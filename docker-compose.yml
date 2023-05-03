@@ -15,7 +15,8 @@ services:
   hmpps-strengths-based-needs-assessments-api:
     build:
       context: .
-    network_mode: "host"
+    networks:
+      - hmpps
     container_name: hmpps-strengths-based-needs-assessments-api
     depends_on:
      - postgres
@@ -24,8 +25,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
     environment:
-      - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: "dev,postgres"
+      DATABASE_ENDPOINT: "postgres:5432"
 
 networks:
   hmpps:

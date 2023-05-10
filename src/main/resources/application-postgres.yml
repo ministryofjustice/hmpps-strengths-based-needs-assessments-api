@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:strengthsbasedneedsapi}&user=${database.username:root}&password=${database.password:dev}&stringtype=unspecified
+  flyway:
+    schemas: strengthsbasedneedsapi
+    locations: classpath:/db/migration
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: false
+  h2:
+    console:
+      enabled: false

@@ -9,6 +9,14 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+  // Database dependencies
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.postgresql:postgresql:42.6.0")
+  implementation("org.flywaydb:flyway-core")
+
+  // Test dependencies
+  testImplementation("com.h2database:h2")
 }
 
 java {

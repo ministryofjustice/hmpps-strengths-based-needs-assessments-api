@@ -20,6 +20,11 @@ dependencies {
   implementation("org.postgresql:postgresql:42.6.0")
   implementation("org.flywaydb:flyway-core")
 
+  // OpenAPI dependencies
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.15")
+
   // Test dependencies
   testImplementation("com.h2database:h2")
 }

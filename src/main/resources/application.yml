@@ -25,6 +25,17 @@ spring:
       hibernate:
         show_sql: false
 
+  security:
+    oauth2:
+      client:
+        registration: {}
+        provider:
+          oauth-service:
+            token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+      resourceserver:
+        jwt:
+          issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
+
 server:
   port: 8080
   servlet:

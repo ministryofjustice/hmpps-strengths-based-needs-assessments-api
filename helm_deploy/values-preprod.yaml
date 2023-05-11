@@ -2,10 +2,13 @@
 # Per environment values which override defaults in hmpps-strengths-based-needs-assessments-api/values.yaml
 
 generic-service:
+  replicaCount: 2
+
   ingress:
     host: hmpps-strengths-based-needs-assessments-api-preprod.hmpps.service.justice.gov.uk
 
   env:
+    OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

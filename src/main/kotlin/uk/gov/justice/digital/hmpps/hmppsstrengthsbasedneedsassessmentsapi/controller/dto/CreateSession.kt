@@ -7,7 +7,7 @@ class CreateSession(
   val userSessionId: String,
 
   @Schema(required = true, description = "User access", example = "READ")
-  val userAccess: String,
+  val userAccess: UserAccess,
 
   @Schema(required = true, description = "OASys assessment ID", example = "ABC12345678")
   val oasysAssessmentId: String,

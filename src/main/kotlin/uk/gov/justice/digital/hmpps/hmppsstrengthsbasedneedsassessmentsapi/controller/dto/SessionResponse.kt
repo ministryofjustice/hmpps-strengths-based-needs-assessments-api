@@ -6,7 +6,7 @@ import java.util.UUID
 data class SessionResponse(
   val uuid: UUID,
   val sessionId: String,
-  val accessLevel: String,
+  val accessLevel: UserAccess,
 ) {
   companion object {
     fun from(session: Session) = with(session) { SessionResponse(uuid, userSessionId, userAccess) }

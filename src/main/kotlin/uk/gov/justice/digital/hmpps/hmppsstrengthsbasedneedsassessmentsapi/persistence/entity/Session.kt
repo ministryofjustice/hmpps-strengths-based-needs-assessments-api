@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UserAccess
 import java.io.Serializable
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -32,7 +34,8 @@ class Session(
   val userSessionId: String = "",
 
   @Column(name = "user_access")
-  val userAccess: String = "",
+  @Enumerated(EnumType.STRING)
+  val userAccess: UserAccess = UserAccess.READ_ONLY,
 
   @Column(name = "link_status")
   @Enumerated(EnumType.STRING)
@@ -44,4 +47,6 @@ class Session(
   @ManyToOne
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid")
   val assessment: Assessment = Assessment(),
-) : Serializable
+) : Serializable {
+  fun hasExpired() = Duration.between(createdAt, LocalDateTime.now()).toHours() > 12
+}

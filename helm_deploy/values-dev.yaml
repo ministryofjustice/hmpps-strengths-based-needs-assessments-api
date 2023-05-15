@@ -5,7 +5,7 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: hmpps-strengths-based-needs-assessments-api-dev.hmpps.service.justice.gov.uk
+    host: api.strengths-based-needs-dev.hmpps.service.justice.gov.uk
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth

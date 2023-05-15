@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.pers
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UserAccess
 import java.io.Serializable
-import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -47,6 +46,4 @@ class Session(
   @ManyToOne
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid")
   val assessment: Assessment = Assessment(),
-) : Serializable {
-  fun hasExpired() = Duration.between(createdAt, LocalDateTime.now()).toHours() > 12
-}
+) : Serializable

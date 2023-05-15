@@ -67,3 +67,9 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+app:
+  link:
+    base-url: ${link.base-url:http://localhost:8080/session}
+  session:
+    max-age: ${session.max-age:12}

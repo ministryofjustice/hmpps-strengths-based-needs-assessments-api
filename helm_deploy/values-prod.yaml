@@ -7,6 +7,7 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
+    LINK_BASE_URL: https://api.strengths-based-needs.hmpps.service.justice.gov.uk/session
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

@@ -10,10 +10,20 @@ configurations {
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+  // OAuth dependencies
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.security:spring-security-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.postgresql:postgresql:42.6.0")
   implementation("org.flywaydb:flyway-core")
+
+  // OpenAPI dependencies
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.15")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.15")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

@@ -1,11 +1,25 @@
 version: "3"
 services:
-  postgres:
-    image: postgres:14
-    ports:
-      - "5432:5432"
+  hmpps-auth:
+    image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
+    container_name: hmpps-strengths-based-needs-assessments-api-auth
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
+    environment:
+      - SERVER_PORT=9090
+      - SPRING_PROFILES_ACTIVE=dev
+
+  postgres:
+    image: postgres:14
+    networks:
+      - hmpps
+    container_name: hmpps-strengths-based-needs-assessments-api-postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: dev

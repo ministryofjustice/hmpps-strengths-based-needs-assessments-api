@@ -21,6 +21,7 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash, postgres"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
+    SESSION_MAX_AGE: 12
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

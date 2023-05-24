@@ -36,6 +36,10 @@ spring:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
 server:
   port: 8080
   servlet:
@@ -73,3 +77,10 @@ app:
     base-url: ${link.base-url:http://localhost:8080/session}
   session:
     max-age: ${session.max-age:12}
+
+logging:
+  level:
+    org:
+      hibernate: INFO
+    uk:
+      gov: INFO

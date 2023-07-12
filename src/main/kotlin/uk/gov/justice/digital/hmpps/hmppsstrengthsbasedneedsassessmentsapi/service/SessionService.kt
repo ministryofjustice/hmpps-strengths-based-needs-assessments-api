@@ -31,7 +31,7 @@ class SessionService(
       ),
     ).let {
       log.info("Session created for OASys assessment ID: ${request.oasysAssessmentId}")
-      OneTimeLinkResponse("${applicationConfig.baseUrl}/${it.linkUuid}")
+      OneTimeLinkResponse("${applicationConfig.baseUrl}?sessionId=${it.linkUuid}")
     }
   }
 

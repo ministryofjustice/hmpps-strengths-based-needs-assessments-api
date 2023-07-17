@@ -32,6 +32,9 @@ class Session(
   @Column(name = "user_id")
   val userSessionId: String = "",
 
+  @Column(name = "user_display_name")
+  val userDisplayName: String = "",
+
   @Column(name = "user_access")
   @Enumerated(EnumType.STRING)
   val userAccess: UserAccess = UserAccess.READ_ONLY,

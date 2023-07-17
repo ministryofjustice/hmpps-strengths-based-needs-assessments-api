@@ -39,7 +39,7 @@ class SessionController(
   @Operation(description = "Use a one time link for a given session")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "200", description = "One time link used"),
+      ApiResponse(responseCode = "200", description = "One time link valid and has been marked as used"),
     ],
   )
   fun useOneTimeLink(
@@ -48,5 +48,21 @@ class SessionController(
     uuid: UUID,
   ): SessionResponse? {
     return sessionService.useOneTimeLink(uuid)
+  }
+
+  @RequestMapping(path = ["/session/{uuid}/validate"], method = [RequestMethod.GET])
+  @Operation(description = "Check status of OASys session")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OASys session is active"),
+      ApiResponse(responseCode = "401", description = "OASys session has expired"),
+    ],
+  )
+  fun checkOASysSessionStatus(
+    @Parameter(description = "Session ID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    uuid: UUID,
+  ) {
+    return sessionService.checkSessionIsValid(uuid)
   }
 }

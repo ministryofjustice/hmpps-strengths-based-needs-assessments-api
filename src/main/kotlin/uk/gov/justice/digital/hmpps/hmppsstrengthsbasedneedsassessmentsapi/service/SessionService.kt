@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Session
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.SessionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OneTimeLinkException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
@@ -26,6 +27,7 @@ class SessionService(
     return sessionRepository.save(
       Session(
         userSessionId = request.userSessionId,
+        userDisplayName = request.userDisplayName,
         userAccess = request.userAccess,
         assessment = assessment,
       ),
@@ -52,6 +54,14 @@ class SessionService(
       SessionResponse.from(it)
     }
   }
+
+  fun checkSessionIsValid(uuid: UUID) {
+    sessionRepository.findSessionByUuid(uuid)
+      ?.let { checkOasysSessionStatus(it.userSessionId) }
+      ?: throw UserNotAuthenticatedException("User session does not exist")
+  }
+
+  fun checkOasysSessionStatus(oasysSessionId: String) {}
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

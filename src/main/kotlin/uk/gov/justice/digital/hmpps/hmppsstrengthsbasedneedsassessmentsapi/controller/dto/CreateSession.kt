@@ -6,6 +6,9 @@ class CreateSession(
   @Schema(required = true, description = "EOR Session", example = "ABC12345678")
   val userSessionId: String,
 
+  @Schema(required = true, description = "User display name", example = "Probation User")
+  val userDisplayName: String,
+
   @Schema(required = true, description = "User access", example = "READ_ONLY")
   val userAccess: UserAccess,
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OneTimeLinkException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 
 @RestControllerAdvice
 class ControllerAdvice {
@@ -17,6 +18,18 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           userMessage = "Unable to use one time link",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
+  @ExceptionHandler(UserNotAuthenticatedException::class)
+  fun handle(ex: UserNotAuthenticatedException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(HttpStatus.UNAUTHORIZED)
+      .body(
+        ErrorResponse(
+          userMessage = "User not authorized",
           developerMessage = ex.message ?: "",
         ),
       )

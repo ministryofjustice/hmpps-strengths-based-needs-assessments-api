@@ -9,20 +9,21 @@ import java.util.UUID
 
 @Service
 class SubjectService(
-  val assessmentRepository: AssessmentRepository
+  val assessmentRepository: AssessmentRepository,
 ) {
   fun getSubject(assessmentUuid: UUID): SubjectResponse {
     log.info("Returning subject for assessment with UUID $assessmentUuid")
     return assessmentRepository.findByUuid(assessmentUuid)
-      ?.let { SubjectResponse(
-        "Paul",
-        "Whitfield",
-        "01/01/1970",
-        "A123456",
-        "01/123456789A",
-      ) }
+      ?.let {
+        SubjectResponse(
+          "Paul",
+          "Whitfield",
+          "01/01/1970",
+          "A123456",
+          "01/123456789A",
+        )
+      }
       ?: throw AssessmentNotFoundException("Not assessment found with ID $assessmentUuid")
-
   }
 
   companion object {

@@ -24,7 +24,7 @@ class AssessmentController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "Assessment found"),
-    ]
+    ],
   )
   fun getAnswers(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")

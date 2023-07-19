@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 
@@ -30,6 +31,18 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           userMessage = "User not authorized",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
+  @ExceptionHandler(AssessmentNotFoundException::class)
+  fun handler(ex: AssessmentNotFoundException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .body(
+        ErrorResponse(
+          userMessage = "Assessment not found",
           developerMessage = ex.message ?: "",
         ),
       )

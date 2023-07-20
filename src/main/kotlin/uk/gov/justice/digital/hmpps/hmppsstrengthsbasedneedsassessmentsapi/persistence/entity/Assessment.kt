@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -14,7 +15,7 @@ import java.util.UUID
 
 enum class AnswerType {
   TEXT,
-  TEXTAREA,
+  TEXT_AREA,
   RADIO,
   CHECKBOX,
   DROPDOWN,
@@ -22,14 +23,16 @@ enum class AnswerType {
 
 class Option(
   val value: String,
-  val description: String,
+  val text: String,
 )
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class Answer(
   val type: AnswerType,
   val description: String,
   val options: List<Option>?,
   val value: String?,
+  val values: List<String>?,
 )
 
 typealias Answers = Map<String, Answer>

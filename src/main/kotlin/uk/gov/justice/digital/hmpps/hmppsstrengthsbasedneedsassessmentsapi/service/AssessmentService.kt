@@ -13,7 +13,7 @@ class AssessmentService(
   val assessmentRepository: AssessmentRepository,
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentId: String): Assessment {
-    return assessmentRepository.save(Assessment(oasysAssessmentId = oasysAssessmentId))
+    return assessmentRepository.save(Assessment(oasysAssessmentId = oasysAssessmentId, answers = emptyMap()))
       .also { log.info("Created assessment for OASys assessment ID: ${it.oasysAssessmentId}") }
   }
 

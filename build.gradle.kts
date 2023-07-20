@@ -19,6 +19,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.postgresql:postgresql:42.6.0")
   implementation("org.flywaydb:flyway-core")
+  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")

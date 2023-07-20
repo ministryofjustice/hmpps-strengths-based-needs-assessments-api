@@ -11,24 +11,25 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.SubjectResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.SubjectService
+import java.util.UUID
 
 @RestController
-@Tag(name = "Session Controller")
+@Tag(name = "Subject Controller")
 class SubjectController(
   val subjectService: SubjectService,
 ) {
-  @RequestMapping(path = ["/subject/{assessmentId}"], method = [RequestMethod.GET])
+  @RequestMapping(path = ["/subject/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the subject of an assessment")
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "One time link used"),
     ],
   )
-  fun useOneTimeLink(
+  fun getSubject(
     @Parameter(description = "OASys assessment ID", required = true, example = "ABC2134567890")
     @PathVariable
-    assessmentId: String,
+    assessmentUuid: UUID,
   ): SubjectResponse {
-    return subjectService.getSubject(assessmentId)
+    return subjectService.getSubject(assessmentUuid)
   }
 }

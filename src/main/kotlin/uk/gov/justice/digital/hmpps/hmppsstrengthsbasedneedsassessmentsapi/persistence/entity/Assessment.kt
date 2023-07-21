@@ -7,6 +7,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import java.io.Serializable
@@ -57,4 +58,7 @@ class Assessment(
   @Type(JsonType::class)
   @Column(name = "answers")
   var answers: Answers = mutableMapOf(),
+
+  @OneToOne(optional = true, mappedBy = "assessment")
+  var info: AssessmentFormInfo? = null,
 ) : Serializable

@@ -19,7 +19,7 @@ import java.util.UUID
 class AssessmentController(
   val assessmentService: AssessmentService,
 ) {
-  @RequestMapping(path = ["/assessment/assessmentUuid/answers"], method = [RequestMethod.GET])
+  @RequestMapping(path = ["/assessment/{assessmentUuid}/answers"], method = [RequestMethod.GET])
   @Operation(description = "Get answers for an assessment")
   @ApiResponses(
     value = [

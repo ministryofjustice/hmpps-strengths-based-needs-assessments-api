@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto
 
-data class OneTimeLinkResponse(
-  val link: String,
+data class UseOneTimeLinkRequest(
+  val form: String,
+  val version: String,
 )

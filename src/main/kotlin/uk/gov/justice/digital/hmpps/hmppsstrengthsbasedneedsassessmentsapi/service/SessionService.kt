@@ -6,8 +6,11 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.confi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.CreateSession
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.OneTimeLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.SessionResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UseOneTimeLinkRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.LinkStatus
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Session
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentFormInfoRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.SessionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
@@ -20,6 +23,7 @@ class SessionService(
   val sessionRepository: SessionRepository,
   val assessmentService: AssessmentService,
   val applicationConfig: ApplicationConfig,
+  val assessmentFormInfoRepository: AssessmentFormInfoRepository,
 ) {
   fun createOneTimeLink(request: CreateSession): OneTimeLinkResponse {
     val assessment = assessmentService.findOrCreateAssessment(request.oasysAssessmentId)
@@ -33,7 +37,10 @@ class SessionService(
       ),
     ).let {
       log.info("Session created for OASys assessment ID: ${request.oasysAssessmentId}")
-      OneTimeLinkResponse("${applicationConfig.baseUrl}?sessionId=${it.linkUuid}")
+      assessment.info?.let { assessmentInfo ->
+        val (majorVersion, minorVersion) = assessmentInfo.formVersion.split(".")
+        OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/$majorVersion/$minorVersion/start?sessionId=${it.linkUuid}")
+      } ?: OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/start?sessionId=${it.linkUuid}")
     }
   }
 
@@ -41,13 +48,19 @@ class SessionService(
     return Duration.between(session.createdAt, LocalDateTime.now()).toHours() > applicationConfig.sessionMaxAge
   }
 
-  fun useOneTimeLink(uuid: UUID): SessionResponse? {
+  fun useOneTimeLink(uuid: UUID, request: UseOneTimeLinkRequest): SessionResponse? {
     val session = sessionRepository.findByLinkUuidAndLinkStatus(uuid, LinkStatus.UNUSED)
       ?: throw OneTimeLinkException("One time link has been used")
 
     if (sessionHasExpired(session)) throw OneTimeLinkException("One time link has expired")
 
     session.linkStatus = LinkStatus.USED
+
+    if (session.assessment.info == null) {
+      assessmentFormInfoRepository.save(
+        AssessmentFormInfo(formName = request.form, formVersion = request.version, assessment = session.assessment),
+      )
+    }
 
     return sessionRepository.save(session).let {
       log.info("Used one time link: ${it.linkUuid}")

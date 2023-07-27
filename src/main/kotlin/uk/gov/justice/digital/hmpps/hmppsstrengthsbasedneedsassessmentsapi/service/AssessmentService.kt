@@ -12,15 +12,17 @@ import java.util.UUID
 @Service
 class AssessmentService(
   val assessmentRepository: AssessmentRepository,
+  val subjectService: SubjectService,
 ) {
-  fun createAssessmentWithOasysId(oasysAssessmentId: String): Assessment {
-    return assessmentRepository.save(Assessment(oasysAssessmentId = oasysAssessmentId, answers = emptyMap()))
+  fun createAssessmentWithOasysId(oasysAssessmentId: String, crn: String): Assessment {
+    val subject = subjectService.findOrCreateSubject(crn)
+    return assessmentRepository.save(Assessment(oasysAssessmentId = oasysAssessmentId, answers = emptyMap(), subject = subject))
       .also { log.info("Created assessment for OASys assessment ID: ${it.oasysAssessmentId}") }
   }
 
-  fun findOrCreateAssessment(oasysAssessmentId: String): Assessment {
+  fun findOrCreateAssessment(oasysAssessmentId: String, crn: String): Assessment {
     return assessmentRepository.findByOasysAssessmentId(oasysAssessmentId)
-      ?: createAssessmentWithOasysId(oasysAssessmentId)
+      ?: createAssessmentWithOasysId(oasysAssessmentId, crn)
   }
 
   fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersDto) {

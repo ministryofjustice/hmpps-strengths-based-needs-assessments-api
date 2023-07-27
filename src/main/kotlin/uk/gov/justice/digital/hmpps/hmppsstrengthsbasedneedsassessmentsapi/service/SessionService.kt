@@ -26,7 +26,7 @@ class SessionService(
   val assessmentFormInfoRepository: AssessmentFormInfoRepository,
 ) {
   fun createOneTimeLink(request: CreateSession): OneTimeLinkResponse {
-    val assessment = assessmentService.findOrCreateAssessment(request.oasysAssessmentId)
+    val assessment = assessmentService.findOrCreateAssessment(request.oasysAssessmentId, request.crn)
 
     return sessionRepository.save(
       Session(

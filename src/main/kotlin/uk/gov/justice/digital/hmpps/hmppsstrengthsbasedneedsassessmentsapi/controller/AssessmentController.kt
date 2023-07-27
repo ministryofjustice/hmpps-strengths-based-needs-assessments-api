@@ -41,13 +41,13 @@ class AssessmentController(
       ApiResponse(responseCode = "200", description = "Assessment updated"),
     ],
   )
-  fun addAnswersToAssessment(
+  fun updateAnswers(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     assessmentUuid: UUID,
     @RequestBody
-    answers: Answers,
+    answers: UpdateAssessmentAnswersDto,
   ) {
-    assessmentService.addAnswers(assessmentUuid, answers)
+    assessmentService.updateAnswers(assessmentUuid, answers)
   }
 }

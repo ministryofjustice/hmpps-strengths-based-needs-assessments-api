@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.UpdateAssessmentAnswersDto
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
@@ -22,11 +23,13 @@ class AssessmentService(
       ?: createAssessmentWithOasysId(oasysAssessmentId)
   }
 
-  fun addAnswers(assessmentUuid: UUID, answers: Answers) {
+  fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersDto) {
     log.info("Adding answers to assessment with ID $assessmentUuid")
     assessmentRepository.findByUuid(assessmentUuid)
       ?.let {
-        it.answers = it.answers.plus(answers)
+        it.answers = it.answers.plus(request.answersToAdd)
+          .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
+
         assessmentRepository.save(it)
       }
       ?: throw AssessmentNotFoundException("Not assessment found with ID $assessmentUuid")

@@ -3,14 +3,23 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.SubjectResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Subject
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.SubjectRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
 import java.util.UUID
 
 @Service
 class SubjectService(
   val assessmentRepository: AssessmentRepository,
+  val subjectRepository: SubjectRepository,
 ) {
+  fun findOrCreateSubject(crn: String): Subject {
+    log.info("Creating subject with CRN: $crn")
+    return subjectRepository.findSubjectByCrn(crn)
+      ?: subjectRepository.save(Subject(crn = crn))
+  }
+
   fun getSubject(assessmentUuid: UUID): SubjectResponse {
     log.info("Returning subject for assessment with UUID $assessmentUuid")
     return assessmentRepository.findByUuid(assessmentUuid)

@@ -14,4 +14,7 @@ class CreateSession(
 
   @Schema(required = true, description = "OASys assessment ID", example = "ABC12345678")
   val oasysAssessmentId: String,
+
+  @Schema(required = true, description = "CRN", example = "X1234567")
+  val crn: String,
 )

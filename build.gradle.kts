@@ -22,7 +22,7 @@ dependencies {
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

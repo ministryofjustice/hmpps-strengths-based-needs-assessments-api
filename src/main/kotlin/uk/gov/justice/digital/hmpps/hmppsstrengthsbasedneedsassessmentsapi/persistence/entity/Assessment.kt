@@ -23,6 +23,7 @@ enum class AnswerType {
   CHECKBOX,
   DROPDOWN,
   COLLECTION,
+  DATE,
 }
 
 class Option(

@@ -3,6 +3,9 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.UpdateAssessmentAnswersDto
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UpdateCollectionEntryRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
@@ -34,7 +37,71 @@ class AssessmentService(
 
         assessmentRepository.save(it)
       }
-      ?: throw AssessmentNotFoundException("Not assessment found with ID $assessmentUuid")
+      ?: throw AssessmentNotFoundException("No assessment found with ID $assessmentUuid")
+  }
+
+  fun addEntryToCollection(assessmentUuid: UUID, collectionName: String, request: UpdateAssessmentAnswersDto) {
+    log.info("Adding answers to collection '$collectionName' for assessment with ID $assessmentUuid")
+    assessmentRepository.findByUuid(assessmentUuid)
+      ?.let {
+        val answer = it.answers[collectionName] ?: Answer(type = AnswerType.COLLECTION, description = "", collection = emptyList(), options = null, value = null, values = null)
+        val updatedCollection = answer.collection?.plus(request.answersToAdd)
+        answer.collection = updatedCollection
+
+        it.answers = it.answers.plus(collectionName to answer)
+
+        assessmentRepository.save(it)
+      }
+      ?: throw AssessmentNotFoundException("No assessment found with ID $assessmentUuid")
+  }
+
+  fun updateEntryInCollection(assessmentUuid: UUID, collectionName: String, request: UpdateCollectionEntryRequest) {
+    log.info("Updating answers in collection '$collectionName' for assessment with ID $assessmentUuid")
+    assessmentRepository.findByUuid(assessmentUuid)
+      ?.let {
+        val answer = it.answers[collectionName] ?: Answer(type = AnswerType.COLLECTION, description = "", collection = emptyList(), options = null, value = null, values = null)
+        val updatedCollection = answer.collection
+          .orEmpty()
+          .toMutableList()
+
+        updatedCollection[request.index] = request.answers.answersToAdd
+        answer.collection = updatedCollection
+
+        it.answers = it.answers.plus(collectionName to answer)
+
+        assessmentRepository.save(it)
+      }
+      ?: throw AssessmentNotFoundException("No assessment found with ID $assessmentUuid")
+  }
+
+  fun removeEntryFromCollection(assessmentUuid: UUID, collectionName: String, indexToRemove: Int) {
+    log.info("Removing entry from collection '$collectionName' at index '$indexToRemove' for assessment with ID $assessmentUuid")
+    assessmentRepository.findByUuid(assessmentUuid)
+      ?.let {
+        val answer = it.answers[collectionName] ?: Answer(type = AnswerType.COLLECTION, description = "", collection = emptyList(), options = null, value = null, values = null)
+
+        val updatedCollection = answer.collection.orEmpty().toMutableList()
+        updatedCollection.removeAt(indexToRemove)
+
+        answer.collection = updatedCollection
+
+        it.answers = it.answers.plus(collectionName to answer)
+
+        assessmentRepository.save(it)
+      }
+      ?: throw AssessmentNotFoundException("No assessment found with ID $assessmentUuid")
+  }
+
+  fun getEntryFromCollection(assessmentUuid: UUID, collectionName: String, indexToReturn: Int): Answers {
+    log.info("Get entry from collection '$collectionName' at index '$indexToReturn' for assessment with ID $assessmentUuid")
+    assessmentRepository.findByUuid(assessmentUuid)
+      ?.let {
+        val answer = it.answers[collectionName] ?: Answer(type = AnswerType.COLLECTION, description = "", collection = emptyList(), options = null, value = null, values = null)
+
+        return answer.collection
+          ?.elementAtOrNull(indexToReturn) ?: throw AssessmentNotFoundException("No entry found at index '$indexToReturn' for collection '$collectionName'")
+      }
+      ?: throw AssessmentNotFoundException("No assessment found with ID $assessmentUuid")
   }
 
   fun getAnswers(assessmentUuid: UUID): Answers {

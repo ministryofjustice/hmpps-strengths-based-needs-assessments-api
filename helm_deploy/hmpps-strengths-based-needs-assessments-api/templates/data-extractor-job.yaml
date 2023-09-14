@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-analytics-extractor
+  name: hmpps-sbna-analytics-extractor
   labels:
     app: hmpps-strengths-based-needs-assessment
     release: {{ .Release.Name }}

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -30,6 +31,7 @@ class SessionController(
       ApiResponse(responseCode = "200", description = "Session created"),
     ],
   )
+  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_CREATE_SESSION')")
   fun createOneTimeLink(
     @RequestBody request: CreateSession,
   ): OneTimeLinkResponse {
@@ -43,6 +45,7 @@ class SessionController(
       ApiResponse(responseCode = "200", description = "One time link valid and has been marked as used"),
     ],
   )
+  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_READ')")
   fun useOneTimeLink(
     @Parameter(description = "One time link ID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
@@ -61,6 +64,7 @@ class SessionController(
       ApiResponse(responseCode = "401", description = "OASys session has expired"),
     ],
   )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun checkOASysSessionStatus(
     @Parameter(description = "Session ID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable

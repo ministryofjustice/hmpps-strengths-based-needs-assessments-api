@@ -48,6 +48,18 @@ class ControllerAdvice {
       )
   }
 
+  @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
+  fun handler(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(HttpStatus.FORBIDDEN)
+      .body(
+        ErrorResponse(
+          userMessage = "Access denied",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
   @ExceptionHandler(Exception::class)
   fun handle(ex: Exception): ResponseEntity<ErrorResponse> {
     log.error("Exception: ", ex)

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -25,6 +26,7 @@ class SubjectController(
       ApiResponse(responseCode = "200", description = "One time link used"),
     ],
   )
+  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_READ')")
   fun getSubject(
     @Parameter(description = "OASys assessment ID", required = true, example = "ABC2134567890")
     @PathVariable

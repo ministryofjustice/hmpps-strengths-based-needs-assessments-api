@@ -8,5 +8,4 @@ import java.util.UUID
 @Repository
 interface AssessmentRepository : JpaRepository<Assessment, Long> {
   fun findByUuid(uuid: UUID): Assessment?
-  fun findByOasysAssessmentId(oasysAssessmentId: String): Assessment?
 }

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.cont
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 
 class UpdateAssessmentAnswersDto(
+  val tags: List<String>,
   val answersToAdd: Answers = emptyMap(),
   val answersToRemove: List<String> = emptyList(),
 )

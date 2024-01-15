@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.CreateSession
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.CreateSessionRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.OneTimeLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.SessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UseOneTimeLinkRequest
@@ -21,23 +21,23 @@ import java.util.UUID
 @Service
 class SessionService(
   val sessionRepository: SessionRepository,
-  val assessmentService: AssessmentService,
+  val oasysAssessmentService: OasysAssessmentService,
   val applicationConfig: ApplicationConfig,
   val assessmentFormInfoRepository: AssessmentFormInfoRepository,
 ) {
-  fun createOneTimeLink(request: CreateSession): OneTimeLinkResponse {
-    val assessment = assessmentService.findOrCreateAssessment(request.oasysAssessmentId, request.crn)
+  fun createOneTimeLink(request: CreateSessionRequest): OneTimeLinkResponse {
+    val oasysAssessment = oasysAssessmentService.findOrCreateAssessment(request.oasysAssessmentPk)
 
     return sessionRepository.save(
       Session(
         userSessionId = request.userSessionId,
         userDisplayName = request.userDisplayName,
         userAccess = request.userAccess,
-        assessment = assessment,
+        oasysAssessment = oasysAssessment,
       ),
     ).let {
-      log.info("Session created for OASys assessment ID: ${request.oasysAssessmentId}")
-      assessment.info?.let { assessmentInfo ->
+      log.info("Session created for OASys assessment PK: ${request.oasysAssessmentPk}")
+      oasysAssessment.assessment.info?.let { assessmentInfo ->
         val (majorVersion, minorVersion) = assessmentInfo.formVersion.split(".")
         OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/$majorVersion/$minorVersion/start?sessionId=${it.linkUuid}")
       } ?: OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/start?sessionId=${it.linkUuid}")
@@ -56,15 +56,19 @@ class SessionService(
 
     session.linkStatus = LinkStatus.USED
 
-    if (session.assessment.info == null) {
+    if (session.oasysAssessment.assessment.info == null) {
       assessmentFormInfoRepository.save(
-        AssessmentFormInfo(formName = request.form, formVersion = request.version, assessment = session.assessment),
+        AssessmentFormInfo(
+          formName = request.form,
+          formVersion = request.version,
+          assessment = session.oasysAssessment.assessment,
+        ),
       )
     }
 
     return sessionRepository.save(session).let {
       log.info("Used one time link: ${it.linkUuid}")
-      SessionResponse.from(it)
+      SessionResponse.from(it, it.oasysAssessment.assessment)
     }
   }
 

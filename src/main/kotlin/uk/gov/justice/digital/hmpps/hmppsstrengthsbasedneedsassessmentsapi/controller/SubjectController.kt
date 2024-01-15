@@ -11,14 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.SubjectResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.SubjectService
 import java.util.UUID
 
 @RestController
 @Tag(name = "Subject Controller")
-class SubjectController(
-  val subjectService: SubjectService,
-) {
+class SubjectController() {
   @RequestMapping(path = ["/subject/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the subject of an assessment")
   @ApiResponses(
@@ -32,6 +29,12 @@ class SubjectController(
     @PathVariable
     assessmentUuid: UUID,
   ): SubjectResponse {
-    return subjectService.getSubject(assessmentUuid)
+    return SubjectResponse(
+      "Paul",
+      "Whitfield",
+      "01/01/1970",
+      "A123456",
+      "01/123456789A",
+    )
   }
 }

@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@7
+  hmpps: ministryofjustice/hmpps@8.2
 
 parameters:
   alerts-slack-channel:
@@ -10,6 +10,10 @@ parameters:
   releases-slack-channel:
     type: string
     default: hmpps-strengths-based-needs-assessments-alerts
+  deploy:
+    description: Trigger a manual deployment
+    type: string
+    default: ""
 
 jobs:
   validate:
@@ -36,6 +40,8 @@ jobs:
 workflows:
   version: 2
   build-test-and-deploy:
+    when:
+      not: << pipeline.parameters.deploy >>
     jobs:
       - validate:
           filters:
@@ -53,6 +59,8 @@ workflows:
           name: deploy_dev
           env: "dev"
           jira_update: true
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
           context: hmpps-common-vars
           filters:
             branches:
@@ -72,6 +80,8 @@ workflows:
   #          env: "preprod"
   #          jira_update: true
   #          jira_env_type: staging
+  #          pipeline_id: << pipeline.id >>
+  #          pipeline_number: << pipeline.number >>
   #          context:
   #            - hmpps-common-vars
   #            - hmpps-strengths-based-needs-assessments-api-preprod
@@ -87,6 +97,8 @@ workflows:
   #          env: "prod"
   #          jira_update: true
   #          jira_env_type: production
+  #          pipeline_id: << pipeline.id >>
+  #          pipeline_number: << pipeline.number >>
   #          slack_notification: true
   #          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
   #          context:
@@ -96,10 +108,29 @@ workflows:
   #            - request-prod-approval
   #          helm_timeout: 5m
 
+  deploy-to-test-env:
+    when:
+      and:
+        - equal: [ "test", << pipeline.parameters.deploy >> ]
+    jobs:
+      - hmpps/build_docker:
+          name: build_docker
+      - hmpps/deploy_env:
+          name: deploy_test
+          env: "test"
+          jira_update: true
+          jira_env_type: testing
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context: hmpps-common-vars
+          requires:
+            - build_docker
+          helm_timeout: 5m
+
   security:
     triggers:
       - schedule:
-          cron: "11 5 * * 1-5"
+          cron: "11 8 * * 1-5"
           filters:
             branches:
               only:
@@ -122,7 +153,7 @@ workflows:
   security-weekly:
     triggers:
       - schedule:
-          cron: "23 5 * * 1"
+          cron: "23 8 * * 1"
           filters:
             branches:
               only:

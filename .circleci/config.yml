@@ -45,19 +45,39 @@ workflows:
           name: helm_lint
       - hmpps/build_multiplatform_docker:
           name: build_docker
+          filters:
+            branches:
+              only:
+                - main
       - hmpps/deploy_env:
-          name: deploy_preprod
-          env: "preprod"
+          name: deploy_dev
+          env: "dev"
           jira_update: true
-          jira_env_type: staging
-          context:
-            - hmpps-common-vars
-            - hmpps-strengths-based-needs-assessments-api-preprod
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
           requires:
             - validate
             - build_docker
             - helm_lint
           helm_timeout: 5m
+  #      - request-preprod-approval:
+  #          type: approval
+  #          requires:
+  #            - deploy_dev
+  #      - hmpps/deploy_env:
+  #          name: deploy_preprod
+  #          env: "preprod"
+  #          jira_update: true
+  #          jira_env_type: staging
+  #          context:
+  #            - hmpps-common-vars
+  #            - hmpps-strengths-based-needs-assessments-api-preprod
+  #          requires:
+  #            - request-preprod-approval
+  #          helm_timeout: 5m
   #      - request-prod-approval:
   #          type: approval
   #          requires:

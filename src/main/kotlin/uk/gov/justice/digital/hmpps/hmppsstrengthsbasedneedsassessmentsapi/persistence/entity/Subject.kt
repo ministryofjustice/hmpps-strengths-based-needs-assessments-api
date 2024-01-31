@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -31,4 +30,4 @@ class Subject(
 
   @OneToMany(cascade = [CascadeType.ALL])
   val assessments: List<Assessment> = listOf(),
-) : Serializable
+)

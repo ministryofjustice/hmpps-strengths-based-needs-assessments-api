@@ -8,7 +8,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -35,4 +34,4 @@ class AssessmentFormInfo(
   @OneToOne
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", unique = true, updatable = false, nullable = false)
   val assessment: Assessment? = null,
-) : Serializable
+)

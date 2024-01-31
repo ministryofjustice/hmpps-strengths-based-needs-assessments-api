@@ -11,7 +11,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UserAccess
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -49,4 +48,4 @@ class Session(
   @ManyToOne
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid")
   val oasysAssessment: OasysAssessment = OasysAssessment(),
-) : Serializable
+)

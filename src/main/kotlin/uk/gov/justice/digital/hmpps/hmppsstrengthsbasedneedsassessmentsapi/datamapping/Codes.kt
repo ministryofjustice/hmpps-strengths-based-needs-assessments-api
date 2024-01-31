@@ -1,0 +1,16 @@
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping
+
+enum class Field {
+  ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING,
+  ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM,
+  CURRENT_ACCOMMODATION,
+  SUITABLE_HOUSING,
+}
+
+enum class Value {
+  NO_ACCOMMODATION,
+  SETTLED,
+  TEMPORARY,
+  YES,
+  YES_WITH_CONCERNS,
+}

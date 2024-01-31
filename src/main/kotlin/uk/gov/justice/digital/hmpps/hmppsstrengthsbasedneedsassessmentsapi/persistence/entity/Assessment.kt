@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -27,4 +26,4 @@ class Assessment(
 
   @OneToOne(optional = true, mappedBy = "assessment")
   var info: AssessmentFormInfo? = null,
-) : Serializable
+)

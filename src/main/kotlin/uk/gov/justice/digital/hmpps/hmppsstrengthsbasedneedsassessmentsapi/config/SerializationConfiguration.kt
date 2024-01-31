@@ -15,7 +15,7 @@ class SerializationConfiguration {
       Json {
         ignoreUnknownKeys = true
         explicitNulls = false
-      }
+      },
     )
   }
 }

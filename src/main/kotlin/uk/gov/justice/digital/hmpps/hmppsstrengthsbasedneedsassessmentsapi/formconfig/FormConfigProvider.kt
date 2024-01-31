@@ -11,18 +11,18 @@ import java.net.http.HttpResponse
 @Serializable
 data class FormConfig(
   val version: String,
-  val fields: Map<String, Field> = emptyMap()
+  val fields: Map<String, Field> = emptyMap(),
 )
 
 @Serializable
 data class Field(
   val code: String,
-  val options: List<Option> = emptyList()
+  val options: List<Option> = emptyList(),
 )
 
 @Serializable
 data class Option(
-  val value: String? = null
+  val value: String? = null,
 )
 
 class FormConfigProvider {

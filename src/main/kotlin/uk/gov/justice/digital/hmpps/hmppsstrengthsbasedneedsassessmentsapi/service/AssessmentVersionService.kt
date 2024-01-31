@@ -2,18 +2,19 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.UpdateAssessmentAnswersDto
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UpdateAssessmentAnswersDto
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
-import java.util.UUID
+import java.util.*
 
 @Service
 class AssessmentVersionService(
   val assessmentService: AssessmentService,
   val assessmentVersionRepository: AssessmentVersionRepository,
+  val dataMappingService: DataMappingService,
 ) {
   fun create(tag: String, assessment: Assessment): AssessmentVersion {
     return assessmentVersionRepository.save(
@@ -33,6 +34,7 @@ class AssessmentVersionService(
         assessment = assessment,
         tag = tag,
         answers = previousVersion?.answers.orEmpty(),
+        oasys_equivalent = previousVersion?.oasys_equivalent.orEmpty(),
       ),
     ).also { log.info("Cloned assessment version with UUID ${it.uuid} and tag ${it.tag} for assessment ${assessment.uuid}") }
   }
@@ -62,6 +64,7 @@ class AssessmentVersionService(
           assessmentVersions.forEach { assessmentVersion ->
             assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
               .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
+            assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
 
             assessmentVersionRepository.save(assessmentVersion)
           }

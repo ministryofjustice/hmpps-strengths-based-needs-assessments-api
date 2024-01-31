@@ -1,19 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.vladmihalcea.hibernate.type.json.JsonType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.Type
-import java.io.Serializable
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 enum class AnswerType {
   TEXT,
@@ -30,7 +21,6 @@ class Option(
   val text: String,
 )
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 class Answer(
   val type: AnswerType,
   val description: String,
@@ -40,6 +30,8 @@ class Answer(
 )
 
 typealias Answers = Map<String, Answer>
+
+typealias OasysEquivalent = Map<String, Any>
 
 @Entity
 @Table(name = "assessments_versions")
@@ -62,7 +54,11 @@ class AssessmentVersion(
   @Column(name = "answers")
   var answers: Answers = mutableMapOf(),
 
+  @Type(JsonType::class)
+  @Column(name = "oasys_equivalent")
+  var oasys_equivalent: OasysEquivalent = mutableMapOf(),
+
   @OneToOne
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", unique = true, updatable = false, nullable = false)
   val assessment: Assessment? = null,
-) : Serializable
+)

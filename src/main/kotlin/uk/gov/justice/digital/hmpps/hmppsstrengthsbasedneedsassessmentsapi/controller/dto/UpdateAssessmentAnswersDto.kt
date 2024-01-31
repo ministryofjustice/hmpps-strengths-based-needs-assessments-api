@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 

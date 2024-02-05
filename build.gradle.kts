@@ -31,7 +31,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
   // JSON serialisation
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

@@ -3,6 +3,7 @@ plugins {
   kotlin("jvm") version "1.9.22"
   kotlin("plugin.serialization") version "1.9.22"
   kotlin("plugin.spring") version "1.9.22"
+  id("org.jetbrains.kotlin.kapt") version "1.9.22"
 }
 
 configurations {
@@ -26,12 +27,13 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.1")
   implementation("org.flywaydb:flyway-core")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+  kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
   // JSON serialisation
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

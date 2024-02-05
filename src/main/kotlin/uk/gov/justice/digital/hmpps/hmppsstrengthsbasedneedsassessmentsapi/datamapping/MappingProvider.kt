@@ -11,7 +11,7 @@ class MappingProvider {
 
   companion object {
     private val versions = mapOf(
-      "1.1" to setOf(
+      "1.0" to setOf(
         Accommodation(),
       ),
     )

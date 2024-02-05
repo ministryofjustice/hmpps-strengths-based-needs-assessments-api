@@ -1,14 +1,16 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UpdateAssessmentAnswersDto
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
-import java.util.*
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import java.util.UUID
 
 @Service
 class AssessmentVersionService(
@@ -27,56 +29,44 @@ class AssessmentVersionService(
   }
 
   fun cloneFromPrevious(tag: String, assessment: Assessment): AssessmentVersion {
-    val previousVersion = find(tag, assessment)
+    val clone = AssessmentVersion(
+      assessment = assessment,
+      tag = tag,
+    )
 
-    return assessmentVersionRepository.save(
-      AssessmentVersion(
-        assessment = assessment,
-        tag = tag,
-        answers = previousVersion?.answers.orEmpty(),
-        oasys_equivalent = previousVersion?.oasys_equivalent.orEmpty(),
-      ),
-    ).also { log.info("Cloned assessment version with UUID ${it.uuid} and tag ${it.tag} for assessment ${assessment.uuid}") }
-  }
-
-  fun findOrCreate(tag: String, assessment: Assessment): AssessmentVersion {
-    return assessmentVersionRepository.findByAssessmentUuidAndTag(assessment.uuid, tag).maxByOrNull { it.createdAt }
-      ?: create(tag, assessment)
-  }
-
-  fun findOrCreateMany(tags: List<String>, assessment: Assessment): List<AssessmentVersion> {
-    val assessmentVersions = assessmentVersionRepository.findByAssessmentUuid(assessment.uuid)
-    return tags.map { tag ->
-      assessmentVersions.filter { it.tag == tag }.maxByOrNull { it.createdAt }
-        ?: create(tag, assessment)
+    try {
+      val previousVersion = find(AssessmentVersionCriteria(assessment.uuid, tag))
+      clone.answers = previousVersion.answers
+      log.info("Cloned from assessment version UUID ${previousVersion.uuid}")
+    } catch (_: AssessmentVersionNotFoundException) {
     }
+
+    return clone
   }
 
-  fun find(tag: String, assessment: Assessment): AssessmentVersion? {
-    return assessmentVersionRepository.findByAssessmentUuid(assessment.uuid).maxByOrNull { it.createdAt }
+  fun find(criteria: AssessmentVersionCriteria): AssessmentVersion {
+    val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"))
+    return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
+      ?: throw AssessmentVersionNotFoundException("No assessment version found that matches criteria: $criteria")
   }
 
   fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersDto) {
     log.info("Adding answers to assessment with UUID $assessmentUuid for tags ${request.tags}")
-    assessmentService.findByUuid(assessmentUuid)?.let {
-      findOrCreateMany(request.tags, it)
-        .let { assessmentVersions ->
-          assessmentVersions.forEach { assessmentVersion ->
-            assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
-              .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
-            assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
 
-            assessmentVersionRepository.save(assessmentVersion)
-          }
-        }
+    assessmentService.findByUuid(assessmentUuid).let {
+      request.tags.map { tag ->
+        val assessmentVersion = cloneFromPrevious(tag, it)
+
+        assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
+          .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
+
+        assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
+
+        assessmentVersionRepository.save(assessmentVersion)
+
+        log.info("Saved answers to assessment version UUID ${assessmentVersion.uuid}")
+      }
     }
-  }
-
-  fun getAnswers(assessmentUuid: UUID, tag: String): Answers {
-    log.info("Getting answers for assessment with UUID $assessmentUuid for tag $tag")
-    return assessmentService.findByUuid(assessmentUuid)?.let {
-      find(tag, it)?.answers
-    } ?: throw AssessmentNotFoundException("No assessment found with UUID $assessmentUuid")
   }
 
   companion object {

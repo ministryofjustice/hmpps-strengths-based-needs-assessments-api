@@ -1,3 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception
 
-class FormVersionNotFoundException(message: String) : RuntimeException(message)
+import jakarta.persistence.EntityNotFoundException
+
+class FormVersionNotFoundException(message: String) : EntityNotFoundException(message)

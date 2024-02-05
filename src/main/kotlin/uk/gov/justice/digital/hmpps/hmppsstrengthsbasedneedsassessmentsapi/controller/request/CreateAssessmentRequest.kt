@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 

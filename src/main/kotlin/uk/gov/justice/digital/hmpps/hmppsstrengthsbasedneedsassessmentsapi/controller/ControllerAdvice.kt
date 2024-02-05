@@ -1,12 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller
 
+import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
+import org.springframework.web.server.ResponseStatusException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 
@@ -36,13 +37,25 @@ class ControllerAdvice {
       )
   }
 
-  @ExceptionHandler(AssessmentNotFoundException::class)
-  fun handler(ex: AssessmentNotFoundException): ResponseEntity<ErrorResponse> {
+  @ExceptionHandler(EntityNotFoundException::class)
+  fun handler(ex: EntityNotFoundException): ResponseEntity<ErrorResponse> {
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .body(
         ErrorResponse(
-          userMessage = "Assessment not found",
+          userMessage = "Not found",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
+  @ExceptionHandler(ResponseStatusException::class)
+  fun handler(ex: ResponseStatusException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(ex.statusCode)
+      .body(
+        ErrorResponse(
+          userMessage = ex.reason ?: "",
           developerMessage = ex.message ?: "",
         ),
       )

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response
 
 data class ErrorResponse(
   val userMessage: String = "Something went wrong",

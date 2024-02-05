@@ -1,8 +1,20 @@
-package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
+import java.time.LocalDateTime
+import java.util.UUID
+
+data class AssessmentMetadata(
+  val uuid: UUID,
+  val createdAt: LocalDateTime,
+  val oasys_pks: List<String>,
+  val versionUuid: UUID,
+  val versionCreatedAt: LocalDateTime,
+  val versionTag: String,
+  val formVersion: String,
+)
 
 data class AssessmentResponse(
   val metaData: AssessmentMetadata,

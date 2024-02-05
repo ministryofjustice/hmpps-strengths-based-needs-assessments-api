@@ -1,3 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception
 
-class AssessmentNotFoundException(message: String) : RuntimeException(message)
+import jakarta.persistence.EntityNotFoundException
+
+class AssessmentNotFoundException(message: String) : EntityNotFoundException(message)

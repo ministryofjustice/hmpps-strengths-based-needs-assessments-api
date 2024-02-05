@@ -10,9 +10,13 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UserAccess
 import java.time.LocalDateTime
 import java.util.UUID
+
+enum class UserAccess(val value: String) {
+  READ_ONLY("READ_ONLY"),
+  READ_WRITE("READ_WRITE"),
+}
 
 @Entity
 @Table(name = "oasys_sessions")

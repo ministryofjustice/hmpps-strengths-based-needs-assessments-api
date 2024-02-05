@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.dto.UpdateAssessmentAnswersDto
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
@@ -50,7 +50,7 @@ class AssessmentVersionService(
       ?: throw AssessmentVersionNotFoundException("No assessment version found that matches criteria: $criteria")
   }
 
-  fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersDto) {
+  fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersRequest) {
     log.info("Adding answers to assessment with UUID $assessmentUuid for tags ${request.tags}")
 
     assessmentService.findByUuid(assessmentUuid).let {

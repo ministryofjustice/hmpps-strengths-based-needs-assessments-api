@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datam
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.exception.MappingNotFoundException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
@@ -23,11 +24,12 @@ class MappingProviderTest {
   @NullSource
   @ValueSource(strings = ["X.Y", ""])
   fun `throws exception when version not found`(version: String?) {
-    assertFailsWith<MappingNotFoundException>(
+    val exception = assertFailsWith<MappingNotFoundException>(
       block = {
         sut.get(version)
       },
     )
+    assertContains(exception.message!!, "No data mapping found for form version ${version ?: "unknown"}")
   }
 
   @Test

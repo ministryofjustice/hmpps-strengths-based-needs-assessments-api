@@ -12,7 +12,10 @@ class Answer(
   val values: List<String>?,
 )
 
-class AnswersProvider(private val answers: Answers, private val config: FormConfig) {
+class AnswersProvider(
+  private val answers: Answers,
+  private val config: FormConfig,
+) {
   private var context: Field? = null
 
   fun answer(field: Field): Answer {

@@ -26,12 +26,12 @@ class AnswersProviderTest {
 
   @Test
   fun `answer throws exception when field not in config`() {
-    assertFailsWith<InvalidMappingException>(
-      message = "Field test_field does not exist in form config version 1.0",
+    val exception = assertFailsWith<InvalidMappingException>(
       block = {
         sut.answer(Field.TEST_FIELD)
       },
     )
+    assertEquals("Field test_field does not exist in form config version 1.0", exception.message)
   }
 
   @Test
@@ -47,23 +47,23 @@ class AnswersProviderTest {
 
   @Test
   fun `get throws exception when called outside of a field context`() {
-    assertFailsWith<InvalidMappingException>(
-      message = "Cannot obtain values without a field context. Call answer() first",
+    val exception = assertFailsWith<InvalidMappingException>(
       block = {
         sut.get(Value.YES)
       },
     )
+    assertEquals("Cannot obtain values without a field context. Call answer() first", exception.message)
   }
 
   @Test
   fun `get throws exception for invalid field option`() {
     sut.answer(Field.SUITABLE_HOUSING)
-    assertFailsWith<InvalidMappingException>(
-      message = "NO_ACCOMMODATION is not a valid option for field SUITABLE_HOUSING in form config version 1.0",
+    val exception = assertFailsWith<InvalidMappingException>(
       block = {
         sut.get(Value.NO_ACCOMMODATION)
       },
     )
+    assertEquals("NO_ACCOMMODATION is not a valid option for field suitable_housing in form config version 1.0", exception.message)
   }
 
   @Test

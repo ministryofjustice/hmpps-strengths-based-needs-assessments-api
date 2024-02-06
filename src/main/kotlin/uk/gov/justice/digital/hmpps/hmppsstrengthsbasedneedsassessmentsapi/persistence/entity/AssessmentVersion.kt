@@ -29,11 +29,11 @@ class Option(
 )
 
 class Answer(
-  val type: AnswerType,
-  val description: String,
-  val options: List<Option>?,
-  val value: String?,
-  val values: List<String>?,
+  val type: AnswerType = AnswerType.TEXT,
+  val description: String = "",
+  val options: List<Option>? = null,
+  val value: String? = null,
+  val values: List<String>? = null,
 )
 
 typealias Answers = Map<String, Answer>

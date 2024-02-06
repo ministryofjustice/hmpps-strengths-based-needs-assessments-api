@@ -24,10 +24,15 @@ class Accommodation : SectionMapping() {
   }
 
   private fun q4(): Any {
+    val noAccommodation = ap.answer(Field.CURRENT_ACCOMMODATION).value == ap.get(Value.NO_ACCOMMODATION)
+    if (noAccommodation) {
+      return "2"
+    }
     return when (ap.answer(Field.SUITABLE_HOUSING).value) {
       ap.get(Value.YES) -> "0"
       ap.get(Value.YES_WITH_CONCERNS) -> "1"
-      else -> "2"
+      ap.get(Value.NO) -> "2"
+      else -> ""
     }
   }
 

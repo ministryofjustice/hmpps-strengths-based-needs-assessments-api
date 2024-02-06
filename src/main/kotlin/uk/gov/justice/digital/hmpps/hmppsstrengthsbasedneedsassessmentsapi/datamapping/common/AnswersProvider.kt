@@ -17,7 +17,7 @@ class AnswersProvider(private val answers: Answers, private val config: FormConf
 
   fun answer(field: Field): Answer {
     context = field
-    val fieldName = field.name.lowercase()
+    val fieldName = field.lower
 
     if (config.fields[fieldName]?.code != fieldName) {
       throw InvalidMappingException("Field $fieldName does not exist in form config version ${config.version}")
@@ -28,8 +28,12 @@ class AnswersProvider(private val answers: Answers, private val config: FormConf
   }
 
   fun get(value: Value): String {
-    val fieldName = context!!.name.lowercase()
-    val valueName = value.name.uppercase()
+    if (context == null) {
+      throw InvalidMappingException("Cannot obtain values without a field context. Call answer() first")
+    }
+
+    val fieldName = context!!.lower
+    val valueName = value.name
 
     if (config.fields[fieldName]?.options?.contains(Option(valueName)) != true) {
       throw InvalidMappingException("$valueName is not a valid option for field $fieldName in form config version ${config.version}")

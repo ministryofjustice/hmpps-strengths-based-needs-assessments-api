@@ -26,7 +26,7 @@ class MappingProviderTest {
     assertFailsWith<MappingNotFoundException>(
       block = {
         sut.get(version)
-      }
+      },
     )
   }
 

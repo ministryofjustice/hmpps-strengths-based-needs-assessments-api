@@ -37,6 +37,7 @@ dependencies {
 
   // Test dependencies
   testImplementation("com.h2database:h2")
+  testImplementation(kotlin("test"))
 }
 
 java {

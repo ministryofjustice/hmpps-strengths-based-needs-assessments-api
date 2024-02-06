@@ -38,7 +38,6 @@ dependencies {
   // Test dependencies
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
 java {

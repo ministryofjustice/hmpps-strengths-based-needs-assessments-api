@@ -1,12 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argForWhich
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.reset
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.MappingProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.common.AnswersProvider
@@ -25,20 +22,15 @@ import kotlin.test.assertFailsWith
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field as FormField
 
 class DataMappingServiceTest {
-  private val mockFormConfigProvider: FormConfigProvider = mock()
-  private val mockMappingProvider: MappingProvider = mock()
-  private val mockSectionMapping: SectionMapping = mock()
+  private val mockFormConfigProvider: FormConfigProvider = mockk()
+  private val mockMappingProvider: MappingProvider = mockk()
+  private val mockSectionMapping: SectionMapping = mockk()
 
   @BeforeTest
   fun setUp() {
-    reset(
-      mockFormConfigProvider,
-      mockMappingProvider,
-      mockSectionMapping,
-    )
-    whenever(mockFormConfigProvider.get("1.0")).thenReturn(
-      FormConfig("1.0", mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower))),
-    )
+    clearAllMocks()
+    val testConfig = FormConfig("1.0", mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower)))
+    every { mockFormConfigProvider.get("1.0") } returns testConfig
   }
 
   @Test
@@ -57,8 +49,8 @@ class DataMappingServiceTest {
 
   @Test
   fun `getOasysEquivalent returns empty result`() {
-    whenever(mockSectionMapping.map(any<AnswersProvider>())).thenReturn(emptyMap())
-    whenever(mockMappingProvider.get("1.0")).thenReturn(setOf(mockSectionMapping))
+    every { mockSectionMapping.map(any<AnswersProvider>()) } returns emptyMap()
+    every { mockMappingProvider.get("1.0") } returns setOf(mockSectionMapping)
 
     val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
     val assessment = AssessmentVersion(assessment = Assessment(info = AssessmentFormInfo(formVersion = "1.0")))
@@ -69,11 +61,11 @@ class DataMappingServiceTest {
 
   @Test
   fun `getOasysEquivalent returns non-empty result comprising of multiple section mappings`() {
-    val mockSectionMappingTwo: SectionMapping = mock()
+    val mockSectionMappingTwo: SectionMapping = mockk()
 
-    whenever(mockSectionMapping.map(any<AnswersProvider>())).thenReturn(mapOf("oasys-key-1" to "val-1"))
-    whenever(mockSectionMappingTwo.map(any<AnswersProvider>())).thenReturn(mapOf("oasys-key-2" to listOf("val-2", "val-3")))
-    whenever(mockMappingProvider.get("1.0")).thenReturn(setOf(mockSectionMapping, mockSectionMappingTwo))
+    every { mockSectionMapping.map(any<AnswersProvider>()) } returns mapOf("oasys-key-1" to "val-1")
+    every { mockSectionMappingTwo.map(any<AnswersProvider>()) } returns mapOf("oasys-key-2" to listOf("val-2", "val-3"))
+    every { mockMappingProvider.get("1.0") } returns setOf(mockSectionMapping, mockSectionMappingTwo)
 
     val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
 
@@ -84,8 +76,10 @@ class DataMappingServiceTest {
 
     val result = sut.getOasysEquivalent(assessment)
 
-    verify(mockSectionMapping, times(1)).map(argForWhich { answer(Field.TEST_FIELD).value == "all good" })
-    verify(mockSectionMappingTwo, times(1)).map(argForWhich { answer(Field.TEST_FIELD).value == "all good" })
+    verify(exactly = 1) {
+      mockSectionMapping.map(withArg { assertEquals("all good", it.answer(Field.TEST_FIELD).value) })
+      mockSectionMappingTwo.map(withArg { assertEquals("all good", it.answer(Field.TEST_FIELD).value) })
+    }
 
     assertEquals(
       mapOf(

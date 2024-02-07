@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping
 
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
@@ -20,22 +21,25 @@ class MappingProviderTest {
     sut = MappingProvider()
   }
 
-  @ParameterizedTest(name = "should throw an exception for version `{0}`")
-  @NullSource
-  @ValueSource(strings = ["X.Y", ""])
-  fun `throws exception when version not found`(version: String?) {
-    val exception = assertFailsWith<MappingNotFoundException>(
-      block = {
-        sut.get(version)
-      },
-    )
-    assertContains(exception.message!!, "No data mapping found for form version ${version ?: "unknown"}")
-  }
+  @Nested
+  inner class Get {
+    @ParameterizedTest(name = "should throw an exception for version `{0}`")
+    @NullSource
+    @ValueSource(strings = ["X.Y", ""])
+    fun `throws exception when version not found`(version: String?) {
+      val exception = assertFailsWith<MappingNotFoundException>(
+        block = {
+          sut.get(version)
+        },
+      )
+      assertContains(exception.message!!, "No data mapping found for form version ${version ?: "unknown"}")
+    }
 
-  @Test
-  fun `returns section mappings for existing form version`() {
-    val result = sut.get("1.0")
-    assertIs<Set<SectionMapping>>(result)
-    assertTrue(result.isNotEmpty())
+    @Test
+    fun `returns section mappings for existing form version`() {
+      val result = sut.get("1.0")
+      assertIs<Set<SectionMapping>>(result)
+      assertTrue(result.isNotEmpty())
+    }
   }
 }

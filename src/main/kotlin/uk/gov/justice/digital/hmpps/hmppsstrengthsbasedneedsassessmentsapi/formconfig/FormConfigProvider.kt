@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.form
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
 import java.net.URI
 import java.net.http.HttpClient
@@ -25,7 +27,12 @@ data class Option(
   val value: String? = null,
 )
 
-class FormConfigProvider {
+@Component
+class FormConfigProvider(
+  val client: HttpClient,
+  @Value("\${app.form.url}")
+  val formUrl: String,
+) {
   fun get(version: String): FormConfig {
     val request = HttpRequest.newBuilder()
       .uri(URI.create("$formUrl/sbna-poc/${version.replace(".", "/")}/fields"))
@@ -33,15 +40,11 @@ class FormConfigProvider {
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
     if (response.statusCode() != 200) {
-      throw FormConfigNotFoundException("Unable to fetch form config from $request")
+      throw FormConfigNotFoundException("Unable to fetch form config from ${request.uri()}")
     }
 
-    return decoder.decodeFromString(response.body())
-  }
+    val decoder = Json { ignoreUnknownKeys = true }
 
-  companion object {
-    private val client = HttpClient.newBuilder().build()
-    private val formUrl = System.getenv("LINK_BASE_URL") ?: throw FormConfigNotFoundException("Form config URL not defined")
-    private val decoder = Json { ignoreUnknownKeys = true }
+    return decoder.decodeFromString(response.body())
   }
 }

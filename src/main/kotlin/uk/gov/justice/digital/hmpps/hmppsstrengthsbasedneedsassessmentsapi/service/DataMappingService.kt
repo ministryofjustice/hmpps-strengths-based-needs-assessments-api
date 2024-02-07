@@ -9,14 +9,17 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.FormVersionNotFoundException
 
 @Service
-class DataMappingService {
+class DataMappingService(
+  val formConfigProvider: FormConfigProvider,
+  val mappingProvider: MappingProvider,
+) {
   fun getOasysEquivalent(assessment: AssessmentVersion): OasysEquivalent {
     val formVersion = assessment.assessment?.info?.formVersion
       ?: throw FormVersionNotFoundException("No form version found for assessment ID ${assessment.id}")
-    val formConfig = FormConfigProvider().get(formVersion)
+    val formConfig = formConfigProvider.get(formVersion)
     val answersProvider = AnswersProvider(assessment.answers, formConfig)
 
-    val mapping = MappingProvider().get(formVersion)
+    val mapping = mappingProvider.get(formVersion)
 
     return mapping.fold(emptyMap()) { acc, sectionMapping -> acc + sectionMapping.map(answersProvider) }
   }

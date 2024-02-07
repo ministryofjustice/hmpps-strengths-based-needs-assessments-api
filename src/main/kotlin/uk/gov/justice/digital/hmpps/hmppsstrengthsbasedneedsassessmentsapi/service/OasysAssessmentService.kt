@@ -39,7 +39,7 @@ class OasysAssessmentService(
     } catch (_: OasysAssessmentNotFoundException) {
     }
 
-    var oasysAssessment: OasysAssessment
+    val oasysAssessment: OasysAssessment
 
     if (request.oldOasysAssessmentPk == null) {
       oasysAssessment = createAssessmentWithOasysId(request.oasysAssessmentPk)

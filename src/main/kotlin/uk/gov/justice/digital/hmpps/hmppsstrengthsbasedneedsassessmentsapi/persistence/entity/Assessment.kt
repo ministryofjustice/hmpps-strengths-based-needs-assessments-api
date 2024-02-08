@@ -29,6 +29,6 @@ class Assessment(
   @OneToOne(optional = true, mappedBy = "assessment")
   var info: AssessmentFormInfo? = null,
 
-  @OneToMany(cascade = [CascadeType.ALL])
+  @OneToMany(cascade = [CascadeType.ALL], mappedBy = "assessment")
   val oasysAssessments: List<OasysAssessment> = listOf(),
 )

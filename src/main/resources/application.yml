@@ -69,11 +69,11 @@ management:
 
 app:
   link:
-    base-url: ${link.base-url:http://localhost:8080/session}
+    base-url: ${link.base-url:http://localhost:3000/form}
   session:
     max-age: ${session.max-age:12}
-  form:
-    url: ${LINK_BASE_URL:http://localhost:3000/form}
+  form-config:
+    base-url: ${form-config.base-url:http://localhost:3000/form}
 
 logging:
   level:

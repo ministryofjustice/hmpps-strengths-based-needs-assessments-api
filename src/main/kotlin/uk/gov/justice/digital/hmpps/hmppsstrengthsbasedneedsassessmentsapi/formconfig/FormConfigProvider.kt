@@ -30,12 +30,12 @@ data class Option(
 @Component
 class FormConfigProvider(
   val client: HttpClient,
-  @Value("\${app.form.url}")
-  val formUrl: String,
+  @Value("\${app.form-config.base-url}")
+  val formConfigBaseUrl: String,
 ) {
   fun get(version: String): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("$formUrl/sbna-poc/${version.replace(".", "/")}/fields"))
+      .uri(URI.create("$formConfigBaseUrl/sbna-poc/${version.replace(".", "/")}/fields"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

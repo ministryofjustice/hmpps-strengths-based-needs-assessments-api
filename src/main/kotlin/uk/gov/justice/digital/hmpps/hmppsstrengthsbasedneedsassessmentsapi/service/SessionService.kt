@@ -39,8 +39,8 @@ class SessionService(
       log.info("Session created for OASys assessment PK: ${request.oasysAssessmentPk}")
       oasysAssessment.assessment.info?.let { assessmentInfo ->
         val (majorVersion, minorVersion) = assessmentInfo.formVersion.split(".")
-        OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/$majorVersion/$minorVersion/start?sessionId=${it.linkUuid}")
-      } ?: OneTimeLinkResponse("${applicationConfig.baseUrl}/sbna-poc/start?sessionId=${it.linkUuid}")
+        OneTimeLinkResponse("${applicationConfig.formBaseUrl}/sbna-poc/$majorVersion/$minorVersion/start?sessionId=${it.linkUuid}")
+      } ?: OneTimeLinkResponse("${applicationConfig.formBaseUrl}/sbna-poc/start?sessionId=${it.linkUuid}")
     }
   }
 

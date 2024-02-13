@@ -1,23 +1,23 @@
-version: "3"
+version: "3.8"
 services:
   hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    container_name: hmpps-strengths-based-needs-assessments-api-auth
     ports:
       - "9090:9090"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
+      test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
     environment:
-      - SERVER_PORT=9090
-      - SPRING_PROFILES_ACTIVE=dev
+      SERVER_PORT: 9090
+      SPRING_PROFILES_ACTIVE: dev
+      APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
 
   postgres:
     image: postgres:16
     networks:
       - hmpps
-    container_name: hmpps-strengths-based-needs-assessments-api-postgres
     ports:
       - "5432:5432"
     environment:
@@ -26,23 +26,28 @@ services:
     tmpfs:
       - /var/lib/postgresql
 
-  hmpps-strengths-based-needs-assessments-api:
+  api:
+    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
     build:
       context: .
     networks:
       - hmpps
-    container_name: hmpps-strengths-based-needs-assessments-api
     depends_on:
      - postgres
+     - hmpps-auth
     ports:
-      - "8081:8080"
+      - "8080:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+      test: ["CMD", "curl", "-f", "http://api:8080/health/ping"]
+      interval: 5s
+      retries: 100
     environment:
       SERVER_PORT: 8080
-      SPRING_PROFILES_ACTIVE: "dev,postgres"
-      DATABASE_ENDPOINT: "postgres:5432"
-      LINK_BASE_URL: "http://localhost:3000/form"
+      SPRING_PROFILES_ACTIVE: dev,postgres
+      DATABASE_ENDPOINT: postgres:5432
+      OAUTH_ENDPOINT_URL: http://hmpps-auth:9090/auth
+      LINK_BASE_URL: http://localhost:3000/form
+      FORM_CONFIG_BASE_URL: http://ui:3000/form
 
 networks:
   hmpps:

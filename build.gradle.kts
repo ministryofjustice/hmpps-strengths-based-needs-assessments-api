@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.2"
   kotlin("jvm") version "1.9.22"
   kotlin("plugin.serialization") version "1.9.22"
   kotlin("plugin.spring") version "1.9.22"
@@ -33,7 +33,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
   // JSON serialisation
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

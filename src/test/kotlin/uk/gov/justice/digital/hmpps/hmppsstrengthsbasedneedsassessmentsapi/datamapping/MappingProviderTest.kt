@@ -28,7 +28,7 @@ class MappingProviderTest {
     fun `throws exception when version not found`(version: String) {
       val exception = assertFailsWith<MappingNotFoundException>(
         block = {
-          sut.get(AssessmentFormInfo(formVersion = version) )
+          sut.get(AssessmentFormInfo(formVersion = version))
         },
       )
       assertContains(exception.message!!, "No data mapping found for form version $version")

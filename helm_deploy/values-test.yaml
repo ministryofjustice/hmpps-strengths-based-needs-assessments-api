@@ -11,6 +11,7 @@ generic-service:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     LINK_BASE_URL: https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/form
+    FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/form
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

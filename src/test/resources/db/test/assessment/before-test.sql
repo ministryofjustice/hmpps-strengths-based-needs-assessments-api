@@ -34,3 +34,16 @@ VALUES ('8399ac39-b441-4bd5-8bbb-1c3a7676e544', '2024-01-01 12:00:00.000', '8efe
 INSERT INTO assessments_versions (uuid, created_at, assessment_uuid, tag, answers, oasys_equivalent)
 VALUES ('4d6e5c66-047e-41f1-9192-6e0a45e22b27', '2024-01-10 12:00:00.000', '8efece75-acfb-4d19-9f09-129a16f4edb0', 'unvalidated', '{}' FORMAT JSON, '{"foo": "BAR"}' FORMAT JSON),
        ('0b9bdff2-104b-4ed3-b6fa-7df8ba0ae32e', '2024-01-10 12:00:00.000', '8efece75-acfb-4d19-9f09-129a16f4edb0', 'validated', '{}' FORMAT JSON, '{"foo": "BAR"}' FORMAT JSON);
+
+-- /assessment/{assessmentUuid}/answers
+INSERT INTO assessments (uuid, created_at)
+VALUES ('d0d8b32b-4255-4955-81d1-8ed0309b2ac4', '2024-01-01 12:00:00.000');
+
+INSERT INTO oasys_assessments (uuid, created_at, assessment_uuid, oasys_assessment_pk)
+VALUES ('d788ba0e-6c71-4706-bcef-ec905f45d7ea', '2024-01-01 12:00:00.000', 'd0d8b32b-4255-4955-81d1-8ed0309b2ac4', '0000000001');
+
+INSERT INTO assessments_form_info (uuid, created_at, assessment_uuid, form_name, form_version)
+VALUES ('6daa3b5e-9725-4ddd-8d4a-cb26020688ed', '2024-01-01 12:00:00.000', 'd0d8b32b-4255-4955-81d1-8ed0309b2ac4', 'san', '1.0');
+
+INSERT INTO assessments_versions (uuid, created_at, assessment_uuid, tag, answers, oasys_equivalent)
+VALUES ('79a6951f-4753-440d-9a41-adb0ed4e57a2', '2024-01-10 12:00:00.000', 'd0d8b32b-4255-4955-81d1-8ed0309b2ac4', 'unvalidated', '{"current_accommodation": {"type": "RADIO", "value": "SETTLED", "values": null, "options": [{"text": "Settled", "value": "SETTLED"}, {"text": "Temporary", "value": "TEMPORARY"}, {"text": "No accommodation", "value": "NO_ACCOMMODATION"}], "description": "What is [subject]''s current accommodation?"}}' FORMAT JSON, '{"foo": "BAR"}' FORMAT JSON);

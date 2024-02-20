@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
@@ -13,8 +14,11 @@ import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AssociateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -28,7 +32,11 @@ import java.util.UUID
 )
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController")
-class AssessmentControllerTest : IntegrationTest() {
+class AssessmentControllerTest(
+  @Autowired
+  val assessmentVersionRepository: AssessmentVersionRepository,
+) : IntegrationTest() {
+
   @Nested
   @DisplayName("/assessment/create")
   inner class CreateAssessment {
@@ -257,6 +265,92 @@ class AssessmentControllerTest : IntegrationTest() {
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
         .exchange()
         .expectStatus().isNotFound
+    }
+  }
+
+  @Nested
+  @DisplayName("/assessment/{assessmentUuid}/answers")
+  inner class Answers {
+    private val randomUuid = UUID.randomUUID()
+    private val assessmentUuid = UUID.fromString("d0d8b32b-4255-4955-81d1-8ed0309b2ac4")
+    private fun endpointWith(assessmentUUID: UUID): String {
+      return "/assessment/$assessmentUUID/answers"
+    }
+
+    @Test
+    fun `it returns Unauthorized when there is no JWT`() {
+      webTestClient.post().uri(endpointWith(randomUuid))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = listOf("unvalidated"),
+        answersToAdd = emptyMap(),
+        answersToRemove = emptyList(),
+      )
+
+      webTestClient.post().uri(endpointWith(randomUuid))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation())
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `it returns Not Found when the assessment does not exist`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = listOf("unvalidated"),
+        answersToAdd = emptyMap(),
+        answersToRemove = emptyList(),
+      )
+
+      webTestClient.post().uri(endpointWith(UUID.fromString("00000000-0000-0000-0000-000000000000")))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `it adds answers for an assessment`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = listOf("unvalidated"),
+        answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
+        answersToRemove = emptyList(),
+      )
+
+      webTestClient.post().uri(endpointWith(assessmentUuid))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+
+      val assessmentVersion = assessmentVersionRepository.findByAssessmentUuidOrderByCreatedAtDesc(assessmentUuid)
+      assertThat(assessmentVersion.first().answers["field_name"]?.value).isEqualTo("TEST")
+    }
+
+    @Test
+    fun `it removes answers for an assessment`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = listOf("unvalidated"),
+        answersToAdd = emptyMap(),
+        answersToRemove = listOf("current_accommodation"),
+      )
+
+      webTestClient.post().uri(endpointWith(assessmentUuid))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+
+      val assessmentVersion = assessmentVersionRepository.findByAssessmentUuidOrderByCreatedAtDesc(assessmentUuid)
+      assertThat(assessmentVersion.first().answers["current_accommodation"]).isNull()
     }
   }
 

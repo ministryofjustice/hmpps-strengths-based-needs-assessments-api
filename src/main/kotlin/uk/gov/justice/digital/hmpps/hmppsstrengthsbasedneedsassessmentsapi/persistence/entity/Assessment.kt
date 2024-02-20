@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.pers
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -29,6 +30,9 @@ class Assessment(
   @OneToOne(optional = true, mappedBy = "assessment")
   var info: AssessmentFormInfo? = null,
 
-  @OneToMany(cascade = [CascadeType.ALL], mappedBy = "assessment")
-  val oasysAssessments: List<OasysAssessment> = listOf(),
+  @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+  var assessmentVersions: List<AssessmentVersion> = listOf(),
+
+  @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+  var oasysAssessments: List<OasysAssessment> = listOf(),
 )

@@ -13,7 +13,7 @@ data class AssessmentMetadata(
   val versionUuid: UUID,
   val versionCreatedAt: LocalDateTime,
   val versionTag: String,
-  val formVersion: String,
+  val formVersion: String?,
 )
 
 data class AssessmentResponse(
@@ -23,13 +23,13 @@ data class AssessmentResponse(
 ) {
   constructor(assessmentVersion: AssessmentVersion) : this(
     AssessmentMetadata(
-      assessmentVersion.assessment!!.uuid,
+      assessmentVersion.assessment.uuid,
       assessmentVersion.assessment.createdAt,
       assessmentVersion.assessment.oasysAssessments.map { it.oasysAssessmentPk },
       assessmentVersion.uuid,
       assessmentVersion.createdAt,
       assessmentVersion.tag,
-      assessmentVersion.assessment.info!!.formVersion,
+      assessmentVersion.assessment.info?.formVersion,
     ),
     assessmentVersion.answers,
     assessmentVersion.oasys_equivalent,

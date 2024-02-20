@@ -19,29 +19,29 @@ class AssessmentVersionService(
   val dataMappingService: DataMappingService,
 ) {
   fun create(tag: String, assessment: Assessment): AssessmentVersion {
-    return assessmentVersionRepository.save(
-      AssessmentVersion(
-        assessment = assessment,
-        tag = tag,
-        answers = emptyMap(),
-      ),
-    ).also { log.info("Created assessment version with UUID ${it.uuid} and tag ${it.tag} for assessment ${assessment.uuid}") }
+    val assessmentVersion = AssessmentVersion(
+      tag = tag,
+      answers = emptyMap(),
+      assessment = assessment,
+    )
+
+    return assessmentVersionRepository.save(assessmentVersion).also { log.info("Created assessment version with UUID ${it.uuid} and tag ${it.tag} for assessment ${assessment.uuid}") }
   }
 
   fun cloneFromPrevious(tag: String, assessment: Assessment): AssessmentVersion {
-    val clone = AssessmentVersion(
-      assessment = assessment,
+    val cloneAssessmentVersion = AssessmentVersion(
       tag = tag,
+      assessment = assessment,
     )
 
     try {
       val previousVersion = find(AssessmentVersionCriteria(assessment.uuid, tag))
-      clone.answers = previousVersion.answers
+      cloneAssessmentVersion.answers = previousVersion.answers
       log.info("Cloned from assessment version UUID ${previousVersion.uuid}")
     } catch (_: AssessmentVersionNotFoundException) {
     }
 
-    return clone
+    return cloneAssessmentVersion
   }
 
   fun find(criteria: AssessmentVersionCriteria): AssessmentVersion {

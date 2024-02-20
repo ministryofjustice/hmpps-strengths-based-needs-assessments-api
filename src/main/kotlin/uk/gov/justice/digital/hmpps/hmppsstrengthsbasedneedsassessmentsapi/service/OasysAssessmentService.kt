@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AssociateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.OasysAssessmentRepository
@@ -17,10 +18,12 @@ class OasysAssessmentService(
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentPk: String): OasysAssessment {
-    val assessment = assessmentService.createAssessment()
-    assessmentVersionService.create("unvalidated", assessment)
-    return oasysAssessmentRepository.save(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = assessment))
-      .also { log.info("Created assessment for OASys assessment PK: ${it.oasysAssessmentPk}") }
+    val assessment = Assessment()
+    assessment.assessmentVersions = listOf(AssessmentVersion(tag = "unvalidated", assessment = assessment))
+    assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = assessment))
+    val persistedAssessment = assessmentService.save(assessment).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
+
+    return persistedAssessment.oasysAssessments.first()
   }
 
   fun findOrCreateAssessment(oasysAssessmentPk: String): OasysAssessment {

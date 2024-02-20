@@ -11,6 +11,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.web.util.UriComponentsBuilder
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AssociateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
@@ -241,6 +242,114 @@ class AssessmentControllerTest : IntegrationTest() {
       assertThat(response?.assessment?.get("current_accommodation")?.value).isEqualTo("NO_ACCOMMODATION")
 
       assertThat(response?.oasysEquivalent?.get("foo")).isEqualTo("BAR")
+    }
+
+    @Test
+    fun `it returns an assessment for an assessment UUID and after a given date`() {
+      webTestClient.get()
+        .uri(
+          UriComponentsBuilder
+            .fromPath(endpoint)
+            .queryParam("after", LocalDateTime.parse("2025-01-05T00:00:00.000").toEpochSecond(ZoneOffset.UTC))
+            .build().toUriString(),
+        )
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
+        .exchange()
+        .expectStatus().isNotFound
+    }
+  }
+
+  @Nested
+  @DisplayName("/assessment/associate")
+  inner class Associate {
+    private val endpoint = "/assessment/associate"
+
+    @Test
+    fun `it returns Unauthorized when there is no JWT`() {
+      webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+      val request = AssociateAssessmentRequest(
+        oasysAssessmentPk = "0000000003",
+        oldOasysAssessmentPk = "0000000004",
+      )
+
+      webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation())
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `it returns Conflict when the association already exists`() {
+      val request = AssociateAssessmentRequest(
+        oasysAssessmentPk = "0000000004",
+        oldOasysAssessmentPk = "0000000003",
+      )
+
+      webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isEqualTo(409)
+    }
+
+    @Test
+    fun `it creates an association with an existing OASys assessment PK`() {
+      val request = AssociateAssessmentRequest(
+        oasysAssessmentPk = "0000000005",
+        oldOasysAssessmentPk = "0000000003",
+      )
+
+      val response = webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(AssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response?.metaData?.oasys_pks).isEqualTo(
+        listOf(
+          "0000000003",
+          "0000000004",
+          "0000000005",
+        ),
+      )
+    }
+
+    @Test
+    fun `it creates an assessment when only an OASys assessment PK provided and no assessment already exists`() {
+      val request = AssociateAssessmentRequest(
+        oasysAssessmentPk = "0000000007",
+      )
+
+      val response = webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(AssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response?.metaData?.oasys_pks).isEqualTo(
+        listOf(
+          "0000000007",
+        ),
+      )
     }
   }
 }

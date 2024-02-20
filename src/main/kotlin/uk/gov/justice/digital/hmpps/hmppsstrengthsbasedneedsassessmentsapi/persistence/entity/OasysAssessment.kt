@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -28,7 +30,7 @@ class OasysAssessment(
   @Column(name = "oasys_assessment_pk")
   val oasysAssessmentPk: String = "",
 
-  @ManyToOne
-  @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid")
+  @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+  @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
   val assessment: Assessment = Assessment(),
 )

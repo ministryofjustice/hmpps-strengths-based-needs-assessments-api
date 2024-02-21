@@ -57,7 +57,7 @@ abstract class IntegrationTest {
     request = MockHttpServletRequest()
     request?.let {
       it.session = session
-      RequestContextHolder.setRequestAttributes(ServletRequestAttributes(request))
+      RequestContextHolder.setRequestAttributes(ServletRequestAttributes(it))
     }
   }
 

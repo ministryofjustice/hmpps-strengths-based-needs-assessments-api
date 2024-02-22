@@ -15,6 +15,11 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
+
+  ui:
+    ports:
+      - "3000:3000"
+
 volumes:
   .gradle:
   build:

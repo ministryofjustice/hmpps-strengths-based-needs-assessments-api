@@ -17,9 +17,8 @@ parameters:
 
 jobs:
   validate:
-    executor:
-      name: hmpps/java
-      tag: "21.0"
+    machine:
+      image: ubuntu-2004:2023.10.1
     steps:
       - checkout
       - restore_cache:
@@ -27,7 +26,7 @@ jobs:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
-          command: ./gradlew check
+          command: make test
       - save_cache:
           paths:
             - ~/.gradle

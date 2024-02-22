@@ -330,6 +330,7 @@ class AssessmentControllerTest(
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
         .bodyValue(request)
         .exchange()
+        .expectStatus().isOk
 
       val assessmentVersion = assessmentVersionRepository.findByAssessmentUuidOrderByCreatedAtDesc(assessmentUuid)
       assertThat(assessmentVersion.first().answers["field_name"]?.value).isEqualTo("TEST")
@@ -348,6 +349,7 @@ class AssessmentControllerTest(
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
         .bodyValue(request)
         .exchange()
+        .expectStatus().isOk
 
       val assessmentVersion = assessmentVersionRepository.findByAssessmentUuidOrderByCreatedAtDesc(assessmentUuid)
       assertThat(assessmentVersion.first().answers["current_accommodation"]).isNull()

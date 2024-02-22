@@ -14,7 +14,7 @@ import java.util.UUID
 
 @Component
 class JwtAuthHelper {
-  private val signingKeyPair: KeyPair
+  private var signingKeyPair: KeyPair? = null
 
   init {
     val rsaGenerator = KeyPairGenerator.getInstance("RSA")
@@ -23,7 +23,7 @@ class JwtAuthHelper {
   }
 
   @Bean
-  fun jwtDecoder(): JwtDecoder = NimbusJwtDecoder.withPublicKey(signingKeyPair.public as RSAPublicKey).build()
+  fun jwtDecoder(): JwtDecoder = NimbusJwtDecoder.withPublicKey(signingKeyPair?.public as RSAPublicKey).build()
 
   fun createJwt(
     subject: String,
@@ -48,7 +48,7 @@ class JwtAuthHelper {
       .subject(subject)
       .claims(claims)
       .expiration(Date(System.currentTimeMillis() + expiryTime.toMillis()))
-      .signWith(signingKeyPair.private, Jwts.SIG.RS256)
+      .signWith(signingKeyPair?.private, Jwts.SIG.RS256)
       .compact()
   }
 }

@@ -8,7 +8,7 @@ import java.net.http.HttpClient
 @Configuration
 class ApplicationConfig(
   @Value("\${app.link.base-url}")
-  val baseUrl: String,
+  val formBaseUrl: String,
 
   @Value("\${app.session.max-age}")
   val sessionMaxAge: Int,

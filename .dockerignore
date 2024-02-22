@@ -1,5 +1,0 @@
-.circleci
-.gradle
-.idea
-build
-helm_deploy

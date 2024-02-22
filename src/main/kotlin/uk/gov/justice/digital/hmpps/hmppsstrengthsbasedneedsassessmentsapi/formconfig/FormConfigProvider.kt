@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -30,12 +31,12 @@ data class Option(
 @Component
 class FormConfigProvider(
   val client: HttpClient,
-  @Value("\${app.form.url}")
-  val formUrl: String,
+  @Value("\${app.form-config.base-url}")
+  val formConfigBaseUrl: String,
 ) {
-  fun get(version: String): FormConfig {
+  fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("$formUrl/sbna-poc/${version.replace(".", "/")}/fields"))
+      .uri(URI.create("$formConfigBaseUrl/${formInfo.formName}/${formInfo.formVersion.replace(".", "/")}/fields"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

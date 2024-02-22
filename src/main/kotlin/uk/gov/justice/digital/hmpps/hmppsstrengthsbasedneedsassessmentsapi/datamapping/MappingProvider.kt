@@ -4,11 +4,12 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.common.SectionMapping
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.exception.MappingNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.datamapping.v1.Accommodation
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 
 @Component
 class MappingProvider {
-  fun get(version: String?): Set<SectionMapping> {
-    return versions[version] ?: throw MappingNotFoundException(version ?: "unknown")
+  fun get(formInfo: AssessmentFormInfo): Set<SectionMapping> {
+    return versions[formInfo.formVersion] ?: throw MappingNotFoundException(formInfo.formVersion)
   }
 
   companion object {

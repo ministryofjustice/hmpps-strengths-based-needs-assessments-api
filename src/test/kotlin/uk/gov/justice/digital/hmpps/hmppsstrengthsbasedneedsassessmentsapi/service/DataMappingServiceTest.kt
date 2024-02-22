@@ -31,7 +31,7 @@ class DataMappingServiceTest {
   fun setUp() {
     clearAllMocks()
     val testConfig = FormConfig("1.0", mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower)))
-    every { mockFormConfigProvider.get("1.0") } returns testConfig
+    every { mockFormConfigProvider.get(match { formInfo -> formInfo.formVersion === "1.0" }) } returns testConfig
   }
 
   @Nested
@@ -53,7 +53,7 @@ class DataMappingServiceTest {
     @Test
     fun `returns empty result`() {
       every { mockSectionMapping.map(any<AnswersProvider>()) } returns emptyMap()
-      every { mockMappingProvider.get("1.0") } returns setOf(mockSectionMapping)
+      every { mockMappingProvider.get(match { formInfo -> formInfo.formVersion === "1.0" }) } returns setOf(mockSectionMapping)
 
       val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
       val assessment = AssessmentVersion(assessment = Assessment(info = AssessmentFormInfo(formVersion = "1.0")))
@@ -68,7 +68,7 @@ class DataMappingServiceTest {
 
       every { mockSectionMapping.map(any<AnswersProvider>()) } returns mapOf("oasys-key-1" to "val-1")
       every { mockSectionMappingTwo.map(any<AnswersProvider>()) } returns mapOf("oasys-key-2" to listOf("val-2", "val-3"))
-      every { mockMappingProvider.get("1.0") } returns setOf(mockSectionMapping, mockSectionMappingTwo)
+      every { mockMappingProvider.get(match { formInfo -> formInfo.formVersion === "1.0" }) } returns setOf(mockSectionMapping, mockSectionMappingTwo)
 
       val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
 

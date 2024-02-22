@@ -1,44 +1,57 @@
 # hmpps-strengths-based-needs-assessments-api
-[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-strengths-based-needs-assessments-api)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-strengths-based-needs-assessments-api "Link to report")
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.message&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv2%2Fcompliant-repository%2Fhmpps-strengths-based-needs-assessments-api)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/hmpps-strengths-based-needs-assessments-api "Link to report")
 [![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-strengths-based-needs-assessments-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-strengths-based-needs-assessments-api)
 [![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-strengths-based-needs-assessments-api/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-strengths-based-needs-assessments-api)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-strengths-based-needs-assessments-api-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://api.strengths-based-needs-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/)
 
-This is a skeleton project from which to create new kotlin projects from.
+API for the Strengths and Needs assessment service.
 
-# Instructions
+## Running the service
 
-If this is a HMPPS project then the project will be created as part of bootstrapping - 
-see https://github.com/ministryofjustice/dps-project-bootstrap.
+The service and all of its dependencies are run in [Docker](https://www.docker.com/get-started/) containers.
 
-## Creating a CloudPlatform namespace
+To start it, run:
 
-When deploying to a new namespace, you may wish to use this template kotlin project namespace as the basis for your new namespace:
+`make up`
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-strengths-based-needs-assessments-api>
+The service is on http://localhost:8080
 
-Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
+To check the status, go to http://localhost:8080/health
 
-## Renaming from Hmpps Strengths Based Needs Assessments Api - github Actions
+## Development
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+To start the API in development mode, run:
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`.  This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review.  Review the PR and merge.
+`make dev-up`
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+To enable live-reload after starting in development mode, run:
 
-## Manually renaming from Hmpps Strengths Based Needs Assessments Api
+`make watch`
 
-Run the `rename-project.bash` and create a PR.
+A remote debugger can be attached to the containerised JVM on port 5005
 
-The `rename-project.bash` script takes a single argument - the name of the project and calculates from it:
-* The main class name (project name converted to pascal case) 
-* The project description (class name with spaces between the words)
-* The main package name (project name with hyphens removed)
+![debugger.png](.readme/debugger.png)
 
-It then performs a search and replace and directory renames so the project is ready to be used.
+Run `make` to see the full list of dev commands.
+
+## Testing
+
+`make lint` to run the linter.
+
+`make test` to run the test suite.
+
+## Deployment
+
+Deployments of the main branch to Development -> Preproduction -> Production are automated through the [build-test-and-deploy](https://app.circleci.com/pipelines/github/ministryofjustice/hmpps-strengths-based-needs-assessments-api/554/workflows/228227bb-282f-4322-8414-178e82b0f60e) workflow in CircleCI.
+
+To deploy a branch manually to the Test environment, open the project in CircleCI and follow these steps:
+
+1. Select the branch you wish to deploy
+2. Press the "Trigger Pipeline" button
+3. Add a string parameter named "deploy" with value "test"
+4. Press "Trigger Pipeline"
+
+## Service dependencies
+
+* [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) - for authentication using OAuth/JWT
+* PostgreSQL - for persisting assessment data

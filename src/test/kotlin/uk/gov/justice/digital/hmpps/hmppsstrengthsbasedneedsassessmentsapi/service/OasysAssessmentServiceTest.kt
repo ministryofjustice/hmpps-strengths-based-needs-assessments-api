@@ -39,18 +39,12 @@ class OasysAssessmentServiceTest {
   inner class CreateAssessmentWithOasysId {
     @Test
     fun `it creates an assessment for a given OASys assessment PK`() {
-      val tag = "unvalidated"
-
-      every { assessmentService.createAssessment() } returns assessment
-      every { assessmentVersionService.create(any(), assessment) } returns assessmentVersion
-      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+      every { assessmentService.save(any()) } returnsArgument 0
 
       val result = oasysAssessmentService.createAssessmentWithOasysId(oasysAssessmentPk)
 
       assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      assertThat(result.assessment).isEqualTo(assessment)
-      verify { assessmentService.createAssessment() }
-      verify { assessmentVersionService.create(tag, assessment) }
+      verify { assessmentService.save(any()) }
     }
   }
 
@@ -72,16 +66,13 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it creates an assessment if unable to find one for a given OASys assessment PK`() {
-      every { assessmentService.createAssessment() } returns assessment
-      every { assessmentVersionService.create(any(), assessment) } returns assessmentVersion
-      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+      every { assessmentService.save(any()) } returnsArgument 0
       every { oasysAssessmentRepository.findByOasysAssessmentPk(any()) } returns null
 
       val result = oasysAssessmentService.findOrCreateAssessment(oasysAssessmentPk)
 
       assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      assertThat(result.assessment).isEqualTo(assessment)
-      verify { assessmentService.createAssessment() }
+      verify { assessmentService.save(any()) }
     }
   }
 
@@ -132,11 +123,14 @@ class OasysAssessmentServiceTest {
         oasysAssessmentPk = "1234567890",
       )
 
+      val assessment = Assessment(
+        assessmentVersions = listOf(assessmentVersion),
+        oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk)),
+      )
+
       every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk) } throws OasysAssessmentNotFoundException("Not found")
-      every { assessmentService.createAssessment() } returns assessment
-      every { assessmentVersionService.create(any(), assessment) } returns assessmentVersion
+      every { assessmentService.save(any()) } returns assessment
       every { assessmentVersionService.find(any()) } returns assessmentVersion
-      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
 
       val result = oasysAssessmentService.associate(request)
 

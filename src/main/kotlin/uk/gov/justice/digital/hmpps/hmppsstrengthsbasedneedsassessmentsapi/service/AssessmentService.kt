@@ -11,6 +11,10 @@ import java.util.UUID
 class AssessmentService(
   val assessmentRepository: AssessmentRepository,
 ) {
+  fun save(assessment: Assessment): Assessment {
+    return assessmentRepository.save(assessment)
+  }
+
   fun findByUuid(uuid: UUID): Assessment {
     return assessmentRepository.findByUuid(uuid) ?: throw AssessmentNotFoundException("No assessment found with UUID $uuid")
   }

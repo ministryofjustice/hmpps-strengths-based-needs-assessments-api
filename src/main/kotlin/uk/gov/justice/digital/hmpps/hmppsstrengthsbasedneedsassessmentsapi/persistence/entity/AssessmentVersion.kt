@@ -3,11 +3,12 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.pers
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import java.time.LocalDateTime
@@ -65,7 +66,7 @@ class AssessmentVersion(
   @Column(name = "oasys_equivalent")
   var oasys_equivalent: OasysEquivalent = mutableMapOf(),
 
-  @OneToOne
-  @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", unique = true, updatable = false, nullable = false)
-  val assessment: Assessment? = null,
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
+  val assessment: Assessment = Assessment(),
 )

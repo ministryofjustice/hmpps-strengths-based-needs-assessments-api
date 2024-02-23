@@ -64,7 +64,7 @@ class AssessmentVersionServiceTest {
 
       assertThat(assessmentVersionRepository.save(result))
       assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.assessment?.uuid).isEqualTo(assessment.uuid)
+      assertThat(result.assessment.uuid).isEqualTo(assessment.uuid)
     }
   }
 

@@ -40,7 +40,7 @@ class DataMappingServiceTest {
     fun `throws exception when assessment does not have a form version`() {
       val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
 
-      listOf(null, Assessment()).forEach {
+      listOf(Assessment()).forEach {
         val exception = assertFailsWith<FormVersionNotFoundException>(
           block = {
             sut.getOasysEquivalent(AssessmentVersion(id = 123, assessment = it))

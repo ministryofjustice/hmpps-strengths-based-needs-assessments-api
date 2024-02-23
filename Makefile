@@ -1,5 +1,6 @@
 SHELL = '/bin/bash'
-LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
+DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.dev.yml
+
 export COMPOSE_PROJECT_NAME=hmpps-strengths-based-needs-assessments
 
 default: help
@@ -19,22 +20,22 @@ build-api: ## Builds a production image of the API.
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
 	docker compose down api
-	docker compose ${LOCAL_COMPOSE_FILES} up --wait --no-recreate api
+	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate api
 
 dev-build: ## Builds a development image of the API.
-	docker compose ${LOCAL_COMPOSE_FILES} build api
+	docker compose ${DEV_COMPOSE_FILES} build api
 
 dev-down: ## Stops and removes the API container.
 	docker compose down api
 
 rebuild: dev-up ## Re-builds and live-reloads the API.
-	docker compose ${LOCAL_COMPOSE_FILES} exec api gradle compileKotlin --parallel --build-cache --configuration-cache
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --parallel --build-cache --configuration-cache
 
 watch: dev-up ## Watches for file changes and live-reloads the API. To be used in conjunction with dev-up e.g. "make dev-up watch"
-	docker compose ${LOCAL_COMPOSE_FILES} exec api gradle compileKotlin --continuous --parallel --build-cache --configuration-cache
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --continuous --parallel --build-cache --configuration-cache
 
-test: ## Runs the test suite
-	./gradlew test
+test: dev-up ## Runs the test suite
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle check --parallel
 
 lint: ## Runs the Kotlin linter
 	./gradlew ktlintCheck

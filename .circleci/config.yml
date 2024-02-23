@@ -79,7 +79,7 @@ workflows:
                 - main
           requires:
             - validate
-            - build_docker
+            - publish_docker
             - helm_lint
           helm_timeout: 5m
   #      - request-preprod-approval:

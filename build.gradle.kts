@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.3"
   kotlin("jvm") version "1.9.22"
   kotlin("plugin.serialization") version "1.9.22"
   kotlin("plugin.spring") version "1.9.22"
@@ -25,14 +25,14 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   constraints {
-    implementation("com.nimbusds:nimbus-jose-jwt:9.37.2") {
+    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3") {
       because("previous versions have a high vulnerability CVE-2023-52428")
     }
   }
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.postgresql:postgresql:42.7.1")
+  implementation("org.postgresql:postgresql:42.7.2")
   implementation("org.flywaydb:flyway-core")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
@@ -47,8 +47,8 @@ dependencies {
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.3")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
   // Dev dependencies
   developmentOnly("org.springframework.boot:spring-boot-devtools")

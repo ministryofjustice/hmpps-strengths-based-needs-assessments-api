@@ -52,8 +52,8 @@ class AssessmentVersionServiceTest {
   )
 
   @Nested
-  @DisplayName("sameOrCloneFromPrevious")
-  inner class SameOrCloneFromPrevious {
+  @DisplayName("getPreviousOrCreate")
+  inner class GetPreviousOrCreate {
     @Test
     fun `it returns the previous assessment version if it was created today`() {
       val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
@@ -67,7 +67,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result.tag).isEqualTo(tag)
       assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
       assertThat(result.answers["test"]?.value).isEqualTo("val")
@@ -86,7 +86,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
       assertThat(result.tag).isEqualTo(tag)
       assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
@@ -104,7 +104,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result.tag).isEqualTo(tag)
       assertThat(result.answers).isEmpty()
     }

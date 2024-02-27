@@ -20,7 +20,7 @@ class AssessmentVersionService(
   val assessmentVersionRepository: AssessmentVersionRepository,
   val dataMappingService: DataMappingService,
 ) {
-  fun sameOrCloneFromPrevious(tag: String, assessment: Assessment): AssessmentVersion {
+  fun getPreviousOrCreate(tag: String, assessment: Assessment): AssessmentVersion {
     val assessmentVersion = AssessmentVersion(
       tag = tag,
       assessment = assessment,
@@ -50,7 +50,7 @@ class AssessmentVersionService(
 
     assessmentService.findByUuid(assessmentUuid).let {
       request.tags.map { tag ->
-        val assessmentVersion = sameOrCloneFromPrevious(tag, it)
+        val assessmentVersion = getPreviousOrCreate(tag, it)
 
         assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
           .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }

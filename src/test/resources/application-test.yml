@@ -1,13 +1,16 @@
 spring:
   datasource:
-    url: 'jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=create domain if not exists jsonb as json'
+    url: jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:strengthsbasedneedsapi}&user=${database.username:root}&password=${database.password:dev}&stringtype=unspecified
   jpa:
     show_sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
   flyway:
-    enabled: true
+    schemas: strengthsbasedneedsapi
+    locations: classpath:/db/migration
 
 server:
   shutdown: immediate

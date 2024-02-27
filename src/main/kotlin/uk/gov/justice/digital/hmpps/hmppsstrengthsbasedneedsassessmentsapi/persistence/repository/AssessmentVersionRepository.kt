@@ -8,5 +8,5 @@ import java.util.UUID
 
 @Repository
 interface AssessmentVersionRepository : JpaRepository<AssessmentVersion, Long>, JpaSpecificationExecutor<AssessmentVersion> {
-  fun findByAssessmentUuidOrderByCreatedAtDesc(uuid: UUID): Collection<AssessmentVersion>
+  fun findByUuid(uuid: UUID): AssessmentVersion
 }

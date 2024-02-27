@@ -41,41 +41,24 @@ class AssessmentVersionServiceTest {
 
   private val firstAssessmentVersion = AssessmentVersion(
     tag = tag,
-    createdAt = LocalDateTime.of(2023, 12, 1, 12, 0),
+    createdAt = LocalDateTime.now().minusDays(1).minusHours(1),
     answers = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "Foo answer", null)),
   )
 
   private val secondAssessmentVersion = AssessmentVersion(
     tag = tag,
-    createdAt = LocalDateTime.of(2023, 6, 1, 12, 0),
-    answers = emptyMap(),
+    createdAt = LocalDateTime.now().minusHours(1),
+    answers = mapOf("test" to Answer(value = "val")),
   )
 
   @Nested
-  @DisplayName("create")
-  inner class Create {
+  @DisplayName("sameOrCloneFromPrevious")
+  inner class SameOrCloneFromPrevious {
     @Test
-    fun `it creates an assessment version with a given tag and assessment`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-
-      every { assessmentVersionRepository.save(any()) } returnsArgument 0
-
-      val result = assessmentVersionService.create(tag, assessment)
-
-      assertThat(assessmentVersionRepository.save(result))
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.assessment.uuid).isEqualTo(assessment.uuid)
-    }
-  }
-
-  @Nested
-  @DisplayName("cloneFromPrevious")
-  inner class CloneFromPrevious {
-    @Test
-    fun `it clones from a previous assessment version`() {
+    fun `it returns the previous assessment version if it was created today`() {
       val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
       val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(firstAssessmentVersion, secondAssessmentVersion))
+        PageImpl(listOf(secondAssessmentVersion))
 
       every {
         assessmentVersionRepository.findAll(
@@ -84,7 +67,27 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.cloneFromPrevious(tag, assessment)
+      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
+      assertThat(result.tag).isEqualTo(tag)
+      assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
+      assertThat(result.answers["test"]?.value).isEqualTo("val")
+    }
+
+    @Test
+    fun `it clones from a previous assessment version if it wasn't created today`() {
+      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
+      val assessmentVersions: Page<AssessmentVersion> =
+        PageImpl(listOf(firstAssessmentVersion))
+
+      every {
+        assessmentVersionRepository.findAll(
+          any<Specification<AssessmentVersion>>(),
+          any<PageRequest>(),
+        )
+      } returns assessmentVersions
+
+      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
+      assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
       assertThat(result.tag).isEqualTo(tag)
       assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
     }
@@ -101,7 +104,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.cloneFromPrevious(tag, assessment)
+      val result = assessmentVersionService.sameOrCloneFromPrevious(tag, assessment)
       assertThat(result.tag).isEqualTo(tag)
       assertThat(result.answers).isEmpty()
     }
@@ -127,8 +130,7 @@ class AssessmentVersionServiceTest {
       val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tag = tag)
       val result = assessmentVersionService.find(specification)
 
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
+      assertThat(result).isEqualTo(firstAssessmentVersion)
     }
 
     @Test

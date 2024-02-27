@@ -28,17 +28,20 @@ dev-build: ## Builds a development image of the API.
 dev-down: ## Stops and removes the API container.
 	docker compose down api
 
-rebuild: dev-up ## Re-builds and live-reloads the API.
+rebuild: ## Re-builds and live-reloads the API.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --parallel --build-cache --configuration-cache
 
-watch: dev-up ## Watches for file changes and live-reloads the API. To be used in conjunction with dev-up e.g. "make dev-up watch"
+watch: ## Watches for file changes and live-reloads the API. To be used in conjunction with dev-up e.g. "make dev-up watch"
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --continuous --parallel --build-cache --configuration-cache
 
-test: dev-up ## Runs the test suite
+check: ## Runs all gradle checks.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle check --parallel
 
-lint: ## Runs the Kotlin linter
-	./gradlew ktlintCheck
+test: ## Runs the test suite.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
+
+lint: ## Runs the Kotlin linter.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down

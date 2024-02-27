@@ -10,6 +10,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -18,30 +20,23 @@ class AssessmentVersionService(
   val assessmentVersionRepository: AssessmentVersionRepository,
   val dataMappingService: DataMappingService,
 ) {
-  fun create(tag: String, assessment: Assessment): AssessmentVersion {
+  fun sameOrCloneFromPrevious(tag: String, assessment: Assessment): AssessmentVersion {
     val assessmentVersion = AssessmentVersion(
-      tag = tag,
-      answers = emptyMap(),
-      assessment = assessment,
-    )
-
-    return assessmentVersionRepository.save(assessmentVersion).also { log.info("Created assessment version with UUID ${it.uuid} and tag ${it.tag} for assessment ${assessment.uuid}") }
-  }
-
-  fun cloneFromPrevious(tag: String, assessment: Assessment): AssessmentVersion {
-    val cloneAssessmentVersion = AssessmentVersion(
       tag = tag,
       assessment = assessment,
     )
 
     try {
       val previousVersion = find(AssessmentVersionCriteria(assessment.uuid, tag))
-      cloneAssessmentVersion.answers = previousVersion.answers
+      if (previousVersion.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE) == LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)) {
+        return previousVersion
+      }
+      assessmentVersion.answers = previousVersion.answers
       log.info("Cloned from assessment version UUID ${previousVersion.uuid}")
     } catch (_: AssessmentVersionNotFoundException) {
     }
 
-    return cloneAssessmentVersion
+    return assessmentVersion
   }
 
   fun find(criteria: AssessmentVersionCriteria): AssessmentVersion {
@@ -55,7 +50,7 @@ class AssessmentVersionService(
 
     assessmentService.findByUuid(assessmentUuid).let {
       request.tags.map { tag ->
-        val assessmentVersion = cloneFromPrevious(tag, it)
+        val assessmentVersion = sameOrCloneFromPrevious(tag, it)
 
         assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
           .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }

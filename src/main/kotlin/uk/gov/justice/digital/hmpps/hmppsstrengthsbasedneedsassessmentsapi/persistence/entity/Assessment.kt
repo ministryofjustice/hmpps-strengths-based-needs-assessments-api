@@ -27,7 +27,7 @@ class Assessment(
   @Column(name = "created_at")
   val createdAt: LocalDateTime = LocalDateTime.now(),
 
-  @OneToOne(optional = true, mappedBy = "assessment")
+  @OneToOne(optional = true, mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var info: AssessmentFormInfo? = null,
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])

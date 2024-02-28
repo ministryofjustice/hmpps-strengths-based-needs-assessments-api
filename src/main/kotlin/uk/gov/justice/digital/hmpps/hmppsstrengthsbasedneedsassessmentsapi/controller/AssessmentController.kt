@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AssociateAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AssociateAssessmentsRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.OasysAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.OasysAssessmentAlreadyExistsException
@@ -33,40 +31,6 @@ class AssessmentController(
   val assessmentVersionService: AssessmentVersionService,
   val oasysAssessmentService: OasysAssessmentService,
 ) {
-  @RequestMapping(path = ["/assessment/create"], method = [RequestMethod.POST])
-  @Operation(description = "Create an assessment")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "200", description = "Assessment created"),
-    ],
-  )
-  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
-  fun createAssessment(
-    @RequestBody
-    request: CreateAssessmentRequest,
-  ) {
-    oasysAssessmentService.createAssessmentWithOasysId(request.oasysAssessmentPk)
-  }
-
-  @RequestMapping(path = ["/assessment/{assessmentUuid}/version/{tag}/answers"], method = [RequestMethod.GET])
-  @Operation(description = "Get answers for an assessment")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "200", description = "Assessment found"),
-    ],
-  )
-  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
-  fun getAnswers(
-    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
-    @PathVariable
-    assessmentUuid: UUID,
-    @Parameter(description = "Tag", required = true, example = "validated")
-    @PathVariable
-    tag: String,
-  ): Answers {
-    return assessmentVersionService.find(AssessmentVersionCriteria(assessmentUuid, tag)).answers
-  }
-
   @RequestMapping(path = ["/assessment/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the latest version of an assessment")
   @ApiResponses(
@@ -141,11 +105,11 @@ class AssessmentController(
   }
 
   @RequestMapping(path = ["/assessment/associate"], method = [RequestMethod.POST])
-  @Operation(description = "Associate an OASys assessment with a SAN assessment")
+  @Operation(description = "Associate OASys assessments with a SAN assessment")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "200", description = "Assessment associated successfully"),
-      ApiResponse(responseCode = "404", description = "Assessment not found", content = arrayOf(Content())),
+      ApiResponse(responseCode = "200", description = "Assessment(s) associated successfully"),
+      ApiResponse(responseCode = "404", description = "Assessment(s) not found", content = arrayOf(Content())),
       ApiResponse(responseCode = "409", description = "An association already exists for the provided OASys Assessment PK", content = arrayOf(Content())),
       ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
     ],
@@ -153,10 +117,13 @@ class AssessmentController(
   @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun associateAssessment(
     @RequestBody
-    request: AssociateAssessmentRequest,
-  ): ResponseEntity<AssessmentResponse> {
+    request: AssociateAssessmentsRequest,
+  ): ResponseEntity<String> {
     try {
-      return ResponseEntity.ok(AssessmentResponse(oasysAssessmentService.associate(request)))
+      for (pair in request.associate) {
+        oasysAssessmentService.associate(pair)
+      }
+      return ResponseEntity.ok("OK")
     } catch (e: OasysAssessmentAlreadyExistsException) {
       throw ResponseStatusException(HttpStatus.CONFLICT, e.message)
     }

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.cont
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -12,7 +13,7 @@ data class AssessmentMetadata(
   val oasys_pks: List<String>,
   val versionUuid: UUID,
   val versionCreatedAt: LocalDateTime,
-  val versionTag: String,
+  val versionTag: Tag,
   val formVersion: String?,
 )
 

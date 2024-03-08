@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.Specification
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion_
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment_
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -11,7 +12,7 @@ import java.util.UUID
 
 data class AssessmentVersionCriteria(
   val assessmentUuid: UUID,
-  val tag: String? = null,
+  val tag: Tag? = null,
   val after: Long? = null,
   val until: Long? = null,
   val status: String? = null,

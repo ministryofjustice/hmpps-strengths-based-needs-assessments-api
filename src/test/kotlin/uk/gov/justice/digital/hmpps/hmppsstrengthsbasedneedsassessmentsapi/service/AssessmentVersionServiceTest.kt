@@ -1,10 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -24,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -52,6 +56,11 @@ class AssessmentVersionServiceTest {
     createdAt = LocalDateTime.now().minusHours(1),
     answers = mapOf("test" to Answer(value = "val")),
   )
+
+  @BeforeEach
+  fun setUp() {
+    clearAllMocks()
+  }
 
   @Nested
   @DisplayName("getPreviousOrCreate")
@@ -155,29 +164,29 @@ class AssessmentVersionServiceTest {
   @Nested
   @DisplayName("updateAnswers")
   inner class UpdateAnswers {
-    @Test
-    fun `it updates answers for a given assessment`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
+    private val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
 
-      val assessmentVersions: Page<AssessmentVersion> = PageImpl(
-        listOf(
-          AssessmentVersion(
-            tag = tag,
-            createdAt = LocalDateTime.of(2023, 12, 1, 12, 0),
-            answers = mapOf(
-              "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
-              "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
-              "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
-            ),
-          ),
-          AssessmentVersion(
-            tag = tag,
-            createdAt = LocalDateTime.of(2023, 6, 1, 12, 0),
-            answers = emptyMap(),
+    private val assessmentVersions: Page<AssessmentVersion> = PageImpl(
+      listOf(
+        AssessmentVersion(
+          tag = tag,
+          createdAt = LocalDateTime.of(2023, 12, 1, 12, 0),
+          answers = mapOf(
+            "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
+            "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
+            "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
           ),
         ),
-      )
+        AssessmentVersion(
+          tag = tag,
+          createdAt = LocalDateTime.of(2023, 6, 1, 12, 0),
+          answers = emptyMap(),
+        ),
+      ),
+    )
 
+    @Test
+    fun `it updates answers for a given assessment`() {
       val request = UpdateAssessmentAnswersRequest(
         tags = listOf(tag),
         answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
@@ -206,6 +215,47 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
       assertThat(savedVersion.captured.answers["baz"]).isNull()
       assertThat(savedVersion.captured.oasys_equivalent).isEqualTo(oasysEquivalents)
+    }
+
+    @Test
+    fun `it throws an exception when attempting to update a locked assessment version`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = listOf(Tag.LOCKED),
+        answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
+        answersToRemove = listOf("baz"),
+      )
+
+      assertThrows<ConflictException> { assessmentVersionService.updateAnswers(assessment.uuid, request) }
+
+      verify(exactly = 0) { assessmentVersionRepository.findAll(any<Specification<AssessmentVersion>>(), any<PageRequest>()) }
+      verify(exactly = 0) { assessmentService.findByUuid(any()) }
+      verify(exactly = 0) { dataMappingService.getOasysEquivalent(any()) }
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+    }
+  }
+
+  @Nested
+  @DisplayName("cloneAndTag")
+  inner class CloneAndTag {
+    @Test
+    fun `it persists a cloned version with the provided tag`() {
+      val originalVersion = AssessmentVersion(
+        tag = Tag.VALIDATED,
+        answers = mapOf(
+          "foo" to Answer(),
+          "bar" to Answer(),
+        ),
+      )
+
+      val savedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
+
+      assessmentVersionService.cloneAndTag(originalVersion, Tag.LOCKED)
+
+      assertThat(savedVersion.captured.uuid).isNotEqualTo(originalVersion.uuid)
+      assertThat(savedVersion.captured.tag).isEqualTo(Tag.LOCKED)
+      assertThat(savedVersion.captured.assessment).isEqualTo(originalVersion.assessment)
+      assertThat(savedVersion.captured.answers).isEqualTo(originalVersion.answers)
     }
   }
 }

@@ -46,6 +46,7 @@ typealias OasysEquivalent = Map<String, Any>
 enum class Tag {
   VALIDATED,
   UNVALIDATED,
+  LOCKED,
 }
 
 @Entity

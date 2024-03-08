@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentsRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
@@ -74,13 +71,28 @@ class OasysAssessmentController(
     @RequestBody
     request: AssociateAssessmentsRequest,
   ): ResponseEntity<String> {
-    try {
-      for (pair in request.associate) {
-        oasysAssessmentService.associate(pair)
-      }
-      return ResponseEntity.ok("OK")
-    } catch (e: OasysAssessmentAlreadyExistsException) {
-      throw ResponseStatusException(HttpStatus.CONFLICT, e.message)
+    for (pair in request.associate) {
+      oasysAssessmentService.associate(pair)
     }
+    return ResponseEntity.ok("OK")
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])
+  @Operation(description = "Locks the latest version of an assessment identified by the provided OASys Assessment PK")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version locked successfully"),
+      ApiResponse(responseCode = "404", description = "Assessment not found", content = arrayOf(Content())),
+      ApiResponse(responseCode = "409", description = "The latest version of the assessment has already been locked", content = arrayOf(Content())),
+      ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
+    ],
+  )
+  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun lockAssessment(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+  ): AssessmentResponse {
+    return AssessmentResponse(oasysAssessmentService.lock(oasysAssessmentPK))
   }
 }

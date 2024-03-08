@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.pers
 import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -41,6 +43,11 @@ typealias Answers = Map<String, Answer>
 
 typealias OasysEquivalent = Map<String, Any>
 
+enum class Tag {
+  VALIDATED,
+  UNVALIDATED,
+}
+
 @Entity
 @Table(name = "assessments_versions")
 class AssessmentVersion(
@@ -56,7 +63,8 @@ class AssessmentVersion(
   val createdAt: LocalDateTime = LocalDateTime.now(),
 
   @Column(name = "tag")
-  val tag: String = "",
+  @Enumerated(EnumType.STRING)
+  val tag: Tag = Tag.UNVALIDATED,
 
   @Type(JsonType::class)
   @Column(name = "answers")

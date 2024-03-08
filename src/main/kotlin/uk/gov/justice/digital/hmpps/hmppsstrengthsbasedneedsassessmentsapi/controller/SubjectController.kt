@@ -14,9 +14,10 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import java.util.UUID
 
 @RestController
-@Tag(name = "Subject Controller")
+@Tag(name = "Subject")
+@RequestMapping("/subject")
 class SubjectController() {
-  @RequestMapping(path = ["/subject/{assessmentUuid}"], method = [RequestMethod.GET])
+  @RequestMapping(path = ["/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the subject of an assessment")
   @ApiResponses(
     value = [

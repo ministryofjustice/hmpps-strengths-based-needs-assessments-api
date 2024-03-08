@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -48,6 +49,10 @@ class AssessmentVersionService(
   }
 
   fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersRequest) {
+    if (request.tags.contains(Tag.LOCKED)) {
+      throw ConflictException("Locked versions cannot be updated")
+    }
+
     log.info("Adding answers to assessment with UUID $assessmentUuid for tags ${request.tags}")
 
     assessmentService.findByUuid(assessmentUuid).let {
@@ -63,6 +68,18 @@ class AssessmentVersionService(
 
         log.info("Saved answers to assessment version UUID ${assessmentVersion.uuid}")
       }
+    }
+  }
+
+  fun cloneAndTag(assessmentVersion: AssessmentVersion, tag: Tag): AssessmentVersion {
+    return assessmentVersionRepository.save(
+      AssessmentVersion(
+        tag = tag,
+        assessment = assessmentVersion.assessment,
+        answers = assessmentVersion.answers,
+      ),
+    ).also {
+      log.info("Assessment version ${it.uuid} was cloned from ${assessmentVersion.uuid} and tagged ${tag.name}.")
     }
   }
 

@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,11 +17,14 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyLockedException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("OasysAssessmentService")
@@ -35,6 +40,11 @@ class OasysAssessmentServiceTest {
   private val oasysAssessmentPk = "1234567890"
   private val assessment = Assessment()
   private val assessmentVersion = AssessmentVersion(assessment = assessment)
+
+  @BeforeEach
+  fun setUp() {
+    clearAllMocks()
+  }
 
   @Nested
   @DisplayName("createAssessmentWithOasysId")
@@ -160,6 +170,73 @@ class OasysAssessmentServiceTest {
       assertThat(association.captured.oasysAssessmentPk).isEqualTo(request.oasysAssessmentPk)
       assertThat(association.captured.assessment).isEqualTo(assessment)
       assertThat(result).isEqualTo(assessmentVersion)
+    }
+  }
+
+  @Nested
+  @DisplayName("lock")
+  inner class Lock {
+    @Test
+    fun `it clones and locks an assessment successfully`() {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+      val lockedVersion = AssessmentVersion()
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns assessmentVersion
+      every { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED) } returns lockedVersion
+
+      val result = oasysAssessmentService.lock(oasysAssessmentPk)
+
+      verify(exactly = 1) { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED) }
+
+      assertThat(result).isEqualTo(lockedVersion)
+    }
+
+    @Test
+    fun `it throws an exception when the assessment is already locked`() {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+      val lockedVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = Tag.LOCKED,
+      )
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns lockedVersion
+      every { assessmentVersionService.cloneAndTag(any(), any()) } throws RuntimeException()
+
+      assertThrows<OasysAssessmentAlreadyLockedException> { oasysAssessmentService.lock(oasysAssessmentPk) }
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
+    }
+
+    @Test
+    fun `it throws an exception when no assessment version is found`() {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } throws AssessmentVersionNotFoundException("test")
+
+      assertThrows<AssessmentVersionNotFoundException> { oasysAssessmentService.lock(oasysAssessmentPk) }
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
+    }
+
+    @Test
+    fun `it throws an exception when no OASys assessment is found`() {
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } throws OasysAssessmentNotFoundException("test")
+
+      assertThrows<OasysAssessmentNotFoundException> { oasysAssessmentService.lock(oasysAssessmentPk) }
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
     }
   }
 }

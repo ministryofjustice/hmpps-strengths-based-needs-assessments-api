@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OneTimeLinkException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 
 @RestControllerAdvice
@@ -44,6 +45,18 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           userMessage = "Not found",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
+  @ExceptionHandler(ConflictException::class)
+  fun handler(ex: ConflictException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(HttpStatus.CONFLICT)
+      .body(
+        ErrorResponse(
+          userMessage = ex.message ?: "",
           developerMessage = ex.message ?: "",
         ),
       )

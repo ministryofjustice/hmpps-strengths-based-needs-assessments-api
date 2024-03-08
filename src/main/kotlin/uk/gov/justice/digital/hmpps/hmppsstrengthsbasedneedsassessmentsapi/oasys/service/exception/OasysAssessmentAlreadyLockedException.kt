@@ -2,4 +2,4 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 
-class OasysAssessmentAlreadyExistsException(oasysAssessmentPk: String) : ConflictException("OASys assessment with ID $oasysAssessmentPk already exists")
+class OasysAssessmentAlreadyLockedException(oasysAssessmentPk: String) : ConflictException("OASys assessment with ID $oasysAssessmentPk has already been locked")

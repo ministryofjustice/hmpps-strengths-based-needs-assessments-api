@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentsRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Transactional
@@ -163,6 +166,83 @@ class OasysAssessmentControllerTest(
           newOasysPK,
         ),
       )
+    }
+  }
+
+  @Nested
+  @DisplayName("/assessment/{oasysPK}/lock")
+  inner class Lock {
+    private lateinit var assessment: Assessment
+    private lateinit var oasysAssessment: OasysAssessment
+    private val endpoint = { "/oasys/assessment/${oasysAssessment.oasysAssessmentPk}/lock" }
+
+    @BeforeAll
+    fun setUp() {
+      assessment = Assessment()
+      oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+      assessment.assessmentVersions = listOf(
+        AssessmentVersion(
+          assessment = assessment,
+          createdAt = LocalDateTime.now().minusDays(1),
+          tag = Tag.VALIDATED,
+        ),
+      )
+      assessment.oasysAssessments = listOf(oasysAssessment)
+      assessmentRepository.save(assessment)
+    }
+
+    @Test
+    fun `it returns Unauthorized when there is no JWT`() {
+      webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+      webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation())
+        .exchange()
+        .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `it creates and returns new locked version of the assessment`() {
+      val response = webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(AssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
+      val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.VALIDATED }
+      val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED }
+
+      assertThat(initialVersion).isNotNull
+      assertThat(lockedVersion).isNotNull
+
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
+      assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAssessment.oasysAssessmentPk))
+      assertThat(response?.metaData?.versionTag).isEqualTo(Tag.LOCKED)
+      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(lockedVersion!!.createdAt.withNano(0))
+      assertThat(response?.metaData?.versionUuid).isEqualTo(lockedVersion.uuid)
+    }
+
+    @Test
+    fun `it returns Conflict when the assessment is already locked`() {
+      webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .exchange()
+        .expectStatus().isEqualTo(409)
     }
   }
 }

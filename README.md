@@ -18,6 +18,10 @@ The service is on http://localhost:8080
 
 To check the status, go to http://localhost:8080/health
 
+To update containers
+
+`make down update up`
+
 ## Development
 
 To start the API in development mode, run:

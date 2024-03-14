@@ -32,7 +32,7 @@ dependencies {
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.postgresql:postgresql:42.7.2")
+  implementation("org.postgresql:postgresql:42.7.3")
   implementation("org.flywaydb:flyway-core")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")

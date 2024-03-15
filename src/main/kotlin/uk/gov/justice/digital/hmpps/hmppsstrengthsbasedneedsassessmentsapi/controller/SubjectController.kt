@@ -31,7 +31,7 @@ class SubjectController() {
     assessmentUuid: UUID,
   ): SubjectResponse {
     return SubjectResponse(
-      "Paul",
+      "Sam",
       "Whitfield",
       "01/01/1970",
       "A123456",

@@ -1,5 +1,6 @@
 SHELL = '/bin/bash'
 DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.dev.yml
+TEST_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.test.yml
 
 export COMPOSE_PROJECT_NAME=hmpps-strengths-based-needs-assessments
 
@@ -42,6 +43,13 @@ test: ## Runs the test suite.
 
 lint: ## Runs the Kotlin linter.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
+
+test-up: ## Stands up a test environment with the UI exposed on port 3007.
+	docker compose --progress plain pull
+	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up ui --wait
+
+test-down: ## Stops and removes all of the test containers.
+	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down

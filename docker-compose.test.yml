@@ -1,0 +1,16 @@
+#file: noinspection YAMLSchemaValidation
+version: '3.8'
+services:
+  api:
+    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
+    environment:
+      LINK_BASE_URL: http://localhost:3007/form
+
+  ui:
+    ports:
+      - "3007:3000"
+    environment:
+      INGRESS_URL: http://localhost:3007
+
+volumes:
+  test_results:

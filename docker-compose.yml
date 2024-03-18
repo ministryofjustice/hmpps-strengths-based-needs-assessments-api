@@ -11,8 +11,6 @@ services:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    ports:
-      - "9090:9090"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
     environment:
@@ -25,8 +23,6 @@ services:
     image: postgres:16
     networks:
       - hmpps
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: dev
@@ -43,8 +39,6 @@ services:
      - postgres
      - hmpps-auth
      - ui
-    ports:
-      - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://api:8080/health/ping"]
       interval: 5s
@@ -64,7 +58,6 @@ services:
     depends_on:
       - redis
       - hmpps-auth
-#      - api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://ui:3000/health" ]
       interval: 5s

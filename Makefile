@@ -1,7 +1,10 @@
 SHELL = '/bin/bash'
 DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.dev.yml
+TEST_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.test.yml
+LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
+PROJECT_NAME = hmpps-strengths-based-needs-assessments
 
-export COMPOSE_PROJECT_NAME=hmpps-strengths-based-needs-assessments
+export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
 
 default: help
 
@@ -9,8 +12,8 @@ help: ## The help text you're reading.
 	@grep --no-filename -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 up: ## Starts/restarts the API in a production container.
-	docker compose down api
-	docker compose up api --wait --no-recreate
+	docker compose ${LOCAL_COMPOSE_FILES} down api
+	docker compose ${LOCAL_COMPOSE_FILES} up api --wait --no-recreate
 
 down: ## Stops and removes all containers in the project.
 	docker compose down
@@ -43,9 +46,16 @@ test: ## Runs the test suite.
 lint: ## Runs the Kotlin linter.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
 
+test-up: ## Stands up a test environment with the UI exposed on port 3007.
+	docker compose --progress plain pull
+	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait
+
+test-down: ## Stops and removes all of the test containers.
+	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
+
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down
 	rm -rf .gradle build
 
-update: ## Downloads the lastest versions of containers.
+update: ## Downloads the latest versions of containers.
 	docker compose pull

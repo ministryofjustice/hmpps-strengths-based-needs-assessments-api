@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   hmpps: ministryofjustice/hmpps@8.2
+  mem: circleci/rememborb@0.0.2
 
 parameters:
   alerts-slack-channel:
@@ -36,6 +37,54 @@ jobs:
       - store_artifacts:
           path: build/reports/tests
 
+  e2e_test:
+    machine:
+      image: ubuntu-2004:2023.10.1
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/app
+      - run:
+          name: Extract saved container image
+          command: docker load --input ~/app/docker_cache/build_image.tar
+      - mem/recall:
+          env_var: APP_VERSION
+      - run:
+          name: Stand up a test environment
+          command: make test-up
+      - run:
+          name: Clone UI repository
+          command: |
+            git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+      - restore_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+      - run:
+          name: Install Node and npm for running Cypress
+          command: |
+            sudo apt-get update
+            sudo apt-get install nodejs npm
+      - run:
+          name: Install Dependencies
+          command: |
+            cd e2e-test-ui
+            npm i --no-audit
+      - save_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+          paths:
+            - e2e-test-ui/node_modules
+            - ~/.cache
+      - run:
+          name: Run the end-to-end tests
+          command: |
+            cd e2e-test-ui
+            make e2e-ci
+      - store_test_results:
+          path: e2e-test-ui/test_results
+      - store_artifacts:
+          path: e2e-test-ui/cypress/videos
+      - store_artifacts:
+          path: e2e-test-ui/cypress/screenshots
+
 workflows:
   version: 2
   build-test-and-deploy:
@@ -56,6 +105,10 @@ workflows:
           pipeline_id: << pipeline.id >>
           pipeline_number: << pipeline.number >>
           context: hmpps-common-vars
+      - e2e_test:
+          context: hmpps-common-vars
+          requires:
+            - build_docker
       - hmpps/publish_docker:
           name: publish_docker
           publish_latest_tag: true

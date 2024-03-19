@@ -85,6 +85,36 @@ jobs:
       - store_artifacts:
           path: e2e-test-ui/cypress/screenshots
 
+  e2e_test_dev:
+    circleci_ip_ranges: true
+    executor:
+      name: hmpps/node
+      tag: << pipeline.parameters.node-version >>
+    steps:
+      - checkout
+      - run:
+          name: Clone UI repository
+          command: |
+            git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+      - restore_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd e2e-test-ui
+            npm i --no-audit
+      - run:
+          name: Run the end-to-end tests against the development environment
+          command: |
+            cd e2e-test-ui
+            make e2e-ci BASE_URL_CI="https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk"
+      - store_test_results:
+          path: e2e-test-ui/test_results
+      - store_artifacts:
+          path: e2e-test-ui/cypress/videos
+      - store_artifacts:
+          path: e2e-test-ui/cypress/screenshots
+
 workflows:
   version: 2
   build-test-and-deploy:
@@ -114,7 +144,10 @@ workflows:
           publish_latest_tag: true
           context: hmpps-common-vars
           requires:
+            - validate
             - build_docker
+            - e2e_test
+            - helm_lint
           filters:
             branches:
               only:
@@ -131,14 +164,16 @@ workflows:
               only:
                 - main
           requires:
-            - validate
             - publish_docker
-            - helm_lint
           helm_timeout: 5m
-  #      - request-preprod-approval:
-  #          type: approval
-  #          requires:
-  #            - deploy_dev
+      - e2e_test_dev:
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - deploy_dev
   #      - hmpps/deploy_env:
   #          name: deploy_preprod
   #          env: "preprod"
@@ -150,7 +185,8 @@ workflows:
   #            - hmpps-common-vars
   #            - hmpps-strengths-based-needs-assessments-api-preprod
   #          requires:
-  #            - request-preprod-approval
+  #            - deploy_dev
+  #            - e2e_test_dev
   #          helm_timeout: 5m
   #      - request-prod-approval:
   #          type: approval

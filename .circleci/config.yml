@@ -91,6 +91,7 @@ jobs:
     executor:
       name: cypress/default
     steps:
+      - checkout
       - run:
           name: Clone UI repository
           command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui

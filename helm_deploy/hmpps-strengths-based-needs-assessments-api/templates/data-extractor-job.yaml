@@ -31,22 +31,22 @@ spec:
                 - name: PGHOST
                   valueFrom:
                     secretKeyRef:
-                      name: hmpps-strengths-based-needs-assessment-rds-instance
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
                       key: rds_instance_address
                 - name: PGDATABASE
                   valueFrom:
                     secretKeyRef:
-                      name: hmpps-strengths-based-needs-assessment-rds-instance
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
                       key: database_name
                 - name: PGUSER
                   valueFrom:
                     secretKeyRef:
-                      name: hmpps-strengths-based-needs-assessment-rds-instance
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
                       key: database_username
                 - name: PGPASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: hmpps-strengths-based-needs-assessment-rds-instance
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
                       key: database_password
                 - name: S3_DESTINATION
                   valueFrom:

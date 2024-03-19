@@ -88,17 +88,16 @@ jobs:
 
   e2e_test_dev:
     circleci_ip_ranges: true
-    executor:
-      name: cypress/default
+    executor: cypress/default
     steps:
-      - checkout
       - run:
           name: Clone UI repository
-          command: |
-            git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+          command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+          working-directory: e2e-test-ui
       - restore_cache:
           key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
       - cypress/run:
+          name: Run the end-to-end tests against the development environment
           cypress-command: make e2e-ci BASE_URL_CI="https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk"
           working-directory: e2e-test-ui
       - store_test_results:

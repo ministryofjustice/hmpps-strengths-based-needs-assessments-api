@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.4"
   kotlin("jvm") version "1.9.23"
   kotlin("plugin.serialization") version "1.9.23"
   kotlin("plugin.spring") version "1.9.23"

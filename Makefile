@@ -46,9 +46,9 @@ test: ## Runs the test suite.
 lint: ## Runs the Kotlin linter.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
 
-test-up: ## Stands up a test environment with the UI exposed on port 3007.
+test-up: ## Stands up a test environment.
 	docker compose --progress plain pull
-	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait
+	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait --force-recreate
 
 test-down: ## Stops and removes all of the test containers.
 	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down

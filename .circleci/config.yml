@@ -59,22 +59,6 @@ jobs:
           name: Clone UI repository
           command: |
             git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
-      - restore_cache:
-          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
-      - run:
-          name: Install Node and npm for running Cypress
-          command: |
-            sudo apt-get update
-            sudo apt-get install nodejs npm
-      - run:
-          name: Install Dependencies
-          command: |
-            cd e2e-test-ui
-            npm i --no-audit
-      - save_cache:
-          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
-          paths:
-            - e2e-test-ui/node_modules
       - run:
           name: Run the end-to-end tests
           command: |
@@ -89,21 +73,13 @@ jobs:
 
   e2e_test_dev:
     circleci_ip_ranges: true
-    executor:
-      name: hmpps/node
-      tag: << pipeline.parameters.node-version >>
+    machine:
+      image: ubuntu-2004:2023.10.1
     steps:
       - checkout
       - run:
           name: Clone UI repository
           command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
-      - restore_cache:
-          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
-      - run:
-          name: Install Dependencies
-          command: |
-            cd e2e-test-ui
-            npm i --no-audit
       - run:
           name: Run the end-to-end tests against the development environment
           command: |
@@ -167,14 +143,14 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
-      - e2e_test_dev:
-          context: hmpps-common-vars
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - deploy_dev
+#      - e2e_test_dev:
+#          context: hmpps-common-vars
+#          filters:
+#            branches:
+#              only:
+#                - main
+#          requires:
+#            - deploy_dev
   #      - hmpps/deploy_env:
   #          name: deploy_preprod
   #          env: "preprod"

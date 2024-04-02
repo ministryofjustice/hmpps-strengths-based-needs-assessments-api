@@ -38,7 +38,7 @@ dependencies {
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
   // JSON serialisation
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")

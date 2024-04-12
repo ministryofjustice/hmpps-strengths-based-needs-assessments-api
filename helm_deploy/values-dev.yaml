@@ -13,6 +13,9 @@ generic-service:
     LINK_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/form
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/form
 
+  allowlist:
+    capita-dev: 51.104.16.30/31
+
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:

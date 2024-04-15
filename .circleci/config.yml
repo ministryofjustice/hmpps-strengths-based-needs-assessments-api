@@ -64,6 +64,23 @@ jobs:
       - run:
           name: Clone UI repository
           command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+      - restore_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+      - run:
+          name: Install Node and npm for running Cypress
+          command: |
+            sudo apt-get update
+            sudo apt-get install nodejs npm
+      - run:
+          name: Install Dependencies
+          command: |
+            cd e2e-test-ui
+            npm i --no-audit
+      - save_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+          paths:
+            - e2e-test-ui/node_modules
+            - ~/.cache
       - run:
           name: Run the end-to-end tests
           command: |

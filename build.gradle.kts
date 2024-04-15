@@ -7,6 +7,8 @@ plugins {
   kotlin("plugin.serialization") version "1.9.23"
   kotlin("plugin.spring") version "1.9.23"
   id("org.jetbrains.kotlin.kapt") version "1.9.23"
+  id("io.gitlab.arturbosch.detekt") version "1.23.6"
+  id("org.jetbrains.kotlinx.kover") version "0.7.6"
 }
 
 configurations {

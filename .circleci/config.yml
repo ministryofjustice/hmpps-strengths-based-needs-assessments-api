@@ -30,7 +30,7 @@ jobs:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
-          command: make dev-up check
+          command: make dev-up lint test-coverage
       - save_cache:
           paths:
             - ~/.gradle
@@ -39,10 +39,16 @@ jobs:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+      - store_artifacts:
+          path: build/reports/kover/html
+          destination: kover
+      - store_artifacts:
+          path: build/reports/detekt/detekt.html
 
   e2e_test:
     machine:
       image: ubuntu-2004:2023.10.1
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
@@ -57,34 +63,29 @@ jobs:
           command: make test-up
       - run:
           name: Clone UI repository
+          command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+      - restore_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+      - run:
+          name: Install Node and npm for running Cypress
           command: |
-            git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
+            sudo apt-get update
+            sudo apt-get install nodejs npm
+      - run:
+          name: Install Dependencies
+          command: |
+            cd e2e-test-ui
+            npm i --no-audit
+      - save_cache:
+          key: dependency-cache-{{ checksum "e2e-test-ui/package-lock.json" }}
+          paths:
+            - e2e-test-ui/node_modules
+            - ~/.cache
       - run:
           name: Run the end-to-end tests
           command: |
             cd e2e-test-ui
             make e2e-ci
-      - store_test_results:
-          path: e2e-test-ui/test_results
-      - store_artifacts:
-          path: e2e-test-ui/cypress/videos
-      - store_artifacts:
-          path: e2e-test-ui/cypress/screenshots
-
-  e2e_test_dev:
-    circleci_ip_ranges: true
-    machine:
-      image: ubuntu-2004:2023.10.1
-    steps:
-      - checkout
-      - run:
-          name: Clone UI repository
-          command: git clone git@github.com:ministryofjustice/hmpps-strengths-based-needs-assessments-ui.git e2e-test-ui
-      - run:
-          name: Run the end-to-end tests against the development environment
-          command: |
-            cd e2e-test-ui
-            make e2e-ci BASE_URL_CI="https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk"
       - store_test_results:
           path: e2e-test-ui/test_results
       - store_artifacts:
@@ -143,14 +144,6 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
-#      - e2e_test_dev:
-#          context: hmpps-common-vars
-#          filters:
-#            branches:
-#              only:
-#                - main
-#          requires:
-#            - deploy_dev
   #      - hmpps/deploy_env:
   #          name: deploy_preprod
   #          env: "preprod"

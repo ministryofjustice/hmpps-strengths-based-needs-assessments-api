@@ -37,14 +37,17 @@ rebuild: ## Re-builds and live-reloads the API.
 watch: ## Watches for file changes and live-reloads the API. To be used in conjunction with dev-up e.g. "make dev-up watch"
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --continuous --parallel --build-cache --configuration-cache
 
-check: ## Runs all gradle checks.
-	docker compose ${DEV_COMPOSE_FILES} exec api gradle check --parallel
-
 test: ## Runs the test suite.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle test --parallel
 
+test-coverage: ## Runs the test suite and outputs a code coverage report.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle koverHtmlReport --parallel
+
 lint: ## Runs the Kotlin linter.
-	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck detekt --parallel
+
+lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle detektBaseline --parallel
 
 test-up: ## Stands up a test environment.
 	docker compose --progress plain pull

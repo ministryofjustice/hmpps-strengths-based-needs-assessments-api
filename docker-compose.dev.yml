@@ -24,6 +24,8 @@ services:
       - ./src:/app/src
       - ./build.gradle.kts:/app/build.gradle.kts
       - ./settings.gradle.kts:/app/settings.gradle.kts
+      - ./detekt.yml:/app/detekt.yml
+      - ./detekt-baseline.xml:/app/detekt-baseline.xml
     ports:
       - "8080:8080"
       - "5005:5005"

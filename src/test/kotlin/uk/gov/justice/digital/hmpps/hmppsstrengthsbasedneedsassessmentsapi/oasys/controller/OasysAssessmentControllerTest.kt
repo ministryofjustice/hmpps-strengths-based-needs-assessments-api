@@ -66,7 +66,7 @@ class OasysAssessmentControllerTest(
         associate = listOf(
           AssociateAssessmentRequest(
             oasysAssessmentPk = oasysAss1.oasysAssessmentPk,
-            oldOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
+            previousOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
           ),
         ),
       )
@@ -85,7 +85,7 @@ class OasysAssessmentControllerTest(
         associate = listOf(
           AssociateAssessmentRequest(
             oasysAssessmentPk = oasysAss2.oasysAssessmentPk,
-            oldOasysAssessmentPk = oasysAss1.oasysAssessmentPk,
+            previousOasysAssessmentPk = oasysAss1.oasysAssessmentPk,
           ),
         ),
       )
@@ -107,11 +107,11 @@ class OasysAssessmentControllerTest(
         associate = listOf(
           AssociateAssessmentRequest(
             oasysAssessmentPk = newOasysPk1,
-            oldOasysAssessmentPk = oasysAss1.oasysAssessmentPk,
+            previousOasysAssessmentPk = oasysAss1.oasysAssessmentPk,
           ),
           AssociateAssessmentRequest(
             oasysAssessmentPk = newOasysPk2,
-            oldOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
+            previousOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
           ),
         ),
       )

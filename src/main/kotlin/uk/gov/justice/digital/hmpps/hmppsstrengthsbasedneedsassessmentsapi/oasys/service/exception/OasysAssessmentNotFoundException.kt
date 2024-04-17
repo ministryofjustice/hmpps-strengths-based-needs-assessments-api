@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception
 
-import jakarta.persistence.EntityNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 
-class OasysAssessmentNotFoundException(message: String) : EntityNotFoundException(message)
+class OasysAssessmentNotFoundException(oasysAssessmentPk: String) :
+  ConflictException("No previous OASys assessment found for PK $oasysAssessmentPk")

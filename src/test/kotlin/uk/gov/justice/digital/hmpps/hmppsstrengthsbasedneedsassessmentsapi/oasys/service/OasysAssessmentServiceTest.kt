@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("OasysAssessmentService")
@@ -99,15 +100,8 @@ class OasysAssessmentServiceTest {
       )
 
       val result = oasysAssessmentService.find(oasysAssessmentPk)
-      assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      assertThat(result.assessment).isEqualTo(assessment)
-    }
-
-    @Test
-    fun `it throws when unable to find an assessment for a given OASys assessment PK`() {
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(any()) } returns null
-
-      assertThrows<OasysAssessmentNotFoundException> { oasysAssessmentService.find(oasysAssessmentPk) }
+      assertThat(result?.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
+      assertThat(result?.assessment).isEqualTo(assessment)
     }
   }
 
@@ -118,7 +112,7 @@ class OasysAssessmentServiceTest {
     fun `it throws when an association already exists for the given OASys assessment PK`() {
       val request = AssociateAssessmentRequest(
         oasysAssessmentPk = "1234567890",
-        oldOasysAssessmentPk = "0987654321",
+        previousOasysAssessmentPk = "0987654321",
       )
 
       every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk) } returns OasysAssessment(
@@ -126,7 +120,9 @@ class OasysAssessmentServiceTest {
         assessment = assessment,
       )
 
-      assertThrows<OasysAssessmentAlreadyExistsException> { oasysAssessmentService.associate(request) }
+      assertThrows<OasysAssessmentAlreadyExistsException> {
+        oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+      }
     }
 
     @Test
@@ -135,41 +131,52 @@ class OasysAssessmentServiceTest {
         oasysAssessmentPk = "1234567890",
       )
 
+      val assessmentUuid = UUID.randomUUID()
+
       val assessment = Assessment(
+        uuid = assessmentUuid,
         assessmentVersions = listOf(assessmentVersion),
-        oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk)),
+        oasysAssessments = listOf(
+          OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = Assessment(uuid = assessmentUuid)),
+        ),
       )
 
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk) } throws OasysAssessmentNotFoundException("Not found")
+      every {
+        oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk)
+      } returns null
       every { assessmentService.save(any()) } returns assessment
       every { assessmentVersionService.find(any()) } returns assessmentVersion
 
-      val result = oasysAssessmentService.associate(request)
+      val result = oasysAssessmentService.associate(request.oasysAssessmentPk)
 
-      assertThat(result).isEqualTo(assessmentVersion)
+      assertThat(result.uuid).isEqualTo(assessment.uuid)
     }
 
     @Test
     fun `it associates an assessment when an old OASys assessment PK is provided`() {
       val request = AssociateAssessmentRequest(
         oasysAssessmentPk = "1234567890",
-        oldOasysAssessmentPk = "0987654321",
+        previousOasysAssessmentPk = "0987654321",
       )
 
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk) } throws OasysAssessmentNotFoundException("Not found")
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oldOasysAssessmentPk!!) } returns OasysAssessment(
-        oasysAssessmentPk = request.oldOasysAssessmentPk!!,
+      every {
+        oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk)
+      } returns null
+      every {
+        oasysAssessmentRepository.findByOasysAssessmentPk(request.previousOasysAssessmentPk!!)
+      } returns OasysAssessment(
+        oasysAssessmentPk = request.previousOasysAssessmentPk!!,
         assessment = assessment,
       )
       val association = slot<OasysAssessment>()
       every { oasysAssessmentRepository.save(capture(association)) } returnsArgument 0
       every { assessmentVersionService.find(any()) } returns assessmentVersion
 
-      val result = oasysAssessmentService.associate(request)
+      val result = oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
 
       assertThat(association.captured.oasysAssessmentPk).isEqualTo(request.oasysAssessmentPk)
       assertThat(association.captured.assessment).isEqualTo(assessment)
-      assertThat(result).isEqualTo(assessmentVersion)
+      assertThat(result.uuid).isEqualTo(assessment.uuid)
     }
   }
 
@@ -232,7 +239,9 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it throws an exception when no OASys assessment is found`() {
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } throws OasysAssessmentNotFoundException("test")
+      every {
+        oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
+      } throws OasysAssessmentNotFoundException("1234567890")
 
       assertThrows<OasysAssessmentNotFoundException> { oasysAssessmentService.lock(oasysAssessmentPk) }
 

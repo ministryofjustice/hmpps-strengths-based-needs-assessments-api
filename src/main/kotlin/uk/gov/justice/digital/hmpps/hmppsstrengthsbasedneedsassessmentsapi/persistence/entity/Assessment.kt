@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "assessments")
-class Assessment(
+data class Assessment(
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +33,9 @@ class Assessment(
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var assessmentVersions: List<AssessmentVersion> = listOf(),
+
+  @OneToOne(optional = true, mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+  var assessmentSubject: AssessmentSubject? = null,
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var oasysAssessments: List<OasysAssessment> = listOf(),

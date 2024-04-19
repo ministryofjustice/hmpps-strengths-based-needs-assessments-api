@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
@@ -29,6 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 class OasysAssessmentController(
   val assessmentVersionService: AssessmentVersionService,
   val oasysAssessmentService: OasysAssessmentService,
+  val assessmentSubjectService: AssessmentSubjectService,
 ) {
   @RequestMapping(path = ["/{oasysAssessmentPK}"], method = [RequestMethod.GET])
   @Operation(description = "Get the latest version of an assessment by OASys Assessment PK")
@@ -79,6 +81,10 @@ class OasysAssessmentController(
     request: AssociateAssessmentRequest,
   ): AssociateAssessmentResponse {
     val assessment = oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+
+    request.subjectDetails?.let {
+      assessmentSubjectService.updateOrCreate(assessment, it)
+    }
 
     val criteria = AssessmentVersionCriteria(assessment.uuid)
     val assessmentVersion = assessmentVersionService.find(criteria)

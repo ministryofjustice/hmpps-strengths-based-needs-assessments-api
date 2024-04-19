@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 
 @Service
 class OasysAssessmentService(
@@ -58,13 +59,20 @@ class OasysAssessmentService(
     return assessment
   }
 
-  fun lock(oasysAssessmentPk: String): AssessmentVersion {
-    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk)
-    val assessmentVersion = assessmentVersionService.find(AssessmentVersionCriteria(oasysAssessment.assessment.uuid))
+  fun checkAlreadyLocked(assessmentVersion: AssessmentVersion, oasysAssessmentPk: String) {
     if (assessmentVersion.tag == Tag.LOCKED) {
       throw OasysAssessmentAlreadyLockedException(oasysAssessmentPk)
     }
-    return assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED)
+  }
+
+  fun lock(oasysAssessmentPk: String): AssessmentVersion {
+    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk)
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid)
+
+    return assessmentVersionService.find(criteria)?.let {
+      checkAlreadyLocked(it, oasysAssessmentPk)
+      assessmentVersionService.cloneAndTag(it, Tag.LOCKED)
+    } ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
   companion object {

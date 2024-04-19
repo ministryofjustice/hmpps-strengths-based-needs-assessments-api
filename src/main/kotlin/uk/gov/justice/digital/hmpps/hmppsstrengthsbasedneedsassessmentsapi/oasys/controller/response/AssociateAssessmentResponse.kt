@@ -4,15 +4,15 @@ import java.util.UUID
 
 class AssociateAssessmentResponse(
   val sanAssessmentId: UUID,
-  val sanAssessmentVersion: UUID,
+  val sanAssessmentVersion: Long,
   val sentencePlanId: UUID? = null,
-  val sentencePlanVersion: UUID? = null,
+  val sentencePlanVersion: Long? = null,
 ) {
   companion object {
-    fun from(assessmentId: UUID, assessmentVersionId: UUID): AssociateAssessmentResponse {
+    fun from(assessmentId: UUID, assessmentVersionNumber: Long): AssociateAssessmentResponse {
       return AssociateAssessmentResponse(
         assessmentId,
-        assessmentVersionId,
+        assessmentVersionNumber,
       )
     }
   }

@@ -51,7 +51,7 @@ enum class Tag {
 
 @Entity
 @Table(name = "assessments_versions")
-class AssessmentVersion(
+data class AssessmentVersion(
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,4 +78,7 @@ class AssessmentVersion(
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
   val assessment: Assessment = Assessment(),
+
+  @Column(name = "version_number")
+  val versionNumber: Long = 0,
 )

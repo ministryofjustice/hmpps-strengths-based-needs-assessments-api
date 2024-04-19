@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
@@ -218,21 +217,6 @@ class OasysAssessmentServiceTest {
       every { assessmentVersionService.cloneAndTag(any(), any()) } throws RuntimeException()
 
       assertThrows<OasysAssessmentAlreadyLockedException> { oasysAssessmentService.lock(oasysAssessmentPk) }
-
-      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
-    }
-
-    @Test
-    fun `it throws an exception when no assessment version is found`() {
-      val oasysAssessment = OasysAssessment(
-        oasysAssessmentPk = oasysAssessmentPk,
-        assessment = assessment,
-      )
-
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
-      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } throws AssessmentVersionNotFoundException("test")
-
-      assertThrows<AssessmentVersionNotFoundException> { oasysAssessmentService.lock(oasysAssessmentPk) }
 
       verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
     }

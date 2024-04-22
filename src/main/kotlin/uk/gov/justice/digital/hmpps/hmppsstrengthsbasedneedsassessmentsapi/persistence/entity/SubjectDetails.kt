@@ -32,10 +32,10 @@ data class SubjectDetails(
   val crn: String?,
   val pnc: String?,
   val nomisId: String?,
-  val givenName: String,
-  val familyName: String,
-  val gender: Gender,
-  val location: Location,
+  val givenName: String?,
+  val familyName: String?,
+  val gender: Gender?,
+  val location: Location?,
   val sexuallyMotivatedOffenceHistory: Boolean?,
 ) {
   companion object {

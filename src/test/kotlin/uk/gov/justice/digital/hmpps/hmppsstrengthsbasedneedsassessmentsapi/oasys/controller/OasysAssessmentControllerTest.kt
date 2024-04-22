@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Gender
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
@@ -112,6 +114,54 @@ class OasysAssessmentControllerTest(
           newOasysPK,
         ),
       )
+    }
+
+    @Test
+    fun `takes subject details request object`() {
+      val newOasysPK = UUID.randomUUID().toString()
+
+      val request = """
+        {
+          "oasysAssessmentPk": "$newOasysPK",
+          "subjectDetails": {
+            "crn": "1234567",
+            "pnc": "1234567890",
+            "nomisId": "1234567890",
+            "givenName": "Paul",
+            "familyName": "Whitfield",
+            "gender": "MALE",
+            "location": "PRISON",
+            "sexuallyMotivatedOffenceHistory": "Yes"
+          } 
+        }
+      """.trimIndent()
+
+      webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isOk
+
+      val newOasysAss = oasysAssessmentRepository.findByOasysAssessmentPk(newOasysPK)
+
+      assertThat(newOasysAss).isNotNull
+      assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk }).isEqualTo(
+        listOf(
+          newOasysPK,
+        ),
+      )
+
+      val subject = newOasysAss?.assessment?.assessmentSubject
+
+      assertThat(subject?.subjectDetails?.crn).isEqualTo("1234567")
+      assertThat(subject?.subjectDetails?.pnc).isEqualTo("1234567890")
+      assertThat(subject?.subjectDetails?.nomisId).isEqualTo("1234567890")
+      assertThat(subject?.subjectDetails?.givenName).isEqualTo("Paul")
+      assertThat(subject?.subjectDetails?.familyName).isEqualTo("Whitfield")
+      assertThat(subject?.subjectDetails?.gender).isEqualTo(Gender.MALE)
+      assertThat(subject?.subjectDetails?.location).isEqualTo(Location.PRISON)
+      assertThat(subject?.subjectDetails?.sexuallyMotivatedOffenceHistory).isEqualTo(true)
     }
   }
 

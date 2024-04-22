@@ -93,36 +93,6 @@ class OasysAssessmentController(
     return AssociateAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
   }
 
-  // @RequestMapping(path = ["/associate"], method = [RequestMethod.POST])
-  // @Operation(description = "Associate OASys assessments with SAN assessments")
-  // @ApiResponses(
-  //   value = [
-  //     ApiResponse(responseCode = "200", description = "Assessment(s) associated successfully"),
-  //     ApiResponse(responseCode = "404", description = "Assessment(s) not found", content = arrayOf(Content())),
-  //     ApiResponse(
-  //      responseCode = "409",
-  //      description = "An association already exists for the provided OASys Assessment PK",
-  //      content = arrayOf(Content()),
-  //     ),
-  //     ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
-  //   ],
-  // )
-  // @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
-  // fun associateAssessments(
-  //   @RequestBody
-  //   request: AssociateAssessmentsRequest,
-  // ): List<AssociateAssessmentResponse> {
-  //   return request.associate.map {
-  //     val assessment = oasysAssessmentService.associate(it.oasysAssessmentPk, it.previousOasysAssessmentPk)
-  //
-  //     val criteria = AssessmentVersionCriteria(assessment.uuid)
-  //     val assessmentVersion = assessmentVersionService.find(criteria)
-  //       ?: throw AssessmentVersionNotFoundException(criteria)
-  //
-  //     AssociateAssessmentResponse.from(assessment.uuid, assessmentVersion.uuid)
-  //   }.toList()
-  // }
-
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])
   @Operation(description = "Locks the latest version of an assessment identified by the provided OASys Assessment PK")
   @ApiResponses(

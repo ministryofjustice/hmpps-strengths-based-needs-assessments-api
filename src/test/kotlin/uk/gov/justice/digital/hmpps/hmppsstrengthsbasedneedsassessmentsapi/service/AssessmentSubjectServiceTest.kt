@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OASysYesNo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysGender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -73,7 +74,7 @@ class AssessmentSubjectServiceTest {
         familyName = "Whitfield",
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = "Yes",
+        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
       )
 
       every { assessmentSubjectRepository.save(any()) } returnsArgument 0
@@ -106,7 +107,7 @@ class AssessmentSubjectServiceTest {
         familyName = "Whitfield",
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = "Yes",
+        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
       )
 
       every { assessmentSubjectRepository.findByAssessment(any()) } returns null
@@ -136,7 +137,7 @@ class AssessmentSubjectServiceTest {
         familyName = "Whitfield",
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = "Yes",
+        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
       )
 
       val assessmentSubject = AssessmentSubject(id = 1, assessment = assessment)

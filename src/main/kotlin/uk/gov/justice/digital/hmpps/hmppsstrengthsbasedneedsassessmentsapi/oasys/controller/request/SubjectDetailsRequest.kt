@@ -14,6 +14,11 @@ enum class OasysGender(val oasysValue: Int) {
   NOT_SPECIFIED(OASYS_GENDER_NOT_SPECIFIED),
 }
 
+enum class OASysYesNo {
+  YES,
+  NO,
+}
+
 data class SubjectDetailsRequest(
   val crn: String?,
   val pnc: String?,
@@ -22,5 +27,5 @@ data class SubjectDetailsRequest(
   val familyName: String,
   val gender: OasysGender,
   val location: Location,
-  val sexuallyMotivatedOffenceHistory: String?,
+  val sexuallyMotivatedOffenceHistory: OASysYesNo?,
 )

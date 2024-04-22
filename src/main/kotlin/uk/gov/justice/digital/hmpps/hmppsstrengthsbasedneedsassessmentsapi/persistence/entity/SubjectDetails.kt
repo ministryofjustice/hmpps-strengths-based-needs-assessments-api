@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OASysYesNo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysGender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
 
@@ -38,10 +39,10 @@ data class SubjectDetails(
   val sexuallyMotivatedOffenceHistory: Boolean?,
 ) {
   companion object {
-    private fun sexuallyMotivatedOffenceHistoryFrom(value: String?): Boolean? {
+    private fun sexuallyMotivatedOffenceHistoryFrom(value: OASysYesNo?): Boolean? {
       return when (value) {
-        "Yes" -> true
-        "No" -> false
+        OASysYesNo.YES -> true
+        OASysYesNo.NO -> false
         else -> null
       }
     }

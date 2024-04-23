@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -16,7 +17,7 @@ import kotlin.test.assertFailsWith
 
 class FormConfigProviderTest {
   private val mockHttpClient: HttpClient = mockk()
-  private val sut = FormConfigProvider(mockHttpClient, "http://test-url")
+  private val sut = FormConfigProvider(mockHttpClient, "http://test-url", jacksonObjectMapper())
 
   @BeforeTest
   fun setUp() {

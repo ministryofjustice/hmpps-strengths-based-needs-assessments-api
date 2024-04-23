@@ -3,8 +3,6 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
-  kotlin("jvm") version "1.9.23"
-  kotlin("plugin.serialization") version "1.9.23"
   kotlin("plugin.spring") version "1.9.23"
   id("org.jetbrains.kotlin.kapt") version "1.9.23"
   id("io.gitlab.arturbosch.detekt") version "1.23.6"
@@ -13,10 +11,6 @@ plugins {
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
-}
-
-repositories {
-  mavenCentral()
 }
 
 dependencies {
@@ -41,9 +35,6 @@ dependencies {
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-
-  // JSON serialisation
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

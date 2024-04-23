@@ -150,7 +150,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tag = tag)
+      val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tags = setOf(tag))
       val result = assessmentVersionService.find(specification)
 
       assertThat(result).isEqualTo(firstAssessmentVersion)
@@ -168,7 +168,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tag = tag)
+      val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tags = setOf(tag))
       val result = assessmentVersionService.find(specification)
 
       assertThat(result).isNull()
@@ -202,7 +202,7 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it updates answers for a given assessment`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(tag),
+        tags = setOf(tag),
         answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
         answersToRemove = listOf("baz"),
       )
@@ -232,12 +232,13 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
       assertThat(savedVersion.captured.answers["baz"]).isNull()
       assertThat(savedVersion.captured.oasys_equivalent).isEqualTo(oasysEquivalents)
+      assertThat(savedVersion.captured.updatedAt).isAfter(assessmentVersions.maxOf { it.updatedAt })
     }
 
     @Test
     fun `it throws an exception when attempting to update a locked assessment version`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(Tag.LOCKED),
+        tags = setOf(Tag.LOCKED_INCOMPLETE),
         answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
         answersToRemove = listOf("baz"),
       )
@@ -267,10 +268,10 @@ class AssessmentVersionServiceTest {
       val savedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
 
-      assessmentVersionService.cloneAndTag(originalVersion, Tag.LOCKED)
+      assessmentVersionService.cloneAndTag(originalVersion, Tag.LOCKED_INCOMPLETE)
 
       assertThat(savedVersion.captured.uuid).isNotEqualTo(originalVersion.uuid)
-      assertThat(savedVersion.captured.tag).isEqualTo(Tag.LOCKED)
+      assertThat(savedVersion.captured.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
       assertThat(savedVersion.captured.assessment).isEqualTo(originalVersion.assessment)
       assertThat(savedVersion.captured.answers).isEqualTo(originalVersion.answers)
     }

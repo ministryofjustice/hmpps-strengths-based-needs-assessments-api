@@ -60,7 +60,7 @@ class OasysAssessmentService(
   }
 
   fun checkAlreadyLocked(assessmentVersion: AssessmentVersion, oasysAssessmentPk: String) {
-    if (assessmentVersion.tag == Tag.LOCKED) {
+    if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
       throw OasysAssessmentAlreadyLockedException(oasysAssessmentPk)
     }
   }
@@ -71,7 +71,7 @@ class OasysAssessmentService(
 
     return assessmentVersionService.find(criteria)?.let {
       checkAlreadyLocked(it, oasysAssessmentPk)
-      assessmentVersionService.cloneAndTag(it, Tag.LOCKED)
+      assessmentVersionService.cloneAndTag(it, Tag.LOCKED_INCOMPLETE)
     } ?: throw AssessmentVersionNotFoundException(criteria)
   }
 

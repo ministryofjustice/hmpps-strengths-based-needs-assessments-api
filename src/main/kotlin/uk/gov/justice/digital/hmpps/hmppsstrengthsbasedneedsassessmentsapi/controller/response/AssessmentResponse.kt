@@ -22,17 +22,21 @@ data class AssessmentResponse(
   val assessment: Answers,
   val oasysEquivalent: OasysEquivalent,
 ) {
-  constructor(assessmentVersion: AssessmentVersion) : this(
-    AssessmentMetadata(
-      assessmentVersion.assessment.uuid,
-      assessmentVersion.assessment.createdAt,
-      assessmentVersion.assessment.oasysAssessments.map { it.oasysAssessmentPk },
-      assessmentVersion.uuid,
-      assessmentVersion.createdAt,
-      assessmentVersion.tag,
-      assessmentVersion.assessment.info?.formVersion,
-    ),
-    assessmentVersion.answers,
-    assessmentVersion.oasys_equivalent,
-  )
+  companion object {
+    fun from(assessmentVersion: AssessmentVersion): AssessmentResponse {
+      return AssessmentResponse(
+        AssessmentMetadata(
+          assessmentVersion.assessment.uuid,
+          assessmentVersion.assessment.createdAt,
+          assessmentVersion.assessment.oasysAssessments.map { it.oasysAssessmentPk },
+          assessmentVersion.uuid,
+          assessmentVersion.createdAt,
+          assessmentVersion.tag,
+          assessmentVersion.assessment.info?.formVersion,
+        ),
+        assessmentVersion.answers,
+        assessmentVersion.oasys_equivalent,
+      )
+    }
+  }
 }

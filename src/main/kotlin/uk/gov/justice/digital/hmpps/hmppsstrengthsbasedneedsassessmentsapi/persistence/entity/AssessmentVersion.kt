@@ -44,9 +44,28 @@ typealias Answers = Map<String, Answer>
 typealias OasysEquivalent = Map<String, Any>
 
 enum class Tag {
-  VALIDATED,
+  VALIDATED, // to be removed once replaced by UNSIGNED in the UI
   UNVALIDATED,
-  LOCKED,
+  UNSIGNED,
+  LOCKED_INCOMPLETE,
+  SELF_SIGNED,
+  AWAITING_COUNTERSIGN,
+  AWAITING_DOUBLE_COUNTERSIGN,
+  COUNTERSIGNED,
+  DOUBLE_COUNTERSIGNED,
+  REJECTED,
+  ROLLED_BACK,
+  ;
+
+  companion object {
+    fun validatedTags(): Set<Tag> {
+      return Tag.values().filter { it !== UNVALIDATED }.toSet()
+    }
+
+    fun lockedTags(): Set<Tag> {
+      return Tag.values().subtract(setOf(VALIDATED, UNVALIDATED, UNSIGNED))
+    }
+  }
 }
 
 @Entity
@@ -62,6 +81,9 @@ data class AssessmentVersion(
 
   @Column(name = "created_at")
   val createdAt: LocalDateTime = LocalDateTime.now(),
+
+  @Column(name = "updated_at")
+  var updatedAt: LocalDateTime = LocalDateTime.now(),
 
   @Column(name = "tag")
   @Enumerated(EnumType.STRING)

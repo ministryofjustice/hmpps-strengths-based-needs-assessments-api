@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
@@ -109,7 +109,7 @@ class OasysAssessmentServiceTest {
   inner class Associate {
     @Test
     fun `it throws when an association already exists for the given OASys assessment PK`() {
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = "1234567890",
         previousOasysAssessmentPk = "0987654321",
       )
@@ -126,7 +126,7 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it creates an assessment when no old OASys assessment PK is provided`() {
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = "1234567890",
       )
 
@@ -153,7 +153,7 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it associates an assessment when an old OASys assessment PK is provided`() {
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = "1234567890",
         previousOasysAssessmentPk = "0987654321",
       )
@@ -192,11 +192,11 @@ class OasysAssessmentServiceTest {
 
       every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
       every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns assessmentVersion
-      every { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED) } returns lockedVersion
+      every { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED_INCOMPLETE) } returns lockedVersion
 
       val result = oasysAssessmentService.lock(oasysAssessmentPk)
 
-      verify(exactly = 1) { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED) }
+      verify(exactly = 1) { assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED_INCOMPLETE) }
 
       assertThat(result).isEqualTo(lockedVersion)
     }
@@ -209,7 +209,7 @@ class OasysAssessmentServiceTest {
       )
       val lockedVersion = AssessmentVersion(
         assessment = assessment,
-        tag = Tag.LOCKED,
+        tag = Tag.LOCKED_INCOMPLETE,
       )
 
       every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment

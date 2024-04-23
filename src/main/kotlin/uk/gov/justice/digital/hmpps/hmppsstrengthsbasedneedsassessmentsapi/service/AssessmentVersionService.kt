@@ -29,8 +29,9 @@ class AssessmentVersionService(
 
     return versionCreatedDate == today
   }
+
   fun clonePreviousOrCreateNew(tag: Tag, assessment: Assessment): AssessmentVersion? {
-    return find(AssessmentVersionCriteria(assessment.uuid, tag))?.let {
+    return find(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))?.let {
       if (tag === Tag.UNVALIDATED || versionCreatedToday(it)) {
         return it
       }
@@ -56,7 +57,7 @@ class AssessmentVersionService(
   }
 
   fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersRequest) {
-    if (request.tags.contains(Tag.LOCKED)) {
+    if (request.tags.intersect(Tag.lockedTags()).isNotEmpty()) {
       throw ConflictException("Locked versions cannot be updated")
     }
 
@@ -67,13 +68,13 @@ class AssessmentVersionService(
         clonePreviousOrCreateNew(tag, it)?.let {
           it.answers = it.answers.plus(request.answersToAdd)
             .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
-
           it.oasys_equivalent = dataMappingService.getOasysEquivalent(it)
+          it.updatedAt = LocalDateTime.now()
 
           assessmentVersionRepository.save(it)
 
           log.info("Saved answers to assessment version UUID ${it.uuid}")
-        } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessmentUuid, tag))
+        } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessmentUuid, setOf(tag)))
       }
     }
   }

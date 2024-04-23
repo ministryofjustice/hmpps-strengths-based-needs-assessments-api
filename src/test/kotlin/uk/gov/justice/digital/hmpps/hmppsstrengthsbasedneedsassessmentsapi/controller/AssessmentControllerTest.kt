@@ -121,7 +121,10 @@ class AssessmentControllerTest(
 
       assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
       assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
-      assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk))
+      assertThat(response?.metaData?.oasys_pks).containsExactlyInAnyOrder(
+        oasysAss1.oasysAssessmentPk,
+        oasysAss2.oasysAssessmentPk,
+      )
       assertThat(response?.metaData?.versionTag).isEqualTo(latestVersion.tag)
       assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(latestVersion.createdAt.withNano(0))
       assertThat(response?.metaData?.versionUuid).isEqualTo(latestVersion.uuid)
@@ -150,9 +153,16 @@ class AssessmentControllerTest(
 
       assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
       assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
-      assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk))
+      assertThat(response?.metaData?.oasys_pks).containsExactlyInAnyOrder(
+        oasysAss1.oasysAssessmentPk,
+        oasysAss2.oasysAssessmentPk,
+      )
       assertThat(response?.metaData?.versionTag).isEqualTo(latestValidatedVersion.tag)
-      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(latestValidatedVersion.createdAt.withNano(0))
+      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(
+        latestValidatedVersion.createdAt.withNano(
+          0,
+        ),
+      )
       assertThat(response?.metaData?.versionUuid).isEqualTo(latestValidatedVersion.uuid)
       assertThat(response?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
       assertThat(response?.assessment?.keys).isEqualTo(latestValidatedVersion.answers.keys)
@@ -179,7 +189,10 @@ class AssessmentControllerTest(
 
       assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
       assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
-      assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk))
+      assertThat(response?.metaData?.oasys_pks).containsExactlyInAnyOrder(
+        oasysAss1.oasysAssessmentPk,
+        oasysAss2.oasysAssessmentPk,
+      )
       assertThat(response?.metaData?.versionTag).isEqualTo(oldValidatedVersion.tag)
       assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(oldValidatedVersion.createdAt.withNano(0))
       assertThat(response?.metaData?.versionUuid).isEqualTo(oldValidatedVersion.uuid)
@@ -219,7 +232,8 @@ class AssessmentControllerTest(
         answers = mapOf("q1" to Answer(value = "val1"), "q2" to Answer(value = "val2")),
       )
       assessment.assessmentVersions = listOf(assessmentVersion)
-      assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
+      assessment.oasysAssessments =
+        listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
       assessment.info = AssessmentFormInfo(formVersion = "1.0", formName = "sbna-poc", assessment = assessment)
 
       assessmentRepository.save(assessment)
@@ -240,7 +254,7 @@ class AssessmentControllerTest(
     @Test
     fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(Tag.UNVALIDATED),
+        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = emptyList(),
       )
@@ -256,7 +270,7 @@ class AssessmentControllerTest(
     @Test
     fun `it returns Not Found when the assessment does not exist`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(Tag.UNVALIDATED),
+        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = emptyList(),
       )
@@ -272,7 +286,7 @@ class AssessmentControllerTest(
     @Test
     fun `it adds answers for an assessment`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(Tag.UNVALIDATED),
+        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
         answersToRemove = emptyList(),
       )
@@ -293,7 +307,7 @@ class AssessmentControllerTest(
     @Test
     fun `it removes answers for an assessment`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = listOf(Tag.UNVALIDATED),
+        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = listOf("q1"),
       )

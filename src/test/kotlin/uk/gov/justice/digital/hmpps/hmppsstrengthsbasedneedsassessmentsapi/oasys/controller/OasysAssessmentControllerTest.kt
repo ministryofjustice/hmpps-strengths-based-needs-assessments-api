@@ -10,10 +10,13 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.http.HttpHeaders
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.GetAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Gender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Location
@@ -33,8 +36,8 @@ class OasysAssessmentControllerTest(
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) : IntegrationTest() {
   @Nested
-  @DisplayName("/assessment/create")
-  inner class Associate {
+  @DisplayName("/oasys/assessment/create")
+  inner class Create {
     private val endpoint = "/oasys/assessment/create"
     private lateinit var assessment: Assessment
     private lateinit var oasysAss1: OasysAssessment
@@ -63,7 +66,7 @@ class OasysAssessmentControllerTest(
 
     @Test
     fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = oasysAss1.oasysAssessmentPk,
         previousOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
       )
@@ -78,7 +81,7 @@ class OasysAssessmentControllerTest(
 
     @Test
     fun `it returns Conflict when the association already exists`() {
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = oasysAss2.oasysAssessmentPk,
         previousOasysAssessmentPk = oasysAss1.oasysAssessmentPk,
       )
@@ -95,7 +98,7 @@ class OasysAssessmentControllerTest(
     fun `it creates an assessment when only an OASys assessment PK provided and no assessment already exists`() {
       val newOasysPK = UUID.randomUUID().toString()
 
-      val request = AssociateAssessmentRequest(
+      val request = CreateAssessmentRequest(
         oasysAssessmentPk = newOasysPK,
       )
 
@@ -166,7 +169,111 @@ class OasysAssessmentControllerTest(
   }
 
   @Nested
-  @DisplayName("/assessment/{oasysPK}/lock")
+  @DisplayName("/oasys/assessment/{oasysPK}")
+  inner class Get {
+    private lateinit var assessment: Assessment
+    private lateinit var oasysAssessment: OasysAssessment
+    private lateinit var latestVersion: AssessmentVersion
+    private lateinit var latestValidatedVersion: AssessmentVersion
+    private lateinit var oldValidatedVersion: AssessmentVersion
+
+    private val endpoint = { "/oasys/assessment/${oasysAssessment.oasysAssessmentPk}" }
+
+    @BeforeAll
+    fun setUp() {
+      assessment = Assessment()
+      oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+      latestVersion = AssessmentVersion(
+        assessment = assessment,
+        answers = mapOf("q1" to Answer(value = "val1")),
+        oasys_equivalent = mapOf("q1" to "1"),
+      )
+      latestValidatedVersion = AssessmentVersion(
+        tag = Tag.VALIDATED,
+        assessment = assessment,
+        createdAt = LocalDateTime.now().minusDays(1),
+        answers = mapOf("q2" to Answer(value = "val2")),
+        oasys_equivalent = mapOf("q2" to "2"),
+      )
+      oldValidatedVersion = AssessmentVersion(
+        tag = Tag.VALIDATED,
+        assessment = assessment,
+        createdAt = LocalDateTime.now().minusDays(3),
+        answers = mapOf("q3" to Answer(value = "val3")),
+        oasys_equivalent = mapOf("q3" to "3"),
+      )
+
+      assessment.assessmentVersions = listOf(latestVersion, latestValidatedVersion, oldValidatedVersion)
+      assessment.oasysAssessments = listOf(oasysAssessment)
+      assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
+
+      assessmentRepository.save(assessment)
+    }
+
+    @Test
+    fun `it returns Unauthorized when there is no JWT`() {
+      webTestClient.get().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_READ' is not present on the JWT`() {
+      webTestClient.get().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation())
+        .exchange()
+        .expectStatus().isForbidden
+    }
+
+    @Test
+    fun `it returns Not Found when no assessment exists for the given assessment UUID`() {
+      webTestClient.get().uri("/oasys/assessment/some-non-existent-id")
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
+        .exchange()
+        .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `it returns the latest validated assessment for a given oasysAssessmentPk`() {
+      val response = webTestClient.get().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(GetAssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
+      assertThat(response?.sanAssessmentVersion).isEqualTo(latestValidatedVersion.versionNumber)
+      assertThat(response?.lastUpdatedTimestamp?.withNano(0)).isEqualTo(latestValidatedVersion.updatedAt.withNano(0))
+      assertThat(response?.sanAssessmentData?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.sanAssessmentData?.metaData?.createdAt?.withNano(0)).isEqualTo(
+        assessment.createdAt.withNano(
+          0,
+        ),
+      )
+      assertThat(response?.sanAssessmentData?.metaData?.oasys_pks).containsExactly(oasysAssessment.oasysAssessmentPk)
+      assertThat(response?.sanAssessmentData?.metaData?.versionTag).isEqualTo(latestValidatedVersion.tag)
+      assertThat(response?.sanAssessmentData?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(
+        latestValidatedVersion.createdAt.withNano(
+          0,
+        ),
+      )
+      assertThat(response?.sanAssessmentData?.metaData?.versionUuid).isEqualTo(latestValidatedVersion.uuid)
+      assertThat(response?.sanAssessmentData?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
+      assertThat(response?.sanAssessmentData?.assessment?.keys).isEqualTo(latestValidatedVersion.answers.keys)
+      assertThat(response?.sanAssessmentData?.assessment?.values?.map { it.value })
+        .isEqualTo(latestValidatedVersion.answers.values.map { it.value })
+      assertThat(response?.sanAssessmentData?.oasysEquivalent).isEqualTo(latestValidatedVersion.oasys_equivalent)
+    }
+  }
+
+  @Nested
+  @DisplayName("/oasys/assessment/{oasysPK}/lock")
   inner class Lock {
     private lateinit var assessment: Assessment
     private lateinit var oasysAssessment: OasysAssessment
@@ -219,7 +326,7 @@ class OasysAssessmentControllerTest(
 
       assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
       val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.VALIDATED }
-      val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED }
+      val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED_INCOMPLETE }
 
       assertThat(initialVersion).isNotNull
       assertThat(lockedVersion).isNotNull
@@ -227,7 +334,7 @@ class OasysAssessmentControllerTest(
       assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
       assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
       assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAssessment.oasysAssessmentPk))
-      assertThat(response?.metaData?.versionTag).isEqualTo(Tag.LOCKED)
+      assertThat(response?.metaData?.versionTag).isEqualTo(Tag.LOCKED_INCOMPLETE)
       assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(lockedVersion!!.createdAt.withNano(0))
       assertThat(response?.metaData?.versionUuid).isEqualTo(lockedVersion.uuid)
     }

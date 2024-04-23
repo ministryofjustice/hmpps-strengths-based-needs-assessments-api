@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import java.util.UUID
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -49,7 +50,9 @@ class AssessmentController(
     @Parameter(description = "Assessment status to filter by", `in` = ParameterIn.QUERY, example = "COMPLETE")
     status: String? = null,
   ): AssessmentResponse {
-    val assessmentVersion = assessmentVersionService.find(AssessmentVersionCriteria(assessmentUuid, tag, after, until, status))
+    val criteria = AssessmentVersionCriteria(assessmentUuid, tag, after, until, status)
+    val assessmentVersion = assessmentVersionService.find(criteria)
+      ?: throw AssessmentVersionNotFoundException(criteria)
     return AssessmentResponse(assessmentVersion)
   }
 

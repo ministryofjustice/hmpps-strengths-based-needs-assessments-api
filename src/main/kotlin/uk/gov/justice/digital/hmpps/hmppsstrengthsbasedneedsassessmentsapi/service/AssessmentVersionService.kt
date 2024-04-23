@@ -23,29 +23,36 @@ class AssessmentVersionService(
   val assessmentVersionRepository: AssessmentVersionRepository,
   val dataMappingService: DataMappingService,
 ) {
-  fun getPreviousOrCreate(tag: Tag, assessment: Assessment): AssessmentVersion {
-    val assessmentVersion = AssessmentVersion(
-      tag = tag,
-      assessment = assessment,
-    )
+  private fun versionCreatedToday(assessmentVersion: AssessmentVersion): Boolean {
+    val versionCreatedDate = assessmentVersion.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    val today = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-    try {
-      val previousVersion = find(AssessmentVersionCriteria(assessment.uuid, tag))
-      if (previousVersion.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE) == LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)) {
-        return previousVersion
+    return versionCreatedDate == today
+  }
+  fun clonePreviousOrCreateNew(tag: Tag, assessment: Assessment): AssessmentVersion? {
+    return find(AssessmentVersionCriteria(assessment.uuid, tag))?.let {
+      if (tag === Tag.UNVALIDATED || versionCreatedToday(it)) {
+        return it
       }
-      assessmentVersion.answers = previousVersion.answers
-      log.info("Cloned from assessment version UUID ${previousVersion.uuid}")
-    } catch (_: AssessmentVersionNotFoundException) {
-    }
 
-    return assessmentVersion
+      AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        answers = it.answers,
+        versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
+      )
+    } ?: run {
+      AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
+      )
+    }
   }
 
-  fun find(criteria: AssessmentVersionCriteria): AssessmentVersion {
+  fun find(criteria: AssessmentVersionCriteria): AssessmentVersion? {
     val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"))
     return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
-      ?: throw AssessmentVersionNotFoundException("No assessment version found that matches criteria: $criteria")
   }
 
   fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersRequest) {
@@ -57,16 +64,16 @@ class AssessmentVersionService(
 
     assessmentService.findByUuid(assessmentUuid).let {
       request.tags.map { tag ->
-        val assessmentVersion = getPreviousOrCreate(tag, it)
+        clonePreviousOrCreateNew(tag, it)?.let {
+          it.answers = it.answers.plus(request.answersToAdd)
+            .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
 
-        assessmentVersion.answers = assessmentVersion.answers.plus(request.answersToAdd)
-          .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
+          it.oasys_equivalent = dataMappingService.getOasysEquivalent(it)
 
-        assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
+          assessmentVersionRepository.save(it)
 
-        assessmentVersionRepository.save(assessmentVersion)
-
-        log.info("Saved answers to assessment version UUID ${assessmentVersion.uuid}")
+          log.info("Saved answers to assessment version UUID ${it.uuid}")
+        } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessmentUuid, tag))
       }
     }
   }

@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
@@ -14,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 
 @Service
 class OasysAssessmentService(
@@ -34,40 +34,45 @@ class OasysAssessmentService(
     return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) ?: createAssessmentWithOasysId(oasysAssessmentPk)
   }
 
-  fun find(oasysAssessmentPk: String): OasysAssessment {
+  fun find(oasysAssessmentPk: String): OasysAssessment? {
     return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
-      ?: throw OasysAssessmentNotFoundException("No OASys assessment found for PK $oasysAssessmentPk")
   }
 
-  fun associate(request: AssociateAssessmentRequest): AssessmentVersion {
-    try {
-      find(request.oasysAssessmentPk)
-      throw OasysAssessmentAlreadyExistsException(request.oasysAssessmentPk)
-    } catch (_: OasysAssessmentNotFoundException) {
+  fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String? = null): Assessment {
+    find(oasysAssessmentPk)?.let { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+
+    val assessment = previousOasysAssessmentPk?.let {
+      val oldOasysAssessment = find(previousOasysAssessmentPk)
+        ?: throw OasysAssessmentNotFoundException(previousOasysAssessmentPk)
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = oldOasysAssessment.assessment,
+      )
+      oasysAssessmentRepository.save(oasysAssessment)
+      oasysAssessment.assessment
+    } ?: run {
+      val oasysAssessment = createAssessmentWithOasysId(oasysAssessmentPk)
+      oasysAssessment.assessment
     }
 
-    val oasysAssessment: OasysAssessment
-
-    if (request.oldOasysAssessmentPk == null) {
-      oasysAssessment = createAssessmentWithOasysId(request.oasysAssessmentPk)
-    } else {
-      val oldOasysAssessment = find(request.oldOasysAssessmentPk)
-      oasysAssessment = OasysAssessment(oasysAssessmentPk = request.oasysAssessmentPk, assessment = oldOasysAssessment.assessment)
-      oasysAssessmentRepository.save(oasysAssessment).also {
-        log.info("Associated OASys assessment PK ${it.oasysAssessmentPk}")
-      }
-    }
-
-    return assessmentVersionService.find(AssessmentVersionCriteria(oasysAssessment.assessment.uuid))
+    log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${assessment.uuid}")
+    return assessment
   }
 
-  fun lock(oasysAssessmentPk: String): AssessmentVersion {
-    val oasysAssessment = find(oasysAssessmentPk)
-    val assessmentVersion = assessmentVersionService.find(AssessmentVersionCriteria(oasysAssessment.assessment.uuid))
+  fun checkAlreadyLocked(assessmentVersion: AssessmentVersion, oasysAssessmentPk: String) {
     if (assessmentVersion.tag == Tag.LOCKED) {
       throw OasysAssessmentAlreadyLockedException(oasysAssessmentPk)
     }
-    return assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED)
+  }
+
+  fun lock(oasysAssessmentPk: String): AssessmentVersion {
+    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk)
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid)
+
+    return assessmentVersionService.find(criteria)?.let {
+      checkAlreadyLocked(it, oasysAssessmentPk)
+      assessmentVersionService.cloneAndTag(it, Tag.LOCKED)
+    } ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
   companion object {

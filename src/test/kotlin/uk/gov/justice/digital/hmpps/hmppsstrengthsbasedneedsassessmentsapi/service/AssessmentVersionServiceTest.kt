@@ -26,7 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.util.UUID
@@ -49,12 +48,14 @@ class AssessmentVersionServiceTest {
     tag = tag,
     createdAt = LocalDateTime.now().minusDays(1).minusHours(1),
     answers = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "Foo answer", null)),
+    versionNumber = 0,
   )
 
   private val secondAssessmentVersion = AssessmentVersion(
     tag = tag,
     createdAt = LocalDateTime.now().minusHours(1),
     answers = mapOf("test" to Answer(value = "val")),
+    versionNumber = 1,
   )
 
   @BeforeEach
@@ -63,13 +64,13 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
-  @DisplayName("getPreviousOrCreate")
+  @DisplayName("clonePreviousOrCreateNew")
   inner class GetPreviousOrCreate {
     @Test
     fun `it returns the previous assessment version if it was created today`() {
       val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
       val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(secondAssessmentVersion))
+        PageImpl(listOf(secondAssessmentVersion, firstAssessmentVersion))
 
       every {
         assessmentVersionRepository.findAll(
@@ -78,10 +79,11 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
-      assertThat(result.answers["test"]?.value).isEqualTo("val")
+      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      assertThat(result?.tag).isEqualTo(tag)
+      assertThat(result?.uuid).isEqualTo(secondAssessmentVersion.uuid)
+      assertThat(result?.answers?.get("test")?.value).isEqualTo("val")
+      assertThat(result?.versionNumber).isEqualTo(1)
     }
 
     @Test
@@ -97,10 +99,15 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
-      assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
+      every {
+        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
+      } returns assessmentVersions.totalElements
+
+      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      assertThat(result?.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
+      assertThat(result?.tag).isEqualTo(tag)
+      assertThat(result?.answers?.get("foo")?.value).isEqualTo("Foo answer")
+      assertThat(result?.versionNumber).isEqualTo(1)
     }
 
     @Test
@@ -115,9 +122,14 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers).isEmpty()
+      every {
+        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
+      } returns assessmentVersions.totalElements
+
+      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      assertThat(result?.tag).isEqualTo(tag)
+      assertThat(result?.answers).isEmpty()
+      assertThat(result?.versionNumber).isEqualTo(0)
     }
   }
 
@@ -145,7 +157,7 @@ class AssessmentVersionServiceTest {
     }
 
     @Test
-    fun `it throws when there is no assessment version for a given tag`() {
+    fun `it returns null when there is no assessment version for a given tag`() {
       val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
       val assessmentVersions: Page<AssessmentVersion> = PageImpl(emptyList())
 
@@ -157,7 +169,9 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions
 
       val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tag = tag)
-      assertThrows<AssessmentVersionNotFoundException> { assessmentVersionService.find(specification) }
+      val result = assessmentVersionService.find(specification)
+
+      assertThat(result).isNull()
     }
   }
 
@@ -201,6 +215,9 @@ class AssessmentVersionServiceTest {
           any<PageRequest>(),
         )
       } returns assessmentVersions
+      every {
+        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
+      } returns assessmentVersions.totalElements
       every { assessmentService.findByUuid(assessment.uuid) } returns assessment
       every { dataMappingService.getOasysEquivalent(any()) } returns oasysEquivalents
 

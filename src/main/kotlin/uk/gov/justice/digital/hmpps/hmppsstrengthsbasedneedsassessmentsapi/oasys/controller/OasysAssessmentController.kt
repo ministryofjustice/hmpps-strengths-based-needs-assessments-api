@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,11 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentsRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AssociateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.AssociateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
 @RestController
@@ -27,6 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 class OasysAssessmentController(
   val assessmentVersionService: AssessmentVersionService,
   val oasysAssessmentService: OasysAssessmentService,
+  val assessmentSubjectService: AssessmentSubjectService,
 ) {
   @RequestMapping(path = ["/{oasysAssessmentPK}"], method = [RequestMethod.GET])
   @Operation(description = "Get the latest version of an assessment by OASys Assessment PK")
@@ -52,16 +56,21 @@ class OasysAssessmentController(
     status: String? = null,
   ): AssessmentResponse {
     val oasysAssessment = oasysAssessmentService.find(oasysAssessmentPK)
-    val assessmentVersion = assessmentVersionService.find(AssessmentVersionCriteria(oasysAssessment.assessment.uuid, tag, after, until, status))
+      ?: throw OasysAssessmentNotFoundException(oasysAssessmentPK)
+
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, tag, after, until, status)
+    val assessmentVersion = assessmentVersionService.find(criteria)
+      ?: throw AssessmentVersionNotFoundException(criteria)
+
     return AssessmentResponse(assessmentVersion)
   }
 
-  @RequestMapping(path = ["/associate"], method = [RequestMethod.POST])
-  @Operation(description = "Associate OASys assessments with a SAN assessment")
+  @RequestMapping(path = ["/create"], method = [RequestMethod.POST])
+  @Operation(description = "Associate an OASys assessment PK with a SAN assessment")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "200", description = "Assessment(s) associated successfully"),
-      ApiResponse(responseCode = "404", description = "Assessment(s) not found", content = arrayOf(Content())),
+      ApiResponse(responseCode = "200", description = "Assessment associated successfully"),
+      ApiResponse(responseCode = "404", description = "Previous assessment not found", content = arrayOf(Content())),
       ApiResponse(responseCode = "409", description = "An association already exists for the provided OASys Assessment PK", content = arrayOf(Content())),
       ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
     ],
@@ -69,12 +78,19 @@ class OasysAssessmentController(
   @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun associateAssessment(
     @RequestBody
-    request: AssociateAssessmentsRequest,
-  ): ResponseEntity<String> {
-    for (pair in request.associate) {
-      oasysAssessmentService.associate(pair)
+    request: AssociateAssessmentRequest,
+  ): AssociateAssessmentResponse {
+    val assessment = oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+
+    request.subjectDetails?.let {
+      assessmentSubjectService.updateOrCreate(assessment, it)
     }
-    return ResponseEntity.ok("OK")
+
+    val criteria = AssessmentVersionCriteria(assessment.uuid)
+    val assessmentVersion = assessmentVersionService.find(criteria)
+      ?: throw AssessmentVersionNotFoundException(criteria)
+
+    return AssociateAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])

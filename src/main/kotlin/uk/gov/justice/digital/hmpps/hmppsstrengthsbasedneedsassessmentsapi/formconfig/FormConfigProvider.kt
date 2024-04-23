@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
@@ -33,6 +33,7 @@ class FormConfigProvider(
   val client: HttpClient,
   @Value("\${app.form-config.base-url}")
   val formConfigBaseUrl: String,
+  val decoder: ObjectMapper,
 ) {
   fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
@@ -43,8 +44,6 @@ class FormConfigProvider(
     if (response.statusCode() != 200) {
       throw FormConfigNotFoundException("Unable to fetch form config from ${request.uri()}")
     }
-
-    val decoder = jacksonObjectMapper()
 
     return decoder.readValue(response.body(), FormConfig::class.java)
   }

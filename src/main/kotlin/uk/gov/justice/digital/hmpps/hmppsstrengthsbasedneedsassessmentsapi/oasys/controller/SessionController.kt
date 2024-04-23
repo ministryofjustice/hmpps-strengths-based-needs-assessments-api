@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateSessionRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UseOneTimeLinkRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UserInformation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OneTimeLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.SessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.SessionService
@@ -35,6 +37,30 @@ class SessionController(
   fun createOneTimeLink(
     @RequestBody
     request: CreateSessionRequest,
+  ): OneTimeLinkResponse {
+    return sessionService.createOneTimeLink(
+      CreateOneTimeLinkRequest(
+        oasysAssessmentPk = request.oasysAssessmentPk,
+        user = UserInformation(
+          identifier = request.userSessionId,
+          displayName = request.userDisplayName,
+          accessMode = request.userAccess,
+        ),
+      ),
+    )
+  }
+
+  @RequestMapping(path = ["/"], method = [RequestMethod.POST])
+  @Operation(description = "Initialise a session for a given OASys assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Session created"),
+    ],
+  )
+  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_CREATE_SESSION')")
+  fun getOneTimeLink(
+    @RequestBody
+    request: CreateOneTimeLinkRequest,
   ): OneTimeLinkResponse {
     return sessionService.createOneTimeLink(request)
   }

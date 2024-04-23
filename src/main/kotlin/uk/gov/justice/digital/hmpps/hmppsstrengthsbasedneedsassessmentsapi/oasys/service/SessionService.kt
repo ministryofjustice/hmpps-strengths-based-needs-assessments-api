@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateSessionRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UseOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OneTimeLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.SessionResponse
@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentFormInfoRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
 import java.time.Duration
 import java.time.LocalDateTime
@@ -24,15 +25,20 @@ class SessionService(
   val oasysAssessmentService: OasysAssessmentService,
   val applicationConfig: ApplicationConfig,
   val assessmentFormInfoRepository: AssessmentFormInfoRepository,
+  val assessmentSubjectService: AssessmentSubjectService,
 ) {
-  fun createOneTimeLink(request: CreateSessionRequest): OneTimeLinkResponse {
+  fun createOneTimeLink(request: CreateOneTimeLinkRequest): OneTimeLinkResponse {
     val oasysAssessment = oasysAssessmentService.findOrCreateAssessment(request.oasysAssessmentPk)
+
+    request.subjectDetails?.let {
+      assessmentSubjectService.updateOrCreate(oasysAssessment.assessment, it)
+    }
 
     return sessionRepository.save(
       Session(
-        userSessionId = request.userSessionId,
-        userDisplayName = request.userDisplayName,
-        userAccess = request.userAccess,
+        userSessionId = request.user.identifier,
+        userDisplayName = request.user.displayName,
+        userAccess = request.user.accessMode,
         oasysAssessment = oasysAssessment,
       ),
     ).let {

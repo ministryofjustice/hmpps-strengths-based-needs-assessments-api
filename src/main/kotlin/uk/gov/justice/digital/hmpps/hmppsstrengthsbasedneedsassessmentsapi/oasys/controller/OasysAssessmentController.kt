@@ -78,7 +78,7 @@ class OasysAssessmentController(
       assessmentSubjectService.updateOrCreate(assessment, it)
     }
 
-    val criteria = AssessmentVersionCriteria(assessment.uuid)
+    val criteria = AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags())
     val assessmentVersion = assessmentVersionService.find(criteria)
       ?: throw AssessmentVersionNotFoundException(criteria)
 

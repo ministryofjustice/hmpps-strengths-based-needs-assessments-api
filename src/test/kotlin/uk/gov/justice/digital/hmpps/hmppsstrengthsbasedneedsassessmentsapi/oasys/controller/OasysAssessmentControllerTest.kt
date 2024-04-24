@@ -187,20 +187,23 @@ class OasysAssessmentControllerTest(
         assessment = assessment,
         answers = mapOf("q1" to Answer(value = "val1")),
         oasys_equivalent = mapOf("q1" to "1"),
+        versionNumber = 3,
       )
       latestValidatedVersion = AssessmentVersion(
         tag = Tag.VALIDATED,
         assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
+        updatedAt = LocalDateTime.now().minusDays(1),
         answers = mapOf("q2" to Answer(value = "val2")),
         oasys_equivalent = mapOf("q2" to "2"),
+        versionNumber = 2,
       )
       oldValidatedVersion = AssessmentVersion(
         tag = Tag.VALIDATED,
         assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(3),
+        updatedAt = LocalDateTime.now().minusDays(3),
         answers = mapOf("q3" to Answer(value = "val3")),
         oasys_equivalent = mapOf("q3" to "3"),
+        versionNumber = 1,
       )
 
       assessment.assessmentVersions = listOf(latestVersion, latestValidatedVersion, oldValidatedVersion)
@@ -287,7 +290,15 @@ class OasysAssessmentControllerTest(
         AssessmentVersion(
           assessment = assessment,
           createdAt = LocalDateTime.now().minusDays(1),
-          tag = Tag.VALIDATED,
+          tag = Tag.UNSIGNED,
+          versionNumber = 1,
+          answers = mapOf("q1" to Answer(value = "val1")),
+        ),
+        AssessmentVersion(
+          assessment = assessment,
+          createdAt = LocalDateTime.now().minusDays(1),
+          tag = Tag.UNVALIDATED,
+          versionNumber = 0,
         ),
       )
       assessment.oasysAssessments = listOf(oasysAssessment)
@@ -324,11 +335,13 @@ class OasysAssessmentControllerTest(
 
       val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
-      val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.VALIDATED }
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(3)
+      val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNSIGNED }
+      val unvalidatedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNVALIDATED }
       val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED_INCOMPLETE }
 
       assertThat(initialVersion).isNotNull
+      assertThat(unvalidatedVersion).isNotNull
       assertThat(lockedVersion).isNotNull
 
       assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
@@ -337,6 +350,7 @@ class OasysAssessmentControllerTest(
       assertThat(response?.metaData?.versionTag).isEqualTo(Tag.LOCKED_INCOMPLETE)
       assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(lockedVersion!!.createdAt.withNano(0))
       assertThat(response?.metaData?.versionUuid).isEqualTo(lockedVersion.uuid)
+      assertThat(response?.assessment?.get("q1")?.value).isEqualTo("val1")
     }
 
     @Test

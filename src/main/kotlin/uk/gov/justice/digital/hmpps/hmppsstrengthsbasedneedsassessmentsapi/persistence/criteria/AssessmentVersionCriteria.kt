@@ -43,7 +43,7 @@ data class AssessmentVersionCriteria(
     return Specification<AssessmentVersion> { root, _, builder ->
       if (after != null) {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(after), ZoneId.systemDefault())
-        builder.greaterThan(root.get(AssessmentVersion_.createdAt), date)
+        builder.greaterThan(root.get(AssessmentVersion_.updatedAt), date)
       } else {
         null
       }
@@ -54,7 +54,7 @@ data class AssessmentVersionCriteria(
     return Specification<AssessmentVersion> { root, _, builder ->
       if (until != null) {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(until), ZoneId.systemDefault())
-        builder.lessThan(root.get(AssessmentVersion_.createdAt), date)
+        builder.lessThan(root.get(AssessmentVersion_.updatedAt), date)
       } else {
         null
       }

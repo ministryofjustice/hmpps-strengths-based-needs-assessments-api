@@ -23,7 +23,10 @@ class OasysAssessmentService(
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentPk: String): OasysAssessment {
     val assessment = Assessment()
-    assessment.assessmentVersions = listOf(AssessmentVersion(assessment = assessment))
+    assessment.assessmentVersions = listOf(
+      AssessmentVersion(assessment = assessment, versionNumber = 0, tag = Tag.UNVALIDATED),
+      AssessmentVersion(assessment = assessment, versionNumber = 1, tag = Tag.VALIDATED),
+    )
     assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = assessment))
     val persistedAssessment = assessmentService.save(assessment).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
 
@@ -67,7 +70,7 @@ class OasysAssessmentService(
 
   fun lock(oasysAssessmentPk: String): AssessmentVersion {
     val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk)
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid)
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
 
     return assessmentVersionService.find(criteria)?.let {
       checkAlreadyLocked(it, oasysAssessmentPk)

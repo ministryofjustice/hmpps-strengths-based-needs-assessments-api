@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpHeaders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder
@@ -18,6 +19,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion_
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment_
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
@@ -56,20 +59,23 @@ class AssessmentControllerTest(
         assessment = assessment,
         answers = mapOf("q1" to Answer(value = "val1")),
         oasys_equivalent = mapOf("q1" to "1"),
+        versionNumber = 3,
       )
       latestValidatedVersion = AssessmentVersion(
         tag = Tag.VALIDATED,
         assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
+        updatedAt = LocalDateTime.now().minusDays(1),
         answers = mapOf("q2" to Answer(value = "val2")),
         oasys_equivalent = mapOf("q2" to "2"),
+        versionNumber = 2,
       )
       oldValidatedVersion = AssessmentVersion(
         tag = Tag.VALIDATED,
         assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(3),
+        updatedAt = LocalDateTime.now().minusDays(3),
         answers = mapOf("q3" to Answer(value = "val3")),
         oasys_equivalent = mapOf("q3" to "3"),
+        versionNumber = 1,
       )
 
       oasysAss1 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
@@ -222,16 +228,26 @@ class AssessmentControllerTest(
   @DisplayName("/assessment/{assessmentUuid}/answers")
   inner class Answers {
     private lateinit var assessment: Assessment
-    private lateinit var assessmentVersion: AssessmentVersion
+    private lateinit var unvalidatedAssessmentVersion: AssessmentVersion
+    private lateinit var unsignedAssessmentVersion: AssessmentVersion
+    private lateinit var lockedAssessmentVersion: AssessmentVersion
 
     @BeforeAll
     fun setUp() {
       assessment = Assessment()
-      assessmentVersion = AssessmentVersion(
+      unvalidatedAssessmentVersion = AssessmentVersion(
         assessment = assessment,
         answers = mapOf("q1" to Answer(value = "val1"), "q2" to Answer(value = "val2")),
       )
-      assessment.assessmentVersions = listOf(assessmentVersion)
+      unsignedAssessmentVersion = AssessmentVersion(assessment = assessment, tag = Tag.UNSIGNED, versionNumber = 1)
+      lockedAssessmentVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = Tag.LOCKED_INCOMPLETE,
+        versionNumber = 2,
+        answers = mapOf("q1" to Answer(value = "val1-locked"), "q2" to Answer(value = "val2-locked")),
+      )
+      assessment.assessmentVersions =
+        listOf(unvalidatedAssessmentVersion, unsignedAssessmentVersion, lockedAssessmentVersion)
       assessment.oasysAssessments =
         listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
       assessment.info = AssessmentFormInfo(formVersion = "1.0", formName = "sbna-poc", assessment = assessment)
@@ -298,7 +314,7 @@ class AssessmentControllerTest(
         .exchange()
         .expectStatus().isOk
 
-      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
+      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(unvalidatedAssessmentVersion.uuid)
 
       assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
       assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val1", "val2", "TEST"))
@@ -319,10 +335,40 @@ class AssessmentControllerTest(
         .exchange()
         .expectStatus().isOk
 
-      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
+      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(unvalidatedAssessmentVersion.uuid)
 
       assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2", "field_name"))
       assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2", "TEST"))
+    }
+
+    @Test
+    fun `it clones from the latest locked version and adds answers for an assessment`() {
+      val request = UpdateAssessmentAnswersRequest(
+        tags = setOf(Tag.UNSIGNED),
+        answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
+        answersToRemove = emptyList(),
+      )
+
+      webTestClient.post().uri(endpointWith(assessment.uuid))
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isOk
+
+      val spec = Specification { root, query, builder ->
+        query.where(
+          builder.equal(root.get(AssessmentVersion_.assessment).get(Assessment_.uuid), assessment.uuid),
+          builder.equal(root.get(AssessmentVersion_.versionNumber), 3),
+        ).restriction
+      }
+
+      val clonedAssessmentVersion = assessmentVersionRepository.findOne(spec).get()
+
+      assertThat(clonedAssessmentVersion.tag).isEqualTo(Tag.UNSIGNED)
+      assertThat(clonedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
+      assertThat(clonedAssessmentVersion.answers.values.map { it.value })
+        .isEqualTo(listOf("val1-locked", "val2-locked", "TEST"))
     }
   }
 }

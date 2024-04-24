@@ -46,14 +46,14 @@ class AssessmentVersionServiceTest {
 
   private val firstAssessmentVersion = AssessmentVersion(
     tag = tag,
-    createdAt = LocalDateTime.now().minusDays(1).minusHours(1),
+    updatedAt = LocalDateTime.now().minusDays(1).minusHours(1),
     answers = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "Foo answer", null)),
     versionNumber = 0,
   )
 
   private val secondAssessmentVersion = AssessmentVersion(
     tag = tag,
-    createdAt = LocalDateTime.now().minusHours(1),
+    updatedAt = LocalDateTime.now().minusHours(1),
     answers = mapOf("test" to Answer(value = "val")),
     versionNumber = 1,
   )
@@ -184,7 +184,7 @@ class AssessmentVersionServiceTest {
       listOf(
         AssessmentVersion(
           tag = tag,
-          createdAt = LocalDateTime.of(2023, 12, 1, 12, 0),
+          updatedAt = LocalDateTime.of(2023, 12, 1, 12, 0),
           answers = mapOf(
             "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
             "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
@@ -193,7 +193,7 @@ class AssessmentVersionServiceTest {
         ),
         AssessmentVersion(
           tag = tag,
-          createdAt = LocalDateTime.of(2023, 6, 1, 12, 0),
+          updatedAt = LocalDateTime.of(2023, 6, 1, 12, 0),
           answers = emptyMap(),
         ),
       ),
@@ -265,6 +265,10 @@ class AssessmentVersionServiceTest {
         ),
       )
 
+      every {
+        assessmentVersionRepository.countVersionWhereAssessmentUuid(any())
+      } returns 1
+
       val savedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
 
@@ -274,6 +278,7 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
       assertThat(savedVersion.captured.assessment).isEqualTo(originalVersion.assessment)
       assertThat(savedVersion.captured.answers).isEqualTo(originalVersion.answers)
+      assertThat(savedVersion.captured.versionNumber).isEqualTo(1)
     }
   }
 }

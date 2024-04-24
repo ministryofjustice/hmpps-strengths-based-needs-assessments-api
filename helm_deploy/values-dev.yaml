@@ -15,6 +15,7 @@ generic-service:
 
   allowlist:
     capita-dev: 51.104.16.30/31
+    captia-further: 172.167.141.40/32
     neil-test: 51.155.102.238/32
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

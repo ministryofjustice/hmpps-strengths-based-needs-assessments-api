@@ -6,10 +6,11 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.confi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UseOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OneTimeLinkResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.SessionResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.UserSessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.LinkStatus
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.Session
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.SessionRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentFormInfoRepository
@@ -28,7 +29,8 @@ class SessionService(
   val assessmentSubjectService: AssessmentSubjectService,
 ) {
   fun createOneTimeLink(request: CreateOneTimeLinkRequest): OneTimeLinkResponse {
-    val oasysAssessment = oasysAssessmentService.findOrCreateAssessment(request.oasysAssessmentPk)
+    val oasysAssessment = oasysAssessmentService.find(request.oasysAssessmentPk)
+      ?: throw OasysAssessmentNotFoundException(request.oasysAssessmentPk)
 
     request.subjectDetails?.let {
       assessmentSubjectService.updateOrCreate(oasysAssessment.assessment, it)
@@ -54,7 +56,7 @@ class SessionService(
     return Duration.between(session.createdAt, LocalDateTime.now()).toHours() > applicationConfig.sessionMaxAge
   }
 
-  fun useOneTimeLink(uuid: UUID, request: UseOneTimeLinkRequest): SessionResponse? {
+  fun useOneTimeLink(uuid: UUID, request: UseOneTimeLinkRequest): UserSessionResponse? {
     val session = sessionRepository.findByLinkUuidAndLinkStatus(uuid, LinkStatus.UNUSED)
       ?: throw OneTimeLinkException("One time link has been used")
 
@@ -74,7 +76,7 @@ class SessionService(
 
     return sessionRepository.save(session).let {
       log.info("Used one time link: ${it.linkUuid}")
-      SessionResponse.from(it, it.oasysAssessment.assessment)
+      UserSessionResponse.from(it, it.oasysAssessment.assessment)
     }
   }
 

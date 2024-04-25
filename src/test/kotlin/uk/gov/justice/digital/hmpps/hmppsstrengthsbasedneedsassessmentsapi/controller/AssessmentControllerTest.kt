@@ -146,7 +146,7 @@ class AssessmentControllerTest(
         .uri(
           UriComponentsBuilder
             .fromPath(endpoint)
-            .queryParam("tag", "VALIDATED")
+            .queryParam("tag", "UNSIGNED")
             .build().toUriString(),
         )
         .header(HttpHeaders.CONTENT_TYPE, "application/json")

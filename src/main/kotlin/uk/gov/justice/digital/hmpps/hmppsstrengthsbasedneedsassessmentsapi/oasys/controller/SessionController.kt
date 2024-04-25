@@ -12,11 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateOneTimeLinkRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateSessionRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UseOneTimeLinkRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UserInformation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OneTimeLinkResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.SessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.UserSessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.SessionService
 import java.util.UUID
@@ -27,60 +24,6 @@ import java.util.UUID
 class SessionController(
   val sessionService: SessionService,
 ) {
-
-  // For future us: Migrate UI to call new endpoint and remove this one
-  @RequestMapping(path = ["/create"], method = [RequestMethod.POST])
-  @Operation(description = "Initialise a session for a given OASys assessment")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "200", description = "Session created"),
-    ],
-  )
-  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_CREATE_SESSION')")
-  fun createOneTimeLink(
-    @RequestBody
-    request: CreateSessionRequest,
-  ): OneTimeLinkResponse {
-    return sessionService.createOneTimeLink(
-      CreateOneTimeLinkRequest(
-        oasysAssessmentPk = request.oasysAssessmentPk,
-        user = UserInformation(
-          identifier = request.userSessionId,
-          displayName = request.userDisplayName,
-          accessMode = request.userAccess,
-        ),
-      ),
-    )
-  }
-
-  // For future us: Migrate UI to call new endpoint and remove this one
-  @RequestMapping(path = ["/{uuid}"], method = [RequestMethod.POST])
-  @Operation(description = "Use a one time link for a given session")
-  @ApiResponses(
-    value = [
-      ApiResponse(responseCode = "200", description = "One time link valid and has been marked as used"),
-    ],
-  )
-  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_READ')")
-  fun useOneTimeLink(
-    @Parameter(description = "One time link ID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
-    @PathVariable
-    uuid: UUID,
-    @RequestBody
-    request: UseOneTimeLinkRequest,
-  ): SessionResponse? {
-    return sessionService.useOneTimeLink(uuid, request)?.let {
-      SessionResponse(
-        it.uuid,
-        it.user.identifier,
-        it.user.displayName,
-        it.user.accessMode,
-        it.assessmentUUID,
-        it.oasysAssessmentPk,
-      )
-    }
-  }
-
   @RequestMapping(path = ["/one-time-link"], method = [RequestMethod.POST])
   @Operation(description = "Initialise a session for a given OASys assessment")
   @ApiResponses(

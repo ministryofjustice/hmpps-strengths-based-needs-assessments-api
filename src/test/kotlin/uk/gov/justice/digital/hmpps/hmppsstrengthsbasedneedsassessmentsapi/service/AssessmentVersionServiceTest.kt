@@ -42,7 +42,7 @@ class AssessmentVersionServiceTest {
     dataMappingService = dataMappingService,
   )
 
-  private val tag = Tag.VALIDATED
+  private val tag = Tag.UNSIGNED
 
   private val firstAssessmentVersion = AssessmentVersion(
     tag = tag,
@@ -258,7 +258,7 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it persists a cloned version with the provided tag`() {
       val originalVersion = AssessmentVersion(
-        tag = Tag.VALIDATED,
+        tag = Tag.UNSIGNED,
         answers = mapOf(
           "foo" to Answer(),
           "bar" to Answer(),

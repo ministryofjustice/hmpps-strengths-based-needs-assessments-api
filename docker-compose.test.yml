@@ -1,5 +1,3 @@
-#file: noinspection YAMLSchemaValidation
-version: '3.8'
 services:
   api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}

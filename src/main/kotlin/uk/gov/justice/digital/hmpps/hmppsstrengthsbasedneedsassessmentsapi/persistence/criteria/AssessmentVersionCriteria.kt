@@ -12,10 +12,9 @@ import java.util.UUID
 
 data class AssessmentVersionCriteria(
   val assessmentUuid: UUID,
-  val tag: Tag? = null,
+  val tags: Set<Tag>? = null,
   val after: Long? = null,
   val until: Long? = null,
-  val status: String? = null,
 ) {
   fun getSpecification(): Specification<AssessmentVersion> {
     return belongsToAssessment()
@@ -32,8 +31,8 @@ data class AssessmentVersionCriteria(
 
   private fun hasTag(): Specification<AssessmentVersion> {
     return Specification<AssessmentVersion> { root, _, builder ->
-      if (tag != null) {
-        builder.equal(root.get(AssessmentVersion_.tag), tag)
+      if (!tags.isNullOrEmpty()) {
+        builder.and(root.get(AssessmentVersion_.tag).`in`(tags))
       } else {
         null
       }
@@ -44,7 +43,7 @@ data class AssessmentVersionCriteria(
     return Specification<AssessmentVersion> { root, _, builder ->
       if (after != null) {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(after), ZoneId.systemDefault())
-        builder.greaterThan(root.get(AssessmentVersion_.createdAt), date)
+        builder.greaterThan(root.get(AssessmentVersion_.updatedAt), date)
       } else {
         null
       }
@@ -55,7 +54,7 @@ data class AssessmentVersionCriteria(
     return Specification<AssessmentVersion> { root, _, builder ->
       if (until != null) {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(until), ZoneId.systemDefault())
-        builder.lessThan(root.get(AssessmentVersion_.createdAt), date)
+        builder.lessThan(root.get(AssessmentVersion_.updatedAt), date)
       } else {
         null
       }

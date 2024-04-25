@@ -45,15 +45,13 @@ class AssessmentController(
     after: Long? = null,
     @Parameter(description = "Timestamp until which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")
     until: Long? = null,
-    @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "1706879012")
+    @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "UNSIGNED")
     tag: Tag? = null,
-    @Parameter(description = "Assessment status to filter by", `in` = ParameterIn.QUERY, example = "COMPLETE")
-    status: String? = null,
   ): AssessmentResponse {
-    val criteria = AssessmentVersionCriteria(assessmentUuid, tag, after, until, status)
+    val criteria = AssessmentVersionCriteria(assessmentUuid, tag?.let { setOf(tag) }, after, until)
     val assessmentVersion = assessmentVersionService.find(criteria)
       ?: throw AssessmentVersionNotFoundException(criteria)
-    return AssessmentResponse(assessmentVersion)
+    return AssessmentResponse.from(assessmentVersion)
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/answers"], method = [RequestMethod.POST])

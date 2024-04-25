@@ -4,7 +4,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 
 class UpdateAssessmentAnswersRequest(
-  val tags: List<Tag>,
+  val tags: Set<Tag>,
   val answersToAdd: Answers = emptyMap(),
   val answersToRemove: List<String> = emptyList(),
 )

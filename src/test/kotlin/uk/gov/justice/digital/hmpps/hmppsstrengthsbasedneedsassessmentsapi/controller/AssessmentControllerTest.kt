@@ -62,7 +62,7 @@ class AssessmentControllerTest(
         versionNumber = 3,
       )
       latestValidatedVersion = AssessmentVersion(
-        tag = Tag.VALIDATED,
+        tag = Tag.UNSIGNED,
         assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(1),
         answers = mapOf("q2" to Answer(value = "val2")),
@@ -70,7 +70,7 @@ class AssessmentControllerTest(
         versionNumber = 2,
       )
       oldValidatedVersion = AssessmentVersion(
-        tag = Tag.VALIDATED,
+        tag = Tag.UNSIGNED,
         assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(3),
         answers = mapOf("q3" to Answer(value = "val3")),

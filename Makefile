@@ -46,6 +46,9 @@ test-coverage: ## Runs the test suite and outputs a code coverage report.
 lint: ## Runs the Kotlin linter.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck detekt --parallel
 
+lint-fix: ## Runs the Kotlin linter and auto-fixes.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintFormat --parallel
+
 lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle detektBaseline --parallel
 

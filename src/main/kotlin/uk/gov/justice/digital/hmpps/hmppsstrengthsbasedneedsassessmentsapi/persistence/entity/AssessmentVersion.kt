@@ -44,7 +44,6 @@ typealias Answers = Map<String, Answer>
 typealias OasysEquivalent = Map<String, Any>
 
 enum class Tag {
-  VALIDATED, // to be removed once replaced by UNSIGNED in the UI
   UNVALIDATED,
   UNSIGNED,
   LOCKED_INCOMPLETE,
@@ -63,7 +62,7 @@ enum class Tag {
     }
 
     fun lockedTags(): Set<Tag> {
-      return Tag.values().subtract(setOf(VALIDATED, UNVALIDATED, UNSIGNED))
+      return Tag.values().subtract(setOf(UNSIGNED, UNVALIDATED))
     }
   }
 }

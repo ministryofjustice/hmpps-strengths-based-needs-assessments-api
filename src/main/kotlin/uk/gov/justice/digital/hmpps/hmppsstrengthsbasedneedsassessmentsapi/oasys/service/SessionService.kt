@@ -56,11 +56,17 @@ class SessionService(
     return Duration.between(session.createdAt, LocalDateTime.now()).toHours() > applicationConfig.sessionMaxAge
   }
 
-  fun useOneTimeLink(uuid: UUID, request: UseOneTimeLinkRequest): UserSessionResponse? {
-    val session = sessionRepository.findByLinkUuidAndLinkStatus(uuid, LinkStatus.UNUSED)
-      ?: throw OneTimeLinkException("One time link has been used")
+  fun useOneTimeLink(oneTimeLinkUuid: UUID, request: UseOneTimeLinkRequest): UserSessionResponse? {
+    val session = sessionRepository.findByLinkUuidAndLinkStatus(oneTimeLinkUuid, LinkStatus.UNUSED)
+      ?: run {
+        log.info("One time link already used: $oneTimeLinkUuid")
+        throw OneTimeLinkException()
+      }
 
-    if (sessionHasExpired(session)) throw OneTimeLinkException("One time link has expired")
+    if (sessionHasExpired(session)) {
+      log.info("One time link expired: $oneTimeLinkUuid")
+      throw OneTimeLinkException()
+    }
 
     session.linkStatus = LinkStatus.USED
 

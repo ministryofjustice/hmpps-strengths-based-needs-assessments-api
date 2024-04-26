@@ -85,3 +85,6 @@ logging:
       hibernate: INFO
     uk:
       gov: INFO
+
+springdoc:
+  default-produces-media-type: application/json

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.security.access.prepost.PreAuthorize
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.GetAssessmentResponse
@@ -37,11 +39,21 @@ class OasysAssessmentController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "Assessment found"),
-      ApiResponse(responseCode = "404", description = "No assessment was found", content = arrayOf(Content())),
-      ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
+      ApiResponse(
+        responseCode = "404",
+        description = "No assessment was found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
     ],
   )
-  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  @PreAuthorize(
+    "hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')",
+  )
   fun get(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
@@ -62,12 +74,24 @@ class OasysAssessmentController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "Assessment associated successfully"),
-      ApiResponse(responseCode = "404", description = "Previous assessment not found", content = arrayOf(Content())),
-      ApiResponse(responseCode = "409", description = "An association already exists for the provided OASys Assessment PK", content = arrayOf(Content())),
-      ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
+      ApiResponse(
+        responseCode = "404",
+        description = "Previous assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "An association already exists for the provided OASys Assessment PK",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
     ],
   )
-  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun create(
     @RequestBody
     request: CreateAssessmentRequest,
@@ -90,12 +114,24 @@ class OasysAssessmentController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "Assessment version locked successfully"),
-      ApiResponse(responseCode = "404", description = "Assessment not found", content = arrayOf(Content())),
-      ApiResponse(responseCode = "409", description = "The latest version of the assessment has already been locked", content = arrayOf(Content())),
-      ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The latest version of the assessment has already been locked",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
     ],
   )
-  @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun lock(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable

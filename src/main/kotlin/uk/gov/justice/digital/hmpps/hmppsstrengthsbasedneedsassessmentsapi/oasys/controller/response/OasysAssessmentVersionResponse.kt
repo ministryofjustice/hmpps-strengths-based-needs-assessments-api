@@ -5,15 +5,15 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class GetAssessmentResponse(
+data class OasysAssessmentVersionResponse(
   val sanAssessmentId: UUID,
   val sanAssessmentVersion: Long,
   val sanAssessmentData: AssessmentResponse,
   val lastUpdatedTimestamp: LocalDateTime,
 ) {
   companion object {
-    fun from(assessmentVersion: AssessmentVersion): GetAssessmentResponse {
-      return GetAssessmentResponse(
+    fun from(assessmentVersion: AssessmentVersion): OasysAssessmentVersionResponse {
+      return OasysAssessmentVersionResponse(
         assessmentVersion.assessment.uuid,
         assessmentVersion.versionNumber,
         AssessmentResponse.from(assessmentVersion),

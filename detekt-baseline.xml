@@ -15,12 +15,9 @@
     <ID>MaxLineLength:AssessmentController.kt$AssessmentController$@Parameter(description = "Timestamp after which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")</ID>
     <ID>MaxLineLength:AssessmentController.kt$AssessmentController$@Parameter(description = "Timestamp until which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")</ID>
     <ID>MaxLineLength:AssessmentController.kt$AssessmentController$ApiResponse(responseCode = "404", description = "No assessment was found for the specified criteria", content = arrayOf(Content()))</ID>
-    <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.Answers$assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))</ID>
     <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.GetAssessment$assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(latestValidatedVersion.answers.values.map { it.value })</ID>
     <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.GetAssessment$assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(latestVersion.answers.values.map { it.value })</ID>
     <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.GetAssessment$assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(oldValidatedVersion.answers.values.map { it.value })</ID>
-    <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.GetAssessment$assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk))</ID>
-    <ID>MaxLineLength:AssessmentControllerTest.kt$AssessmentControllerTest.GetAssessment$assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(latestValidatedVersion.createdAt.withNano(0))</ID>
     <ID>MaxLineLength:AssessmentFormInfo.kt$AssessmentFormInfo$@JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", unique = true, updatable = false, nullable = false)</ID>
     <ID>MaxLineLength:AssessmentService.kt$AssessmentService$return assessmentRepository.findByUuid(uuid) ?: throw AssessmentNotFoundException("No assessment found with UUID $uuid")</ID>
     <ID>MaxLineLength:AssessmentVersionRepository.kt$AssessmentVersionRepository$interface</ID>
@@ -32,8 +29,6 @@
     <ID>MaxLineLength:DataMappingServiceTest.kt$DataMappingServiceTest.GetOasysEquivalent$every { mockSectionMappingTwo.map(any&lt;AnswersProvider&gt;()) } returns mapOf("oasys-key-2" to listOf("val-2", "val-3"))</ID>
     <ID>MaxLineLength:OasysAssessmentAlreadyExistsException.kt$OasysAssessmentAlreadyExistsException : ConflictException</ID>
     <ID>MaxLineLength:OasysAssessmentAlreadyLockedException.kt$OasysAssessmentAlreadyLockedException : ConflictException</ID>
-    <ID>MaxLineLength:OasysAssessmentController.kt$OasysAssessmentController$ApiResponse(responseCode = "409", description = "An association already exists for the provided OASys Assessment PK", content = arrayOf(Content()))</ID>
-    <ID>MaxLineLength:OasysAssessmentController.kt$OasysAssessmentController$ApiResponse(responseCode = "409", description = "The latest version of the assessment has already been locked", content = arrayOf(Content()))</ID>
     <ID>MaxLineLength:OasysAssessmentService.kt$OasysAssessmentService$assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = assessment))</ID>
     <ID>MaxLineLength:OasysAssessmentService.kt$OasysAssessmentService$return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) ?: createAssessmentWithOasysId(oasysAssessmentPk)</ID>
     <ID>MaxLineLength:OasysAssessmentService.kt$OasysAssessmentService$val persistedAssessment = assessmentService.save(assessment).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }</ID>

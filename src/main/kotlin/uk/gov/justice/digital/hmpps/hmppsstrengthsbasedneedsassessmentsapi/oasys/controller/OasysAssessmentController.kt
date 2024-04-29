@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.CreateAssessmentResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.GetAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
@@ -58,7 +59,7 @@ class OasysAssessmentController(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
     oasysAssessmentPK: String,
-  ): GetAssessmentResponse {
+  ): OasysAssessmentVersionResponse {
     val oasysAssessment = oasysAssessmentService.find(oasysAssessmentPK)
       ?: throw OasysAssessmentNotFoundException(oasysAssessmentPK)
 
@@ -66,7 +67,7 @@ class OasysAssessmentController(
     val assessmentVersion = assessmentVersionService.find(criteria)
       ?: throw AssessmentVersionNotFoundException(criteria)
 
-    return GetAssessmentResponse.from(assessmentVersion)
+    return OasysAssessmentVersionResponse.from(assessmentVersion)
   }
 
   @RequestMapping(path = ["/create"], method = [RequestMethod.POST])
@@ -95,7 +96,7 @@ class OasysAssessmentController(
   fun create(
     @RequestBody
     request: CreateAssessmentRequest,
-  ): CreateAssessmentResponse {
+  ): OasysAssessmentResponse {
     val assessment = oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
 
     request.subjectDetails?.let {
@@ -106,7 +107,41 @@ class OasysAssessmentController(
     val assessmentVersion = assessmentVersionService.find(criteria)
       ?: throw AssessmentVersionNotFoundException(criteria)
 
-    return CreateAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
+    return OasysAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/sign"], method = [RequestMethod.POST])
+  @Operation(description = "Signs the latest version of an assessment identified by the provided OASys Assessment PK")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version signed successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The assessment could not be signed. See details in error message.",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun sign(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+    @RequestBody
+    request: SignAssessmentRequest,
+  ): OasysAssessmentResponse {
+    val signedVersion = oasysAssessmentService.sign(oasysAssessmentPK, request.counterSignType)
+    return OasysAssessmentResponse.from(signedVersion.assessment.uuid, signedVersion.versionNumber)
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])

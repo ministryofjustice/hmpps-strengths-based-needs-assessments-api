@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
@@ -14,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 
 @Service
 class OasysAssessmentService(
@@ -62,20 +66,41 @@ class OasysAssessmentService(
     return assessment
   }
 
-  fun checkAlreadyLocked(assessmentVersion: AssessmentVersion, oasysAssessmentPk: String) {
-    if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
-      throw OasysAssessmentAlreadyLockedException(oasysAssessmentPk)
+  fun sign(oasysAssessmentPk: String, counterSignType: CounterSignType): AssessmentVersion {
+    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
+
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
+    val assessmentVersion = assessmentVersionService.find(criteria)
+      ?: throw AssessmentVersionNotFoundException(criteria)
+
+    if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
+      throw ConflictException("The current assessment version is not completed.")
     }
+
+    val tag = when (counterSignType) {
+      CounterSignType.SELF -> Tag.SELF_SIGNED
+      CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
+    }
+
+    if (assessmentVersion.tag == tag) {
+      throw ConflictException("The current assessment version is already ${tag.name}.")
+    }
+
+    return assessmentVersionService.cloneAndTag(assessmentVersion, tag)
   }
 
   fun lock(oasysAssessmentPk: String): AssessmentVersion {
-    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk)
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
+    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
 
-    return assessmentVersionService.find(criteria)?.let {
-      checkAlreadyLocked(it, oasysAssessmentPk)
-      assessmentVersionService.cloneAndTag(it, Tag.LOCKED_INCOMPLETE)
-    } ?: throw AssessmentVersionNotFoundException(criteria)
+    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
+    val assessmentVersion = assessmentVersionService.find(criteria)
+      ?: throw AssessmentVersionNotFoundException(criteria)
+
+    if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
+      throw OasysAssessmentAlreadyLockedException(oasysAssessmentPk)
+    }
+
+    return assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED_INCOMPLETE)
   }
 
   companion object {

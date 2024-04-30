@@ -489,6 +489,14 @@ class OasysAssessmentControllerTest(
 
     @Test
     fun `it returns Conflict when the assessment is already locked`() {
+      assessment.assessmentVersions = assessment.assessmentVersions + AssessmentVersion(
+        assessment = assessment,
+        createdAt = LocalDateTime.now().minusHours(1),
+        tag = Tag.LOCKED_INCOMPLETE,
+        versionNumber = 2,
+      )
+      assessmentRepository.save(assessment)
+
       webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))

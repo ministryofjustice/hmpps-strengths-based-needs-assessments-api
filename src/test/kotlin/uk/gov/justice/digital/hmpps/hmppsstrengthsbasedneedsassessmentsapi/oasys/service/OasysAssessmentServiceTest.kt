@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyLockedException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -52,7 +51,6 @@ class OasysAssessmentServiceTest {
 
   @BeforeEach
   fun setUp() {
-    println("clearing mocks")
     clearAllMocks()
   }
 
@@ -316,7 +314,8 @@ class OasysAssessmentServiceTest {
       every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns lockedVersion
       every { assessmentVersionService.cloneAndTag(any(), any()) } throws RuntimeException()
 
-      assertThrows<OasysAssessmentAlreadyLockedException> { oasysAssessmentService.lock(oasysAssessmentPk) }
+      val exception = assertThrows<ConflictException> { oasysAssessmentService.lock(oasysAssessmentPk) }
+      assertThat(exception.message).isEqualTo("OASys assessment with ID $oasysAssessmentPk has already been locked")
 
       verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
     }

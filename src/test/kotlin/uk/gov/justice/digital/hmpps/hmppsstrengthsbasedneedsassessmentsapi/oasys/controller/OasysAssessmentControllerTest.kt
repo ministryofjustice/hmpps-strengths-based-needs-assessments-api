@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
@@ -65,7 +64,7 @@ class OasysAssessmentControllerTest(
     }
 
     @Test
-    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
       val request = CreateAssessmentRequest(
         oasysAssessmentPk = oasysAss1.oasysAssessmentPk,
         previousOasysAssessmentPk = oasysAss2.oasysAssessmentPk,
@@ -88,7 +87,7 @@ class OasysAssessmentControllerTest(
 
       webTestClient.post().uri(endpoint)
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .bodyValue(request)
         .exchange()
         .expectStatus().isEqualTo(409)
@@ -104,7 +103,7 @@ class OasysAssessmentControllerTest(
 
       webTestClient.post().uri(endpoint)
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .bodyValue(request)
         .exchange()
         .expectStatus().isOk
@@ -141,7 +140,7 @@ class OasysAssessmentControllerTest(
 
       webTestClient.post().uri(endpoint)
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .bodyValue(request)
         .exchange()
         .expectStatus().isOk
@@ -323,7 +322,7 @@ class OasysAssessmentControllerTest(
     }
 
     @Test
-    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
       val request = """
         {
           "oasysAssessmentPk": "${oasysAssessment.oasysAssessmentPk}",
@@ -397,7 +396,7 @@ class OasysAssessmentControllerTest(
 
       val response = webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .bodyValue(request)
         .exchange()
         .expectStatus().isEqualTo(409)
@@ -448,7 +447,7 @@ class OasysAssessmentControllerTest(
     }
 
     @Test
-    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
+    fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
       webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation())
@@ -460,10 +459,10 @@ class OasysAssessmentControllerTest(
     fun `it creates and returns new locked version of the assessment`() {
       val response = webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .exchange()
         .expectStatus().isOk
-        .expectBody(AssessmentResponse::class.java)
+        .expectBody(OasysAssessmentResponse::class.java)
         .returnResult()
         .responseBody
 
@@ -478,13 +477,10 @@ class OasysAssessmentControllerTest(
       assertThat(unvalidatedVersion).isNotNull
       assertThat(lockedVersion).isNotNull
 
-      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-      assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
-      assertThat(response?.metaData?.oasys_pks).isEqualTo(listOf(oasysAssessment.oasysAssessmentPk))
-      assertThat(response?.metaData?.versionTag).isEqualTo(Tag.LOCKED_INCOMPLETE)
-      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(lockedVersion!!.createdAt.withNano(0))
-      assertThat(response?.metaData?.versionUuid).isEqualTo(lockedVersion.uuid)
-      assertThat(response?.assessment?.get("q1")?.value).isEqualTo("val1")
+      assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
+      assertThat(response?.sanAssessmentVersion).isEqualTo(lockedVersion?.versionNumber).isEqualTo(2)
+      assertThat(response?.sentencePlanId).isNull()
+      assertThat(response?.sentencePlanVersion).isNull()
     }
 
     @Test
@@ -499,7 +495,7 @@ class OasysAssessmentControllerTest(
 
       webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
         .exchange()
         .expectStatus().isEqualTo(409)
     }

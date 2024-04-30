@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
@@ -171,7 +170,8 @@ class OasysAssessmentController(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
     oasysAssessmentPK: String,
-  ): AssessmentResponse {
-    return AssessmentResponse.from(oasysAssessmentService.lock(oasysAssessmentPK))
+  ): OasysAssessmentResponse {
+    val lockedVersion = oasysAssessmentService.lock(oasysAssessmentPK)
+    return OasysAssessmentResponse.from(lockedVersion.assessment.uuid, lockedVersion.versionNumber)
   }
 }

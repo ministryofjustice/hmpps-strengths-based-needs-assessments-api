@@ -63,3 +63,9 @@ tasks {
     )
   }
 }
+
+detekt {
+  config.setFrom("detekt.yml")
+  baseline = file("detekt-baseline.xml")
+  basePath = "./"
+}

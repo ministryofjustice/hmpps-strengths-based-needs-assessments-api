@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpHeaders
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -29,7 +28,6 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 
-@Transactional
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController")
 class AssessmentControllerTest(
@@ -41,8 +39,7 @@ class AssessmentControllerTest(
   @Nested
   @DisplayName("/assessment/{assessmentUuid}")
   inner class GetAssessment {
-    private val assessmentUuid = UUID.randomUUID().toString()
-    private val endpoint = "/assessment/$assessmentUuid"
+    private val endpoint = { "/assessment/${assessment.uuid}" }
 
     private lateinit var assessment: Assessment
     private lateinit var latestVersion: AssessmentVersion
@@ -51,9 +48,9 @@ class AssessmentControllerTest(
     private lateinit var oasysAss1: OasysAssessment
     private lateinit var oasysAss2: OasysAssessment
 
-    @BeforeAll
+    @BeforeEach
     fun setUp() {
-      assessment = Assessment(uuid = UUID.fromString(assessmentUuid))
+      assessment = Assessment(uuid = UUID.randomUUID())
 
       latestVersion = AssessmentVersion(
         assessment = assessment,
@@ -90,7 +87,7 @@ class AssessmentControllerTest(
 
     @Test
     fun `it returns Unauthorized when there is no JWT`() {
-      webTestClient.get().uri(endpoint)
+      webTestClient.get().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .exchange()
         .expectStatus().isUnauthorized
@@ -98,7 +95,7 @@ class AssessmentControllerTest(
 
     @Test
     fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_READ' is not present on the JWT`() {
-      webTestClient.get().uri(endpoint)
+      webTestClient.get().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation())
         .exchange()
@@ -116,7 +113,7 @@ class AssessmentControllerTest(
 
     @Test
     fun `it returns an assessment for a given assessment UUID`() {
-      val response = webTestClient.get().uri(endpoint)
+      val response = webTestClient.get().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
         .exchange()
@@ -145,7 +142,7 @@ class AssessmentControllerTest(
       val response = webTestClient.get()
         .uri(
           UriComponentsBuilder
-            .fromPath(endpoint)
+            .fromPath(endpoint())
             .queryParam("tag", "UNSIGNED")
             .build().toUriString(),
         )
@@ -181,7 +178,7 @@ class AssessmentControllerTest(
       val response = webTestClient.get()
         .uri(
           UriComponentsBuilder
-            .fromPath(endpoint)
+            .fromPath(endpoint())
             .queryParam("until", LocalDateTime.now().minusDays(2).toEpochSecond(ZoneOffset.UTC))
             .build().toUriString(),
         )
@@ -213,7 +210,7 @@ class AssessmentControllerTest(
       webTestClient.get()
         .uri(
           UriComponentsBuilder
-            .fromPath(endpoint)
+            .fromPath(endpoint())
             .queryParam("after", LocalDateTime.now().plusDays(1).toEpochSecond(ZoneOffset.UTC))
             .build().toUriString(),
         )
@@ -232,7 +229,7 @@ class AssessmentControllerTest(
     private lateinit var unsignedAssessmentVersion: AssessmentVersion
     private lateinit var lockedAssessmentVersion: AssessmentVersion
 
-    @BeforeAll
+    @BeforeEach
     fun setUp() {
       assessment = Assessment()
       unvalidatedAssessmentVersion = AssessmentVersion(
@@ -337,8 +334,8 @@ class AssessmentControllerTest(
 
       val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(unvalidatedAssessmentVersion.uuid)
 
-      assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2", "field_name"))
-      assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2", "TEST"))
+      assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2"))
+      assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2"))
     }
 
     @Test

@@ -13,18 +13,27 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyLockedException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.util.UUID
+import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("OasysAssessmentService")
@@ -43,6 +52,7 @@ class OasysAssessmentServiceTest {
 
   @BeforeEach
   fun setUp() {
+    println("clearing mocks")
     clearAllMocks()
   }
 
@@ -176,6 +186,96 @@ class OasysAssessmentServiceTest {
       assertThat(association.captured.oasysAssessmentPk).isEqualTo(request.oasysAssessmentPk)
       assertThat(association.captured.assessment).isEqualTo(assessment)
       assertThat(result.uuid).isEqualTo(assessment.uuid)
+    }
+  }
+
+  @Nested
+  @DisplayName("sign")
+  inner class Sign {
+    private val unsignedVersion = AssessmentVersion(
+      assessment = assessment,
+      tag = Tag.UNSIGNED,
+      answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+    )
+
+    private fun getExpectedTag(counterSignType: CounterSignType?): Tag {
+      return when (counterSignType) {
+        CounterSignType.SELF -> Tag.SELF_SIGNED
+        CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
+        else -> fail("Unhandled countersign type")
+      }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CounterSignType::class)
+    fun `it clones and signs an assessment successfully`(counterSignType: CounterSignType) {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+      val signedVersion = AssessmentVersion()
+      val expectedTag = getExpectedTag(counterSignType)
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns unsignedVersion
+      every { assessmentVersionService.cloneAndTag(unsignedVersion, expectedTag) } returns signedVersion
+
+      val result = oasysAssessmentService.sign(oasysAssessmentPk, counterSignType)
+
+      verify(exactly = 1) { assessmentVersionService.cloneAndTag(unsignedVersion, expectedTag) }
+
+      assertThat(result).isEqualTo(signedVersion)
+    }
+
+    @ParameterizedTest
+    @EnumSource(CounterSignType::class)
+    fun `it throws an exception when the assessment is already signed`(counterSignType: CounterSignType) {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+      val signedVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = getExpectedTag(counterSignType),
+        answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+      )
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns signedVersion
+      every { assessmentVersionService.cloneAndTag(any(), any()) } throws RuntimeException()
+
+      val exception = assertThrows<ConflictException> { oasysAssessmentService.sign(oasysAssessmentPk, counterSignType) }
+      assertEquals("The current assessment version is already ${signedVersion.tag.name}.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
+    }
+
+    @Test
+    fun `it throws an exception when the assessment is not completed`() {
+      val oasysAssessment = OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      )
+
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns oasysAssessment
+      every { assessmentVersionService.find(match { it.assessmentUuid == assessment.uuid }) } returns assessmentVersion
+      every { assessmentVersionService.cloneAndTag(any(), any()) } throws RuntimeException()
+
+      val exception = assertThrows<ConflictException> { oasysAssessmentService.sign(oasysAssessmentPk, CounterSignType.SELF) }
+      assertEquals("The current assessment version is not completed.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
+    }
+
+    @Test
+    fun `it throws an exception when no OASys assessment is found`() {
+      every {
+        oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
+      } throws OasysAssessmentNotFoundException("1234567890")
+
+      assertThrows<OasysAssessmentNotFoundException> { oasysAssessmentService.sign(oasysAssessmentPk, CounterSignType.SELF) }
+
+      verify(exactly = 0) { assessmentVersionService.cloneAndTag(any(), any()) }
     }
   }
 

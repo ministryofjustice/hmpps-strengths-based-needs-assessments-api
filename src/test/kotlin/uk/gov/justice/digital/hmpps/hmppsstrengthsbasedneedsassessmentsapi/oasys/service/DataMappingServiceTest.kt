@@ -30,7 +30,7 @@ class DataMappingServiceTest {
   @BeforeTest
   fun setUp() {
     clearAllMocks()
-    val testConfig = FormConfig("1.0", mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower)))
+    val testConfig = FormConfig("form-name", "1.0", mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower)))
     every { mockFormConfigProvider.get(match { formInfo -> formInfo.formVersion === "1.0" }) } returns testConfig
   }
 

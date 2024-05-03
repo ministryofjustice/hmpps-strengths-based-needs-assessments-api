@@ -22,29 +22,55 @@ class NewSections : SectionMapping() {
     )
   }
 
-  private fun qLinkedToRosh(): Any { return "" }
+  private fun qLinkedToRosh(): Any {
+    return ""
+  }
 
-  private fun qLinkedToReoffending(): Any { return "" }
+  private fun qLinkedToReoffending(): Any {
+    return ""
+  }
 
-  private fun qStrength(): Any { return "" }
+  private fun qStrength(): Any {
+    return ""
+  }
 
-  private fun qNotRelatedToRisk(): Any { return "" }
+  private fun qNotRelatedToRisk(): Any {
+    return ""
+  }
 
-  private fun qAccommodationComplete(): Any { return "" }
+  private fun qAccommodationComplete(): Any {
+    return ""
+  }
 
-  private fun qEducationEmploymentComplete(): Any { return "" }
+  private fun qEducationEmploymentComplete(): Any {
+    return ""
+  }
 
-  private fun qFinanceComplete(): Any { return "" }
+  private fun qFinanceComplete(): Any {
+    return ""
+  }
 
-  private fun qDrugsComplete(): Any { return "" }
+  private fun qDrugsComplete(): Any {
+    return ""
+  }
 
-  private fun qAlcoholCompletes(): Any { return "" }
+  private fun qAlcoholCompletes(): Any {
+    return ""
+  }
 
-  private fun qHealthWellbeingComplete(): Any { return "" }
+  private fun qHealthWellbeingComplete(): Any {
+    return ""
+  }
 
-  private fun qPersonalRelationshipsComplete(): Any { return "" }
+  private fun qPersonalRelationshipsComplete(): Any {
+    return ""
+  }
 
-  private fun qThinkingBehavioursAttitudesComplete(): Any { return "" }
+  private fun qThinkingBehavioursAttitudesComplete(): Any {
+    return ""
+  }
 
-  private fun qOffenceAnalysisComplete(): Any { return "" }
+  private fun qOffenceAnalysisComplete(): Any {
+    return ""
+  }
 }

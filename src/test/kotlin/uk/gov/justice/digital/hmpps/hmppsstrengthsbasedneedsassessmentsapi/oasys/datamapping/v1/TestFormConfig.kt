@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field as FormField
 
 val testFormConfig = FormConfig(
+  "form-name",
   "1.0",
   mapOf(
     Field.CURRENT_ACCOMMODATION.lower to FormField(

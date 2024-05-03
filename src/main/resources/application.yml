@@ -78,6 +78,7 @@ app:
     max-age: ${session.max-age:12}
   form-config:
     base-url: ${form-config.base-url:http://localhost:3000/form}
+    form-name: ${form-config.form-name:sbna-poc}
 
 logging:
   level:

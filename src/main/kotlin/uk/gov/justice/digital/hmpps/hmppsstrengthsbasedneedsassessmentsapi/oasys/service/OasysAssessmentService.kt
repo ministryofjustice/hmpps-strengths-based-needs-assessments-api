@@ -25,15 +25,13 @@ class OasysAssessmentService(
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentPk: String): OasysAssessment {
-    val assessment = Assessment()
-    assessment.assessmentVersions = listOf(
-      AssessmentVersion(assessment = assessment, versionNumber = 0, tag = Tag.UNVALIDATED),
-      AssessmentVersion(assessment = assessment, versionNumber = 1, tag = Tag.UNSIGNED),
-    )
-    assessment.oasysAssessments = listOf(OasysAssessment(oasysAssessmentPk = oasysAssessmentPk, assessment = assessment))
-    val persistedAssessment = assessmentService.save(assessment).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
-
-    return persistedAssessment.oasysAssessments.first()
+    val assessment = assessmentService.createAssessment()
+    return oasysAssessmentRepository.save(
+      OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
+        assessment = assessment,
+      ),
+    ).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
   }
 
   fun findOrCreateAssessment(oasysAssessmentPk: String): OasysAssessment {

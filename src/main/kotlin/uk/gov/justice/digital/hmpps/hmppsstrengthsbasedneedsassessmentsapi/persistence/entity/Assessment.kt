@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import java.time.LocalDateTime
 import java.util.UUID
@@ -39,4 +40,20 @@ data class Assessment(
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var oasysAssessments: List<OasysAssessment> = listOf(),
-)
+) {
+  companion object {
+    fun newAssessment(formConfig: FormConfig): Assessment {
+      val assessment = Assessment()
+      assessment.info = AssessmentFormInfo(
+        formName = formConfig.name,
+        formVersion = formConfig.version,
+        assessment = assessment,
+      )
+      assessment.assessmentVersions = listOf(
+        AssessmentVersion(assessment = assessment, versionNumber = 0, tag = Tag.UNVALIDATED),
+        AssessmentVersion(assessment = assessment, versionNumber = 1, tag = Tag.UNSIGNED),
+      )
+      return assessment
+    }
+  }
+}

@@ -78,7 +78,12 @@ class ControllerAdvice {
     log.error("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body(ErrorResponse())
+      .body(
+        ErrorResponse(
+          userMessage = "Unexpected error",
+          developerMessage = ex.message ?: "",
+        ),
+      )
   }
 
   companion object {

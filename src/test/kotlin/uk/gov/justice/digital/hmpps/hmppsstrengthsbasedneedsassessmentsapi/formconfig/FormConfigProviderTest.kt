@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Nested
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import java.net.http.HttpClient
@@ -17,7 +18,13 @@ import kotlin.test.assertFailsWith
 
 class FormConfigProviderTest {
   private val mockHttpClient: HttpClient = mockk()
-  private val sut = FormConfigProvider(mockHttpClient, "http://test-url", jacksonObjectMapper())
+  private val appConfig: ApplicationConfig = ApplicationConfig(
+    formBaseUrl = "http://test-url",
+    formConfigBaseUrl = "http://test-url",
+    formName = "form-name",
+    sessionMaxAge = 1,
+  )
+  private val sut = FormConfigProvider(appConfig, mockHttpClient, jacksonObjectMapper())
 
   @BeforeTest
   fun setUp() {
@@ -48,6 +55,7 @@ class FormConfigProviderTest {
       every { mockResponse.body() } returns
         """
         {
+          "name": "test-form-name",
           "version": "1.1",
           "fields": {
             "test-field": {
@@ -65,7 +73,7 @@ class FormConfigProviderTest {
       every { mockHttpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns mockResponse
 
       assertEquals(
-        FormConfig("1.1", mapOf("test-field" to Field("test-field", listOf(Option("val-1"))))),
+        FormConfig("test-form-name", "1.1", mapOf("test-field" to Field("test-field", listOf(Option("val-1"))))),
         sut.get(AssessmentFormInfo(formVersion = "1.1", formName = "test-form-name")),
       )
 

@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.form
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import java.net.URI
@@ -13,6 +13,7 @@ import java.net.http.HttpResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class FormConfig(
+  val name: String,
   val version: String,
   val fields: Map<String, Field> = emptyMap(),
 )
@@ -30,14 +31,26 @@ data class Option(
 
 @Component
 class FormConfigProvider(
+  val appConfig: ApplicationConfig,
   val client: HttpClient,
-  @Value("\${app.form-config.base-url}")
-  val formConfigBaseUrl: String,
   val decoder: ObjectMapper,
 ) {
   fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("$formConfigBaseUrl/${formInfo.formName}/${formInfo.formVersion.replace(".", "/")}/fields"))
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formName}/${formInfo.formVersion.replace(".", "/")}/fields"))
+      .build()
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+    if (response.statusCode() != 200) {
+      throw FormConfigNotFoundException("Unable to fetch form config from ${request.uri()}")
+    }
+
+    return decoder.readValue(response.body(), FormConfig::class.java)
+  }
+
+  fun getLatest(): FormConfig {
+    val request = HttpRequest.newBuilder()
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/${appConfig.formName}/fields"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import java.util.UUID
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 @SwaggerTag(name = "Assessment")
 @RequestMapping("/assessment")
 class AssessmentController(
+  val assessmentService: AssessmentService,
   val assessmentVersionService: AssessmentVersionService,
 ) {
   @RequestMapping(path = ["/{assessmentUuid}"], method = [RequestMethod.GET])
@@ -69,6 +71,8 @@ class AssessmentController(
     @RequestBody
     request: UpdateAssessmentAnswersRequest,
   ) {
-    assessmentVersionService.updateAnswers(assessmentUuid, request)
+    assessmentService.findByUuid(assessmentUuid).let {
+      assessmentVersionService.updateAnswers(it, request)
+    }
   }
 }

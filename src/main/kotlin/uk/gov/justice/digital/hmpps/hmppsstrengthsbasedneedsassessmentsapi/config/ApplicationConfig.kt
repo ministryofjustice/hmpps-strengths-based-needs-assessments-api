@@ -10,6 +10,12 @@ class ApplicationConfig(
   @Value("\${app.link.base-url}")
   val formBaseUrl: String,
 
+  @Value("\${app.form-config.base-url}")
+  val formConfigBaseUrl: String,
+
+  @Value("\${app.form-config.form-name}")
+  val formName: String,
+
   @Value("\${app.session.max-age}")
   val sessionMaxAge: Int,
 ) {

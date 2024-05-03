@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
@@ -33,11 +34,9 @@ import java.util.UUID
 @ExtendWith(MockKExtension::class)
 @DisplayName("AssessmentVersionService")
 class AssessmentVersionServiceTest {
-  private val assessmentService: AssessmentService = mockk()
   private val assessmentVersionRepository: AssessmentVersionRepository = mockk()
   private val dataMappingService: DataMappingService = mockk()
   private val assessmentVersionService = AssessmentVersionService(
-    assessmentService = assessmentService,
     assessmentVersionRepository = assessmentVersionRepository,
     dataMappingService = dataMappingService,
   )
@@ -176,6 +175,24 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
+  @DisplayName("setOasysEquivalent")
+  inner class SetOasysEquivalent {
+    private val assessmentVersion = AssessmentVersion()
+    private val oasysEquivalent: OasysEquivalent = mapOf("foo" to "bar")
+
+    @Test
+    fun `it sets OASys equivalent data`() {
+      every { dataMappingService.getOasysEquivalent(match { it.uuid == assessmentVersion.uuid }) } returns oasysEquivalent
+
+      assessmentVersionService.setOasysEquivalent(assessmentVersion)
+
+      assertThat(assessmentVersion.oasys_equivalent).isEqualTo(oasysEquivalent)
+
+      verify(exactly = 1) { dataMappingService.getOasysEquivalent(any()) }
+    }
+  }
+
+  @Nested
   @DisplayName("updateAnswers")
   inner class UpdateAnswers {
     private val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
@@ -218,13 +235,12 @@ class AssessmentVersionServiceTest {
       every {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
       } returns assessmentVersions.totalElements
-      every { assessmentService.findByUuid(assessment.uuid) } returns assessment
       every { dataMappingService.getOasysEquivalent(any()) } returns oasysEquivalents
 
       val savedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
 
-      assessmentVersionService.updateAnswers(assessment.uuid, request)
+      assessmentVersionService.updateAnswers(assessment, request)
 
       assertThat(savedVersion.captured.assessment).isEqualTo(assessment)
       assertThat(savedVersion.captured.tag).isEqualTo(tag)
@@ -243,10 +259,9 @@ class AssessmentVersionServiceTest {
         answersToRemove = listOf("baz"),
       )
 
-      assertThrows<ConflictException> { assessmentVersionService.updateAnswers(assessment.uuid, request) }
+      assertThrows<ConflictException> { assessmentVersionService.updateAnswers(assessment, request) }
 
       verify(exactly = 0) { assessmentVersionRepository.findAll(any<Specification<AssessmentVersion>>(), any<PageRequest>()) }
-      verify(exactly = 0) { assessmentService.findByUuid(any()) }
       verify(exactly = 0) { dataMappingService.getOasysEquivalent(any()) }
       verify(exactly = 0) { assessmentVersionRepository.save(any()) }
     }

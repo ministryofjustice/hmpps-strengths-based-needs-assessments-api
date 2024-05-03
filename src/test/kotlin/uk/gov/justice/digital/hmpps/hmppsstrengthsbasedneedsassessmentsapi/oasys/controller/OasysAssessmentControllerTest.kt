@@ -404,7 +404,7 @@ class OasysAssessmentControllerTest(
         .returnResult()
         .responseBody
 
-      assertThat(response.developerMessage).isEqualTo("The current assessment version is already SELF_SIGNED.")
+      assertThat(response?.developerMessage).isEqualTo("The current assessment version is already SELF_SIGNED.")
     }
   }
 

@@ -59,12 +59,16 @@ class OasysAssessmentServiceTest {
   inner class CreateAssessmentWithOasysId {
     @Test
     fun `it creates an assessment for a given OASys assessment PK`() {
-      every { assessmentService.save(any()) } returnsArgument 0
+      val assessment = Assessment()
+      every { assessmentService.createAssessment() } returns assessment
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
 
       val result = oasysAssessmentService.createAssessmentWithOasysId(oasysAssessmentPk)
 
       assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      verify { assessmentService.save(any()) }
+      assertThat(result.assessment).isEqualTo(assessment)
+
+      verify(exactly = 1) { assessmentService.createAssessment() }
     }
   }
 
@@ -86,13 +90,18 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it creates an assessment if unable to find one for a given OASys assessment PK`() {
-      every { assessmentService.save(any()) } returnsArgument 0
+      val assessment = Assessment()
+
+      every { assessmentService.createAssessment() } returns assessment
       every { oasysAssessmentRepository.findByOasysAssessmentPk(any()) } returns null
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
 
       val result = oasysAssessmentService.findOrCreateAssessment(oasysAssessmentPk)
 
       assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      verify { assessmentService.save(any()) }
+      assertThat(result.assessment).isEqualTo(assessment)
+
+      verify(exactly = 1) { assessmentService.createAssessment() }
     }
   }
 
@@ -151,10 +160,13 @@ class OasysAssessmentServiceTest {
       every {
         oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk)
       } returns null
-      every { assessmentService.save(any()) } returns assessment
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+      every { assessmentService.createAssessment() } returns assessment
       every { assessmentVersionService.find(any()) } returns assessmentVersion
 
       val result = oasysAssessmentService.associate(request.oasysAssessmentPk)
+
+      verify(exactly = 1) { assessmentService.createAssessment() }
 
       assertThat(result.uuid).isEqualTo(assessment.uuid)
     }

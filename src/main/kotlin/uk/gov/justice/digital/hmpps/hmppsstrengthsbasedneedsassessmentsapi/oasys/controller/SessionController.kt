@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateOneTimeLinkRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.UseOneTimeLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OneTimeLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.UserSessionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.SessionService
@@ -44,10 +43,8 @@ class SessionController(
     @Parameter(description = "One time link ID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     uuid: UUID,
-    @RequestBody
-    request: UseOneTimeLinkRequest,
   ): UserSessionResponse? {
-    return sessionService.useOneTimeLink(uuid, request)
+    return sessionService.useOneTimeLink(uuid)
   }
 
   @RequestMapping(path = ["/one-time-link"], method = [RequestMethod.POST])

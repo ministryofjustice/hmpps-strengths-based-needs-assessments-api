@@ -15,11 +15,9 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.servi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @Service
 class AssessmentVersionService(
-  val assessmentService: AssessmentService,
   val assessmentVersionRepository: AssessmentVersionRepository,
   val dataMappingService: DataMappingService,
 ) {
@@ -60,27 +58,30 @@ class AssessmentVersionService(
     return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
   }
 
-  fun updateAnswers(assessmentUuid: UUID, request: UpdateAssessmentAnswersRequest) {
+  fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
     if (request.tags.intersect(Tag.lockedTags()).isNotEmpty()) {
       throw ConflictException("Locked versions cannot be updated")
     }
 
-    log.info("Adding answers to assessment with UUID $assessmentUuid for tags ${request.tags}")
+    log.info("Adding answers to assessment with UUID ${assessment.uuid} for tags ${request.tags}")
 
-    assessmentService.findByUuid(assessmentUuid).let {
-      request.tags.map { tag ->
-        clonePreviousOrCreateNew(tag, it)?.let {
-          it.answers = it.answers.plus(request.answersToAdd)
-            .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
-          it.oasys_equivalent = dataMappingService.getOasysEquivalent(it)
-          it.updatedAt = LocalDateTime.now()
+    request.tags.map { tag ->
+      clonePreviousOrCreateNew(tag, assessment)?.let {
+        it.answers = it.answers.plus(request.answersToAdd)
+          .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
+        it.updatedAt = LocalDateTime.now()
+        setOasysEquivalent(it)
 
-          assessmentVersionRepository.save(it)
+        assessmentVersionRepository.save(it)
 
-          log.info("Saved answers to assessment version UUID ${it.uuid}")
-        } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessmentUuid, setOf(tag)))
-      }
+        log.info("Saved answers to assessment version UUID ${it.uuid}")
+      } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
     }
+  }
+
+  fun setOasysEquivalent(assessmentVersion: AssessmentVersion): AssessmentVersion {
+    assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
+    return assessmentVersion
   }
 
   fun cloneAndTag(assessmentVersion: AssessmentVersion, tag: Tag): AssessmentVersion {

@@ -53,8 +53,8 @@ class Given {
     this.answers = answers + mapOf(field.lower to Answer(value = value.name))
   }
 
-  constructor(field: Field, values: List<String>) {
-    this.answers = answers + mapOf(field.lower to Answer(values = values))
+  constructor(field: Field, values: List<Value>) {
+    this.answers = answers + mapOf(field.lower to Answer(values = values.map { it.name }))
   }
 
   fun and(field: Field, value: String?): Given {
@@ -67,8 +67,8 @@ class Given {
     return this
   }
 
-  fun and(field: Field, values: List<String>): Given {
-    this.answers = answers + mapOf(field.lower to Answer(values = values))
+  fun and(field: Field, values: List<Value>): Given {
+    this.answers = answers + mapOf(field.lower to Answer(values = values.map { it.name }))
     return this
   }
 

@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.FieldsToMap
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
@@ -19,11 +21,36 @@ class FinancialManagement : SectionMapping() {
   }
 
   private fun q3(): Any {
-    return ""
+    return when(ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
+      ap.get(Value.GOOD), ap.get(Value.FAIRLY_GOOD) -> "0"
+      ap.get(Value.FAIRLY_BAD) -> "1"
+      ap.get(Value.BAD) -> "2"
+      else -> ""
+    }
   }
 
   private fun q4(): Any {
-    return ""
+    val income = ap.answer(Field.FINANCE_INCOME).values ?: return ""
+
+    if (!income.contains(ap.get(Value.OFFENDING))) {
+      return "0"
+    }
+
+    if (
+      !income.contains(ap.get(Value.CARERS_ALLOWANCE))
+      && !income.contains(ap.get(Value.DISABILITY_BENEFITS))
+      && !income.contains(ap.get(Value.EMPLOYMENT))
+      && !income.contains(ap.get(Value.FAMILY_OR_FRIENDS))
+      && !income.contains(ap.get(Value.PENSION))
+      && !income.contains(ap.get(Value.STUDENT_LOAN))
+      && !income.contains(ap.get(Value.Undeclared))
+      && !income.contains(ap.get(Value.WORK_RELATED_BENEFITS))
+      && !income.contains(ap.get(Value.OTHER))
+    ) {
+      return "2"
+    }
+
+    return "1"
   }
 
   private fun q5(): Any {

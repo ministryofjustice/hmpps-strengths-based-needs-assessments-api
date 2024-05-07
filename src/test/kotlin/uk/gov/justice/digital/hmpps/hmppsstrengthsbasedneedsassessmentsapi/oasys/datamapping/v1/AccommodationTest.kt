@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import kotlin.test.Test
 
-class AccommodationTest: SectionMappingTest(Accommodation(), "1.0") {
+class AccommodationTest : SectionMappingTest(Accommodation(), "1.0") {
   @Test
   fun q3() {
     test(

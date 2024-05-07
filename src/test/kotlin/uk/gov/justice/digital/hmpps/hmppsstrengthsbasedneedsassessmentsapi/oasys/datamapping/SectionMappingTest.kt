@@ -16,9 +16,10 @@ import kotlin.test.assertEquals
 abstract class SectionMappingTest(
   private val sectionMapping: SectionMapping,
   private val version: String,
-): IntegrationTest() {
+) : IntegrationTest() {
   @Autowired
   private lateinit var appConfig: ApplicationConfig
+
   @Autowired
   private lateinit var formConfigProvider: FormConfigProvider
 

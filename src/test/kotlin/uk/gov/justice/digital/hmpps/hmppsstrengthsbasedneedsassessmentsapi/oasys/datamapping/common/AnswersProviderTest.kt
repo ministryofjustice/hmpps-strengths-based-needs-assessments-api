@@ -2,10 +2,11 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Option
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.exception.InvalidMappingException
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1.testFormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -22,6 +23,21 @@ class AnswersProviderTest {
 
   @BeforeTest
   fun setUp() {
+    val testFormConfig = FormConfig(
+      "form-name",
+      "1.0",
+      mapOf(
+        Field.CURRENT_ACCOMMODATION.lower to uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field(
+          Field.CURRENT_ACCOMMODATION.lower,
+          listOf(Option(Value.TEMPORARY.name), Option(Value.NO_ACCOMMODATION.name), Option(Value.SETTLED.name)),
+        ),
+        Field.SUITABLE_HOUSING.lower to uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field(
+          Field.SUITABLE_HOUSING.lower,
+          listOf(Option(Value.YES.name), Option(Value.YES_WITH_CONCERNS.name), Option(Value.NO.name)),
+        ),
+      ),
+    )
+
     sut = AnswersProvider(testAnswers, testFormConfig)
   }
 

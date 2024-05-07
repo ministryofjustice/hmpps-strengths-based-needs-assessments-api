@@ -1,17 +1,35 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping
 
+import org.springframework.beans.factory.annotation.Autowired
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.AnswersProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1.testFormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-class Scenarios(private vararg val scenarios: Given) {
-  fun test(sectionMapping: SectionMapping, questionCode: String) {
+abstract class SectionMappingTest(
+  private val sectionMapping: SectionMapping,
+  private val version: String,
+): IntegrationTest() {
+  @Autowired
+  private lateinit var appConfig: ApplicationConfig
+  @Autowired
+  private lateinit var formConfigProvider: FormConfigProvider
+
+  private val formConfig: FormConfig by lazy {
+    val formInfo = AssessmentFormInfo(formName = appConfig.formName, formVersion = version)
+    formConfigProvider.get(formInfo)
+  }
+
+  fun test(questionCode: String, vararg scenarios: Given) {
     for (scenario in scenarios) {
-      val answersProvider = AnswersProvider(scenario.answers, testFormConfig)
+      val answersProvider = AnswersProvider(scenario.answers, formConfig)
       val result = sectionMapping.map(answersProvider)
 
       assertContains(result, questionCode)

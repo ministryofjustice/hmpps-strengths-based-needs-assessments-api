@@ -119,8 +119,6 @@
     <ID>FunctionOnlyReturningConstant:EmotionalWellbeing.kt$EmotionalWellbeing$private fun qHistoryOfPsychTreatment(): Any</ID>
     <ID>FunctionOnlyReturningConstant:EmotionalWellbeing.kt$EmotionalWellbeing$private fun qNotRelatedToRisk(): Any</ID>
     <ID>FunctionOnlyReturningConstant:EmotionalWellbeing.kt$EmotionalWellbeing$private fun qStrength(): Any</ID>
-    <ID>FunctionOnlyReturningConstant:FinancialManagement.kt$FinancialManagement$private fun q3(): Any</ID>
-    <ID>FunctionOnlyReturningConstant:FinancialManagement.kt$FinancialManagement$private fun q4(): Any</ID>
     <ID>FunctionOnlyReturningConstant:FinancialManagement.kt$FinancialManagement$private fun q5(): Any</ID>
     <ID>FunctionOnlyReturningConstant:FinancialManagement.kt$FinancialManagement$private fun q6(): Any</ID>
     <ID>FunctionOnlyReturningConstant:FinancialManagement.kt$FinancialManagement$private fun q97(): Any</ID>

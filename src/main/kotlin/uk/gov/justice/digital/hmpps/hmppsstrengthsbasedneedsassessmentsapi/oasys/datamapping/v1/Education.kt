@@ -21,6 +21,7 @@ class Education : SectionMapping() {
       "o4_SAN_STRENGTH" to ::qStrength,
       "o4_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
       "oSC2" to ::qSC2,
+      "oSC2-t" to ::qSC2t,
       "oSC3" to ::qSC3,
       "oSC4" to ::qSC4,
       "oSC5" to ::qSC5,
@@ -71,6 +72,9 @@ class Education : SectionMapping() {
     return ""
   }
   private fun qSC2(): Any {
+    return ""
+  }
+  private fun qSC2t(): Any {
     return ""
   }
   private fun qSC3(): Any {

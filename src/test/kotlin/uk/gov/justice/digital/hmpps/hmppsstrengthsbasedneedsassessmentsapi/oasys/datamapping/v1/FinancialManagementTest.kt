@@ -54,6 +54,13 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5-5",
       Given().expect(""),
+      Given(Field.FINANCE_INCOME, emptyList()).expect("0"),
+      Given(Field.FINANCE_INCOME, listOf(Value.STUDENT_LOAN)).expect("0"),
+      Given(Field.FINANCE_INCOME, listOf(Value.FAMILY_OR_FRIENDS)).expect("0"),
+      Given(Field.FINANCE_INCOME, listOf(Value.FAMILY_OR_FRIENDS))
+        .and(Field.FAMILY_OR_FRIENDS_DETAILS, Value.NO).expect("0"),
+      Given(Field.FINANCE_INCOME, listOf(Value.FAMILY_OR_FRIENDS))
+        .and(Field.FAMILY_OR_FRIENDS_DETAILS, Value.YES).expect("2"),
     )
   }
 
@@ -62,6 +69,10 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5-6",
       Given().expect(""),
+      Given(Field.FINANCE_MONEY_MANAGEMENT, Value.BAD).expect(""),
+      Given(Field.FINANCE_MONEY_MANAGEMENT, Value.FAIRLY_BAD).expect(""),
+      Given(Field.FINANCE_MONEY_MANAGEMENT, Value.GOOD).expect("0"),
+      Given(Field.FINANCE_MONEY_MANAGEMENT, Value.FAIRLY_GOOD).expect("0"),
     )
   }
 
@@ -70,6 +81,54 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5-97",
       Given().expect(""),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.YES)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS, "Details 2 go here")
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.YES)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS, "Details 1 go here")
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.YES)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS, "Details 3 go here")
+        .expect(
+          """
+          Strengths and protective factor notes - Details 1 go here
+          Area linked to serious harm notes - Details 2 go here
+          Risk of reoffending notes - Details 3 go here
+          """.trimIndent(),
+        ),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.NO)
+        .expect(
+          """
+          Area not linked to strengths and positive factors notes - 
+          Area not linked to serious harm notes - 
+          Area not linked to reoffending notes - 
+          """.trimIndent(),
+        ),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS, "Details 2 go here")
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS, "Details 1 go here")
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS, "Details 3 go here")
+        .expect(
+          """
+          Area not linked to strengths and positive factors notes - Details 1 go here
+          Area not linked to serious harm notes - Details 2 go here
+          Area not linked to reoffending notes - Details 3 go here
+          """.trimIndent(),
+        ),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.YES)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS, "Details 2 go here")
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.NO)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.YES)
+        .and(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS, "Details 3 go here")
+        .expect(
+          """
+          Area not linked to strengths and positive factors notes - 
+          Area linked to serious harm notes - Details 2 go here
+          Risk of reoffending notes - Details 3 go here
+          """.trimIndent(),
+        ),
     )
   }
 
@@ -78,6 +137,8 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5-98",
       Given().expect(""),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.YES).expect("YES"),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.NO).expect("NO"),
     )
   }
 
@@ -86,6 +147,8 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5-99",
       Given().expect(""),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.YES).expect("YES"),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING, Value.NO).expect("NO"),
     )
   }
 
@@ -94,6 +157,8 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5_SAN_STRENGTH",
       Given().expect(""),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.YES).expect("YES"),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS, Value.NO).expect("NO"),
     )
   }
 
@@ -102,6 +167,8 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
     test(
       "o5_SAN_NOT_REL_RISK",
       Given().expect(""),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RELATED_TO_RISK, Value.YES).expect("YES"),
+      Given(Field.FINANCE_PRACTITIONER_ANALYSIS_RELATED_TO_RISK, Value.NO).expect("NO"),
     )
   }
 }

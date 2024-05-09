@@ -58,7 +58,8 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       Given().expect(""),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, emptyList()).expect("NO"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, listOf(Value.CHILD_PARENTAL_RESPONSIBILITIES)).expect("YES"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, listOf(Value.OTHER, Value.CHILD_PARENTAL_RESPONSIBILITIES)).expect("YES"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, listOf(Value.OTHER, Value.CHILD_PARENTAL_RESPONSIBILITIES))
+        .expect("YES"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, listOf(Value.FAMILY)).expect("NO"),
     )
   }

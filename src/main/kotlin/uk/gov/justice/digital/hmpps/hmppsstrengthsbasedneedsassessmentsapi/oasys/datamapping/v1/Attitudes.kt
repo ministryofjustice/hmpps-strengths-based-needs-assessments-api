@@ -55,43 +55,14 @@ class Attitudes : SectionMapping() {
   }
 
   private fun q97(): Any {
-    return listOf(
-      // line 1
-      when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS).value) {
-        ap.get(Value.YES) -> "Strengths and protective factor notes - "
-        ap.get(Value.NO) -> "Area not linked to strengths and positive factors notes - "
-        else -> ""
-      } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS).value ?: ""),
-
-      // line 2
-      when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-        ap.get(Value.YES) -> "Area linked to serious harm notes - "
-        ap.get(Value.NO) -> "Area not linked to serious harm notes - "
-        else -> ""
-      } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS).value ?: ""),
-
-      // line 3
-      when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-        ap.get(Value.YES) -> "Risk of reoffending notes - "
-        ap.get(Value.NO) -> "Area not linked to reoffending notes - "
-        else -> ""
-      } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS).value ?: ""),
-    ).filterNot { it.isEmpty() }.joinToString(separator = "\n")
+    return ThinkingBehaviours.q97(ap)
   }
 
   private fun q98(): Any {
-    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+    return ThinkingBehaviours.q98(ap)
   }
 
   private fun q99(): Any {
-    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+    return ThinkingBehaviours.q99(ap)
   }
 }

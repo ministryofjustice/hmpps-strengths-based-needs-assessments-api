@@ -29,12 +29,12 @@ abstract class SectionMappingTest(
   }
 
   fun test(questionCode: String, vararg scenarios: Given) {
-    for (scenario in scenarios) {
+    for ((scenarioNumber, scenario) in scenarios.withIndex()) {
       val answersProvider = AnswersProvider(scenario.answers, formConfig)
       val result = sectionMapping.map(answersProvider)
 
-      assertContains(result, questionCode)
-      assertEquals(scenario.expected, result[questionCode])
+      assertContains(result, questionCode, "Scenario $scenarioNumber failed")
+      assertEquals(scenario.expected, result[questionCode], "Scenario $scenarioNumber failed")
     }
   }
 }

@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import kotlin.test.Test
 
-class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
+class EducationTest : SectionMappingTest(Education(), "1.0") {
   @Test
   fun q2() {
     test(
@@ -53,12 +53,26 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
   }
 
   @Test
+  fun q5() {
+    test(
+      "o4-5",
+      Given().expect(""),
+      Given(Field.EMPLOYMENT_EXPERIENCE, null).expect(""),
+      Given(Field.EMPLOYMENT_EXPERIENCE, Value.POSITIVE).expect("0"),
+      Given(Field.EMPLOYMENT_EXPERIENCE, Value.MOSTLY_POSITIVE).expect("0"),
+      Given(Field.EMPLOYMENT_EXPERIENCE, Value.POSITIVE_AND_NEGATIVE).expect("1"),
+      Given(Field.EMPLOYMENT_EXPERIENCE, Value.MOSTLY_NEGATIVE).expect("2"),
+      Given(Field.EMPLOYMENT_EXPERIENCE, Value.NEGATIVE).expect("2"),
+    )
+  }
+
+  @Test
   fun q7() {
     test(
       "o4-7",
       Given().expect(""),
       Given(Field.EDUCATION_DIFFICULTIES, emptyList()).expect(""),
-      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NO_DIFFICULTIES)).expect("0"),
+      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NONE)).expect("0"),
       Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.READING))
         .and(Field.EDUCATION_DIFFICULTIES_READING_SEVERITY, null)
         .expect(""),
@@ -151,7 +165,7 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
     test(
       "o4-10",
       Given().expect(""),
-      Given(Field.EDUCATION_EXPERIENCE, emptyList()).expect(emptyList<String>()),
+      Given(Field.EDUCATION_EXPERIENCE, null).expect(""),
       Given(Field.EDUCATION_EXPERIENCE, Value.POSITIVE).expect("0"),
       Given(Field.EDUCATION_EXPERIENCE, Value.MOSTLY_POSITIVE).expect("0"),
       Given(Field.EDUCATION_EXPERIENCE, Value.POSITIVE_AND_NEGATIVE).expect("1"),
@@ -163,7 +177,7 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
   @Test
   fun q94() {
     test(
-      "o3-97",
+      "o4-94",
       Given().expect(""),
       Given(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM, Value.YES)
         .and(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS, "Details 2 go here")
@@ -217,7 +231,7 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
   }
 
   @Test
-  fun q98() {
+  fun q96() {
     test(
       "o4-96",
       Given().expect(""),
@@ -227,7 +241,7 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
   }
 
   @Test
-  fun q99() {
+  fun q98() {
     test(
       "o4-98",
       Given().expect(""),
@@ -277,7 +291,7 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
     test(
       "oSC2-t",
       Given().expect(""),
-      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS_DETAILS, "Some details")
+      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS_YES_DETAILS, "Some details")
         .expect("Some details"),
     )
   }
@@ -305,22 +319,10 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
     test(
       "oSC4",
       Given().expect(""),
-      Given(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RELATED_TO_RISK, Value.YES)
-        .expect("YES"),
-      Given(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RELATED_TO_RISK, Value.NO)
-        .expect("NO"),
-    )
-  }
-
-  @Test
-  fun qSC5() {
-    test(
-      "oSC5",
-      Given().expect(""),
+      Given(Field.EMPLOYMENT_STATUS, Value.RETIRED).expect("FULLTIME"),
       Given(Field.EMPLOYMENT_STATUS, Value.EMPLOYED)
         .and(Field.EMPLOYMENT_TYPE, Value.FULL_TIME)
         .expect("FULLTIME"),
-      Given(Field.EMPLOYMENT_STATUS, Value.RETIRED).expect("FULLTIME"),
       Given(Field.EMPLOYMENT_STATUS, Value.EMPLOYED)
         .and(Field.EMPLOYMENT_TYPE, Value.PART_TIME)
         .expect("PARTTIME"),
@@ -343,13 +345,24 @@ class EducationTest : SectionMappingTest(Accommodation(), "1.0") {
   }
 
   @Test
+  fun qSC5() {
+    test(
+      "oSC5",
+      Given().expect(""),
+      Given(Field.EMPLOYMENT_STATUS, Value.EMPLOYED).expect("Yes [Score 0]"),
+      Given(Field.EMPLOYMENT_STATUS, Value.SELF_EMPLOYED).expect("Yes [Score 0]"),
+      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_LOOKING_FOR_WORK).expect("No [Score 0]"),
+      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK).expect("No [Score 0]"),
+    )
+  }
+
+  @Test
   fun qSC8() {
     test(
       "oSC8",
       Given().expect(""),
       Given(Field.FINANCE_MONEY_MANAGEMENT, Value.GOOD).expect("YES"),
       Given(Field.FINANCE_MONEY_MANAGEMENT, Value.FAIRLY_GOOD).expect("SOMETIMES"),
-      Given(Field.FINANCE_MONEY_MANAGEMENT, Value.GOOD).expect("YES"),
       Given(Field.FINANCE_MONEY_MANAGEMENT, Value.FAIRLY_BAD).expect("NOTCONFIDENT"),
       Given(Field.FINANCE_MONEY_MANAGEMENT, Value.BAD).expect("NOTCONFIDENT"),
     )

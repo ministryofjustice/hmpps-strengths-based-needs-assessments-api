@@ -85,7 +85,10 @@ class AnswersProviderTest {
           sut.get(Value.NO_ACCOMMODATION)
         },
       )
-      assertEquals("NO_ACCOMMODATION is not a valid option for field suitable_housing in form config version 1.0", exception.message)
+      assertEquals(
+        "NO_ACCOMMODATION is not a valid option for field suitable_housing in form config version 1.0",
+        exception.message,
+      )
     }
 
     @Test

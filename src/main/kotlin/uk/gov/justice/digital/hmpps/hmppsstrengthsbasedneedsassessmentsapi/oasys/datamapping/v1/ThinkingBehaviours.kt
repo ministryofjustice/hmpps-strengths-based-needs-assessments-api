@@ -115,24 +115,30 @@ class ThinkingBehaviours : SectionMapping() {
           ap.get(Value.YES) -> "Strengths and protective factor notes - "
           ap.get(Value.NO) -> "Area not linked to strengths and positive factors notes - "
           else -> ""
-        } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS).value
-          ?: ""),
+        } + (
+          ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS).value
+            ?: ""
+          ),
 
         // line 2
         when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
           ap.get(Value.YES) -> "Area linked to serious harm notes - "
           ap.get(Value.NO) -> "Area not linked to serious harm notes - "
           else -> ""
-        } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS).value
-          ?: ""),
+        } + (
+          ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS).value
+            ?: ""
+          ),
 
         // line 3
         when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
           ap.get(Value.YES) -> "Risk of reoffending notes - "
           ap.get(Value.NO) -> "Area not linked to reoffending notes - "
           else -> ""
-        } + (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS).value
-          ?: ""),
+        } + (
+          ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS).value
+            ?: ""
+          ),
       ).filterNot { it.isEmpty() }.joinToString(separator = "\n")
     }
 

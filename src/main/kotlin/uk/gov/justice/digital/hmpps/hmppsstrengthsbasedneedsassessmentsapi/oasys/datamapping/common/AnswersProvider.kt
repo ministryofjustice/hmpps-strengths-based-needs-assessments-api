@@ -16,18 +16,16 @@ class AnswersProvider(
   private val answers: Answers,
   private val config: FormConfig,
 ) {
-  private var context: Field? = null
+  private var context: String? = null
 
   fun answer(field: Field): Answer {
-    context = field
-    val fieldName = field.lower
+    context = config.fields[field.lower]?.let { field.lower }
+      ?: config.fields.entries.find { it.value.code == field.lower }?.key
 
-    if (config.fields[fieldName]?.code != fieldName) {
-      throw InvalidMappingException("Field $fieldName does not exist in form config version ${config.version}")
-    }
-
-    val answer = answers[fieldName]
-    return Answer(answer?.value, answer?.values)
+    return config.fields[context]?.code?.let {
+      val answer = answers[it]
+      Answer(answer?.value, answer?.values)
+    } ?: throw InvalidMappingException("Field ${field.lower} does not exist in form config version ${config.version}")
   }
 
   fun get(value: Value): String {
@@ -35,11 +33,10 @@ class AnswersProvider(
       throw InvalidMappingException("Cannot obtain values without a field context. Call answer() first")
     }
 
-    val fieldName = context!!.lower
     val valueName = value.name
 
-    if (config.fields[fieldName]?.options?.contains(Option(valueName)) != true) {
-      throw InvalidMappingException("$valueName is not a valid option for field $fieldName in form config version ${config.version}")
+    if (config.fields[context]?.options?.contains(Option(valueName)) != true) {
+      throw InvalidMappingException("$valueName is not a valid option for field $context in form config version ${config.version}")
     }
 
     return valueName

@@ -73,7 +73,11 @@ class FormConfigProviderTest {
       every { mockHttpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns mockResponse
 
       assertEquals(
-        FormConfig("test-form-name", "1.1", mapOf("test-field" to Field("test-field", listOf(Option("val-1"))))),
+        FormConfig(
+          "test-form-name",
+          "1.1",
+          mapOf("test-field" to Field("test-field", listOf(Option("val-1")))),
+        ),
         sut.get(AssessmentFormInfo(formVersion = "1.1", formName = "test-form-name")),
       )
 

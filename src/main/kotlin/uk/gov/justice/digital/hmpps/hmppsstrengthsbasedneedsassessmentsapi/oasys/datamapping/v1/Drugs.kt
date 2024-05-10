@@ -69,243 +69,243 @@ class Drugs : SectionMapping() {
     )
   }
 
-  private fun q1(): Any {
-    return ""
+  private fun q1(): Any? {
+    return null
   }
 
-  private fun q2011(): Any {
-    return ""
+  private fun q2011(): Any? {
+    return null
   }
 
-  private fun q2013(): Any {
-    return ""
+  private fun q2013(): Any? {
+    return null
   }
 
-  private fun q2012(): Any {
-    return ""
+  private fun q2012(): Any? {
+    return null
   }
 
-  private fun q2014(): Any {
-    return ""
+  private fun q2014(): Any? {
+    return null
   }
 
-  private fun q2021(): Any {
-    return ""
+  private fun q2021(): Any? {
+    return null
   }
 
-  private fun q2023(): Any {
-    return ""
+  private fun q2023(): Any? {
+    return null
   }
 
-  private fun q2022(): Any {
-    return ""
+  private fun q2022(): Any? {
+    return null
   }
 
-  private fun q2024(): Any {
-    return ""
+  private fun q2024(): Any? {
+    return null
   }
 
-  private fun q2031(): Any {
-    return ""
+  private fun q2031(): Any? {
+    return null
   }
 
-  private fun q2033(): Any {
-    return ""
+  private fun q2033(): Any? {
+    return null
   }
 
-  private fun q2032(): Any {
-    return ""
+  private fun q2032(): Any? {
+    return null
   }
 
-  private fun q2034(): Any {
-    return ""
+  private fun q2034(): Any? {
+    return null
   }
 
-  private fun q2041(): Any {
-    return ""
+  private fun q2041(): Any? {
+    return null
   }
 
-  private fun q2042(): Any {
-    return ""
+  private fun q2042(): Any? {
+    return null
   }
 
-  private fun q2043(): Any {
-    return ""
+  private fun q2043(): Any? {
+    return null
   }
 
-  private fun q2044(): Any {
-    return ""
+  private fun q2044(): Any? {
+    return null
   }
 
-  private fun q2051(): Any {
-    return ""
+  private fun q2051(): Any? {
+    return null
   }
 
-  private fun q2052(): Any {
-    return ""
+  private fun q2052(): Any? {
+    return null
   }
 
-  private fun q2053(): Any {
-    return ""
+  private fun q2053(): Any? {
+    return null
   }
 
-  private fun q2054(): Any {
-    return ""
+  private fun q2054(): Any? {
+    return null
   }
 
-  private fun q2061(): Any {
-    return ""
+  private fun q2061(): Any? {
+    return null
   }
 
-  private fun q2062(): Any {
-    return ""
+  private fun q2062(): Any? {
+    return null
   }
 
-  private fun q2063(): Any {
-    return ""
+  private fun q2063(): Any? {
+    return null
   }
 
-  private fun q2064(): Any {
-    return ""
+  private fun q2064(): Any? {
+    return null
   }
 
-  private fun q2071(): Any {
-    return ""
+  private fun q2071(): Any? {
+    return null
   }
 
-  private fun q2073(): Any {
-    return ""
+  private fun q2073(): Any? {
+    return null
   }
 
-  private fun q2072(): Any {
-    return ""
+  private fun q2072(): Any? {
+    return null
   }
 
-  private fun q2074(): Any {
-    return ""
+  private fun q2074(): Any? {
+    return null
   }
 
-  private fun q2081(): Any {
-    return ""
+  private fun q2081(): Any? {
+    return null
   }
 
-  private fun q2082(): Any {
-    return ""
+  private fun q2082(): Any? {
+    return null
   }
 
-  private fun q2083(): Any {
-    return ""
+  private fun q2083(): Any? {
+    return null
   }
 
-  private fun q2084(): Any {
-    return ""
+  private fun q2084(): Any? {
+    return null
   }
 
-  private fun q2091(): Any {
-    return ""
+  private fun q2091(): Any? {
+    return null
   }
 
-  private fun q2093(): Any {
-    return ""
+  private fun q2093(): Any? {
+    return null
   }
 
-  private fun q2101(): Any {
-    return ""
+  private fun q2101(): Any? {
+    return null
   }
 
-  private fun q2103(): Any {
-    return ""
+  private fun q2103(): Any? {
+    return null
   }
 
-  private fun q2111(): Any {
-    return ""
+  private fun q2111(): Any? {
+    return null
   }
 
-  private fun q2113(): Any {
-    return ""
+  private fun q2113(): Any? {
+    return null
   }
 
-  private fun q2121(): Any {
-    return ""
+  private fun q2121(): Any? {
+    return null
   }
 
-  private fun q2123(): Any {
-    return ""
+  private fun q2123(): Any? {
+    return null
   }
 
-  private fun q2131(): Any {
-    return ""
+  private fun q2131(): Any? {
+    return null
   }
 
-  private fun q2132(): Any {
-    return ""
+  private fun q2132(): Any? {
+    return null
   }
 
-  private fun q2133(): Any {
-    return ""
+  private fun q2133(): Any? {
+    return null
   }
 
-  private fun q2134(): Any {
-    return ""
+  private fun q2134(): Any? {
+    return null
   }
 
-  private fun q2151(): Any {
-    return ""
+  private fun q2151(): Any? {
+    return null
   }
 
-  private fun q2153(): Any {
-    return ""
+  private fun q2153(): Any? {
+    return null
   }
 
-  private fun q2141(): Any {
-    return ""
+  private fun q2141(): Any? {
+    return null
   }
 
-  private fun q2142(): Any {
-    return ""
+  private fun q2142(): Any? {
+    return null
   }
 
-  private fun q2143(): Any {
-    return ""
+  private fun q2143(): Any? {
+    return null
   }
 
-  private fun q2144(): Any {
-    return ""
+  private fun q2144(): Any? {
+    return null
   }
 
-  private fun q2140(): Any {
-    return ""
+  private fun q2140(): Any? {
+    return null
   }
 
-  private fun q4(): Any {
-    return ""
+  private fun q4(): Any? {
+    return null
   }
 
-  private fun q6(): Any {
-    return ""
+  private fun q6(): Any? {
+    return null
   }
 
-  private fun q8(): Any {
-    return ""
+  private fun q8(): Any? {
+    return null
   }
 
-  private fun q97(): Any {
-    return ""
+  private fun q97(): Any? {
+    return null
   }
 
-  private fun q98(): Any {
-    return ""
+  private fun q98(): Any? {
+    return null
   }
 
-  private fun q99(): Any {
-    return ""
+  private fun q99(): Any? {
+    return null
   }
 
-  private fun qStrength(): Any {
-    return ""
+  private fun qStrength(): Any? {
+    return null
   }
 
-  private fun qNotRelatedToRisk(): Any {
-    return ""
+  private fun qNotRelatedToRisk(): Any? {
+    return null
   }
 }

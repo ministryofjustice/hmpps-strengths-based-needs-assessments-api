@@ -33,15 +33,15 @@ abstract class SectionMappingTest(
       val answersProvider = AnswersProvider(scenario.answers, formConfig)
       val result = sectionMapping.map(answersProvider)
 
-      assertContains(result, questionCode, "Scenario $scenarioNumber failed")
-      assertEquals(scenario.expected, result[questionCode], "Scenario $scenarioNumber failed")
+      assertContains(result, questionCode, "Scenario ${scenarioNumber + 1} failed")
+      assertEquals(scenario.expected, result[questionCode], "Scenario ${scenarioNumber + 1} failed")
     }
   }
 }
 
 class Given {
   var answers: Answers = emptyMap()
-  lateinit var expected: Any
+  var expected: Any? = null
 
   constructor()
 
@@ -72,7 +72,7 @@ class Given {
     return this
   }
 
-  fun expect(expected: Any): Given {
+  fun expect(expected: Any?): Given {
     this.expected = expected
     return this
   }

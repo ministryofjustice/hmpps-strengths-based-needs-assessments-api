@@ -20,15 +20,15 @@ class Accommodation : SectionMapping() {
     )
   }
 
-  private fun q3(): String {
+  private fun q3(): Any? {
     return when (ap.answer(Field.CURRENT_ACCOMMODATION).value) {
       ap.get(Value.NO_ACCOMMODATION) -> "YES"
       ap.get(Value.TEMPORARY), ap.get(Value.SETTLED) -> "NO"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q4(): Any {
+  private fun q4(): Any? {
     val noAccommodation = ap.answer(Field.CURRENT_ACCOMMODATION).value == ap.get(Value.NO_ACCOMMODATION)
     if (noAccommodation) {
       return "2"
@@ -37,86 +37,49 @@ class Accommodation : SectionMapping() {
       ap.get(Value.YES) -> "0"
       ap.get(Value.YES_WITH_CONCERNS) -> "1"
       ap.get(Value.NO) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q5(): Any {
+  private fun q5(): Any? {
     return when (ap.answer(Field.CURRENT_ACCOMMODATION).value) {
       ap.get(Value.NO_ACCOMMODATION) -> "2"
       ap.get(Value.TEMPORARY) -> when (ap.answer(Field.TYPE_OF_TEMPORARY_ACCOMMODATION).value) {
         ap.get(Value.SHORT_TERM) -> "2"
-        else -> ""
+        else -> null
       }
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q6(): Any {
+  private fun q6(): Any? {
     return when (ap.answer(Field.CURRENT_ACCOMMODATION).value) {
       ap.get(Value.NO_ACCOMMODATION) -> "2"
       else -> when (ap.answer(Field.SUITABLE_HOUSING_LOCATION).value) {
         ap.get(Value.YES) -> "0"
         ap.get(Value.NO) -> "2"
-        else -> ""
+        else -> null
       }
     }
   }
 
-  private fun q97(): Any {
-    return listOf(
-      // line 1
-      when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS).value) {
-        ap.get(Value.YES) -> "Strengths and protective factor notes - "
-        ap.get(Value.NO) -> "Area not linked to strengths and positive factors notes - "
-        else -> ""
-      } + (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS).value ?: ""),
-
-      // line 2
-      when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-        ap.get(Value.YES) -> "Area linked to serious harm notes - "
-        ap.get(Value.NO) -> "Area not linked to serious harm notes - "
-        else -> ""
-      } + (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS).value ?: ""),
-
-      // line 3
-      when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-        ap.get(Value.YES) -> "Risk of reoffending notes - "
-        ap.get(Value.NO) -> "Area not linked to reoffending notes - "
-        else -> ""
-      } + (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS).value ?: ""),
-    ).filterNot { it.isEmpty() }.joinToString(separator = "\n")
+  private fun q97(): Any? {
+    return PractitionerAnalysis("ACCOMMODATION", ap).notes()
   }
 
-  private fun q98(): Any {
-    return when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun q98(): Any? {
+    return PractitionerAnalysis("ACCOMMODATION", ap).riskOfSeriousHarm()
   }
 
-  private fun q99(): Any {
-    return when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun q99(): Any? {
+    return PractitionerAnalysis("ACCOMMODATION", ap).riskOfReoffending()
   }
 
-  private fun qStrength(): Any {
-    return when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun qStrength(): Any? {
+    return PractitionerAnalysis("ACCOMMODATION", ap).strengthsOrProtectiveFactors()
   }
 
-  private fun qNotRelatedToRisk(): Any {
-    return when (ap.answer(Field.ACCOMMODATION_PRACTITIONER_ANALYSIS_RELATED_TO_RISK).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun qNotRelatedToRisk(): Any? {
+    return PractitionerAnalysis("ACCOMMODATION", ap).relatedToRisk()
   }
 }

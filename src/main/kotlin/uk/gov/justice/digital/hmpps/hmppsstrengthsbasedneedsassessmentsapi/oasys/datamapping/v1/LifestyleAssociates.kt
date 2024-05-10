@@ -18,51 +18,51 @@ class LifestyleAssociates : SectionMapping() {
     )
   }
 
-  private fun q2(): Any {
+  private fun q2(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES).value) {
       ap.get(Value.NO_OFFENDING_ACTIVITIES) -> "0"
       ap.get(Value.SOMETIMES_OFFENDING_ACTIVITIES) -> "1"
       ap.get(Value.YES_OFFENDING_ACTIVITIES) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q3(): Any {
+  private fun q3(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PEER_PRESSURE).value) {
       ap.get(Value.YES) -> "0"
       ap.get(Value.SOME) -> "1"
       ap.get(Value.NO) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q4(): Any {
+  private fun q4(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_MANIPULATIVE_PREDATORY_BEHAVIOUR).value) {
       ap.get(Value.YES) -> "2"
       ap.get(Value.SOME) -> "1"
       ap.get(Value.NO) -> "0"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q5(): Any {
+  private fun q5(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_STABLE_BEHAVIOUR).value) {
       ap.get(Value.YES) -> "0"
       ap.get(Value.SOMETIMES) -> "1"
       ap.get(Value.NO) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q97(): Any {
-    return ThinkingBehaviours.q97(ap)
+  private fun q97(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).notes()
   }
 
-  private fun q98(): Any {
-    return ThinkingBehaviours.q98(ap)
+  private fun q98(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfSeriousHarm()
   }
 
-  private fun q99(): Any {
-    return ThinkingBehaviours.q99(ap)
+  private fun q99(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfReoffending()
   }
 }

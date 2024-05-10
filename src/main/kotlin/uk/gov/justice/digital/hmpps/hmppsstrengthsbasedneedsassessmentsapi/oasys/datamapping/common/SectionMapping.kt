@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 
-typealias FieldsToMap = Map<String, () -> Any>
+typealias FieldsToMap = Map<String, () -> Any?>
 
 abstract class SectionMapping {
   protected lateinit var ap: AnswersProvider
@@ -11,7 +11,7 @@ abstract class SectionMapping {
 
   fun map(answersProvider: AnswersProvider): OasysEquivalent {
     ap = answersProvider
-    val result = mutableMapOf<String, Any>()
+    val result = mutableMapOf<String, Any?>()
     for ((field, method) in getFieldsToMap()) {
       result[field] = method()
     }

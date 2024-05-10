@@ -11,8 +11,8 @@ class LifestyleAssociatesTest : SectionMappingTest(LifestyleAssociates(), "1.0")
   fun q2() {
     test(
       "o7-2",
-      Given().expect(""),
-      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES, null).expect(""),
+      Given().expect(null),
+      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES, null).expect(null),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES, Value.NO_OFFENDING_ACTIVITIES).expect("0"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES, Value.SOMETIMES_OFFENDING_ACTIVITIES).expect("1"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES, Value.YES_OFFENDING_ACTIVITIES).expect("2"),
@@ -23,7 +23,7 @@ class LifestyleAssociatesTest : SectionMappingTest(LifestyleAssociates(), "1.0")
   fun q3() {
     test(
       "o7-3",
-      Given().expect(""),
+      Given().expect(null),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_PEER_PRESSURE, Value.YES).expect("0"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_PEER_PRESSURE, Value.SOME).expect("1"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_PEER_PRESSURE, Value.NO).expect("2"),
@@ -34,7 +34,7 @@ class LifestyleAssociatesTest : SectionMappingTest(LifestyleAssociates(), "1.0")
   fun q4() {
     test(
       "o7-4",
-      Given().expect(""),
+      Given().expect(null),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_MANIPULATIVE_PREDATORY_BEHAVIOUR, Value.YES).expect("2"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_MANIPULATIVE_PREDATORY_BEHAVIOUR, Value.SOME).expect("1"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_MANIPULATIVE_PREDATORY_BEHAVIOUR, Value.NO).expect("0"),
@@ -45,10 +45,34 @@ class LifestyleAssociatesTest : SectionMappingTest(LifestyleAssociates(), "1.0")
   fun q5() {
     test(
       "o7-5",
-      Given().expect(""),
+      Given().expect(null),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_STABLE_BEHAVIOUR, Value.YES).expect("0"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_STABLE_BEHAVIOUR, Value.SOMETIMES).expect("1"),
       Given(Field.THINKING_BEHAVIOURS_ATTITUDES_STABLE_BEHAVIOUR, Value.NO).expect("2"),
+    )
+  }
+
+  @Test
+  fun q97() {
+    test(
+      "o7-97",
+      *PractitionerAnalysisScenarios("THINKING_BEHAVIOURS_ATTITUDES").notes(),
+    )
+  }
+
+  @Test
+  fun q98() {
+    test(
+      "o7-98",
+      *PractitionerAnalysisScenarios("THINKING_BEHAVIOURS_ATTITUDES").riskOfSeriousHarm(),
+    )
+  }
+
+  @Test
+  fun q99() {
+    test(
+      "o7-99",
+      *PractitionerAnalysisScenarios("THINKING_BEHAVIOURS_ATTITUDES").riskOfReoffending(),
     )
   }
 }

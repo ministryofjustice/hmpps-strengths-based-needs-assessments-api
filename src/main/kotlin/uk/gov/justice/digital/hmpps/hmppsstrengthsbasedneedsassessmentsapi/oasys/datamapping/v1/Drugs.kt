@@ -59,6 +59,7 @@ class Drugs : SectionMapping() {
       "o8-2-14-4" to ::q2144,
       "o8-2-14" to ::q2140,
       "o8-4" to ::q4,
+      "o8-5" to ::q5,
       "o8-6" to ::q6,
       "o8-8" to ::q8,
       "o8-97" to ::q97,
@@ -281,6 +282,10 @@ class Drugs : SectionMapping() {
     return null
   }
 
+  private fun q5(): Any? {
+    return null
+  }
+
   private fun q6(): Any? {
     return null
   }
@@ -290,22 +295,22 @@ class Drugs : SectionMapping() {
   }
 
   private fun q97(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).notes()
   }
 
   private fun q98(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).riskOfSeriousHarm()
   }
 
   private fun q99(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).riskOfReoffending()
   }
 
   private fun qStrength(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).strengthsOrProtectiveFactors()
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).relatedToRisk()
   }
 }

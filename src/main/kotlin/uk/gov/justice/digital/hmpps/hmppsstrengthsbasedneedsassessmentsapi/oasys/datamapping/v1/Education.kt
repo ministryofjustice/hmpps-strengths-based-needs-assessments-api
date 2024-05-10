@@ -11,7 +11,6 @@ class Education : SectionMapping() {
       "o4-2" to ::q2,
       "o4-3" to ::q3,
       "o4-4" to ::q4,
-      "o4-5" to ::q5,
       "o4-7" to ::q7,
       "o4-7-1" to ::q71,
       "o4-8" to ::q8,
@@ -69,15 +68,6 @@ class Education : SectionMapping() {
       ap.get(Value.NO) -> "2"
       ap.get(Value.YES_SOME_SKILLS) -> "1"
       ap.get(Value.YES) -> "0"
-      else -> null
-    }
-  }
-
-  private fun q5(): Any? {
-    return when (ap.answer(Field.EMPLOYMENT_EXPERIENCE).value) {
-      ap.get(Value.POSITIVE), ap.get(Value.MOSTLY_POSITIVE) -> "0"
-      ap.get(Value.POSITIVE_AND_NEGATIVE) -> "1"
-      ap.get(Value.NEGATIVE), ap.get(Value.MOSTLY_NEGATIVE) -> "2"
       else -> null
     }
   }

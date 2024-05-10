@@ -70,242 +70,242 @@ class Drugs : SectionMapping() {
   }
 
   private fun q1(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2011(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2013(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2012(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2014(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2021(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2023(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2022(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2024(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2031(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2033(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2032(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2034(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2041(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2042(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2043(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2044(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2051(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2052(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2053(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2054(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2061(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2062(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2063(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2064(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2071(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2073(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2072(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2074(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2081(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2082(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2083(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2084(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2091(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2093(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2101(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2103(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2111(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2113(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2121(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2123(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2131(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2132(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2133(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2134(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2151(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2153(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2141(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2142(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2143(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2144(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2140(): Any? {
-    TODO()
+    return null
   }
 
   private fun q4(): Any? {
-    TODO()
+    return null
   }
 
   private fun q6(): Any? {
-    TODO()
+    return null
   }
 
   private fun q8(): Any? {
-    TODO()
+    return null
   }
 
   private fun q97(): Any? {
-    TODO()
+    return null
   }
 
   private fun q98(): Any? {
-    TODO()
+    return null
   }
 
   private fun q99(): Any? {
-    TODO()
+    return null
   }
 
   private fun qStrength(): Any? {
-    TODO()
+    return null
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    TODO()
+    return null
   }
 }

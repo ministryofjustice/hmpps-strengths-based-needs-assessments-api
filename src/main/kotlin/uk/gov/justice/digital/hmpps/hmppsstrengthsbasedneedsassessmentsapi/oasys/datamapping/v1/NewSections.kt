@@ -23,54 +23,54 @@ class NewSections : SectionMapping() {
   }
 
   private fun qLinkedToRosh(): Any? {
-    TODO()
+    return null
   }
 
   private fun qLinkedToReoffending(): Any? {
-    TODO()
+    return null
   }
 
   private fun qStrength(): Any? {
-    TODO()
+    return null
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    TODO()
+    return null
   }
 
   private fun qAccommodationComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qEducationEmploymentComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qFinanceComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qDrugsComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qAlcoholCompletes(): Any? {
-    TODO()
+    return null
   }
 
   private fun qHealthWellbeingComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qPersonalRelationshipsComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qThinkingBehavioursAttitudesComplete(): Any? {
-    TODO()
+    return null
   }
 
   private fun qOffenceAnalysisComplete(): Any? {
-    TODO()
+    return null
   }
 }

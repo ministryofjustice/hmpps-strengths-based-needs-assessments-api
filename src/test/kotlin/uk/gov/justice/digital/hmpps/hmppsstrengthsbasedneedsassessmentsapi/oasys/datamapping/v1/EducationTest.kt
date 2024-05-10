@@ -53,20 +53,6 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
   }
 
   @Test
-  fun q5() {
-    test(
-      "o4-5",
-      Given().expect(null),
-      Given(Field.EMPLOYMENT_EXPERIENCE, null).expect(null),
-      Given(Field.EMPLOYMENT_EXPERIENCE, Value.POSITIVE).expect("0"),
-      Given(Field.EMPLOYMENT_EXPERIENCE, Value.MOSTLY_POSITIVE).expect("0"),
-      Given(Field.EMPLOYMENT_EXPERIENCE, Value.POSITIVE_AND_NEGATIVE).expect("1"),
-      Given(Field.EMPLOYMENT_EXPERIENCE, Value.MOSTLY_NEGATIVE).expect("2"),
-      Given(Field.EMPLOYMENT_EXPERIENCE, Value.NEGATIVE).expect("2"),
-    )
-  }
-
-  @Test
   fun q7() {
     test(
       "o4-7",

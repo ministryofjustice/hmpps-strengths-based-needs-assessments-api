@@ -18,34 +18,34 @@ class Alcohol : SectionMapping() {
   }
 
   private fun q1(): Any? {
-    TODO()
+    return null
   }
 
   private fun q1t(): Any? {
-    TODO()
+    return null
   }
 
   private fun q2(): Any? {
-    TODO()
+    return null
   }
 
   private fun q97(): Any? {
-    TODO()
+    return null
   }
 
   private fun q98(): Any? {
-    TODO()
+    return null
   }
 
   private fun q99(): Any? {
-    TODO()
+    return null
   }
 
   private fun qStrength(): Any? {
-    TODO()
+    return null
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    TODO()
+    return null
   }
 }

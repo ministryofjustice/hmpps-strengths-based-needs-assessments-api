@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.FieldsToMap
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
@@ -17,30 +19,50 @@ class LifestyleAssociates : SectionMapping() {
   }
 
   private fun q2(): Any {
-    return ""
+    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_OFFENDING_ACTIVITIES).value) {
+      ap.get(Value.NO_OFFENDING_ACTIVITIES) -> "0"
+      ap.get(Value.SOMETIMES_OFFENDING_ACTIVITIES) -> "1"
+      ap.get(Value.YES_OFFENDING_ACTIVITIES) -> "2"
+      else -> ""
+    }
   }
 
   private fun q3(): Any {
-    return ""
+    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_PEER_PRESSURE).value) {
+      ap.get(Value.YES) -> "0"
+      ap.get(Value.SOME) -> "1"
+      ap.get(Value.NO) -> "2"
+      else -> ""
+    }
   }
 
   private fun q4(): Any {
-    return ""
+    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_MANIPULATIVE_PREDATORY_BEHAVIOUR).value) {
+      ap.get(Value.YES) -> "2"
+      ap.get(Value.SOME) -> "1"
+      ap.get(Value.NO) -> "0"
+      else -> ""
+    }
   }
 
   private fun q5(): Any {
-    return ""
+    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_STABLE_BEHAVIOUR).value) {
+      ap.get(Value.YES) -> "0"
+      ap.get(Value.SOMETIMES) -> "1"
+      ap.get(Value.NO) -> "2"
+      else -> ""
+    }
   }
 
   private fun q97(): Any {
-    return ""
+    return ThinkingBehaviours.q97(ap)
   }
 
   private fun q98(): Any {
-    return ""
+    return ThinkingBehaviours.q98(ap)
   }
 
   private fun q99(): Any {
-    return ""
+    return ThinkingBehaviours.q99(ap)
   }
 }

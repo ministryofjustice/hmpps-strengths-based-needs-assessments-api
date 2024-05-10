@@ -18,51 +18,51 @@ class Attitudes : SectionMapping() {
     )
   }
 
-  private fun q1(): Any {
+  private fun q1(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_CRIMINAL_BEHAVIOUR).value) {
       ap.get(Value.NO) -> "0"
       ap.get(Value.SOMETIMES) -> "1"
       ap.get(Value.YES) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q3(): Any {
+  private fun q3(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_POSITIVE_ATTITUDE).value) {
       ap.get(Value.YES_POSITIVE) -> "0"
       ap.get(Value.NEGATIVE_ATTITUDE_NO_CONCERNS) -> "1"
       ap.get(Value.NEGATIVE_ATTITUDE_AND_CONCERNS) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q4(): Any {
+  private fun q4(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SUPERVISION).value) {
       ap.get(Value.YES_SUPERVISION) -> "0"
       ap.get(Value.UNSURE_SUPERVISION) -> "1"
       ap.get(Value.NO_SUPERVISION) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q9(): Any {
+  private fun q9(): Any? {
     return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_HOSTILE_ORIENTATION).value) {
       ap.get(Value.NO) -> "0"
       ap.get(Value.SOME) -> "1"
       ap.get(Value.YES) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q97(): Any {
-    return ThinkingBehaviours.q97(ap)
+  private fun q97(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).notes()
   }
 
-  private fun q98(): Any {
-    return ThinkingBehaviours.q98(ap)
+  private fun q98(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfSeriousHarm()
   }
 
-  private fun q99(): Any {
-    return ThinkingBehaviours.q99(ap)
+  private fun q99(): Any? {
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfReoffending()
   }
 }

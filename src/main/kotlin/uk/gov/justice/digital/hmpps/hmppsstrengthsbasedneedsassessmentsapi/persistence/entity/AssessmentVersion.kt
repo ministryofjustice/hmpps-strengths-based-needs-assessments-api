@@ -41,7 +41,7 @@ class Answer(
 
 typealias Answers = Map<String, Answer>
 
-typealias OasysEquivalent = Map<String, Any>
+typealias OasysEquivalent = Map<String, Any?>
 
 enum class Tag {
   UNVALIDATED,

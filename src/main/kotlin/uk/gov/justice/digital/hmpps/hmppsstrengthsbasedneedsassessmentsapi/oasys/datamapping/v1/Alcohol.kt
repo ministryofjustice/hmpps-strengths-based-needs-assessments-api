@@ -17,35 +17,35 @@ class Alcohol : SectionMapping() {
     )
   }
 
-  private fun q1(): Any {
-    return ""
+  private fun q1(): Any? {
+    TODO()
   }
 
-  private fun q1t(): Any {
-    return ""
+  private fun q1t(): Any? {
+    TODO()
   }
 
-  private fun q2(): Any {
-    return ""
+  private fun q2(): Any? {
+    TODO()
   }
 
-  private fun q97(): Any {
-    return ""
+  private fun q97(): Any? {
+    TODO()
   }
 
-  private fun q98(): Any {
-    return ""
+  private fun q98(): Any? {
+    TODO()
   }
 
-  private fun q99(): Any {
-    return ""
+  private fun q99(): Any? {
+    TODO()
   }
 
-  private fun qStrength(): Any {
-    return ""
+  private fun qStrength(): Any? {
+    TODO()
   }
 
-  private fun qNotRelatedToRisk(): Any {
-    return ""
+  private fun qNotRelatedToRisk(): Any? {
+    TODO()
   }
 }

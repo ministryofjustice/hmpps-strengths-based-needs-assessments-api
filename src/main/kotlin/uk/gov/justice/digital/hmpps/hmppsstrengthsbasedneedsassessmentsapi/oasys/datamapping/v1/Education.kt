@@ -31,25 +31,25 @@ class Education : SectionMapping() {
     )
   }
 
-  private fun q2(): Any {
+  private fun q2(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK), ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK) -> "YES"
       ap.get(Value.EMPLOYED), ap.get(Value.SELF_EMPLOYED) -> "NO"
       ap.get(Value.RETIRED), ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK) -> "NA"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun getEmploymentHistory(): Any {
+  private fun getEmploymentHistory(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_HISTORY).value) {
       ap.get(Value.STABLE) -> "0"
       ap.get(Value.PERIODS_OF_INSTABILITY) -> "1"
       ap.get(Value.UNSTABLE) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q3(): Any {
+  private fun q3(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
       ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
@@ -64,21 +64,21 @@ class Education : SectionMapping() {
     }
   }
 
-  private fun q4(): Any {
+  private fun q4(): Any? {
     return when (ap.answer(Field.EDUCATION_TRANSFERABLE_SKILLS).value) {
       ap.get(Value.NO) -> "2"
       ap.get(Value.YES_SOME_SKILLS) -> "1"
       ap.get(Value.YES) -> "0"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q5(): Any {
+  private fun q5(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_EXPERIENCE).value) {
       ap.get(Value.POSITIVE), ap.get(Value.MOSTLY_POSITIVE) -> "0"
       ap.get(Value.POSITIVE_AND_NEGATIVE) -> "1"
       ap.get(Value.NEGATIVE), ap.get(Value.MOSTLY_NEGATIVE) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
@@ -90,7 +90,7 @@ class Education : SectionMapping() {
     }
   }
 
-  private fun q7(): Any {
+  private fun q7(): Any? {
     val difficulties = ap.answer(Field.EDUCATION_DIFFICULTIES).values.orEmpty()
 
     val categories = mapOf(
@@ -104,27 +104,27 @@ class Education : SectionMapping() {
       difficulties.isNotEmpty() ->
         categories
           .values.mapNotNull(::getSeverityOf)
-          .maxOrNull()?.toString() ?: ""
-      else -> ""
+          .maxOrNull()?.toString()
+      else -> null
     }
   }
 
-  private fun q71(): Any {
+  private fun q71(): Any? {
     val difficulties = ap.answer(Field.EDUCATION_DIFFICULTIES).values
 
-    return difficulties?.joinToString(",") ?: ""
+    return difficulties?.joinToString(",")?.ifEmpty { null }
   }
 
-  private fun q8(): Any {
+  private fun q8(): Any? {
     return when (ap.answer(Field.HEALTH_WELLBEING_LEARNING_DIFFICULTIES).value) {
       ap.get(Value.YES_SIGNIFICANT_DIFFICULTIES) -> "2"
       ap.get(Value.YES_SOME_DIFFICULTIES) -> "1"
       ap.get(Value.NO) -> "0"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q9(): Any {
+  private fun q9(): Any? {
     return when (ap.answer(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED).value) {
       ap.get(Value.ENTRY_LEVEL) -> "2"
       ap.get(Value.LEVEL_1),
@@ -136,89 +136,52 @@ class Education : SectionMapping() {
       ap.get(Value.LEVEL_7),
       ap.get(Value.LEVEL_8),
       -> "0"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q10(): Any {
+  private fun q10(): Any? {
     return when (ap.answer(Field.EDUCATION_EXPERIENCE).value) {
       ap.get(Value.POSITIVE), ap.get(Value.MOSTLY_POSITIVE) -> "0"
       ap.get(Value.POSITIVE_AND_NEGATIVE) -> "1"
       ap.get(Value.NEGATIVE), ap.get(Value.MOSTLY_NEGATIVE) -> "2"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun q94(): Any {
-    return listOf(
-      // line 1
-      when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS).value) {
-        ap.get(Value.YES) -> "Strengths and protective factor notes - "
-        ap.get(Value.NO) -> "Area not linked to strengths and positive factors notes - "
-        else -> ""
-      } + (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS).value ?: ""),
-
-      // line 2
-      when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-        ap.get(Value.YES) -> "Area linked to serious harm notes - "
-        ap.get(Value.NO) -> "Area not linked to serious harm notes - "
-        else -> ""
-      } + (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS).value ?: ""),
-
-      // line 3
-      when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-        ap.get(Value.YES) -> "Risk of reoffending notes - "
-        ap.get(Value.NO) -> "Area not linked to reoffending notes - "
-        else -> ""
-      } + (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS).value ?: ""),
-    ).filterNot { it.isEmpty() }.joinToString(separator = "\n")
+  private fun q94(): Any? {
+    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).notes()
   }
 
-  private fun q96(): Any {
-    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun q96(): Any? {
+    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).riskOfSeriousHarm()
   }
 
-  private fun q98(): Any {
-    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun q98(): Any? {
+    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).riskOfReoffending()
   }
 
-  private fun qStrength(): Any {
-    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun qStrength(): Any? {
+    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).strengthsOrProtectiveFactors()
   }
 
-  private fun qNotRelatedToRisk(): Any {
-    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_PRACTITIONER_ANALYSIS_RELATED_TO_RISK).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> ""
-    }
+  private fun qNotRelatedToRisk(): Any? {
+    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).relatedToRisk()
   }
 
-  private fun qSC2(): Any {
+  private fun qSC2(): Any? {
     return when (ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS).value) {
       ap.get(Value.YES) -> "YES"
       ap.get(Value.NO) -> "NO"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun qSC2t(): Any {
-    return ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS_YES_DETAILS).value.orEmpty()
+  private fun qSC2t(): Any? {
+    return ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS_YES_DETAILS).value
   }
 
-  private fun qSC3(): Any {
+  private fun qSC3(): Any? {
     return when (ap.answer(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED).value) {
       ap.get(Value.ENTRY_LEVEL) -> "ANYOTHER"
       ap.get(Value.LEVEL_1),
@@ -231,11 +194,11 @@ class Education : SectionMapping() {
       ap.get(Value.LEVEL_8),
       -> "MATHSENGLISH"
       ap.get(Value.NONE_OF_THESE) -> "NOQUAL"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun qSC4(): Any {
+  private fun qSC4(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
       ap.get(Value.RETIRED) -> "FULLTIME"
       ap.get(Value.EMPLOYED) -> when (ap.answer(Field.EMPLOYMENT_TYPE).value) {
@@ -244,23 +207,23 @@ class Education : SectionMapping() {
         ap.get(Value.TEMPORARY_OR_CASUAL),
         ap.get(Value.APPRENTICESHIP),
         -> "PARTTIME"
-        else -> ""
+        else -> null
       }
       ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK) -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
         ap.get(Value.NO) -> "UNEMPLOYED"
-        else -> ""
+        else -> null
       }
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
       ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
       -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
         ap.get(Value.NO) -> "0"
-        else -> ""
+        else -> null
       }
-      else -> ""
+      else -> null
     }
   }
 
-  private fun qSC5(): Any {
+  private fun qSC5(): Any? {
     return when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
       ap.get(Value.EMPLOYED),
       ap.get(Value.SELF_EMPLOYED),
@@ -268,18 +231,18 @@ class Education : SectionMapping() {
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
       ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
       -> "No [Score 0]"
-      else -> ""
+      else -> null
     }
   }
 
-  private fun qSC8(): Any {
+  private fun qSC8(): Any? {
     return when (ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
       ap.get(Value.GOOD) -> "YES"
       ap.get(Value.FAIRLY_GOOD) -> "SOMETIMES"
       ap.get(Value.FAIRLY_BAD),
       ap.get(Value.BAD),
       -> "NOTCONFIDENT"
-      else -> ""
+      else -> null
     }
   }
 }

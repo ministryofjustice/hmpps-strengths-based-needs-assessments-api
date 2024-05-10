@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.FieldsToMap
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
@@ -23,51 +25,83 @@ class NewSections : SectionMapping() {
   }
 
   private fun qLinkedToRosh(): Any? {
-    return null
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfSeriousHarm()
   }
 
   private fun qLinkedToReoffending(): Any? {
-    return null
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).riskOfReoffending()
   }
 
   private fun qStrength(): Any? {
-    return null
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).strengthsOrProtectiveFactors()
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    return null
+    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).relatedToRisk()
   }
 
   private fun qAccommodationComplete(): Any? {
-    return null
+    return when (ap.answer(Field.ACCOMMODATION_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qEducationEmploymentComplete(): Any? {
-    return null
+    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qFinanceComplete(): Any? {
-    return null
+    return when (ap.answer(Field.FINANCE_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qDrugsComplete(): Any? {
-    return null
+    return when (ap.answer(Field.DRUG_USE_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qAlcoholCompletes(): Any? {
-    return null
+    return when (ap.answer(Field.ALCOHOL_USE_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qHealthWellbeingComplete(): Any? {
-    return null
+    return when (ap.answer(Field.HEALTH_WELLBEING_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qPersonalRelationshipsComplete(): Any? {
-    return null
+    return when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qThinkingBehavioursAttitudesComplete(): Any? {
-    return null
+    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun qOffenceAnalysisComplete(): Any? {

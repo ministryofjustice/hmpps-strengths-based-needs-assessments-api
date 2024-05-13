@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.FieldsToMap
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
@@ -59,6 +61,7 @@ class Drugs : SectionMapping() {
       "o8-2-14-4" to ::q2144,
       "o8-2-14" to ::q2140,
       "o8-4" to ::q4,
+      "o8-5" to ::q5,
       "o8-6" to ::q6,
       "o8-8" to ::q8,
       "o8-97" to ::q97,
@@ -69,243 +72,341 @@ class Drugs : SectionMapping() {
     )
   }
 
+  private fun getUsageFrequencyScore(field: Field): Any? {
+    return when (ap.answer(field).value) {
+      ap.get(Value.DAILY) -> "100"
+      ap.get(Value.WEEKLY) -> "110"
+      ap.get(Value.MONTHLY) -> "120"
+      ap.get(Value.OCCASIONALLY) -> "130"
+      else -> null
+    }
+  }
+
+  private fun isUsing(field: Field, frequencies: Set<Value>): Boolean {
+    val usage = ap.answer(field).value ?: return false
+    return when (true) {
+      frequencies.map { ap.get(it) }.contains(usage) -> true
+      else -> false
+    }
+  }
+
+  private fun isYes(field: Field): Boolean {
+    return when (ap.answer(field).value) {
+      ap.get(Value.YES) -> true
+      else -> false
+    }
+  }
+
   private fun q1(): Any? {
-    return null
+    return when (ap.answer(Field.DRUG_USE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
   }
 
   private fun q2011(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_HEROIN)
   }
 
   private fun q2013(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_HEROIN)) "YES" else null
   }
 
   private fun q2012(): Any? {
-    return null
+    return if (isYes(Field.INJECTING_DRUG_HEROIN)) "YES" else null
   }
 
   private fun q2014(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_HEROIN)) "YES" else null
   }
 
   private fun q2021(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED)
   }
 
   private fun q2023(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_METHADONE_NOT_PRESCRIBED)) "YES" else null
   }
 
   private fun q2022(): Any? {
-    return null
+    return if (isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED)) "YES" else null
   }
 
   private fun q2024(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED)) "YES" else null
   }
 
   private fun q2031(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_OTHER_OPIATES)
   }
 
   private fun q2033(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_OTHER_OPIATES)) "YES" else null
   }
 
   private fun q2032(): Any? {
-    return null
+    return if (isYes(Field.INJECTING_DRUG_OTHER_OPIATES)) "YES" else null
   }
 
   private fun q2034(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES)) "YES" else null
   }
 
   private fun q2041(): Any? {
-    return null
-  }
-
-  private fun q2042(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_CRACK)
   }
 
   private fun q2043(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_CRACK)) "YES" else null
+  }
+
+  private fun q2042(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_CRACK)) "YES" else null
   }
 
   private fun q2044(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_CRACK)) "YES" else null
   }
 
   private fun q2051(): Any? {
-    return null
-  }
-
-  private fun q2052(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_COCAINE)
   }
 
   private fun q2053(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_COCAINE)) "YES" else null
+  }
+
+  private fun q2052(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_COCAINE)) "YES" else null
   }
 
   private fun q2054(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_COCAINE)) "YES" else null
   }
 
   private fun q2061(): Any? {
-    return null
-  }
-
-  private fun q2062(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS)
   }
 
   private fun q2063(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
+  }
+
+  private fun q2062(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
   }
 
   private fun q2064(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
   }
 
   private fun q2071(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_BENZODIAZEPINES)
   }
 
   private fun q2073(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_BENZODIAZEPINES)) "YES" else null
   }
 
   private fun q2072(): Any? {
-    return null
+    return if (isYes(Field.INJECTING_DRUG_BENZODIAZEPINES)) "YES" else null
   }
 
   private fun q2074(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_BENZODIAZEPINES)) "YES" else null
   }
 
   private fun q2081(): Any? {
-    return null
-  }
-
-  private fun q2082(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_AMPHETAMINES)
   }
 
   private fun q2083(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_AMPHETAMINES)) "YES" else null
+  }
+
+  private fun q2082(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_AMPHETAMINES)) "YES" else null
   }
 
   private fun q2084(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES)) "YES" else null
   }
 
   private fun q2091(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_HALLUCINOGENICS)
   }
 
   private fun q2093(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_HALLUCINOGENICS)) "YES" else null
   }
 
   private fun q2101(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_ECSTASY)
   }
 
   private fun q2103(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_ECSTASY)) "YES" else null
   }
 
   private fun q2111(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_CANNABIS)
   }
 
   private fun q2113(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_CANNABIS)) "YES" else null
   }
 
   private fun q2121(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_SOLVENTS)
   }
 
   private fun q2123(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_SOLVENTS)) "YES" else null
   }
 
   private fun q2131(): Any? {
-    return null
-  }
-
-  private fun q2132(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_STEROIDS)
   }
 
   private fun q2133(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_STEROIDS)) "YES" else null
+  }
+
+  private fun q2132(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_STEROIDS)) "YES" else null
   }
 
   private fun q2134(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_STEROIDS)) "YES" else null
   }
 
   private fun q2151(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_SPICE)
   }
 
   private fun q2153(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_SPICE)) "YES" else null
   }
 
   private fun q2141(): Any? {
-    return null
-  }
-
-  private fun q2142(): Any? {
-    return null
+    return getUsageFrequencyScore(Field.DRUG_USAGE_OTHER_DRUG)
   }
 
   private fun q2143(): Any? {
-    return null
+    return if (isYes(Field.PAST_DRUG_USAGE_OTHER_DRUG)) "YES" else null
+  }
+
+  private fun q2142(): Any? {
+    return if (isYes(Field.INJECTING_DRUG_OTHER_DRUG)) "YES" else null
   }
 
   private fun q2144(): Any? {
-    return null
+    return if (isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG)) "YES" else null
   }
 
   private fun q2140(): Any? {
-    return null
+    return ap.answer(Field.OTHER_DRUG_DETAILS).value
   }
 
-  private fun q4(): Any? {
-    return null
+  private fun q4(): Any {
+    val frequencies = setOf(Value.DAILY, Value.WEEKLY, Value.MONTHLY, Value.OCCASIONALLY)
+    return when (true) {
+      isUsing(Field.DRUG_USAGE_HEROIN, frequencies),
+      isUsing(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, frequencies),
+      isUsing(Field.DRUG_USAGE_OTHER_OPIATES, frequencies),
+      isUsing(Field.DRUG_USAGE_CRACK, frequencies),
+      isUsing(Field.DRUG_USAGE_COCAINE, frequencies),
+      isUsing(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, frequencies),
+      -> "2"
+      else -> "0"
+    }
   }
 
-  private fun q6(): Any? {
-    return null
+  private fun q5(): Any? {
+    val dailyOrWeekly = setOf(Value.DAILY, Value.WEEKLY)
+    val monthlyOrOccasionally = setOf(Value.MONTHLY, Value.OCCASIONALLY)
+    val drugs = setOf(
+      Field.DRUG_USAGE_HEROIN,
+      Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED,
+      Field.DRUG_USAGE_OTHER_OPIATES,
+      Field.DRUG_USAGE_CRACK,
+      Field.DRUG_USAGE_COCAINE,
+      Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS,
+      Field.DRUG_USAGE_BENZODIAZEPINES,
+      Field.DRUG_USAGE_AMPHETAMINES,
+      Field.DRUG_USAGE_HALLUCINOGENICS,
+      Field.DRUG_USAGE_ECSTASY,
+      Field.DRUG_USAGE_CANNABIS,
+      Field.DRUG_USAGE_SOLVENTS,
+      Field.DRUG_USAGE_STEROIDS,
+      Field.DRUG_USAGE_SPICE,
+      Field.DRUG_USAGE_OTHER_DRUG,
+    )
+
+    return when (true) {
+      drugs.any { isUsing(it, dailyOrWeekly) } -> "2"
+      drugs.any { isUsing(it, monthlyOrOccasionally) } -> "0"
+      else -> null
+    }
+  }
+
+  private fun q6(): Any {
+    return when (true) {
+      isYes(Field.INJECTING_DRUG_HEROIN),
+      isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED),
+      isYes(Field.INJECTING_DRUG_OTHER_OPIATES),
+      isYes(Field.INJECTING_DRUG_CRACK),
+      isYes(Field.INJECTING_DRUG_COCAINE),
+      isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS),
+      isYes(Field.INJECTING_DRUG_BENZODIAZEPINES),
+      isYes(Field.INJECTING_DRUG_AMPHETAMINES),
+      isYes(Field.INJECTING_DRUG_STEROIDS),
+      isYes(Field.INJECTING_DRUG_OTHER_DRUG),
+      -> "2"
+
+      isYes(Field.PAST_INJECTING_DRUG_HEROIN),
+      isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED),
+      isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES),
+      isYes(Field.PAST_INJECTING_DRUG_CRACK),
+      isYes(Field.PAST_INJECTING_DRUG_COCAINE),
+      isYes(Field.PAST_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS),
+      isYes(Field.PAST_INJECTING_DRUG_BENZODIAZEPINES),
+      isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES),
+      isYes(Field.PAST_INJECTING_DRUG_STEROIDS),
+      isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG),
+      -> "1"
+
+      else -> "0"
+    }
   }
 
   private fun q8(): Any? {
-    return null
+    return when (ap.answer(Field.MOTIVATED_STOPPING_DRUG_USE).value) {
+      ap.get(Value.MOTIVATED) -> "0"
+      ap.get(Value.SOME_MOTIVATION) -> "1"
+      ap.get(Value.NO_MOTIVATION) -> "2"
+      else -> null
+    }
   }
 
   private fun q97(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).notes()
   }
 
   private fun q98(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).riskOfSeriousHarm()
   }
 
   private fun q99(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).riskOfReoffending()
   }
 
   private fun qStrength(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).strengthsOrProtectiveFactors()
   }
 
   private fun qNotRelatedToRisk(): Any? {
-    return null
+    return PractitionerAnalysis("DRUGS", ap).relatedToRisk()
   }
 }

@@ -72,69 +72,6 @@ class Drugs : SectionMapping() {
     )
   }
 
-  private val injectingFrequency = mapOf(
-    Field.DRUG_USAGE_HEROIN to setOf(
-      Field.DAILY_INJECTING_DRUG_HEROIN,
-      Field.WEEKLY_INJECTING_DRUG_HEROIN,
-      Field.MONTHLY_INJECTING_DRUG_HEROIN,
-      Field.OCCASIONALLY_INJECTING_DRUG_HEROIN,
-    ),
-    Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED to setOf(
-      Field.DAILY_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED,
-      Field.WEEKLY_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED,
-      Field.MONTHLY_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED,
-      Field.OCCASIONALLY_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED,
-    ),
-    Field.DRUG_USAGE_OTHER_OPIATES to setOf(
-      Field.DAILY_INJECTING_DRUG_OTHER_OPIATES,
-      Field.WEEKLY_INJECTING_DRUG_OTHER_OPIATES,
-      Field.MONTHLY_INJECTING_DRUG_OTHER_OPIATES,
-      Field.OCCASIONALLY_INJECTING_DRUG_OTHER_OPIATES,
-    ),
-    Field.DRUG_USAGE_CRACK to setOf(
-      Field.DAILY_INJECTING_DRUG_CRACK,
-      Field.WEEKLY_INJECTING_DRUG_CRACK,
-      Field.MONTHLY_INJECTING_DRUG_CRACK,
-      Field.OCCASIONALLY_INJECTING_DRUG_CRACK,
-    ),
-    Field.DRUG_USAGE_COCAINE to setOf(
-      Field.DAILY_INJECTING_DRUG_COCAINE,
-      Field.WEEKLY_INJECTING_DRUG_COCAINE,
-      Field.MONTHLY_INJECTING_DRUG_COCAINE,
-      Field.OCCASIONALLY_INJECTING_DRUG_COCAINE,
-    ),
-    Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS to setOf(
-      Field.DAILY_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS,
-      Field.WEEKLY_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS,
-      Field.MONTHLY_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS,
-      Field.OCCASIONALLY_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS,
-    ),
-    Field.DRUG_USAGE_BENZODIAZEPINES to setOf(
-      Field.DAILY_INJECTING_DRUG_BENZODIAZEPINES,
-      Field.WEEKLY_INJECTING_DRUG_BENZODIAZEPINES,
-      Field.MONTHLY_INJECTING_DRUG_BENZODIAZEPINES,
-      Field.OCCASIONALLY_INJECTING_DRUG_BENZODIAZEPINES,
-    ),
-    Field.DRUG_USAGE_AMPHETAMINES to setOf(
-      Field.DAILY_INJECTING_DRUG_AMPHETAMINES,
-      Field.WEEKLY_INJECTING_DRUG_AMPHETAMINES,
-      Field.MONTHLY_INJECTING_DRUG_AMPHETAMINES,
-      Field.OCCASIONALLY_INJECTING_DRUG_AMPHETAMINES,
-    ),
-    Field.DRUG_USAGE_STEROIDS to setOf(
-      Field.DAILY_INJECTING_DRUG_STEROIDS,
-      Field.WEEKLY_INJECTING_DRUG_STEROIDS,
-      Field.MONTHLY_INJECTING_DRUG_STEROIDS,
-      Field.OCCASIONALLY_INJECTING_DRUG_STEROIDS,
-    ),
-    Field.DRUG_USAGE_OTHER_DRUG to setOf(
-      Field.DAILY_INJECTING_DRUG_OTHER_DRUG,
-      Field.WEEKLY_INJECTING_DRUG_OTHER_DRUG,
-      Field.MONTHLY_INJECTING_DRUG_OTHER_DRUG,
-      Field.OCCASIONALLY_INJECTING_DRUG_OTHER_DRUG,
-    ),
-  )
-
   private fun getUsageFrequencyScore(field: Field): Any? {
     return when (ap.answer(field).value) {
       ap.get(Value.DAILY) -> "100"
@@ -150,15 +87,6 @@ class Drugs : SectionMapping() {
     return when (true) {
       frequencies.map { ap.get(it) }.contains(usage) -> true
       else -> false
-    }
-  }
-
-  private fun isInjecting(field: Field): Boolean {
-    return injectingFrequency[field]!!.any {
-      when (ap.answer(it).value) {
-        ap.get(Value.YES) -> true
-        else -> false
-      }
     }
   }
 
@@ -186,7 +114,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2012(): Any? {
-    return if (isYes(Field.DRUG_USAGE_HEROIN)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_HEROIN)) "YES" else null
   }
 
   private fun q2014(): Any? {
@@ -202,7 +130,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2022(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED)) "YES" else null
   }
 
   private fun q2024(): Any? {
@@ -218,7 +146,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2032(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_OTHER_OPIATES)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_OTHER_OPIATES)) "YES" else null
   }
 
   private fun q2034(): Any? {
@@ -234,7 +162,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2042(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_CRACK)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_CRACK)) "YES" else null
   }
 
   private fun q2044(): Any? {
@@ -250,7 +178,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2052(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_COCAINE)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_COCAINE)) "YES" else null
   }
 
   private fun q2054(): Any? {
@@ -266,7 +194,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2062(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
   }
 
   private fun q2064(): Any? {
@@ -282,7 +210,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2072(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_BENZODIAZEPINES)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_BENZODIAZEPINES)) "YES" else null
   }
 
   private fun q2074(): Any? {
@@ -298,7 +226,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2082(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_AMPHETAMINES)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_AMPHETAMINES)) "YES" else null
   }
 
   private fun q2084(): Any? {
@@ -346,7 +274,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2132(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_STEROIDS)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_STEROIDS)) "YES" else null
   }
 
   private fun q2134(): Any? {
@@ -370,7 +298,7 @@ class Drugs : SectionMapping() {
   }
 
   private fun q2142(): Any? {
-    return if (isInjecting(Field.DRUG_USAGE_OTHER_DRUG)) "YES" else null
+    return if (isYes(Field.INJECTING_DRUG_OTHER_DRUG)) "YES" else null
   }
 
   private fun q2144(): Any? {
@@ -425,16 +353,16 @@ class Drugs : SectionMapping() {
 
   private fun q6(): Any {
     return when (true) {
-      isInjecting(Field.DRUG_USAGE_HEROIN),
-      isInjecting(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED),
-      isInjecting(Field.DRUG_USAGE_OTHER_OPIATES),
-      isInjecting(Field.DRUG_USAGE_CRACK),
-      isInjecting(Field.DRUG_USAGE_COCAINE),
-      isInjecting(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS),
-      isInjecting(Field.DRUG_USAGE_BENZODIAZEPINES),
-      isInjecting(Field.DRUG_USAGE_AMPHETAMINES),
-      isInjecting(Field.DRUG_USAGE_STEROIDS),
-      isInjecting(Field.DRUG_USAGE_OTHER_DRUG),
+      isYes(Field.INJECTING_DRUG_HEROIN),
+      isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED),
+      isYes(Field.INJECTING_DRUG_OTHER_OPIATES),
+      isYes(Field.INJECTING_DRUG_CRACK),
+      isYes(Field.INJECTING_DRUG_COCAINE),
+      isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS),
+      isYes(Field.INJECTING_DRUG_BENZODIAZEPINES),
+      isYes(Field.INJECTING_DRUG_AMPHETAMINES),
+      isYes(Field.INJECTING_DRUG_STEROIDS),
+      isYes(Field.INJECTING_DRUG_OTHER_DRUG),
       -> "2"
 
       isYes(Field.PAST_INJECTING_DRUG_HEROIN),

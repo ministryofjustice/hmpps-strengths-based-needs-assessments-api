@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.v1
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Given
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.SectionMappingTest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import kotlin.test.Test
 
 class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
@@ -10,6 +12,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-1",
       Given().expect(null),
+      Given(Field.DRUG_USE, null).expect(null),
+      Given(Field.DRUG_USE, Value.YES).expect("YES"),
+      Given(Field.DRUG_USE, Value.NO).expect("NO"),
     )
   }
 

@@ -64,7 +64,7 @@ class AlcoholMisuse : SectionMapping() {
   }
 
   private fun q2(): Any? {
-    return when(ap.answer(Field.ALCOHOL_USE).value){
+    return when (ap.answer(Field.ALCOHOL_USE).value) {
       ap.get(Value.NO) -> "0"
       ap.get(Value.YES_WITHIN_LAST_THREE_MONTHS), ap.get(Value.YES_NOT_IN_LAST_THREE_MONTHS) -> {
         when (ap.answer(Field.ALCOHOL_EVIDENCE_OF_EXCESS_DRINKING).value) {

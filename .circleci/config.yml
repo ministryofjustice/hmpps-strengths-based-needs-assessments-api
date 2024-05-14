@@ -22,7 +22,7 @@ parameters:
 jobs:
   validate:
     machine:
-      image: ubuntu-2004:2023.10.1
+      image: ubuntu-2204:current
     steps:
       - checkout
       - restore_cache:
@@ -47,7 +47,7 @@ jobs:
 
   e2e_test:
     machine:
-      image: ubuntu-2004:2023.10.1
+      image: ubuntu-2204:current
     parallelism: 4
     steps:
       - checkout

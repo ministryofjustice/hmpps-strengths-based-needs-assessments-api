@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.util
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
@@ -22,6 +23,7 @@ import java.time.Duration
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @ActiveProfiles(profiles = ["test"])
+@Tag("integration")
 abstract class IntegrationTest {
   var session: MockHttpSession? = null
   var request: MockHttpServletRequest? = null

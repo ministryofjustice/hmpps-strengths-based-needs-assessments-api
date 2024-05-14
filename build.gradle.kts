@@ -64,6 +64,18 @@ tasks {
   }
 }
 
+tasks.register<Test>("unitTests") {
+  useJUnitPlatform {
+    excludeTags("integration")
+  }
+}
+
+tasks.register<Test>("integrationTests") {
+  useJUnitPlatform {
+    includeTags("integration")
+  }
+}
+
 detekt {
   config.setFrom("detekt.yml")
   baseline = file("detekt-baseline.xml")

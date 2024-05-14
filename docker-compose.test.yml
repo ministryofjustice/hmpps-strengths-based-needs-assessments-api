@@ -1,6 +1,5 @@
 services:
   api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
     environment:
       LINK_BASE_URL: http://ui:3000/form
 

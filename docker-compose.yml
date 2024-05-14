@@ -29,7 +29,7 @@ services:
       - /var/lib/postgresql
 
   api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
+    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
     build:
       context: .
     networks:

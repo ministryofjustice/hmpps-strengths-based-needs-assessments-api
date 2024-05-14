@@ -59,7 +59,7 @@ lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle detektBaseline --parallel
 
 test-up: ## Stands up a test environment.
-	docker compose --progress plain pull
+	docker compose --progress plain pull --policy missing
 	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait --force-recreate
 
 test-down: ## Stops and removes all of the test containers.

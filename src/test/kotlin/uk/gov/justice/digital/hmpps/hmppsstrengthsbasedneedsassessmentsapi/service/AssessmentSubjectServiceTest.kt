@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Gender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentSubjectRepository
+import java.time.LocalDate
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
@@ -32,7 +33,7 @@ class AssessmentSubjectServiceTest {
   }
 
   @Nested
-  @DisplayName("find")
+  @DisplayName("findByAssessment")
   inner class Find {
     @Test
     fun `it returns the subject for a given assessment`() {
@@ -40,10 +41,10 @@ class AssessmentSubjectServiceTest {
       val assessmentSubject = AssessmentSubject()
 
       every {
-        assessmentSubjectRepository.findByAssessment(assessment)
+        assessmentSubjectRepository.findByAssessmentUuid(assessment.uuid)
       } returns assessmentSubject
 
-      val result = assessmentSubjectService.find(assessment)
+      val result = assessmentSubjectService.findByAssessmentUuid(assessment.uuid)
       assertThat(result).isEqualTo(assessmentSubject)
     }
 
@@ -52,10 +53,10 @@ class AssessmentSubjectServiceTest {
       val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
 
       every {
-        assessmentSubjectRepository.findByAssessment(assessment)
+        assessmentSubjectRepository.findByAssessmentUuid(assessment.uuid)
       } returns null
 
-      val result = assessmentSubjectService.find(assessment)
+      val result = assessmentSubjectService.findByAssessmentUuid(assessment.uuid)
       assertThat(result).isNull()
     }
   }
@@ -72,6 +73,7 @@ class AssessmentSubjectServiceTest {
         nomisId = "1234567",
         givenName = "Paul",
         familyName = "Whitfield",
+        dateOfBirth = LocalDate.of(1980, 1, 1),
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
         sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
@@ -82,14 +84,15 @@ class AssessmentSubjectServiceTest {
       val result = assessmentSubjectService.create(assessment, subjectDetails)
 
       assertThat(result.assessment).isEqualTo(assessment)
-      assertThat(result.subjectDetails?.crn).isEqualTo(subjectDetails.crn)
-      assertThat(result.subjectDetails?.pnc).isEqualTo(subjectDetails.pnc)
-      assertThat(result.subjectDetails?.nomisId).isEqualTo(subjectDetails.nomisId)
-      assertThat(result.subjectDetails?.givenName).isEqualTo(subjectDetails.givenName)
-      assertThat(result.subjectDetails?.familyName).isEqualTo(subjectDetails.familyName)
-      assertThat(result.subjectDetails?.gender).isEqualTo(Gender.MALE)
-      assertThat(result.subjectDetails?.location).isEqualTo(subjectDetails.location)
-      assertThat(result.subjectDetails?.sexuallyMotivatedOffenceHistory).isEqualTo(true)
+      assertThat(result.subjectDetails.crn).isEqualTo(subjectDetails.crn)
+      assertThat(result.subjectDetails.pnc).isEqualTo(subjectDetails.pnc)
+      assertThat(result.subjectDetails.nomisId).isEqualTo(subjectDetails.nomisId)
+      assertThat(result.subjectDetails.givenName).isEqualTo(subjectDetails.givenName)
+      assertThat(result.subjectDetails.familyName).isEqualTo(subjectDetails.familyName)
+      assertThat(result.subjectDetails.dateOfBirth).isEqualTo(subjectDetails.dateOfBirth)
+      assertThat(result.subjectDetails.gender).isEqualTo(Gender.MALE)
+      assertThat(result.subjectDetails.location).isEqualTo(subjectDetails.location)
+      assertThat(result.subjectDetails.sexuallyMotivatedOffenceHistory).isEqualTo(true)
     }
   }
 
@@ -105,25 +108,27 @@ class AssessmentSubjectServiceTest {
         nomisId = "1234567",
         givenName = "Paul",
         familyName = "Whitfield",
+        dateOfBirth = LocalDate.of(1980, 1, 1),
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
         sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
       )
 
-      every { assessmentSubjectRepository.findByAssessment(any()) } returns null
+      every { assessmentSubjectRepository.findByAssessmentUuid(any()) } returns null
       every { assessmentSubjectRepository.save(any()) } returnsArgument 0
 
       val result = assessmentSubjectService.updateOrCreate(assessment, subjectDetails)
 
       assertThat(result.assessment).isEqualTo(assessment)
-      assertThat(result.subjectDetails?.crn).isEqualTo(subjectDetails.crn)
-      assertThat(result.subjectDetails?.pnc).isEqualTo(subjectDetails.pnc)
-      assertThat(result.subjectDetails?.nomisId).isEqualTo(subjectDetails.nomisId)
-      assertThat(result.subjectDetails?.givenName).isEqualTo(subjectDetails.givenName)
-      assertThat(result.subjectDetails?.familyName).isEqualTo(subjectDetails.familyName)
-      assertThat(result.subjectDetails?.gender).isEqualTo(Gender.MALE)
-      assertThat(result.subjectDetails?.location).isEqualTo(subjectDetails.location)
-      assertThat(result.subjectDetails?.sexuallyMotivatedOffenceHistory).isEqualTo(true)
+      assertThat(result.subjectDetails.crn).isEqualTo(subjectDetails.crn)
+      assertThat(result.subjectDetails.pnc).isEqualTo(subjectDetails.pnc)
+      assertThat(result.subjectDetails.nomisId).isEqualTo(subjectDetails.nomisId)
+      assertThat(result.subjectDetails.givenName).isEqualTo(subjectDetails.givenName)
+      assertThat(result.subjectDetails.familyName).isEqualTo(subjectDetails.familyName)
+      assertThat(result.subjectDetails.dateOfBirth).isEqualTo(subjectDetails.dateOfBirth)
+      assertThat(result.subjectDetails.gender).isEqualTo(Gender.MALE)
+      assertThat(result.subjectDetails.location).isEqualTo(subjectDetails.location)
+      assertThat(result.subjectDetails.sexuallyMotivatedOffenceHistory).isEqualTo(true)
     }
 
     @Test
@@ -135,6 +140,7 @@ class AssessmentSubjectServiceTest {
         nomisId = "1234567",
         givenName = "Paul",
         familyName = "Whitfield",
+        dateOfBirth = LocalDate.of(1980, 1, 1),
         gender = OasysGender.MALE,
         location = Location.COMMUNITY,
         sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
@@ -142,20 +148,21 @@ class AssessmentSubjectServiceTest {
 
       val assessmentSubject = AssessmentSubject(id = 1, assessment = assessment)
 
-      every { assessmentSubjectRepository.findByAssessment(assessment) } returns assessmentSubject
+      every { assessmentSubjectRepository.findByAssessmentUuid(assessment.uuid) } returns assessmentSubject
       every { assessmentSubjectRepository.save(assessmentSubject) } returnsArgument 0
 
       val result = assessmentSubjectService.updateOrCreate(assessment, subjectDetails)
 
       assertThat(result.assessment).isEqualTo(assessment)
-      assertThat(result.subjectDetails?.crn).isEqualTo(subjectDetails.crn)
-      assertThat(result.subjectDetails?.pnc).isEqualTo(subjectDetails.pnc)
-      assertThat(result.subjectDetails?.nomisId).isEqualTo(subjectDetails.nomisId)
-      assertThat(result.subjectDetails?.givenName).isEqualTo(subjectDetails.givenName)
-      assertThat(result.subjectDetails?.familyName).isEqualTo(subjectDetails.familyName)
-      assertThat(result.subjectDetails?.gender).isEqualTo(Gender.MALE)
-      assertThat(result.subjectDetails?.location).isEqualTo(subjectDetails.location)
-      assertThat(result.subjectDetails?.sexuallyMotivatedOffenceHistory).isEqualTo(true)
+      assertThat(result.subjectDetails.crn).isEqualTo(subjectDetails.crn)
+      assertThat(result.subjectDetails.pnc).isEqualTo(subjectDetails.pnc)
+      assertThat(result.subjectDetails.nomisId).isEqualTo(subjectDetails.nomisId)
+      assertThat(result.subjectDetails.givenName).isEqualTo(subjectDetails.givenName)
+      assertThat(result.subjectDetails.familyName).isEqualTo(subjectDetails.familyName)
+      assertThat(result.subjectDetails.dateOfBirth).isEqualTo(subjectDetails.dateOfBirth)
+      assertThat(result.subjectDetails.gender).isEqualTo(Gender.MALE)
+      assertThat(result.subjectDetails.location).isEqualTo(subjectDetails.location)
+      assertThat(result.subjectDetails.sexuallyMotivatedOffenceHistory).isEqualTo(true)
     }
   }
 }

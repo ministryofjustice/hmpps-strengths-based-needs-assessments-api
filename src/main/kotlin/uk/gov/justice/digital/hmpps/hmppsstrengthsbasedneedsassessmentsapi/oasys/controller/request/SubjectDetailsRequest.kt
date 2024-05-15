@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Location
+import java.time.LocalDate
 
 const val OASYS_GENDER_NOT_KNOWN = 0
 const val OASYS_GENDER_MALE = 1
@@ -25,6 +26,7 @@ data class SubjectDetailsRequest(
   val nomisId: String?,
   val givenName: String,
   val familyName: String,
+  val dateOfBirth: LocalDate?,
   val gender: OasysGender,
   val location: Location,
   val sexuallyMotivatedOffenceHistory: OASysYesNo?,

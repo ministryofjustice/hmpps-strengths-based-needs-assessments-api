@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.SubjectResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.SubjectNotFoundException
 import java.util.UUID
 
 @RestController
 @Tag(name = "Subject")
 @RequestMapping("/subject")
-class SubjectController() {
+class SubjectController(
+  private val assessmentSubjectService: AssessmentSubjectService,
+) {
   @RequestMapping(path = ["/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the subject of an assessment")
   @ApiResponses(
@@ -30,12 +34,7 @@ class SubjectController() {
     @PathVariable
     assessmentUuid: UUID,
   ): SubjectResponse {
-    return SubjectResponse(
-      "Sam",
-      "Whitfield",
-      "01/01/1970",
-      "A123456",
-      "01/123456789A",
-    )
+    return assessmentSubjectService.findByAssessmentUuid(assessmentUuid)?.let { SubjectResponse.from(it) }
+      ?: throw SubjectNotFoundException("Subject not found for assessment UUID: $assessmentUuid")
   }
 }

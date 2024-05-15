@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentSubject
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentSubjectRepository
+import java.util.UUID
 
 @Service
 class AssessmentSubjectService(
@@ -24,7 +25,7 @@ class AssessmentSubjectService(
   }
 
   fun updateOrCreate(assessment: Assessment, subjectDetails: SubjectDetailsRequest): AssessmentSubject {
-    return find(assessment)?.let {
+    return findByAssessmentUuid(assessment.uuid)?.let {
       it.subjectDetails = SubjectDetails.from(subjectDetails)
       assessmentSubjectRepository.save(it)
         .also { log.info("Updated subject for assessment ${assessment.uuid}") }
@@ -33,8 +34,8 @@ class AssessmentSubjectService(
     }
   }
 
-  fun find(assessment: Assessment): AssessmentSubject? {
-    return assessmentSubjectRepository.findByAssessment(assessment)
+  fun findByAssessmentUuid(assessmentUuid: UUID): AssessmentSubject? {
+    return assessmentSubjectRepository.findByAssessmentUuid(assessmentUuid)
   }
 
   companion object {

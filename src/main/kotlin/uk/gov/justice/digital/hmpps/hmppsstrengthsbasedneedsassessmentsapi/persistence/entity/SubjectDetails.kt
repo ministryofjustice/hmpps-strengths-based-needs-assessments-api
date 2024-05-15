@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.pers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OASysYesNo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysGender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
+import java.time.LocalDate
 
 enum class Gender {
   NOT_KNOWN,
@@ -29,14 +30,15 @@ enum class Location {
 }
 
 data class SubjectDetails(
-  val crn: String?,
-  val pnc: String?,
-  val nomisId: String?,
-  val givenName: String?,
-  val familyName: String?,
-  val gender: Gender?,
-  val location: Location?,
-  val sexuallyMotivatedOffenceHistory: Boolean?,
+  val crn: String? = null,
+  val pnc: String? = null,
+  val nomisId: String? = null,
+  val givenName: String = "",
+  val familyName: String = "",
+  val dateOfBirth: LocalDate? = null,
+  val gender: Gender? = null,
+  val location: Location? = null,
+  val sexuallyMotivatedOffenceHistory: Boolean? = null,
 ) {
   companion object {
     private fun sexuallyMotivatedOffenceHistoryFrom(value: OASysYesNo?): Boolean? {
@@ -54,6 +56,7 @@ data class SubjectDetails(
         request.nomisId,
         request.givenName,
         request.familyName,
+        request.dateOfBirth,
         Gender.from(request.gender),
         request.location,
         sexuallyMotivatedOffenceHistoryFrom(request.sexuallyMotivatedOffenceHistory),

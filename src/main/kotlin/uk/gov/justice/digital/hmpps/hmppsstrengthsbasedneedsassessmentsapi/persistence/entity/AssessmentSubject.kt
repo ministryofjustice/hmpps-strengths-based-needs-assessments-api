@@ -30,7 +30,7 @@ data class AssessmentSubject(
 
   @Type(JsonType::class)
   @Column(name = "subject_details")
-  var subjectDetails: SubjectDetails? = null,
+  var subjectDetails: SubjectDetails = SubjectDetails(),
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)

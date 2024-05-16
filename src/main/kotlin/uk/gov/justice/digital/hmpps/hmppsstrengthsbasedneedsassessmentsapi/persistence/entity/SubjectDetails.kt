@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
 import java.time.LocalDate
 
@@ -34,6 +35,7 @@ data class SubjectDetails(
   val nomisId: String? = null,
   val givenName: String = "",
   val familyName: String = "",
+  @JsonFormat(pattern = "yyyy-MM-dd")
   val dateOfBirth: LocalDate? = null,
   val gender: Gender? = null,
   val location: Location? = null,

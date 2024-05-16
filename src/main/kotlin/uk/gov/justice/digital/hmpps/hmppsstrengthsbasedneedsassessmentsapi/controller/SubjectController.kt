@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.SubjectResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.SubjectNotFoundException
 import java.util.UUID
@@ -33,8 +33,8 @@ class SubjectController(
     @Parameter(description = "OASys assessment ID", required = true, example = "ABC2134567890")
     @PathVariable
     assessmentUuid: UUID,
-  ): SubjectResponse {
-    return assessmentSubjectService.findByAssessmentUuid(assessmentUuid)?.let { SubjectResponse.from(it) }
+  ): SubjectDetails {
+    return assessmentSubjectService.findByAssessmentUuid(assessmentUuid)?.subjectDetails
       ?: throw SubjectNotFoundException("Subject not found for assessment UUID: $assessmentUuid")
   }
 }

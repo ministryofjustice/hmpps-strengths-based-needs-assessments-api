@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OASysYesNo
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysGender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
 import java.time.LocalDate
 
@@ -13,12 +11,13 @@ enum class Gender {
   ;
 
   companion object {
-    fun from(value: OasysGender): Gender {
-      return when (value) {
-        OasysGender.NOT_KNOWN -> NOT_KNOWN
-        OasysGender.MALE -> MALE
-        OasysGender.FEMALE -> FEMALE
-        OasysGender.NOT_SPECIFIED -> NOT_SPECIFIED
+    fun from(oasysValue: Int): Gender {
+      return when (oasysValue) {
+        0 -> NOT_KNOWN
+        1 -> MALE
+        2 -> FEMALE
+        9 -> NOT_SPECIFIED
+        else -> throw IllegalArgumentException("Invalid value for gender: $oasysValue")
       }
     }
   }
@@ -41,11 +40,12 @@ data class SubjectDetails(
   val sexuallyMotivatedOffenceHistory: Boolean? = null,
 ) {
   companion object {
-    private fun sexuallyMotivatedOffenceHistoryFrom(value: OASysYesNo?): Boolean? {
-      return when (value) {
-        OASysYesNo.YES -> true
-        OASysYesNo.NO -> false
-        else -> null
+    private fun sexuallyMotivatedOffenceHistoryFrom(value: String?): Boolean? {
+      return when (value?.lowercase()) {
+        "yes" -> true
+        "no" -> false
+        null -> null
+        else -> throw IllegalArgumentException("Invalid value for sexually motivated offence history: $value")
       }
     }
 

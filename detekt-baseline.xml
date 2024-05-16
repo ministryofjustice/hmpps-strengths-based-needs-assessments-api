@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues>
     <ID>FunctionNaming:AssessmentSubjectRepository.kt$AssessmentSubjectRepository$fun findByAssessment_Uuid(assessmentUuid: UUID): AssessmentSubject?</ID>
+    <ID>MagicNumber:SubjectDetails.kt$Gender.Companion$9</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>ConstructorParameterNaming:AssessmentResponse.kt$AssessmentMetadata$val oasys_pks: List&lt;String></ID>

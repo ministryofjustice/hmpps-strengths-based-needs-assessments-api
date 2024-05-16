@@ -131,7 +131,7 @@ class OasysAssessmentControllerTest(
             "nomisId": "1234567890",
             "givenName": "Paul",
             "familyName": "Whitfield",
-            "gender": "MALE",
+            "gender": 1,
             "location": "PRISON",
             "sexuallyMotivatedOffenceHistory": "Yes"
           } 

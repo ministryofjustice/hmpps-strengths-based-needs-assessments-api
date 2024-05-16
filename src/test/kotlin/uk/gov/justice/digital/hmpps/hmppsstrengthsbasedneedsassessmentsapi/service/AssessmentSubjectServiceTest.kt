@@ -10,8 +10,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OASysYesNo
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysGender
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SubjectDetailsRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentSubject
@@ -74,9 +72,9 @@ class AssessmentSubjectServiceTest {
         givenName = "Paul",
         familyName = "Whitfield",
         dateOfBirth = LocalDate.of(1980, 1, 1),
-        gender = OasysGender.MALE,
+        gender = 1,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
+        sexuallyMotivatedOffenceHistory = "Yes",
       )
 
       every { assessmentSubjectRepository.save(any()) } returnsArgument 0
@@ -109,9 +107,9 @@ class AssessmentSubjectServiceTest {
         givenName = "Paul",
         familyName = "Whitfield",
         dateOfBirth = LocalDate.of(1980, 1, 1),
-        gender = OasysGender.MALE,
+        gender = 1,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
+        sexuallyMotivatedOffenceHistory = "Yes",
       )
 
       every { assessmentSubjectRepository.findByAssessmentUuid(any()) } returns null
@@ -141,9 +139,9 @@ class AssessmentSubjectServiceTest {
         givenName = "Paul",
         familyName = "Whitfield",
         dateOfBirth = LocalDate.of(1980, 1, 1),
-        gender = OasysGender.MALE,
+        gender = 1,
         location = Location.COMMUNITY,
-        sexuallyMotivatedOffenceHistory = OASysYesNo.YES,
+        sexuallyMotivatedOffenceHistory = "Yes",
       )
 
       val assessmentSubject = AssessmentSubject(id = 1, assessment = assessment)

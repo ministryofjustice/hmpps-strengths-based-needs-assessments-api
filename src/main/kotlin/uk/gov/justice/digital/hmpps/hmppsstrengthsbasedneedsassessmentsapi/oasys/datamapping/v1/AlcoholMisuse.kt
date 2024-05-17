@@ -61,10 +61,8 @@ class AlcoholMisuse : SectionMapping() {
   }
 
   private fun q1t(): Any? {
-
     return when (ap.answer(Field.ALCOHOL_USE).value) {
       ap.get(Value.YES_WITHIN_LAST_THREE_MONTHS) -> {
-
         val frequencyText = when (ap.answer(Field.ALCOHOL_FREQUENCY).value) {
           ap.get(Value.ONCE_A_MONTH_OR_LESS) -> "Only drinks once a month or less"
           ap.get(Value.MULTIPLE_TIMES_A_MONTH) -> "Drinks multiple times a month"
@@ -84,7 +82,9 @@ class AlcoholMisuse : SectionMapping() {
 
         return if (frequencyText != null && unitsText != null) {
           "$frequencyText and $unitsText."
-        } else null
+        } else {
+          null
+        }
       }
       else -> null
     }

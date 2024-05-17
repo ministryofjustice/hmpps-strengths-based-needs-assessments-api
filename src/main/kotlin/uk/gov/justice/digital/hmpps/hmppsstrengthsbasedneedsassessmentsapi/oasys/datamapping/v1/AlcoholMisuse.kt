@@ -28,6 +28,7 @@ class AlcoholMisuse : SectionMapping() {
         total = calculateUnitsScore(total)
         calculateOasysScore(total)
       }
+
       ap.get(Value.NO), ap.get(Value.YES_NOT_IN_LAST_THREE_MONTHS) -> "0"
       else -> null
     }
@@ -60,12 +61,37 @@ class AlcoholMisuse : SectionMapping() {
   }
 
   private fun q1t(): Any? {
-    return null
+
+    return when (ap.answer(Field.ALCOHOL_USE).value) {
+      ap.get(Value.YES_WITHIN_LAST_THREE_MONTHS) -> {
+
+        val frequencyText = when (ap.answer(Field.ALCOHOL_FREQUENCY).value) {
+          ap.get(Value.ONCE_A_MONTH_OR_LESS) -> "Only drinks once a month or less"
+          ap.get(Value.MULTIPLE_TIMES_A_MONTH) -> "Drinks multiple times a month"
+          ap.get(Value.LESS_THAN_4_TIMES_A_WEEK) -> "Drinks less than four times a week"
+          ap.get(Value.MORE_THAN_4_TIMES_A_WEEK) -> "Drinks more than four times a week"
+          else -> null
+        }
+
+        val unitsText = when (ap.answer(Field.ALCOHOL_UNITS).value) {
+          ap.get(Value.UNITS_1_TO_2) -> "consumes 1 to 2 units a day, when they drink"
+          ap.get(Value.UNITS_3_TO_4) -> "consumes 3 to 4 units a day, when they drink"
+          ap.get(Value.UNITS_5_TO_6) -> "consumes 5 to 6 units a day, when they drink"
+          ap.get(Value.UNITS_7_TO_9) -> "consumes 7 to 9 units a day, when they drink"
+          ap.get(Value.UNITS_10_OR_MORE) -> "consumes 10 or more units a day, when they drink"
+          else -> null
+        }
+
+        return if (frequencyText != null && unitsText != null) {
+          "$frequencyText and $unitsText."
+        } else null
+      }
+      else -> null
+    }
   }
 
   private fun q2(): Any? {
     return when (ap.answer(Field.ALCOHOL_USE).value) {
-      ap.get(Value.NO) -> "0"
       ap.get(Value.YES_WITHIN_LAST_THREE_MONTHS), ap.get(Value.YES_NOT_IN_LAST_THREE_MONTHS) -> {
         when (ap.answer(Field.ALCOHOL_EVIDENCE_OF_EXCESS_DRINKING).value) {
           ap.get(Value.NO_EVIDENCE) -> "0"
@@ -74,6 +100,7 @@ class AlcoholMisuse : SectionMapping() {
           else -> null
         }
       }
+
       else -> null
     }
   }

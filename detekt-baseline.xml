@@ -7,15 +7,9 @@
   <CurrentIssues>
     <ID>ConstructorParameterNaming:AssessmentResponse.kt$AssessmentMetadata$val oasys_pks: List&lt;String></ID>
     <ID>ConstructorParameterNaming:AssessmentVersion.kt$AssessmentVersion$@Type(JsonType::class) @Column(name = "oasys_equivalent") var oasys_equivalent: OasysEquivalent = mutableMapOf()</ID>
+    <ID>CyclomaticComplexMethod:AlcoholMisuse.kt$AlcoholMisuse$private fun q1t(): Any?</ID>
     <ID>EmptyDefaultConstructor:SubjectController.kt$SubjectController$()</ID>
     <ID>EmptyFunctionBlock:SessionService.kt$SessionService${}</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun q1t(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun q2(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun q97(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun q98(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun q99(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun qNotRelatedToRisk(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:AlcoholMisuse.kt$AlcoholMisuse$private fun qStrength(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:Drugs.kt$Drugs$private fun q1(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:Drugs.kt$Drugs$private fun q2011(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:Drugs.kt$Drugs$private fun q2012(): Any?</ID>
@@ -86,6 +80,11 @@
     <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qLinkedToRosh(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qNotRelatedToRisk(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qOffenceAnalysisComplete(): Any?</ID>
+    <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qPersonalRelationshipsComplete(): Any?</ID>
+    <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qStrength(): Any?</ID>
+    <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qThinkingBehavioursAttitudesComplete(): Any?</ID>
+    <ID>LongMethod:AlcoholMisuseTest.kt$AlcoholMisuseTest$@Test fun q1()</ID>
+    <ID>LongMethod:AlcoholMisuseTest.kt$AlcoholMisuseTest$@Test fun q1t()</ID>
     <ID>LargeClass:DrugsTest.kt$DrugsTest : SectionMappingTest</ID>
     <ID>LongMethod:Drugs.kt$Drugs$override fun getFieldsToMap(): FieldsToMap</ID>
     <ID>LongMethod:DrugsTest.kt$DrugsTest$@Test fun q5()</ID>

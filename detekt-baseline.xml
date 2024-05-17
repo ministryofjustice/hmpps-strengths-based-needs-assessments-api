@@ -1,34 +1,35 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" ?>
 <SmellBaseline>
   <ManuallySuppressedIssues>
     <ID>FunctionNaming:AssessmentSubjectRepository.kt$AssessmentSubjectRepository$fun findByAssessment_Uuid(assessmentUuid: UUID): AssessmentSubject?</ID>
     <ID>MagicNumber:SubjectDetails.kt$Gender.Companion$9</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>ConstructorParameterNaming:AssessmentResponse.kt$AssessmentMetadata$val oasys_pks: List&lt;String></ID>
+    <ID>ConstructorParameterNaming:AssessmentResponse.kt$AssessmentMetadata$val oasys_pks: List&lt;String&gt;</ID>
     <ID>ConstructorParameterNaming:AssessmentVersion.kt$AssessmentVersion$@Type(JsonType::class) @Column(name = "oasys_equivalent") var oasys_equivalent: OasysEquivalent = mutableMapOf()</ID>
-    <ID>EmptyDefaultConstructor:SubjectController.kt$SubjectController$()</ID>
+    <ID>CyclomaticComplexMethod:AlcoholMisuse.kt$AlcoholMisuse$private fun q1t(): Any?</ID>
     <ID>EmptyFunctionBlock:SessionService.kt$SessionService${}</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q1(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q1t(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q2(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q97(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q98(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun q99(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun qNotRelatedToRisk(): Any?</ID>
-    <ID>FunctionOnlyReturningConstant:Alcohol.kt$Alcohol$private fun qStrength(): Any?</ID>
     <ID>FunctionOnlyReturningConstant:NewSections.kt$NewSections$private fun qOffenceAnalysisComplete(): Any?</ID>
     <ID>LargeClass:DrugsTest.kt$DrugsTest : SectionMappingTest</ID>
+    <ID>LongMethod:AlcoholMisuseTest.kt$AlcoholMisuseTest$@Test fun q1()</ID>
+    <ID>LongMethod:AlcoholMisuseTest.kt$AlcoholMisuseTest$@Test fun q1t()</ID>
     <ID>LongMethod:Drugs.kt$Drugs$override fun getFieldsToMap(): FieldsToMap</ID>
     <ID>LongMethod:DrugsTest.kt$DrugsTest$@Test fun q5()</ID>
     <ID>LongMethod:DrugsTest.kt$DrugsTest$@Test fun q6()</ID>
-    <ID>LongParameterList:JwtAuthHelper.kt$JwtAuthHelper$( subject: String, fullName: String = "Full Name", scope: List&lt;String>? = listOf(), roles: List&lt;String>? = listOf(), expiryTime: Duration = Duration.ofHours(1), jwtId: String = UUID.randomUUID().toString(), grantType: String = "authorization_code", )</ID>
+    <ID>LongParameterList:JwtAuthHelper.kt$JwtAuthHelper$( subject: String, fullName: String = "Full Name", scope: List&lt;String&gt;? = listOf(), roles: List&lt;String&gt;? = listOf(), expiryTime: Duration = Duration.ofHours(1), jwtId: String = UUID.randomUUID().toString(), grantType: String = "authorization_code", )</ID>
     <ID>LongParameterList:Session.kt$Session$( @Id @Column(name = "id") @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Long? = null, @Column(name = "uuid") val uuid: UUID = UUID.randomUUID(), @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(), @Column(name = "user_id") val userSessionId: String = "", @Column(name = "user_access") @Enumerated(EnumType.STRING) val userAccess: UserAccess = UserAccess.READ_ONLY, @Column(name = "user_display_name") val userDisplayName: String = "", @Column(name = "link_status") @Enumerated(EnumType.STRING) var linkStatus: LinkStatus = LinkStatus.UNUSED, @Column(name = "link_uuid") val linkUuid: UUID = UUID.randomUUID(), @ManyToOne @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid") val oasysAssessment: OasysAssessment = OasysAssessment(), )</ID>
+    <ID>MagicNumber:AlcoholMisuse.kt$AlcoholMisuse$3</ID>
+    <ID>MagicNumber:AlcoholMisuse.kt$AlcoholMisuse$4</ID>
+    <ID>MagicNumber:AlcoholMisuse.kt$AlcoholMisuse$5</ID>
+    <ID>MagicNumber:AlcoholMisuse.kt$AlcoholMisuse$7</ID>
+    <ID>MagicNumber:AlcoholMisuse.kt$AlcoholMisuse$8</ID>
     <ID>MagicNumber:FormConfigProvider.kt$FormConfigProvider$200</ID>
+    <ID>MagicNumber:SubjectDetails.kt$Gender.Companion$9</ID>
     <ID>MaxLineLength:AssessmentController.kt$AssessmentController$@Parameter(description = "Timestamp after which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")</ID>
     <ID>MaxLineLength:AssessmentController.kt$AssessmentController$@Parameter(description = "Timestamp until which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")</ID>
     <ID>MaxLineLength:OasysAssessmentAlreadyExistsException.kt$OasysAssessmentAlreadyExistsException : ConflictException</ID>
     <ID>SpreadOperator:HmppsStrengthsBasedNeedsAssessmentsApi.kt$(*args)</ID>
+    <ID>TooManyFunctions:AlcoholMisuse.kt$AlcoholMisuse : SectionMapping</ID>
     <ID>TooManyFunctions:Drugs.kt$Drugs : SectionMapping</ID>
     <ID>TooManyFunctions:Education.kt$Education : SectionMapping</ID>
     <ID>TooManyFunctions:EmotionalWellbeing.kt$EmotionalWellbeing : SectionMapping</ID>
@@ -37,6 +38,5 @@
     <ID>TooManyFunctions:ThinkingBehaviours.kt$ThinkingBehaviours : SectionMapping</ID>
     <ID>UnusedParameter:OpenApiConfiguration.kt$OpenApiConfiguration$buildProperties: BuildProperties</ID>
     <ID>UnusedParameter:SessionService.kt$SessionService$oasysSessionId: String</ID>
-    <ID>UnusedParameter:SubjectController.kt$SubjectController$@Parameter(description = "OASys assessment ID", required = true, example = "ABC2134567890") @PathVariable assessmentUuid: UUID</ID>
   </CurrentIssues>
 </SmellBaseline>

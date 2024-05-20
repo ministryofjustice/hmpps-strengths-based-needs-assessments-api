@@ -31,32 +31,24 @@ data class AssessmentVersionCriteria(
 
   private fun hasTag(): Specification<AssessmentVersion> {
     return Specification<AssessmentVersion> { root, _, builder ->
-      if (!tags.isNullOrEmpty()) {
-        builder.and(root.get(AssessmentVersion_.tag).`in`(tags))
-      } else {
-        null
-      }
+      tags?.takeIf { it.isNotEmpty() }?.let { builder.and(root.get(AssessmentVersion_.tag).`in`(tags)) }
     }
   }
 
   private fun isAfter(): Specification<AssessmentVersion> {
     return Specification<AssessmentVersion> { root, _, builder ->
-      if (after != null) {
+      after?.let {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(after), ZoneId.systemDefault())
         builder.greaterThan(root.get(AssessmentVersion_.updatedAt), date)
-      } else {
-        null
       }
     }
   }
 
   private fun isBefore(): Specification<AssessmentVersion> {
     return Specification<AssessmentVersion> { root, _, builder ->
-      if (until != null) {
+      until?.let {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(until), ZoneId.systemDefault())
         builder.lessThan(root.get(AssessmentVersion_.updatedAt), date)
-      } else {
-        null
       }
     }
   }

@@ -78,7 +78,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.uuid).isEqualTo(secondAssessmentVersion.uuid)
       assertThat(result?.answers?.get("test")?.value).isEqualTo("val")
@@ -102,7 +102,7 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
       } returns assessmentVersions.totalElements
 
-      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result?.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.answers?.get("foo")?.value).isEqualTo("Foo answer")
@@ -125,7 +125,7 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
       } returns assessmentVersions.totalElements
 
-      val result = assessmentVersionService.clonePreviousOrCreateNew(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.answers).isEmpty()
       assertThat(result?.versionNumber).isEqualTo(0)
@@ -150,7 +150,7 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions
 
       val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tags = setOf(tag))
-      val result = assessmentVersionService.find(specification)
+      val result = assessmentVersionService.findOrNull(specification)
 
       assertThat(result).isEqualTo(firstAssessmentVersion)
     }
@@ -168,7 +168,7 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions
 
       val specification = AssessmentVersionCriteria(assessmentUuid = assessment.uuid, tags = setOf(tag))
-      val result = assessmentVersionService.find(specification)
+      val result = assessmentVersionService.findOrNull(specification)
 
       assertThat(result).isNull()
     }

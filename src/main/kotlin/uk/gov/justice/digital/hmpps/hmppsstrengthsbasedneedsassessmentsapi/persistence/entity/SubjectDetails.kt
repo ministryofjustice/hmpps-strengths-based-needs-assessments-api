@@ -52,17 +52,19 @@ data class SubjectDetails(
     }
 
     fun from(request: SubjectDetailsRequest): SubjectDetails {
-      return SubjectDetails(
-        request.crn,
-        request.pnc,
-        request.nomisId,
-        request.givenName,
-        request.familyName,
-        request.dateOfBirth,
-        Gender.from(request.gender),
-        request.location,
-        sexuallyMotivatedOffenceHistoryFrom(request.sexuallyMotivatedOffenceHistory),
-      )
+      return with(request) {
+        SubjectDetails(
+          crn,
+          pnc,
+          nomisId,
+          givenName,
+          familyName,
+          dateOfBirth,
+          Gender.from(gender),
+          location,
+          sexuallyMotivatedOffenceHistoryFrom(sexuallyMotivatedOffenceHistory),
+        )
+      }
     }
   }
 }

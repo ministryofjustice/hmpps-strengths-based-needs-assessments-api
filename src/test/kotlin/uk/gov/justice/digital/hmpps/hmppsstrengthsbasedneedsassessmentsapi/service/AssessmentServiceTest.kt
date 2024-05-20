@@ -31,8 +31,8 @@ class AssessmentServiceTest {
   )
 
   @Nested
-  @DisplayName("createAssessment")
-  inner class CreateAssessment {
+  @DisplayName("create")
+  inner class Create {
     @Test
     fun `it creates and returns an assessment`() {
       val formConfig = FormConfig("name", "version")
@@ -42,7 +42,7 @@ class AssessmentServiceTest {
       every { formConfigProvider.getLatest() } returns formConfig
       every { assessmentVersionService.setOasysEquivalent(any()) } returnsArgument 0
 
-      val result = assessmentService.createAssessment()
+      val result = assessmentService.create()
 
       verify(exactly = 1) { formConfigProvider.getLatest() }
       verify(exactly = 1) { assessmentRepository.save(any()) }

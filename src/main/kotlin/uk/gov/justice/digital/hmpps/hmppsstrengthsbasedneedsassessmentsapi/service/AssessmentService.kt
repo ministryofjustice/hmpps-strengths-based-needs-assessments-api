@@ -14,20 +14,15 @@ class AssessmentService(
   val formConfigProvider: FormConfigProvider,
   val assessmentVersionService: AssessmentVersionService,
 ) {
-  fun save(assessment: Assessment): Assessment {
-    return assessmentRepository.save(assessment)
-  }
-
   fun findByUuid(uuid: UUID): Assessment {
-    return assessmentRepository.findByUuid(uuid) ?: throw AssessmentNotFoundException("No assessment found with UUID $uuid")
+    return assessmentRepository.findByUuid(uuid)
+      ?: throw AssessmentNotFoundException("No assessment found with UUID $uuid")
   }
 
-  fun createAssessment(): Assessment {
-    val assessment = Assessment.newAssessment(formConfigProvider.getLatest())
-    assessment.assessmentVersions.forEach { assessmentVersionService.setOasysEquivalent(it) }
-
-    return assessmentRepository.save(assessment)
-      .also { log.info("Created assessment with UUID ${it.uuid}") }
+  fun create(): Assessment {
+    return Assessment.new(formConfigProvider.getLatest())
+      .apply { assessmentVersions.forEach { assessmentVersionService.setOasysEquivalent(it) } }
+      .also { assessmentRepository.save(it).run { log.info("Created assessment with UUID $uuid") } }
   }
 
   companion object {

@@ -29,9 +29,7 @@ class AssessmentSubjectService(
       it.subjectDetails = SubjectDetails.from(subjectDetails)
       assessmentSubjectRepository.save(it)
         .also { log.info("Updated subject for assessment ${assessment.uuid}") }
-    } ?: run {
-      create(assessment, subjectDetails)
-    }
+    } ?: create(assessment, subjectDetails)
   }
 
   fun findByAssessmentUuid(assessmentUuid: UUID): AssessmentSubject? {

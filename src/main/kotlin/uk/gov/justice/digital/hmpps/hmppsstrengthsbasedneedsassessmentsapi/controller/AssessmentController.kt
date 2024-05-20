@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import java.util.UUID
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -34,7 +33,11 @@ class AssessmentController(
   @ApiResponses(
     value = [
       ApiResponse(responseCode = "200", description = "Assessment found"),
-      ApiResponse(responseCode = "404", description = "No assessment was found for the specified criteria", content = arrayOf(Content())),
+      ApiResponse(
+        responseCode = "404",
+        description = "No assessment was found for the specified criteria",
+        content = arrayOf(Content()),
+      ),
       ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
     ],
   )
@@ -43,17 +46,24 @@ class AssessmentController(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     assessmentUuid: UUID,
-    @Parameter(description = "Timestamp after which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")
+    @Parameter(
+      description = "Timestamp after which the latest assessment should be returned",
+      `in` = ParameterIn.QUERY,
+      example = "1706879012",
+    )
     after: Long? = null,
-    @Parameter(description = "Timestamp until which the latest assessment should be returned", `in` = ParameterIn.QUERY, example = "1706879012")
+    @Parameter(
+      description = "Timestamp until which the latest assessment should be returned",
+      `in` = ParameterIn.QUERY,
+      example = "1706879012",
+    )
     until: Long? = null,
     @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "UNSIGNED")
     tag: Tag? = null,
   ): AssessmentResponse {
-    val criteria = AssessmentVersionCriteria(assessmentUuid, tag?.let { setOf(tag) }, after, until)
-    val assessmentVersion = assessmentVersionService.find(criteria)
-      ?: throw AssessmentVersionNotFoundException(criteria)
-    return AssessmentResponse.from(assessmentVersion)
+    return AssessmentVersionCriteria(assessmentUuid, tag?.let { setOf(tag) }, after, until)
+      .let { assessmentVersionService.find(it) }
+      .let { AssessmentResponse.from(it) }
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/answers"], method = [RequestMethod.POST])

@@ -83,7 +83,7 @@ class OasysAssessmentService(
     }
 
     val tag = when (counterSignType) {
-      CounterSignType. SELF -> Tag.SELF_SIGNED
+      CounterSignType.SELF -> Tag.SELF_SIGNED
       CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
     }
 

@@ -28,34 +28,49 @@ class AssessmentVersionService(
     return versionUpdatedDate == today
   }
 
-  fun clonePreviousOrCreateNew(tag: Tag, assessment: Assessment): AssessmentVersion? {
+  fun getPreviousOrCreate(tag: Tag, assessment: Assessment): AssessmentVersion? {
     if (!Tag.validatedTags().contains(tag)) {
-      return find(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
+      return findOrNull(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
     }
 
-    return find(AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()))?.let {
-      if (versionUpdatedToday(it) && !Tag.lockedTags().contains(it.tag)) {
-        it
-      } else {
-        AssessmentVersion(
-          tag = tag,
-          assessment = assessment,
-          answers = it.answers,
-          versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
-        )
-      }
-    } ?: run {
-      AssessmentVersion(
-        tag = tag,
-        assessment = assessment,
-        versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
-      )
-    }
+    return findOrNull(AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()))?.let {
+      getPrevious(it, tag, assessment)
+    } ?: createNew(tag, assessment)
   }
 
-  fun find(criteria: AssessmentVersionCriteria): AssessmentVersion? {
+  private fun createNew(
+    tag: Tag,
+    assessment: Assessment,
+  ) = AssessmentVersion(
+    tag = tag,
+    assessment = assessment,
+    versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
+  )
+
+  private fun getPrevious(
+    assessmentVersion: AssessmentVersion,
+    tag: Tag,
+    assessment: Assessment,
+  ) = if (versionUpdatedToday(assessmentVersion) && !Tag.lockedTags().contains(assessmentVersion.tag)) {
+    assessmentVersion
+  } else {
+    AssessmentVersion(
+      tag = tag,
+      assessment = assessment,
+      answers = assessmentVersion.answers,
+      versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
+    )
+  }
+
+  fun findOrNull(criteria: AssessmentVersionCriteria): AssessmentVersion? {
     val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "updatedAt"))
     return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
+  }
+
+  fun find(criteria: AssessmentVersionCriteria): AssessmentVersion {
+    val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "updatedAt"))
+    return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
+      ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
   fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
@@ -66,22 +81,23 @@ class AssessmentVersionService(
     log.info("Adding answers to assessment with UUID ${assessment.uuid} for tags ${request.tags}")
 
     request.tags.map { tag ->
-      clonePreviousOrCreateNew(tag, assessment)?.let {
-        it.answers = it.answers.plus(request.answersToAdd)
+      getPreviousOrCreate(tag, assessment)?.run {
+        answers = answers.plus(request.answersToAdd)
           .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
-        it.updatedAt = LocalDateTime.now()
-        setOasysEquivalent(it)
+        updatedAt = LocalDateTime.now()
+        setOasysEquivalent(this)
 
-        assessmentVersionRepository.save(it)
+        assessmentVersionRepository.save(this)
 
-        log.info("Saved answers to assessment version UUID ${it.uuid}")
+        log.info("Saved answers to assessment version UUID $uuid")
       } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
     }
   }
 
   fun setOasysEquivalent(assessmentVersion: AssessmentVersion): AssessmentVersion {
-    assessmentVersion.oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
-    return assessmentVersion
+    return assessmentVersion.apply {
+      oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
+    }
   }
 
   fun cloneAndTag(assessmentVersion: AssessmentVersion, tag: Tag): AssessmentVersion {

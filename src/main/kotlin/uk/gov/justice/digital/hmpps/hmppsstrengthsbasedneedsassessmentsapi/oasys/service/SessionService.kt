@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.LinkStatus
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.Session
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.SessionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OneTimeLinkException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.UserNotAuthenticatedException
@@ -26,7 +25,6 @@ class SessionService(
 ) {
   fun createOneTimeLink(request: CreateOneTimeLinkRequest): OneTimeLinkResponse {
     val oasysAssessment = oasysAssessmentService.find(request.oasysAssessmentPk)
-      ?: throw OasysAssessmentNotFoundException(request.oasysAssessmentPk)
 
     request.subjectDetails?.let {
       assessmentSubjectService.updateOrCreate(oasysAssessment.assessment, it)
@@ -73,8 +71,7 @@ class SessionService(
   }
 
   fun checkSessionIsValid(uuid: UUID) {
-    sessionRepository.findSessionByUuid(uuid)
-      ?.let { checkOasysSessionStatus(it.userSessionId) }
+    sessionRepository.findSessionByUuid(uuid)?.let { checkOasysSessionStatus(it.userSessionId) }
       ?: throw UserNotAuthenticatedException("User session does not exist")
   }
 

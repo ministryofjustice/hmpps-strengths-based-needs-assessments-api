@@ -18,12 +18,10 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentSubjectService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
 @RestController
@@ -60,11 +58,9 @@ class OasysAssessmentController(
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
     val oasysAssessment = oasysAssessmentService.find(oasysAssessmentPK)
-      ?: throw OasysAssessmentNotFoundException(oasysAssessmentPK)
 
     val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
     val assessmentVersion = assessmentVersionService.find(criteria)
-      ?: throw AssessmentVersionNotFoundException(criteria)
 
     return OasysAssessmentVersionResponse.from(assessmentVersion)
   }
@@ -96,15 +92,15 @@ class OasysAssessmentController(
     @RequestBody
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
-    val assessment = oasysAssessmentService.associate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+    val assessment =
+      oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
 
     request.subjectDetails?.let {
       assessmentSubjectService.updateOrCreate(assessment, it)
     }
 
-    val criteria = AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags())
-    val assessmentVersion = assessmentVersionService.find(criteria)
-      ?: throw AssessmentVersionNotFoundException(criteria)
+    val assessmentVersion = AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags())
+      .let { assessmentVersionService.find(it) }
 
     return OasysAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
   }

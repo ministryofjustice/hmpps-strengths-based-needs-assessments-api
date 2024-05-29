@@ -15,7 +15,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 
 @Service
@@ -25,50 +24,59 @@ class OasysAssessmentService(
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentPk: String): OasysAssessment {
-    val assessment = assessmentService.createAssessment()
-    return oasysAssessmentRepository.save(
-      OasysAssessment(
-        oasysAssessmentPk = oasysAssessmentPk,
-        assessment = assessment,
-      ),
-    ).also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
+    return assessmentService.create()
+      .run {
+        oasysAssessmentRepository.save(
+          OasysAssessment(
+            oasysAssessmentPk = oasysAssessmentPk,
+            assessment = this,
+          ),
+        )
+      }
+      .also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
   }
 
   fun findOrCreateAssessment(oasysAssessmentPk: String): OasysAssessment {
-    return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) ?: createAssessmentWithOasysId(oasysAssessmentPk)
+    return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) ?: createAssessmentWithOasysId(
+      oasysAssessmentPk,
+    )
   }
 
-  fun find(oasysAssessmentPk: String): OasysAssessment? {
+  fun findOrNull(oasysAssessmentPk: String): OasysAssessment? {
     return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
   }
 
-  fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String? = null): Assessment {
-    find(oasysAssessmentPk)?.let { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+  fun find(previousOasysAssessmentPk: String): OasysAssessment {
+    return findOrNull(previousOasysAssessmentPk)
+      ?: throw OasysAssessmentNotFoundException(previousOasysAssessmentPk)
+  }
 
-    val assessment = previousOasysAssessmentPk?.let {
-      val oldOasysAssessment = find(previousOasysAssessmentPk)
-        ?: throw OasysAssessmentNotFoundException(previousOasysAssessmentPk)
+  private fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String): OasysAssessment {
+    return find(previousOasysAssessmentPk).let {
       val oasysAssessment = OasysAssessment(
         oasysAssessmentPk = oasysAssessmentPk,
-        assessment = oldOasysAssessment.assessment,
+        assessment = it.assessment,
       )
       oasysAssessmentRepository.save(oasysAssessment)
-      oasysAssessment.assessment
-    } ?: run {
-      val oasysAssessment = createAssessmentWithOasysId(oasysAssessmentPk)
-      oasysAssessment.assessment
     }
+  }
 
-    log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${assessment.uuid}")
-    return assessment
+  fun associateExistingOrCreate(oasysAssessmentPk: String, previousOasysAssessmentPk: String? = null): Assessment {
+    return findOrNull(oasysAssessmentPk)?.let { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+      ?: run {
+        previousOasysAssessmentPk?.let {
+          associate(oasysAssessmentPk, previousOasysAssessmentPk).assessment
+        } ?: createAssessmentWithOasysId(oasysAssessmentPk).assessment
+      }.also {
+        log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${it.uuid}")
+      }
   }
 
   fun sign(oasysAssessmentPk: String, counterSignType: CounterSignType): AssessmentVersion {
-    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
+    val oasysAssessment = find(oasysAssessmentPk)
 
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
-    val assessmentVersion = assessmentVersionService.find(criteria)
-      ?: throw AssessmentVersionNotFoundException(criteria)
+    val assessmentVersion = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
+      .let { assessmentVersionService.find(it) }
 
     if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
       throw ConflictException("The current assessment version is not completed.")
@@ -87,11 +95,10 @@ class OasysAssessmentService(
   }
 
   fun lock(oasysAssessmentPk: String): AssessmentVersion {
-    val oasysAssessment = find(oasysAssessmentPk) ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
+    val oasysAssessment = find(oasysAssessmentPk)
 
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
-    val assessmentVersion = assessmentVersionService.find(criteria)
-      ?: throw AssessmentVersionNotFoundException(criteria)
+    val assessmentVersion = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
+      .let { assessmentVersionService.find(it) }
 
     if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
       throw ConflictException("OASys assessment with ID $oasysAssessmentPk has already been locked")

@@ -78,8 +78,8 @@ tasks.register<Test>("integrationTests") {
 }
 
 // TODO: re-enable Detekt when it supports Kotlin 2.0
-//detekt {
+// detekt {
 //  config.setFrom("detekt.yml")
 //  baseline = file("detekt-baseline.xml")
 //  basePath = "./"
-//}
+// }

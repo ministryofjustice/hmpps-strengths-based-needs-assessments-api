@@ -3,11 +3,11 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
-  kotlin("plugin.spring") version "1.9.23"
-  id("org.jetbrains.kotlin.kapt") version "1.9.23"
+  kotlin("plugin.spring") version "1.9.24"
+  id("org.jetbrains.kotlin.kapt") version "1.9.24"
   // TODO: re-enable Detekt when it supports Kotlin 2.0
 //  id("io.gitlab.arturbosch.detekt") version "1.23.6"
-  id("org.jetbrains.kotlinx.kover") version "0.7.6"
+  id("org.jetbrains.kotlinx.kover") version "0.8.0"
 }
 
 configurations {
@@ -22,7 +22,7 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   constraints {
-    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3") {
+    implementation("com.nimbusds:nimbus-jose-jwt:9.39.2") {
       because("previous versions have a high vulnerability CVE-2023-52428")
     }
   }

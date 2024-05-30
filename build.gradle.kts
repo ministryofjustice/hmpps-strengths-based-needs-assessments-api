@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.0"
   kotlin("plugin.spring") version "2.0.0"
   id("org.jetbrains.kotlin.kapt") version "2.0.0"
   // TODO: re-enable Detekt when it supports Kotlin 2.0
@@ -31,6 +30,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.postgresql:postgresql:42.7.3")
   implementation("org.flywaydb:flyway-core")
+  runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
@@ -53,11 +53,6 @@ java {
 }
 
 tasks {
-  withType<KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "21"
-    }
-  }
   withType<BootRun> {
     jvmArgs = listOf(
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",

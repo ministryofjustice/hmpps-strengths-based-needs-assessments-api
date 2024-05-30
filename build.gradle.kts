@@ -5,7 +5,8 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
   kotlin("plugin.spring") version "1.9.23"
   id("org.jetbrains.kotlin.kapt") version "1.9.23"
-  id("io.gitlab.arturbosch.detekt") version "1.23.6"
+  // TODO: re-enable Detekt when it supports Kotlin 2.0
+//  id("io.gitlab.arturbosch.detekt") version "1.23.6"
   id("org.jetbrains.kotlinx.kover") version "0.7.6"
 }
 
@@ -76,8 +77,9 @@ tasks.register<Test>("integrationTests") {
   }
 }
 
-detekt {
-  config.setFrom("detekt.yml")
-  baseline = file("detekt-baseline.xml")
-  basePath = "./"
-}
+// TODO: re-enable Detekt when it supports Kotlin 2.0
+//detekt {
+//  config.setFrom("detekt.yml")
+//  baseline = file("detekt-baseline.xml")
+//  basePath = "./"
+//}

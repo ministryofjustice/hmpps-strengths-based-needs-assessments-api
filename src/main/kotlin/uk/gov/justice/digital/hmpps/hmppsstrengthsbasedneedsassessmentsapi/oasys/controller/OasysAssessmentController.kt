@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.TransferAssociationRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
@@ -103,6 +105,37 @@ class OasysAssessmentController(
       .let { assessmentVersionService.find(it) }
 
     return OasysAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
+  }
+
+  @RequestMapping(path = ["/merge"], method = [RequestMethod.POST])
+  @Operation(description = "Transfer associated SAN assessment from one PK to another")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessments associated successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Previous assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "An association already exists for the provided OASys Assessment PK",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun merge(
+    @RequestBody
+    request: List<TransferAssociationRequest>,
+  ): Message {
+    oasysAssessmentService.transferAssociation(request)
+    return Message("Successfully processed all ${request.size} merge elements")
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/sign"], method = [RequestMethod.POST])

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -53,6 +54,9 @@ java {
 }
 
 tasks {
+  withType<KotlinCompile> {
+    compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+  }
   withType<BootRun> {
     jvmArgs = listOf(
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",

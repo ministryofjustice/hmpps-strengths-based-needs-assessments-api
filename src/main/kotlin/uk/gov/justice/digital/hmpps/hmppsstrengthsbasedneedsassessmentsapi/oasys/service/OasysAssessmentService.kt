@@ -48,9 +48,9 @@ class OasysAssessmentService(
     return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
   }
 
-  fun find(previousOasysAssessmentPk: String): OasysAssessment {
-    return findOrNull(previousOasysAssessmentPk)
-      ?: throw OasysAssessmentNotFoundException(previousOasysAssessmentPk)
+  fun find(oasysAssessmentPk: String): OasysAssessment {
+    return findOrNull(oasysAssessmentPk)
+      ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
   }
 
   private fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String): OasysAssessment {

@@ -86,7 +86,7 @@ data class AssessmentVersion(
 
   @Column(name = "tag")
   @Enumerated(EnumType.STRING)
-  val tag: Tag = Tag.UNVALIDATED,
+  var tag: Tag = Tag.UNVALIDATED,
 
   @Type(JsonType::class)
   @Column(name = "answers")

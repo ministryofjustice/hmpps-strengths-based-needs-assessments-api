@@ -15,12 +15,14 @@ data class AssessmentVersionCriteria(
   val tags: Set<Tag>? = null,
   val after: Long? = null,
   val until: Long? = null,
+  val versionNumber: Long? = null,
 ) {
   fun getSpecification(): Specification<AssessmentVersion> {
     return belongsToAssessment()
       .and(hasTag())
       .and(isAfter())
       .and(isBefore())
+      .and(isVersionNumber())
   }
 
   private fun belongsToAssessment(): Specification<AssessmentVersion> {
@@ -49,6 +51,14 @@ data class AssessmentVersionCriteria(
       until?.let {
         val date = LocalDateTime.ofInstant(Instant.ofEpochSecond(until), ZoneId.systemDefault())
         builder.lessThan(root.get(AssessmentVersion_.updatedAt), date)
+      }
+    }
+  }
+
+  private fun isVersionNumber(): Specification<AssessmentVersion> {
+    return Specification<AssessmentVersion> { root, _, builder ->
+      versionNumber?.let {
+        builder.equal(root.get(AssessmentVersion_.versionNumber), it)
       }
     }
   }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
@@ -22,6 +23,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -164,6 +167,50 @@ class OasysAssessmentController(
   ): OasysAssessmentResponse {
     val signedVersion = oasysAssessmentService.sign(oasysAssessmentPK, request.counterSignType)
     return OasysAssessmentResponse.from(signedVersion.assessment.uuid, signedVersion.versionNumber)
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/counter-sign"], method = [RequestMethod.POST])
+  @Operation(description = "Marks an assessment version as counter-signed.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version counter-signed successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The assessment could not be counter-signed. See details in error message.",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun counterSign(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+    @RequestBody
+    request: CounterSignAssessmentRequest,
+  ): OasysAssessmentResponse {
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        val criteria = AssessmentVersionCriteria(it.assessment.uuid, versionNumber = request.sanVersionNumber)
+        assessmentVersionService.find(criteria)
+      }
+      .let {
+        val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
+        assessmentVersionService.counterSign(it, counterSigner, request.outcome)
+      }
+      .let {
+        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
+      }
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])

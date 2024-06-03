@@ -66,6 +66,10 @@ services:
       REDIS_HOST: redis
       HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HANDOVER_CLIENT_ID: strengths-and-needs-assessment
+      HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
       API_CLIENT_SECRET: clientsecret

@@ -32,6 +32,7 @@ class OasysAssessmentControllerMergeTest(
     private lateinit var assessment: Assessment
     private lateinit var oasysAssessmentA: OasysAssessment
     private lateinit var oasysAssessmentB: OasysAssessment
+    private lateinit var oasysAssessmentC: OasysAssessment
 
     @BeforeEach
     fun setUp() {
@@ -39,8 +40,9 @@ class OasysAssessmentControllerMergeTest(
 
       oasysAssessmentA = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
       oasysAssessmentB = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+      oasysAssessmentC = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
 
-      assessment.oasysAssessments = listOf(oasysAssessmentA, oasysAssessmentB)
+      assessment.oasysAssessments = listOf(oasysAssessmentA, oasysAssessmentB, oasysAssessmentC)
 
       assessmentRepository.save(assessment)
     }
@@ -106,12 +108,17 @@ class OasysAssessmentControllerMergeTest(
 
     @Test
     fun `it transfers association with an assessment to the new PK`() {
-      val newAssessmentPk = UUID.randomUUID().toString()
+      val newAssessmentPkX = UUID.randomUUID().toString()
+      val newAssessmentPkY = UUID.randomUUID().toString()
 
       val request = listOf(
         TransferAssociationRequest(
-          newOasysAssessmentPK = newAssessmentPk,
+          newOasysAssessmentPK = newAssessmentPkX,
           oldOasysAssessmentPK = oasysAssessmentA.oasysAssessmentPk,
+        ),
+        TransferAssociationRequest(
+          newOasysAssessmentPK = newAssessmentPkY,
+          oldOasysAssessmentPK = oasysAssessmentB.oasysAssessmentPk,
         ),
       )
 
@@ -125,14 +132,59 @@ class OasysAssessmentControllerMergeTest(
         .returnResult()
         .responseBody
 
-      assertThat(response?.message).isEqualTo("Successfully processed all 1 merge elements")
+      assertThat(response?.message).isEqualTo("Successfully processed all 2 merge elements")
 
-      val oldAssessment = oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentA.oasysAssessmentPk)
-      assertThat(oldAssessment).isNull()
+      listOf(oasysAssessmentA, oasysAssessmentB).forEach {
+        with(oasysAssessmentRepository.findByOasysAssessmentPk(it.oasysAssessmentPk)) {
+          assertThat(this).isNull()
+        }
+      }
 
-      val newAssessment = oasysAssessmentRepository.findByOasysAssessmentPk(newAssessmentPk)
-      assertThat(newAssessment).isNotNull
-      assertThat(newAssessment?.assessment?.uuid).isEqualTo(oasysAssessmentA.assessment.uuid)
+      with(oasysAssessmentRepository.findByOasysAssessmentPk(newAssessmentPkX)) {
+        assertThat(this).isNotNull
+        assertThat(this?.assessment?.uuid).isEqualTo(oasysAssessmentA.assessment.uuid)
+      }
+
+      with(oasysAssessmentRepository.findByOasysAssessmentPk(newAssessmentPkY)) {
+        assertThat(this).isNotNull
+        assertThat(this?.assessment?.uuid).isEqualTo(oasysAssessmentB.assessment.uuid)
+      }
+    }
+
+    @Test
+    fun `it rolls back on failure`() {
+      val newAssessmentPkX = UUID.randomUUID().toString()
+      val newAssessmentPkY = UUID.randomUUID().toString()
+
+      val request = listOf(
+        TransferAssociationRequest(
+          newOasysAssessmentPK = newAssessmentPkX,
+          oldOasysAssessmentPK = oasysAssessmentA.oasysAssessmentPk,
+        ),
+        TransferAssociationRequest(
+          newOasysAssessmentPK = oasysAssessmentC.oasysAssessmentPk,
+          oldOasysAssessmentPK = oasysAssessmentB.oasysAssessmentPk,
+        ),
+      )
+
+      webTestClient.post().uri(endpoint)
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isEqualTo(409)
+
+      listOf(oasysAssessmentA, oasysAssessmentB, oasysAssessmentC).forEach {
+        with(oasysAssessmentRepository.findByOasysAssessmentPk(it.oasysAssessmentPk)) {
+          assertThat(this).isNotNull
+        }
+      }
+
+      listOf(newAssessmentPkX, newAssessmentPkY).forEach {
+        with(oasysAssessmentRepository.findByOasysAssessmentPk(it)) {
+          assertThat(this).isNull()
+        }
+      }
     }
   }
 }

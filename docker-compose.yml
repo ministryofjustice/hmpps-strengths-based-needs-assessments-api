@@ -77,5 +77,22 @@ services:
       INGRESS_URL: http://localhost:3000
       HTTPS: false
 
+  arns-handover:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:latest
+    networks:
+      - hmpps
+    depends_on:
+      - redis
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://arns-handover:7070/health/ping" ]
+    environment:
+      SERVER_PORT: 7070
+      REDIS_HOST: redis
+      SPRING_PROFILES_ACTIVE: local
+      HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
+      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
+      SERVER_ERROR_WHITELABEL_ENABLED: true
+
 networks:
   hmpps:

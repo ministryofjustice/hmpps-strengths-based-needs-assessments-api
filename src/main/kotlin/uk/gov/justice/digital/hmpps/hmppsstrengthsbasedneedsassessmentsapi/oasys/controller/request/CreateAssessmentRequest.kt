@@ -13,6 +13,4 @@ class CreateAssessmentRequest(
   val previousOasysAssessmentPk: String? = null,
   @Schema(description = "Region prison code", example = "111111")
   val regionPrisonCode: String? = null,
-  @Schema(description = "Assessment subject details")
-  val subjectDetails: SubjectDetailsRequest? = null,
 )

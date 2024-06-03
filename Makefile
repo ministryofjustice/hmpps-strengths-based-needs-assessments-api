@@ -16,7 +16,8 @@ up: ## Starts/restarts the API in a production container.
 	docker compose ${LOCAL_COMPOSE_FILES} up api --wait --no-recreate
 
 down: ## Stops and removes all containers in the project.
-	docker compose down
+	docker compose ${DEV_COMPOSE_FILES} down
+	docker compose ${LOCAL_COMPOSE_FILES} down
 
 build-api: ## Builds a production image of the API.
 	docker compose build api

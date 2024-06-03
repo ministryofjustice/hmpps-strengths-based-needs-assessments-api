@@ -7,7 +7,7 @@ services:
       ALLOW_EMPTY_PASSWORD: yes
 
   hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:2024-05-09.23133.61d6975
+    image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
     healthcheck:
@@ -66,6 +66,10 @@ services:
       REDIS_HOST: redis
       HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HANDOVER_CLIENT_ID: strengths-and-needs-assessment
+      HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
       API_CLIENT_SECRET: clientsecret
@@ -76,6 +80,23 @@ services:
       SBNA_API_URL: http://api:8080
       INGRESS_URL: http://localhost:3000
       HTTPS: false
+
+  arns-handover:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:latest
+    networks:
+      - hmpps
+    depends_on:
+      - redis
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://arns-handover:7070/health/ping" ]
+    environment:
+      SERVER_PORT: 7070
+      REDIS_HOST: redis
+      SPRING_PROFILES_ACTIVE: local
+      HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
+      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
+      SERVER_ERROR_WHITELABEL_ENABLED: true
 
 networks:
   hmpps:

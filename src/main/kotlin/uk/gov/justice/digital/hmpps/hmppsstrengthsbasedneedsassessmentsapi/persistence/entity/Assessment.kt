@@ -35,9 +35,6 @@ data class Assessment(
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var assessmentVersions: List<AssessmentVersion> = listOf(),
 
-  @OneToOne(optional = true, mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-  var assessmentSubject: AssessmentSubject? = null,
-
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var oasysAssessments: List<OasysAssessment> = listOf(),
 ) {

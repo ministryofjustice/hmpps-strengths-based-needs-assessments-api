@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service
 
+import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.TransferAssociationRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
@@ -105,6 +107,28 @@ class OasysAssessmentService(
     }
 
     return assessmentVersionService.cloneAndTag(assessmentVersion, Tag.LOCKED_INCOMPLETE)
+  }
+
+  @Transactional
+  fun transferAssociation(request: List<TransferAssociationRequest>) {
+    request.forEach {
+      with(it) {
+        find(oldOasysAssessmentPK).let { oldAssociation ->
+          OasysAssessment(
+            oasysAssessmentPk = newOasysAssessmentPK,
+            assessment = oldAssociation.assessment,
+          ).also { newAssociation ->
+            oasysAssessmentRepository.findByOasysAssessmentPk(newAssociation.oasysAssessmentPk)
+              ?.run { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+
+            oasysAssessmentRepository.save(newAssociation)
+            oasysAssessmentRepository.delete(oldAssociation)
+
+            log.info("Successfully transferred association for ${oldAssociation.oasysAssessmentPk} to ${newAssociation.oasysAssessmentPk}")
+          }
+        }
+      }
+    }
   }
 
   companion object {

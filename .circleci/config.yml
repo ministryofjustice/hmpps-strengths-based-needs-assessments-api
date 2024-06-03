@@ -30,7 +30,7 @@ jobs:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
-          command: make dev-up lint test-coverage
+          command: make update dev-up lint test-coverage
       - save_cache:
           paths:
             - ~/.gradle

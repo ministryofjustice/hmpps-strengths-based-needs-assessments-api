@@ -94,7 +94,7 @@ jobs:
             make e2e-ci
       - run:
           name: Store container logs
-          command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
+          command: make save-logs OUTPUT_LOGS_DIR=~/build/docker-logs
           when: on_fail
       - store_test_results:
           path: e2e-test-ui/test_results

@@ -33,7 +33,7 @@ jobs:
           command: make dev-up lint test-coverage
       - run:
           name: Store container logs
-          command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
+          command: make save-logs OUTPUT_LOGS_DIR=~/build/docker-logs
           when: on_fail
       - save_cache:
           paths:

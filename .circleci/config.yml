@@ -31,6 +31,10 @@ jobs:
             - gradle-
       - run:
           command: make dev-up lint test-coverage
+      - run:
+          name: Store container logs
+          command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
+          when: on_fail
       - save_cache:
           paths:
             - ~/.gradle
@@ -44,6 +48,8 @@ jobs:
           destination: kover
       - store_artifacts:
           path: build/reports/detekt/detekt.html
+      - store_artifacts:
+          path: build/docker-logs
 
   e2e_test:
     machine:
@@ -100,12 +106,9 @@ workflows:
       not: << pipeline.parameters.deploy >>
     jobs:
       - validate:
-          post-steps:
-            - run:
-                name: Store container logs
-                command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
-            - store_artifacts:
-                path: build/docker-logs
+          filters:
+            tags:
+              ignore: /.*/
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:

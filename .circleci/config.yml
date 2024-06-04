@@ -100,9 +100,12 @@ workflows:
       not: << pipeline.parameters.deploy >>
     jobs:
       - validate:
-          filters:
-            tags:
-              ignore: /.*/
+          post-steps:
+            - run:
+                name: Store container logs
+                command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
+            - store_artifacts:
+                path: build/docker-logs
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:

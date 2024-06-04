@@ -33,7 +33,7 @@ jobs:
           command: make dev-up lint test-coverage
       - run:
           name: Store container logs
-          command: make save-logs OUTPUT_LOGS_DIR=~/build/docker-logs
+          command: make save-logs OUTPUT_LOGS_DIR=~/docker-logs
           when: on_fail
       - save_cache:
           paths:
@@ -49,7 +49,7 @@ jobs:
       - store_artifacts:
           path: build/reports/detekt/detekt.html
       - store_artifacts:
-          path: build/docker-logs
+          path: ~/docker-logs
 
   e2e_test:
     machine:
@@ -94,7 +94,7 @@ jobs:
             make e2e-ci
       - run:
           name: Store container logs
-          command: make save-logs OUTPUT_LOGS_DIR=~/build/docker-logs
+          command: make save-logs OUTPUT_LOGS_DIR=~/docker-logs
           when: on_fail
       - store_test_results:
           path: e2e-test-ui/test_results
@@ -103,7 +103,7 @@ jobs:
       - store_artifacts:
           path: e2e-test-ui/cypress/screenshots
       - store_artifacts:
-          path: build/docker-logs
+          path: ~/docker-logs
 
 workflows:
   version: 2

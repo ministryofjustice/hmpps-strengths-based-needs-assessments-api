@@ -13,24 +13,33 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.domain.Specification
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("AssessmentVersionService")
@@ -271,32 +280,122 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
-  @DisplayName("cloneAndTag")
-  inner class CloneAndTag {
+  @DisplayName("lock")
+  inner class Lock {
+    private val assessment = Assessment()
+    private val assessmentVersion = AssessmentVersion(assessment = assessment)
+
     @Test
-    fun `it persists a cloned version with the provided tag`() {
-      val originalVersion = AssessmentVersion(
-        tag = Tag.UNSIGNED,
-        answers = mapOf(
-          "foo" to Answer(),
-          "bar" to Answer(),
-        ),
+    fun `it locks an assessment successfully`() {
+      val lockedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(lockedVersion)) } returnsArgument 0
+
+      val audit = slot<AssessmentVersionAudit>()
+      every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+
+      val result = assessmentVersionService.lock(assessmentVersion)
+
+      verify(exactly = 1) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+
+      assertThat(result).isEqualTo(lockedVersion.captured)
+      assertThat(result.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
+      assertThat(assessmentVersion.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
+
+      assertThat(audit.captured.assessmentVersion).isEqualTo(lockedVersion.captured)
+      assertThat(audit.captured.statusFrom).isEqualTo(Tag.UNSIGNED)
+      assertThat(audit.captured.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
+      assertThat(audit.captured.userDetails).isEqualTo(UserDetails())
+    }
+
+    @Test
+    fun `it throws an exception when the assessment is already locked`() {
+      val lockedVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = Tag.LOCKED_INCOMPLETE,
       )
 
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(any())
-      } returns 1
+      val exception = assertThrows<ConflictException> { assessmentVersionService.lock(lockedVersion) }
+      assertThat(exception.message).isEqualTo("The current assessment version is already locked")
 
-      val savedVersion = slot<AssessmentVersion>()
-      every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
+    }
+  }
 
-      assessmentVersionService.cloneAndTag(originalVersion, Tag.LOCKED_INCOMPLETE)
+  @Nested
+  @DisplayName("sign")
+  inner class Sign {
+    private val assessment = Assessment()
+    private val assessmentVersion = AssessmentVersion(assessment = assessment)
+    private val unsignedVersion = AssessmentVersion(
+      assessment = assessment,
+      tag = Tag.UNSIGNED,
+      answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+    )
 
-      assertThat(savedVersion.captured.uuid).isNotEqualTo(originalVersion.uuid)
-      assertThat(savedVersion.captured.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
-      assertThat(savedVersion.captured.assessment).isEqualTo(originalVersion.assessment)
-      assertThat(savedVersion.captured.answers).isEqualTo(originalVersion.answers)
-      assertThat(savedVersion.captured.versionNumber).isEqualTo(1)
+    private fun getExpectedTag(counterSignType: CounterSignType?): Tag {
+      return when (counterSignType) {
+        CounterSignType.SELF -> Tag.SELF_SIGNED
+        CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
+        else -> fail("Unhandled countersign type")
+      }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CounterSignType::class)
+    fun `it signs an assessment successfully`(counterSignType: CounterSignType) {
+      val expectedTag = getExpectedTag(counterSignType)
+      val signer = UserDetails("signer-id", "Signer Name")
+
+      val signedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(signedVersion)) } returnsArgument 0
+
+      val audit = slot<AssessmentVersionAudit>()
+      every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+
+      val result = assessmentVersionService.sign(unsignedVersion, counterSignType, signer)
+
+      verify(exactly = 1) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+
+      assertThat(result).isEqualTo(signedVersion.captured)
+      assertThat(result.tag).isEqualTo(expectedTag)
+      assertThat(unsignedVersion.tag).isEqualTo(expectedTag)
+
+      assertThat(audit.captured.assessmentVersion).isEqualTo(signedVersion.captured)
+      assertThat(audit.captured.statusFrom).isEqualTo(Tag.UNSIGNED)
+      assertThat(audit.captured.statusTo).isEqualTo(expectedTag)
+      assertThat(audit.captured.userDetails).isEqualTo(signer)
+    }
+
+    @ParameterizedTest
+    @EnumSource(CounterSignType::class)
+    fun `it throws an exception when the assessment is already signed`(counterSignType: CounterSignType) {
+      val signedVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = getExpectedTag(counterSignType),
+        answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+      )
+
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.sign(signedVersion, counterSignType, UserDetails())
+      }
+      assertEquals("The current assessment version is already ${signedVersion.tag.name}.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
+    }
+
+    @Test
+    fun `it throws an exception when the assessment is not completed`() {
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.sign(assessmentVersion, CounterSignType.SELF, UserDetails())
+      }
+      assertEquals("The current assessment version is not completed.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
     }
   }
 }

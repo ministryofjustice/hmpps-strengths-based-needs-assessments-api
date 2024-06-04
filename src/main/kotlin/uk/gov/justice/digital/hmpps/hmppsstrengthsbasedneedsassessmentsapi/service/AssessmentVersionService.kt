@@ -1,11 +1,14 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
+import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -105,16 +108,49 @@ class AssessmentVersionService(
     }
   }
 
-  fun cloneAndTag(assessmentVersion: AssessmentVersion, tag: Tag): AssessmentVersion {
-    return assessmentVersionRepository.save(
-      AssessmentVersion(
-        tag = tag,
-        assessment = assessmentVersion.assessment,
-        answers = assessmentVersion.answers,
-        versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessmentVersion.assessment.uuid),
-      ),
-    ).also {
-      log.info("Assessment version ${it.uuid} was cloned from ${assessmentVersion.uuid} and tagged ${tag.name}.")
+  @Transactional
+  fun lock(assessmentVersion: AssessmentVersion): AssessmentVersion {
+    if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
+      throw ConflictException("The current assessment version is already locked")
+    }
+
+    val oldStatus = assessmentVersion.tag
+    assessmentVersion.tag = Tag.LOCKED_INCOMPLETE
+
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+    }
+  }
+
+  @Transactional
+  fun sign(assessmentVersion: AssessmentVersion, counterSignType: CounterSignType, signer: UserDetails): AssessmentVersion {
+    if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
+      throw ConflictException("The current assessment version is not completed.")
+    }
+
+    val newStatus = when (counterSignType) {
+      CounterSignType.SELF -> Tag.SELF_SIGNED
+      CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
+    }
+    val oldStatus = assessmentVersion.tag
+
+    if (assessmentVersion.tag == newStatus) {
+      throw ConflictException("The current assessment version is already ${newStatus.name}.")
+    }
+
+    assessmentVersion.tag = newStatus
+
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        userDetails = signer,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
     }
   }
 
@@ -130,16 +166,15 @@ class AssessmentVersionService(
     }
 
     assessmentVersion.tag = outcome
-    assessmentVersionRepository.save(assessmentVersion)
 
-    AssessmentVersionAudit(
-      assessmentVersion = assessmentVersion,
-      userDetails = counterSigner,
-      statusFrom = oldStatus,
-      statusTo = assessmentVersion.tag,
-    ).let { assessmentVersionAuditRepository.save(it) }
-
-    return assessmentVersion
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        userDetails = counterSigner,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+    }
   }
 
   companion object {

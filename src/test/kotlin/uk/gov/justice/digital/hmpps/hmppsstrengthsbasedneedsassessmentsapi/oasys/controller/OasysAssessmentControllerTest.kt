@@ -261,7 +261,6 @@ class OasysAssessmentControllerTest(
     fun `it returns Unauthorized when there is no JWT`() {
       val request = """
         {
-          "oasysAssessmentPk": "${oasysAssessment.oasysAssessmentPk}",
           "counterSignType": "SELF"
         }
       """.trimIndent()
@@ -277,8 +276,9 @@ class OasysAssessmentControllerTest(
     fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
       val request = """
         {
-          "oasysAssessmentPk": "${oasysAssessment.oasysAssessmentPk}",
-          "counterSignType": "SELF"
+          "counterSignType": "SELF",
+          "oasysUserID": "123",
+          "oasysUserName": "John Doe"
         }
       """.trimIndent()
 
@@ -291,10 +291,9 @@ class OasysAssessmentControllerTest(
     }
 
     @Test
-    fun `it creates and returns new signed version of the assessment`() {
+    fun `it updates and returns the version of the assessment as Signed`() {
       val request = """
         {
-          "oasysAssessmentPk": "${oasysAssessment.oasysAssessmentPk}",
           "counterSignType": "SELF",
           "oasysUserID": "123",
           "oasysUserName": "John Doe"
@@ -313,17 +312,17 @@ class OasysAssessmentControllerTest(
 
       val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(3)
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
       val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNSIGNED }
       val unvalidatedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNVALIDATED }
       val signedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.SELF_SIGNED }
 
-      assertThat(initialVersion).isNotNull
+      assertThat(initialVersion).isNull()
       assertThat(unvalidatedVersion).isNotNull
       assertThat(signedVersion).isNotNull
 
       assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
-      assertThat(response?.sanAssessmentVersion).isEqualTo(signedVersion?.versionNumber).isEqualTo(2)
+      assertThat(response?.sanAssessmentVersion).isEqualTo(signedVersion?.versionNumber).isEqualTo(1)
       assertThat(response?.sentencePlanId).isNull()
       assertThat(response?.sentencePlanVersion).isNull()
     }
@@ -341,8 +340,9 @@ class OasysAssessmentControllerTest(
 
       val request = """
         {
-          "oasysAssessmentPk": "${oasysAssessment.oasysAssessmentPk}",
-          "counterSignType": "SELF"
+          "counterSignType": "SELF",
+          "oasysUserID": "123",
+          "oasysUserName": "John Doe"
         }
       """.trimIndent()
 
@@ -408,7 +408,7 @@ class OasysAssessmentControllerTest(
     }
 
     @Test
-    fun `it creates and returns new locked version of the assessment`() {
+    fun `it updates and returns the version of the assessment as Locked`() {
       val response = webTestClient.post().uri(endpoint())
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
@@ -420,17 +420,17 @@ class OasysAssessmentControllerTest(
 
       val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(3)
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
       val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNSIGNED }
       val unvalidatedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNVALIDATED }
       val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED_INCOMPLETE }
 
-      assertThat(initialVersion).isNotNull
+      assertThat(initialVersion).isNull()
       assertThat(unvalidatedVersion).isNotNull
       assertThat(lockedVersion).isNotNull
 
       assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
-      assertThat(response?.sanAssessmentVersion).isEqualTo(lockedVersion?.versionNumber).isEqualTo(2)
+      assertThat(response?.sanAssessmentVersion).isEqualTo(lockedVersion?.versionNumber).isEqualTo(1)
       assertThat(response?.sentencePlanId).isNull()
       assertThat(response?.sentencePlanVersion).isNull()
     }

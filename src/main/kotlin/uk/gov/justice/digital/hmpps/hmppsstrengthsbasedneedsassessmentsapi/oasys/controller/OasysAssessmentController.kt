@@ -95,7 +95,11 @@ class OasysAssessmentController(
     @RequestBody
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
-    return oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk, request.regionPrisonCode)
+    return oasysAssessmentService.associateExistingOrCreate(
+      request.oasysAssessmentPk,
+      request.previousOasysAssessmentPk,
+      request.regionPrisonCode,
+    )
       .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
       .let { OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber) }
   }
@@ -161,8 +165,17 @@ class OasysAssessmentController(
     @RequestBody
     request: SignAssessmentRequest,
   ): OasysAssessmentResponse {
-    val signedVersion = oasysAssessmentService.sign(oasysAssessmentPK, request.counterSignType)
-    return OasysAssessmentResponse.from(signedVersion.assessment.uuid, signedVersion.versionNumber)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
+      }
+      .let {
+        val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
+        assessmentVersionService.sign(it, request.counterSignType, signer)
+      }
+      .let {
+        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
+      }
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/counter-sign"], method = [RequestMethod.POST])
@@ -197,8 +210,9 @@ class OasysAssessmentController(
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
       .let {
-        val criteria = AssessmentVersionCriteria(it.assessment.uuid, versionNumber = request.sanVersionNumber)
-        assessmentVersionService.find(criteria)
+        assessmentVersionService.find(
+          AssessmentVersionCriteria(it.assessment.uuid, versionNumber = request.sanVersionNumber),
+        )
       }
       .let {
         val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
@@ -237,7 +251,17 @@ class OasysAssessmentController(
     @PathVariable
     oasysAssessmentPK: String,
   ): OasysAssessmentResponse {
-    val lockedVersion = oasysAssessmentService.lock(oasysAssessmentPK)
-    return OasysAssessmentResponse.from(lockedVersion.assessment.uuid, lockedVersion.versionNumber)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(
+          AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()),
+        )
+      }
+      .let {
+        assessmentVersionService.lock(it)
+      }
+      .let {
+        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
+      }
   }
 }

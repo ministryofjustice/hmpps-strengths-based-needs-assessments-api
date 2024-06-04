@@ -57,6 +57,7 @@ services:
     depends_on:
       - redis
       - hmpps-auth
+      - arns-handover
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://ui:3000/health" ]
       interval: 5s

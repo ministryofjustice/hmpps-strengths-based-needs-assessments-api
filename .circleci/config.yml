@@ -92,12 +92,18 @@ jobs:
           command: |
             cd e2e-test-ui
             make e2e-ci
+      - run:
+          name: Store container logs
+          command: make save-logs OUTPUT_LOGS_DIR="build/docker-logs"
+          when: on_fail
       - store_test_results:
           path: e2e-test-ui/test_results
       - store_artifacts:
           path: e2e-test-ui/cypress/videos
       - store_artifacts:
           path: e2e-test-ui/cypress/screenshots
+      - store_artifacts:
+          path: build/docker-logs
 
 workflows:
   version: 2

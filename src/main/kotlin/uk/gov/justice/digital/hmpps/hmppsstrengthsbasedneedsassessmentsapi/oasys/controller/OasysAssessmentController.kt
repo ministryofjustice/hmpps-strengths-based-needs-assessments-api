@@ -171,7 +171,7 @@ class OasysAssessmentController(
       }
       .let {
         val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
-        assessmentVersionService.sign(it, request.counterSignType, signer)
+        assessmentVersionService.sign(it, request.signType, signer)
       }
       .let {
         OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)

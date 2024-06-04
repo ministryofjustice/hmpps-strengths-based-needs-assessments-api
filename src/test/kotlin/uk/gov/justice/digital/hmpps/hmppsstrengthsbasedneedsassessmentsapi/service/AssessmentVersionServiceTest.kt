@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.domain.Specification
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
@@ -283,10 +284,11 @@ class AssessmentVersionServiceTest {
   @DisplayName("lock")
   inner class Lock {
     private val assessment = Assessment()
-    private val assessmentVersion = AssessmentVersion(assessment = assessment)
 
     @Test
     fun `it locks an assessment successfully`() {
+      val assessmentVersion = AssessmentVersion(assessment = assessment, tag = Tag.UNSIGNED)
+
       val lockedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(lockedVersion)) } returnsArgument 0
 
@@ -328,24 +330,17 @@ class AssessmentVersionServiceTest {
   inner class Sign {
     private val assessment = Assessment()
     private val assessmentVersion = AssessmentVersion(assessment = assessment)
-    private val unsignedVersion = AssessmentVersion(
-      assessment = assessment,
-      tag = Tag.UNSIGNED,
-      answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
-    )
-
-    private fun getExpectedTag(counterSignType: CounterSignType?): Tag {
-      return when (counterSignType) {
-        CounterSignType.SELF -> Tag.SELF_SIGNED
-        CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
-        else -> fail("Unhandled countersign type")
-      }
-    }
 
     @ParameterizedTest
-    @EnumSource(CounterSignType::class)
-    fun `it signs an assessment successfully`(counterSignType: CounterSignType) {
-      val expectedTag = getExpectedTag(counterSignType)
+    @EnumSource(SignType::class)
+    fun `it signs an assessment successfully`(signType: SignType) {
+      val unsignedVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = Tag.UNSIGNED,
+        answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+      )
+
+      val expectedTag: Tag = signType.into()
       val signer = UserDetails("signer-id", "Signer Name")
 
       val signedVersion = slot<AssessmentVersion>()
@@ -354,7 +349,7 @@ class AssessmentVersionServiceTest {
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
 
-      val result = assessmentVersionService.sign(unsignedVersion, counterSignType, signer)
+      val result = assessmentVersionService.sign(unsignedVersion, signType, signer)
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
@@ -370,16 +365,16 @@ class AssessmentVersionServiceTest {
     }
 
     @ParameterizedTest
-    @EnumSource(CounterSignType::class)
-    fun `it throws an exception when the assessment is already signed`(counterSignType: CounterSignType) {
+    @EnumSource(SignType::class)
+    fun `it throws an exception when the assessment is already signed`(signType: SignType) {
       val signedVersion = AssessmentVersion(
         assessment = assessment,
-        tag = getExpectedTag(counterSignType),
+        tag = signType.into(),
         answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
       )
 
       val exception = assertThrows<ConflictException> {
-        assessmentVersionService.sign(signedVersion, counterSignType, UserDetails())
+        assessmentVersionService.sign(signedVersion, signType, UserDetails())
       }
       assertEquals("The current assessment version is already ${signedVersion.tag.name}.", exception.message)
 
@@ -390,9 +385,78 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it throws an exception when the assessment is not completed`() {
       val exception = assertThrows<ConflictException> {
-        assessmentVersionService.sign(assessmentVersion, CounterSignType.SELF, UserDetails())
+        assessmentVersionService.sign(assessmentVersion, SignType.SELF, UserDetails())
       }
       assertEquals("The current assessment version is not completed.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
+    }
+  }
+
+  @Nested
+  @DisplayName("counter-sign")
+  inner class CounterSign {
+    private val assessment = Assessment()
+    private val assessmentVersion = AssessmentVersion(assessment = assessment)
+
+    private fun validCounterSignStatusesProvider(): List<Arguments> {
+      return setOf(Tag.COUNTERSIGNED, Tag.AWAITING_DOUBLE_COUNTERSIGN, Tag.DOUBLE_COUNTERSIGNED, Tag.REJECTED).flatMap { outcome ->
+        setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).map { initialStatus ->
+          Arguments.of(initialStatus, outcome)
+        }
+      }
+    }
+
+    @ParameterizedTest
+    @MethodSource("validCounterSignStatusesProvider")
+    fun `it counter-signs an assessment successfully`(initialStatus: Tag, outcome: Tag) {
+      val counterSigner = UserDetails("signer-id", "Signer Name")
+
+      val counterSignedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(counterSignedVersion)) } returnsArgument 0
+
+      val audit = slot<AssessmentVersionAudit>()
+      every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+
+      assessmentVersion.tag = initialStatus
+
+      val result = assessmentVersionService.counterSign(assessmentVersion, counterSigner, outcome)
+
+      verify(exactly = 1) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+
+      assertThat(result).isEqualTo(counterSignedVersion.captured)
+      assertThat(result.tag).isEqualTo(outcome)
+      assertThat(assessmentVersion.tag).isEqualTo(outcome)
+
+      assertThat(audit.captured.assessmentVersion).isEqualTo(counterSignedVersion.captured)
+      assertThat(audit.captured.statusFrom).isEqualTo(initialStatus)
+      assertThat(audit.captured.statusTo).isEqualTo(outcome)
+      assertThat(audit.captured.userDetails).isEqualTo(counterSigner)
+    }
+
+    @ParameterizedTest
+    @EnumSource(Tag::class, mode = EnumSource.Mode.EXCLUDE, names = ["COUNTERSIGNED", "AWAITING_DOUBLE_COUNTERSIGN", "DOUBLE_COUNTERSIGNED", "REJECTED"])
+    fun `it throws an exception when the requested outcome status is invalid`(outcome: Tag) {
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.counterSign(assessmentVersion, UserDetails(), outcome)
+      }
+      assertEquals("Invalid outcome status ${outcome.name}.", exception.message)
+
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
+    }
+
+    @ParameterizedTest
+    @EnumSource(Tag::class, mode = EnumSource.Mode.EXCLUDE, names = ["AWAITING_COUNTERSIGN", "AWAITING_DOUBLE_COUNTERSIGN"])
+    fun `it throws an exception when the initial assessment status is unexpected`(initialStatus: Tag) {
+      assessmentVersion.tag = initialStatus
+
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.counterSign(assessmentVersion, UserDetails(), Tag.COUNTERSIGNED)
+      }
+      assertEquals("Cannot counter-sign this assessment version. Unexpected status ${initialStatus.name}.", exception.message)
 
       verify(exactly = 0) { assessmentVersionRepository.save(any()) }
       verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }

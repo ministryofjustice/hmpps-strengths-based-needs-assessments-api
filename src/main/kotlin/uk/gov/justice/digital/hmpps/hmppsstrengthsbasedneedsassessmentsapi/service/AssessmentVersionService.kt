@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
@@ -14,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
@@ -127,15 +127,12 @@ class AssessmentVersionService(
   }
 
   @Transactional
-  fun sign(assessmentVersion: AssessmentVersion, counterSignType: CounterSignType, signer: UserDetails): AssessmentVersion {
+  fun sign(assessmentVersion: AssessmentVersion, signType: SignType, signer: UserDetails): AssessmentVersion {
     if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
       throw ConflictException("The current assessment version is not completed.")
     }
 
-    val newStatus = when (counterSignType) {
-      CounterSignType.SELF -> Tag.SELF_SIGNED
-      CounterSignType.COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
-    }
+    val newStatus: Tag = signType.into()
     val oldStatus = assessmentVersion.tag
 
     if (assessmentVersion.tag == newStatus) {
@@ -157,12 +154,12 @@ class AssessmentVersionService(
   @Transactional
   fun counterSign(assessmentVersion: AssessmentVersion, counterSigner: UserDetails, outcome: Tag): AssessmentVersion {
     if (!setOf(Tag.COUNTERSIGNED, Tag.AWAITING_DOUBLE_COUNTERSIGN, Tag.DOUBLE_COUNTERSIGNED, Tag.REJECTED).contains(outcome)) {
-      throw ConflictException("Invalid outcome status ${outcome.name}")
+      throw ConflictException("Invalid outcome status ${outcome.name}.")
     }
 
     val oldStatus = assessmentVersion.tag
     if (!setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).contains(oldStatus)) {
-      throw ConflictException("Cannot counter-sign assessment version ${assessmentVersion.uuid}. Unexpected status ${oldStatus.name}")
+      throw ConflictException("Cannot counter-sign this assessment version. Unexpected status ${oldStatus.name}.")
     }
 
     assessmentVersion.tag = outcome

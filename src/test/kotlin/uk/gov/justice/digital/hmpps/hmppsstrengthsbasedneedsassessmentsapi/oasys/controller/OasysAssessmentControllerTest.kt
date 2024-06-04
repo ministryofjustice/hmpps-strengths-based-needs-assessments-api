@@ -97,6 +97,7 @@ class OasysAssessmentControllerTest(
 
       val request = CreateAssessmentRequest(
         oasysAssessmentPk = newOasysPK,
+        regionPrisonCode = "test-prison-code",
       )
 
       webTestClient.post().uri(endpoint)
@@ -109,6 +110,7 @@ class OasysAssessmentControllerTest(
       val newOasysAss = oasysAssessmentRepository.findByOasysAssessmentPk(newOasysPK)
 
       assertThat(newOasysAss).isNotNull
+      assertThat(newOasysAss?.regionPrisonCode).isEqualTo(request.regionPrisonCode)
       assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk }).isEqualTo(
         listOf(
           newOasysPK,

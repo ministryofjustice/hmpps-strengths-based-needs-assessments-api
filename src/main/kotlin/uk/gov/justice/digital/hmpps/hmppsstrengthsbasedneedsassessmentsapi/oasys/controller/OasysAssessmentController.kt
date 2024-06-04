@@ -95,13 +95,9 @@ class OasysAssessmentController(
     @RequestBody
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
-    val assessment =
-      oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
-
-    val assessmentVersion = AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags())
-      .let { assessmentVersionService.find(it) }
-
-    return OasysAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
+      return oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk, request.regionPrisonCode)
+        .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
+        .let { OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber) }
   }
 
   @RequestMapping(path = ["/merge"], method = [RequestMethod.POST])

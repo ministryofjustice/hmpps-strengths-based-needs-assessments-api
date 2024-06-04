@@ -25,23 +25,18 @@ class OasysAssessmentService(
   val assessmentVersionService: AssessmentVersionService,
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) {
-  fun createAssessmentWithOasysId(oasysAssessmentPk: String): OasysAssessment {
+  fun createAssessmentWithOasysId(oasysAssessmentPk: String, regionPrisonCode: String?): OasysAssessment {
     return assessmentService.create()
       .run {
         oasysAssessmentRepository.save(
           OasysAssessment(
             oasysAssessmentPk = oasysAssessmentPk,
             assessment = this,
+            regionPrisonCode = regionPrisonCode,
           ),
         )
       }
       .also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
-  }
-
-  fun findOrCreateAssessment(oasysAssessmentPk: String): OasysAssessment {
-    return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) ?: createAssessmentWithOasysId(
-      oasysAssessmentPk,
-    )
   }
 
   fun findOrNull(oasysAssessmentPk: String): OasysAssessment? {
@@ -53,22 +48,27 @@ class OasysAssessmentService(
       ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
   }
 
-  private fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String): OasysAssessment {
+  private fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String, regionPrisonCode: String?): OasysAssessment {
     return find(previousOasysAssessmentPk).let {
       val oasysAssessment = OasysAssessment(
         oasysAssessmentPk = oasysAssessmentPk,
         assessment = it.assessment,
+        regionPrisonCode = regionPrisonCode,
       )
       oasysAssessmentRepository.save(oasysAssessment)
     }
   }
 
-  fun associateExistingOrCreate(oasysAssessmentPk: String, previousOasysAssessmentPk: String? = null): Assessment {
+  fun associateExistingOrCreate(
+    oasysAssessmentPk: String,
+    previousOasysAssessmentPk: String? = null,
+    regionPrisonCode: String? = null,
+  ): Assessment {
     return findOrNull(oasysAssessmentPk)?.let { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
       ?: run {
         previousOasysAssessmentPk?.let {
-          associate(oasysAssessmentPk, previousOasysAssessmentPk).assessment
-        } ?: createAssessmentWithOasysId(oasysAssessmentPk).assessment
+          associate(oasysAssessmentPk, previousOasysAssessmentPk, regionPrisonCode).assessment
+        } ?: createAssessmentWithOasysId(oasysAssessmentPk, regionPrisonCode).assessment
       }.also {
         log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${it.uuid}")
       }

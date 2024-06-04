@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
@@ -35,10 +36,12 @@ import java.util.UUID
 @DisplayName("AssessmentVersionService")
 class AssessmentVersionServiceTest {
   private val assessmentVersionRepository: AssessmentVersionRepository = mockk()
+  private val assessmentVersionAuditRepository: AssessmentVersionAuditRepository = mockk()
   private val dataMappingService: DataMappingService = mockk()
   private val assessmentVersionService = AssessmentVersionService(
     assessmentVersionRepository = assessmentVersionRepository,
     dataMappingService = dataMappingService,
+    assessmentVersionAuditRepository = assessmentVersionAuditRepository,
   )
 
   private val tag = Tag.UNSIGNED

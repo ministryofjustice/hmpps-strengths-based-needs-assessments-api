@@ -6,7 +6,7 @@ CREATE TABLE assessment_version_audit
     assessment_version_uuid uuid        NOT NULL,
     user_details            jsonb       NOT NULL,
     status_from             VARCHAR(64),
-    status_to               VARCHAR(64),
+    status_to               VARCHAR(64)
 );
 
 ALTER TABLE assessment_version_audit

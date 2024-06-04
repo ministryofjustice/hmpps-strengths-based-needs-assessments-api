@@ -17,7 +17,6 @@ import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignType
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
@@ -63,43 +62,11 @@ class OasysAssessmentServiceTest {
       every { assessmentService.create() } returns assessment
       every { oasysAssessmentRepository.save(any()) } returnsArgument 0
 
-      val result = oasysAssessmentService.createAssessmentWithOasysId(oasysAssessmentPk)
+      val result = oasysAssessmentService.createAssessmentWithOasysId(oasysAssessmentPk, "test-prison-code")
 
       assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
       assertThat(result.assessment).isEqualTo(assessment)
-
-      verify(exactly = 1) { assessmentService.create() }
-    }
-  }
-
-  @Nested
-  @DisplayName("findOrCreateAssessment")
-  inner class FindOrCreateAssessment {
-    @Test
-    fun `it finds an assessment for a given OASys assessment PK`() {
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(any()) } returns OasysAssessment(
-        oasysAssessmentPk = oasysAssessmentPk,
-        assessment = assessment,
-      )
-
-      val result = oasysAssessmentService.findOrCreateAssessment(oasysAssessmentPk)
-
-      assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      assertThat(result.assessment).isEqualTo(assessment)
-    }
-
-    @Test
-    fun `it creates an assessment if unable to find one for a given OASys assessment PK`() {
-      val assessment = Assessment()
-
-      every { assessmentService.create() } returns assessment
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(any()) } returns null
-      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
-
-      val result = oasysAssessmentService.findOrCreateAssessment(oasysAssessmentPk)
-
-      assertThat(result.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
-      assertThat(result.assessment).isEqualTo(assessment)
+      assertThat(result.regionPrisonCode).isEqualTo("test-prison-code")
 
       verify(exactly = 1) { assessmentService.create() }
     }
@@ -126,27 +93,22 @@ class OasysAssessmentServiceTest {
   inner class Associate {
     @Test
     fun `it throws when an association already exists for the given OASys assessment PK`() {
-      val request = CreateAssessmentRequest(
-        oasysAssessmentPk = "1234567890",
-        previousOasysAssessmentPk = "0987654321",
-      )
+      val oasysAssessmentPk = "1234567890"
+      val previousOasysAssessmentPk = "0987654321"
 
-      every { oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk) } returns OasysAssessment(
-        oasysAssessmentPk = request.oasysAssessmentPk,
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk) } returns OasysAssessment(
+        oasysAssessmentPk = oasysAssessmentPk,
         assessment = assessment,
       )
 
       assertThrows<OasysAssessmentAlreadyExistsException> {
-        oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+        oasysAssessmentService.associateExistingOrCreate(oasysAssessmentPk, previousOasysAssessmentPk)
       }
     }
 
     @Test
     fun `it creates an assessment when no old OASys assessment PK is provided`() {
-      val request = CreateAssessmentRequest(
-        oasysAssessmentPk = "1234567890",
-      )
-
+      val oasysAssessmentPk = "1234567890"
       val assessmentUuid = UUID.randomUUID()
 
       val assessment = Assessment(
@@ -158,13 +120,13 @@ class OasysAssessmentServiceTest {
       )
 
       every {
-        oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk)
+        oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
       } returns null
       every { oasysAssessmentRepository.save(any()) } returnsArgument 0
       every { assessmentService.create() } returns assessment
       every { assessmentVersionService.findOrNull(any()) } returns assessmentVersion
 
-      val result = oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk)
+      val result = oasysAssessmentService.associateExistingOrCreate(oasysAssessmentPk)
 
       verify(exactly = 1) { assessmentService.create() }
 
@@ -173,28 +135,28 @@ class OasysAssessmentServiceTest {
 
     @Test
     fun `it associates an assessment when an old OASys assessment PK is provided`() {
-      val request = CreateAssessmentRequest(
-        oasysAssessmentPk = "1234567890",
-        previousOasysAssessmentPk = "0987654321",
-      )
+      val oasysAssessmentPk = "1234567890"
+      val previousOasysAssessmentPk = "0987654321"
+      val regionPrisonCode = "test-prison-code"
 
       every {
-        oasysAssessmentRepository.findByOasysAssessmentPk(request.oasysAssessmentPk)
+        oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
       } returns null
       every {
-        oasysAssessmentRepository.findByOasysAssessmentPk(request.previousOasysAssessmentPk!!)
+        oasysAssessmentRepository.findByOasysAssessmentPk(previousOasysAssessmentPk)
       } returns OasysAssessment(
-        oasysAssessmentPk = request.previousOasysAssessmentPk!!,
+        oasysAssessmentPk = previousOasysAssessmentPk,
         assessment = assessment,
       )
       val association = slot<OasysAssessment>()
       every { oasysAssessmentRepository.save(capture(association)) } returnsArgument 0
       every { assessmentVersionService.findOrNull(any()) } returns assessmentVersion
 
-      val result = oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
+      val result = oasysAssessmentService.associateExistingOrCreate(oasysAssessmentPk, previousOasysAssessmentPk, regionPrisonCode)
 
-      assertThat(association.captured.oasysAssessmentPk).isEqualTo(request.oasysAssessmentPk)
+      assertThat(association.captured.oasysAssessmentPk).isEqualTo(oasysAssessmentPk)
       assertThat(association.captured.assessment).isEqualTo(assessment)
+      assertThat(association.captured.regionPrisonCode).isEqualTo(regionPrisonCode)
       assertThat(result.uuid).isEqualTo(assessment.uuid)
     }
   }

@@ -95,9 +95,9 @@ class OasysAssessmentController(
     @RequestBody
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
-      return oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk, request.regionPrisonCode)
-        .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
-        .let { OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber) }
+    return oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk, request.regionPrisonCode)
+      .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
+      .let { OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber) }
   }
 
   @RequestMapping(path = ["/merge"], method = [RequestMethod.POST])

@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.RollbackAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.TransferAssociationRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
@@ -61,9 +62,8 @@ class OasysAssessmentController(
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .let {
-        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
-      }
+      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run(assessmentVersionService::find)
       .run(OasysAssessmentVersionResponse::from)
   }
 
@@ -99,7 +99,8 @@ class OasysAssessmentController(
       request.previousOasysAssessmentPk,
       request.regionPrisonCode,
     )
-      .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
+      .run { AssessmentVersionCriteria(uuid, Tag.validatedTags()) }
+      .run(assessmentVersionService::find)
       .run(OasysAssessmentResponse::from)
   }
 
@@ -165,9 +166,8 @@ class OasysAssessmentController(
     request: SignAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .let {
-        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
-      }
+      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run(assessmentVersionService::find)
       .let {
         val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
         assessmentVersionService.sign(it, request.signType, signer)
@@ -206,11 +206,8 @@ class OasysAssessmentController(
     request: CounterSignAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .let {
-        assessmentVersionService.find(
-          AssessmentVersionCriteria(it.assessment.uuid, versionNumber = request.sanVersionNumber),
-        )
-      }
+      .run { AssessmentVersionCriteria(assessment.uuid, versionNumber = request.sanVersionNumber) }
+      .run(assessmentVersionService::find)
       .let {
         val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
         assessmentVersionService.counterSign(it, counterSigner, request.outcome)
@@ -247,12 +244,46 @@ class OasysAssessmentController(
     oasysAssessmentPK: String,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .let {
-        assessmentVersionService.find(
-          AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()),
-        )
-      }
+      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run(assessmentVersionService::find)
       .run(assessmentVersionService::lock)
+      .run(OasysAssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/rollback"], method = [RequestMethod.POST])
+  @Operation(description = "Create a new \"ROLLBACK\" version of an existing assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "ROLLBACK version created"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to create ROLLBACK for latest assessment version",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun rollback(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+    @RequestBody
+    request: RollbackAssessmentRequest,
+  ): OasysAssessmentResponse {
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .run { AssessmentVersionCriteria(assessment.uuid, versionNumber = request.sanVersionNumber) }
+      .run(assessmentVersionService::find)
+      .let { assessmentVersionService.rollback(it, UserDetails.from(request.userDetails)) }
       .run(OasysAssessmentResponse::from)
   }
 }

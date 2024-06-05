@@ -10,4 +10,4 @@ class CounterSignAssessmentRequest(
   val outcome: Tag,
   @Schema(description = "OASys User")
   override val userDetails: OasysUserDetails,
-): AuditableOasysRequest
+) : AuditableOasysRequest

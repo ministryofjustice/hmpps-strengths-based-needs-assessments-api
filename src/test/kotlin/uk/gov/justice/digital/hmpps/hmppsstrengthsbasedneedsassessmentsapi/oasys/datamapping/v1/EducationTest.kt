@@ -193,14 +193,6 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
   }
 
   @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o4_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("EMPLOYMENT_EDUCATION").relatedToRisk(),
-    )
-  }
-
-  @Test
   fun qSC2() {
     test(
       "oSC2",

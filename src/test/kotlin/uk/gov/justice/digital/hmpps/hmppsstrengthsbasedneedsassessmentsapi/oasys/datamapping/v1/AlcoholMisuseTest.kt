@@ -245,12 +245,4 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
       *PractitionerAnalysisScenarios("ALCOHOL").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o9_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("ALCOHOL").relatedToRisk(),
-    )
-  }
 }

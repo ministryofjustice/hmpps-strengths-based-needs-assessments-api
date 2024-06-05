@@ -859,12 +859,4 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       *PractitionerAnalysisScenarios("DRUGS").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o8_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("DRUGS").relatedToRisk(),
-    )
-  }
 }

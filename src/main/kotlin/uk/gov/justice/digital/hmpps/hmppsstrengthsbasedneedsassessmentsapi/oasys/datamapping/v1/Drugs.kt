@@ -68,7 +68,6 @@ class Drugs : SectionMapping() {
       "o8-98" to ::q98,
       "o8-99" to ::q99,
       "o8_SAN_STRENGTH" to ::qStrength,
-      "o8_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -404,9 +403,5 @@ class Drugs : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("DRUGS", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("DRUGS", ap).relatedToRisk()
   }
 }

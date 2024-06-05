@@ -20,7 +20,6 @@ class Education : SectionMapping() {
       "o4-96" to ::q96,
       "o4-98" to ::q98,
       "o4_SAN_STRENGTH" to ::qStrength,
-      "o4_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
       "oSC2" to ::qSC2,
       "oSC2-t" to ::qSC2t,
       "oSC3" to ::qSC3,
@@ -153,10 +152,6 @@ class Education : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("EMPLOYMENT_EDUCATION", ap).relatedToRisk()
   }
 
   private fun qSC2(): Any? {

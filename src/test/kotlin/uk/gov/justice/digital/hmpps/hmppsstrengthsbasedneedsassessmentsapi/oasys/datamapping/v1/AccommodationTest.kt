@@ -91,12 +91,4 @@ class AccommodationTest : SectionMappingTest(Accommodation(), "1.0") {
       *PractitionerAnalysisScenarios("ACCOMMODATION").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o3_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("ACCOMMODATION").relatedToRisk(),
-    )
-  }
 }

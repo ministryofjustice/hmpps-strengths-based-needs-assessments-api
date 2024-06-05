@@ -130,12 +130,4 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       *PractitionerAnalysisScenarios("PERSONAL_RELATIONSHIPS_COMMUNITY").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o6_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("PERSONAL_RELATIONSHIPS_COMMUNITY").relatedToRisk(),
-    )
-  }
 }

@@ -72,12 +72,4 @@ class PractitionerAnalysis(private val sectionPrefix: String, private val ap: An
       else -> null
     }
   }
-
-  fun relatedToRisk(): Any? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RELATED_TO_RISK")).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
-    }
-  }
 }

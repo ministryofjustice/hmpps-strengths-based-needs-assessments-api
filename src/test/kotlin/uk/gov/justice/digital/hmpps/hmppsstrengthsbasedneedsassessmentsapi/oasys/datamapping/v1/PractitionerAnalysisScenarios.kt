@@ -75,12 +75,4 @@ class PractitionerAnalysisScenarios(private val sectionPrefix: String) {
       Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS"), Value.NO).expect("NO"),
     )
   }
-
-  fun relatedToRisk(): Array<Given> {
-    return arrayOf(
-      Given().expect(null),
-      Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RELATED_TO_RISK"), Value.YES).expect("YES"),
-      Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RELATED_TO_RISK"), Value.NO).expect("NO"),
-    )
-  }
 }

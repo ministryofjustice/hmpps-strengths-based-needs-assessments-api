@@ -16,7 +16,6 @@ class Accommodation : SectionMapping() {
       "o3-98" to ::q98,
       "o3-99" to ::q99,
       "o3_SAN_STRENGTH" to ::qStrength,
-      "o3_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -77,9 +76,5 @@ class Accommodation : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("ACCOMMODATION", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("ACCOMMODATION", ap).relatedToRisk()
   }
 }

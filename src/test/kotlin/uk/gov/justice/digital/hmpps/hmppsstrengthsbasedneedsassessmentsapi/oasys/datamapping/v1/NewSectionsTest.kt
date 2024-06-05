@@ -34,15 +34,6 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
   }
 
   @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "oTBA_SAN_NOT_REL_RISK",
-      Given().expect(null),
-      *PractitionerAnalysisScenarios("THINKING_BEHAVIOURS_ATTITUDES").relatedToRisk(),
-    )
-  }
-
-  @Test
   fun qAccommodationComplete() {
     test(
       "oAC_SAN_SECTION_COMP",

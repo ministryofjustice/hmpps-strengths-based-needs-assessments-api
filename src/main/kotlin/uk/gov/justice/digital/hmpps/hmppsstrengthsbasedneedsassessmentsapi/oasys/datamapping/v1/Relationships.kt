@@ -20,7 +20,6 @@ class Relationships : SectionMapping() {
       "o6-98" to ::q98,
       "o6-99" to ::q99,
       "o6_SAN_STRENGTH" to ::qStrength,
-      "o6_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -108,9 +107,5 @@ class Relationships : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("PERSONAL_RELATIONSHIPS_COMMUNITY", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("PERSONAL_RELATIONSHIPS_COMMUNITY", ap).relatedToRisk()
   }
 }

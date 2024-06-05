@@ -148,12 +148,4 @@ class EmotionalWellbeingTest : SectionMappingTest(EmotionalWellbeing(), "1.0") {
       *PractitionerAnalysisScenarios("HEALTH_WELLBEING").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o10_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("HEALTH_WELLBEING").relatedToRisk(),
-    )
-  }
 }

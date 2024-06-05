@@ -16,7 +16,6 @@ class FinancialManagement : SectionMapping() {
       "o5-98" to ::q98,
       "o5-99" to ::q99,
       "o5_SAN_STRENGTH" to ::qStrength,
-      "o5_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -84,9 +83,5 @@ class FinancialManagement : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("FINANCE", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("FINANCE", ap).relatedToRisk()
   }
 }

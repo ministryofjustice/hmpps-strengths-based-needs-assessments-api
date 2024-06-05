@@ -21,7 +21,6 @@ class EmotionalWellbeing : SectionMapping() {
       "o10-98" to ::q98,
       "o10-99" to ::q99,
       "o10_SAN_STRENGTH" to ::qStrength,
-      "o10_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -128,9 +127,5 @@ class EmotionalWellbeing : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("HEALTH_WELLBEING", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("HEALTH_WELLBEING", ap).relatedToRisk()
   }
 }

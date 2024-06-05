@@ -15,7 +15,6 @@ class AlcoholMisuse : SectionMapping() {
       "o9-98" to ::q98,
       "o9-99" to ::q99,
       "o9_SAN_STRENGTH" to ::qStrength,
-      "o9_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
     )
   }
 
@@ -119,9 +118,5 @@ class AlcoholMisuse : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("ALCOHOL", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("ALCOHOL", ap).relatedToRisk()
   }
 }

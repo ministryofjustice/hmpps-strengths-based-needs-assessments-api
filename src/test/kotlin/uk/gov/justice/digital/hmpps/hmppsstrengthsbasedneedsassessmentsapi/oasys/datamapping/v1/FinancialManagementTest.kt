@@ -107,12 +107,4 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
       *PractitionerAnalysisScenarios("FINANCE").strengthsOrProtectiveFactors(),
     )
   }
-
-  @Test
-  fun qNotRelatedToRisk() {
-    test(
-      "o5_SAN_NOT_REL_RISK",
-      *PractitionerAnalysisScenarios("FINANCE").relatedToRisk(),
-    )
-  }
 }

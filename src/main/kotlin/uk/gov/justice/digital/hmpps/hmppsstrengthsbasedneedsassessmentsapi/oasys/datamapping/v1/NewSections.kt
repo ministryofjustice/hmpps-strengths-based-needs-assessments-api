@@ -11,7 +11,6 @@ class NewSections : SectionMapping() {
       "oTBA_SAN_LINKED_ROSH" to ::qLinkedToRosh,
       "oTBA_SAN_LINKED_REOFFEND" to ::qLinkedToReoffending,
       "oTBA_SAN_STRENGTH" to ::qStrength,
-      "oTBA_SAN_NOT_REL_RISK" to ::qNotRelatedToRisk,
       "oAC_SAN_SECTION_COMP" to ::qAccommodationComplete,
       "oEE_SAN_SECTION_COMP" to ::qEducationEmploymentComplete,
       "oFI_SAN_SECTION_COMP" to ::qFinanceComplete,
@@ -34,10 +33,6 @@ class NewSections : SectionMapping() {
 
   private fun qStrength(): Any? {
     return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).strengthsOrProtectiveFactors()
-  }
-
-  private fun qNotRelatedToRisk(): Any? {
-    return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).relatedToRisk()
   }
 
   private fun qAccommodationComplete(): Any? {

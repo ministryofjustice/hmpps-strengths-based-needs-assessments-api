@@ -60,12 +60,11 @@ class OasysAssessmentController(
     @PathVariable
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
-    val oasysAssessment = oasysAssessmentService.find(oasysAssessmentPK)
-
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
-    val assessmentVersion = assessmentVersionService.find(criteria)
-
-    return OasysAssessmentVersionResponse.from(assessmentVersion)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
+      }
+      .run(OasysAssessmentVersionResponse::from)
   }
 
   @RequestMapping(path = ["/create"], method = [RequestMethod.POST])
@@ -101,7 +100,7 @@ class OasysAssessmentController(
       request.regionPrisonCode,
     )
       .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
-      .let { OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber) }
+      .run(OasysAssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/merge"], method = [RequestMethod.POST])
@@ -173,9 +172,7 @@ class OasysAssessmentController(
         val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
         assessmentVersionService.sign(it, request.signType, signer)
       }
-      .let {
-        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
-      }
+      .run(OasysAssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/counter-sign"], method = [RequestMethod.POST])
@@ -218,9 +215,7 @@ class OasysAssessmentController(
         val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
         assessmentVersionService.counterSign(it, counterSigner, request.outcome)
       }
-      .let {
-        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
-      }
+      .run(OasysAssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])
@@ -257,11 +252,7 @@ class OasysAssessmentController(
           AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()),
         )
       }
-      .let {
-        assessmentVersionService.lock(it)
-      }
-      .let {
-        OasysAssessmentResponse.from(it.assessment.uuid, it.versionNumber)
-      }
+      .run(assessmentVersionService::lock)
+      .run(OasysAssessmentResponse::from)
   }
 }

@@ -81,6 +81,10 @@ class AssessmentVersionService(
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
+  fun save(assessmentVersion: AssessmentVersion): AssessmentVersion {
+    return assessmentVersionRepository.save(assessmentVersion)
+  }
+
   fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
     if (request.tags.intersect(Tag.lockedTags()).isNotEmpty()) {
       throw ConflictException("Locked versions cannot be updated")
@@ -114,15 +118,15 @@ class AssessmentVersionService(
       throw ConflictException("The current assessment version is already locked")
     }
 
-    val oldStatus = assessmentVersion.tag
+    val originalStatus = assessmentVersion.tag
     assessmentVersion.tag = Tag.LOCKED_INCOMPLETE
 
     return assessmentVersionRepository.save(assessmentVersion).also {
       AssessmentVersionAudit(
         assessmentVersion = it,
-        statusFrom = oldStatus,
+        statusFrom = originalStatus,
         statusTo = it.tag,
-      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+      ).run(assessmentVersionAuditRepository::save)
     }
   }
 
@@ -133,7 +137,7 @@ class AssessmentVersionService(
     }
 
     val newStatus: Tag = signType.into()
-    val oldStatus = assessmentVersion.tag
+    val originalStatus = assessmentVersion.tag
 
     if (assessmentVersion.tag == newStatus) {
       throw ConflictException("The current assessment version is already ${newStatus.name}.")
@@ -145,33 +149,58 @@ class AssessmentVersionService(
       AssessmentVersionAudit(
         assessmentVersion = it,
         userDetails = signer,
-        statusFrom = oldStatus,
+        statusFrom = originalStatus,
         statusTo = it.tag,
-      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+      ).run(assessmentVersionAuditRepository::save)
     }
   }
 
   @Transactional
   fun counterSign(assessmentVersion: AssessmentVersion, counterSigner: UserDetails, outcome: Tag): AssessmentVersion {
-    if (!setOf(Tag.COUNTERSIGNED, Tag.AWAITING_DOUBLE_COUNTERSIGN, Tag.DOUBLE_COUNTERSIGNED, Tag.REJECTED).contains(outcome)) {
+    if (!setOf(Tag.COUNTERSIGNED, Tag.AWAITING_DOUBLE_COUNTERSIGN, Tag.DOUBLE_COUNTERSIGNED, Tag.REJECTED).contains(
+        outcome,
+      )
+    ) {
       throw ConflictException("Invalid outcome status ${outcome.name}.")
     }
 
-    val oldStatus = assessmentVersion.tag
-    if (!setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).contains(oldStatus)) {
-      throw ConflictException("Cannot counter-sign this assessment version. Unexpected status ${oldStatus.name}.")
+    val originalStatus = assessmentVersion.tag
+    if (!setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).contains(originalStatus)) {
+      throw ConflictException("Cannot counter-sign this assessment version. Unexpected status ${originalStatus.name}.")
     }
 
     assessmentVersion.tag = outcome
 
-    return assessmentVersionRepository.save(assessmentVersion).also {
-      AssessmentVersionAudit(
-        assessmentVersion = it,
-        userDetails = counterSigner,
-        statusFrom = oldStatus,
-        statusTo = it.tag,
-      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+    return assessmentVersionRepository.save(assessmentVersion)
+      .also {
+        AssessmentVersionAudit(
+          assessmentVersion = it,
+          userDetails = counterSigner,
+          statusFrom = originalStatus,
+          statusTo = it.tag,
+        ).run(assessmentVersionAuditRepository::save)
+      }
+  }
+
+  @Transactional
+  fun rollback(assessmentVersion: AssessmentVersion, userDetails: UserDetails): AssessmentVersion {
+    val originalStatus = assessmentVersion.tag
+
+    if (!Tag.tagsThatCanRollback().contains(assessmentVersion.tag)) {
+      throw ConflictException("Cannot rollback this assessment version. Unexpected status ${originalStatus.name}.")
     }
+
+    assessmentVersion.tag = Tag.ROLLED_BACK
+
+    return assessmentVersionRepository.save(assessmentVersion)
+      .also {
+        AssessmentVersionAudit(
+          assessmentVersion = it,
+          userDetails = userDetails,
+          statusFrom = originalStatus,
+          statusTo = it.tag,
+        ).run(assessmentVersionAuditRepository::save)
+      }
   }
 
   companion object {

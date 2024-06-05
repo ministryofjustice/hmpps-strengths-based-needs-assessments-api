@@ -462,4 +462,59 @@ class AssessmentVersionServiceTest {
       verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
     }
   }
+
+  @Nested
+  @DisplayName("rollback")
+  inner class Rollback {
+    private val assessment = Assessment()
+    private val assessmentVersion = AssessmentVersion(assessment = assessment)
+
+    @ParameterizedTest
+    @EnumSource(Tag::class, mode = EnumSource.Mode.INCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE"])
+    fun `it does a rollback on the assessment successfully`(tag: Tag) {
+      val userDetails = UserDetails("signer-id", "Signer Name")
+
+      val rolledBackVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(rolledBackVersion)) } returnsArgument 0
+
+      val audit = slot<AssessmentVersionAudit>()
+      every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+
+      assessmentVersion.tag = tag
+
+      val result = assessmentVersionService.rollback(assessmentVersion, userDetails)
+
+      verify(exactly = 1) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+
+      assertThat(result).isEqualTo(rolledBackVersion.captured)
+      assertThat(result.tag).isEqualTo(Tag.ROLLED_BACK)
+
+      assertThat(audit.captured.assessmentVersion).isEqualTo(rolledBackVersion.captured)
+      assertThat(audit.captured.statusFrom).isEqualTo(tag)
+      assertThat(audit.captured.statusTo).isEqualTo(Tag.ROLLED_BACK)
+      assertThat(audit.captured.userDetails).isEqualTo(userDetails)
+    }
+
+    @ParameterizedTest
+    @EnumSource(Tag::class, mode = EnumSource.Mode.EXCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE"])
+    fun `it throws when the requested version status is invalid`(tag: Tag) {
+      val userDetails = UserDetails("signer-id", "Signer Name")
+
+      val rolledBackVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(rolledBackVersion)) } returnsArgument 0
+
+      val audit = slot<AssessmentVersionAudit>()
+      every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+
+      assessmentVersion.tag = tag
+
+      val exception = assertThrows<ConflictException> { assessmentVersionService.rollback(assessmentVersion, userDetails) }
+
+      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
+      verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
+
+      assertThat(exception.message).isEqualTo("Cannot rollback this assessment version. Unexpected status ${tag.name}.")
+    }
+  }
 }

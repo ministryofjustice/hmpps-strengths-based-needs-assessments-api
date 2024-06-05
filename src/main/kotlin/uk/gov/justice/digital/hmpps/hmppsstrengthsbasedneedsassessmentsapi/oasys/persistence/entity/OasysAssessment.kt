@@ -34,4 +34,7 @@ class OasysAssessment(
   @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
   val assessment: Assessment = Assessment(),
+
+  @Column(name = "region_prison_code")
+  val regionPrisonCode: String? = null,
 )

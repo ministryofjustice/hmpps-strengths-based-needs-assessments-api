@@ -61,9 +61,9 @@ class AssessmentController(
     @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "UNSIGNED")
     tag: Tag? = null,
   ): AssessmentResponse {
-    return AssessmentVersionCriteria(assessmentUuid, tag?.let { setOf(tag) }, after, until)
-      .let { assessmentVersionService.find(it) }
-      .let { AssessmentResponse.from(it) }
+    return AssessmentVersionCriteria(assessmentUuid, tag?.run(::setOf), after, until)
+      .run(assessmentVersionService::find)
+      .run(AssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/answers"], method = [RequestMethod.POST])

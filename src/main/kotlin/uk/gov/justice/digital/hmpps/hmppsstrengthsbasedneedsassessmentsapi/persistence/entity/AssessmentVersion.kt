@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
 import com.vladmihalcea.hibernate.type.json.JsonType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import java.time.LocalDateTime
@@ -67,6 +69,19 @@ enum class Tag {
   }
 }
 
+enum class SignType {
+  SELF,
+  COUNTERSIGN,
+  ;
+
+  fun into(): Tag {
+    return when (this) {
+      SELF -> Tag.SELF_SIGNED
+      COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
+    }
+  }
+}
+
 @Entity
 @Table(name = "assessments_versions")
 data class AssessmentVersion(
@@ -86,7 +101,7 @@ data class AssessmentVersion(
 
   @Column(name = "tag")
   @Enumerated(EnumType.STRING)
-  val tag: Tag = Tag.UNVALIDATED,
+  var tag: Tag = Tag.UNVALIDATED,
 
   @Type(JsonType::class)
   @Column(name = "answers")
@@ -102,4 +117,7 @@ data class AssessmentVersion(
 
   @Column(name = "version_number")
   val versionNumber: Long = 0,
+
+  @OneToMany(mappedBy = "assessmentVersion", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+  var assessmentVersionAudit: List<AssessmentVersionAudit> = listOf(),
 )

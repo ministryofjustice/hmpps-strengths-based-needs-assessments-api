@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
@@ -22,6 +23,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -57,12 +60,11 @@ class OasysAssessmentController(
     @PathVariable
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
-    val oasysAssessment = oasysAssessmentService.find(oasysAssessmentPK)
-
-    val criteria = AssessmentVersionCriteria(oasysAssessment.assessment.uuid, Tag.validatedTags())
-    val assessmentVersion = assessmentVersionService.find(criteria)
-
-    return OasysAssessmentVersionResponse.from(assessmentVersion)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
+      }
+      .run(OasysAssessmentVersionResponse::from)
   }
 
   @RequestMapping(path = ["/create"], method = [RequestMethod.POST])
@@ -92,13 +94,13 @@ class OasysAssessmentController(
     @RequestBody
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
-    val assessment =
-      oasysAssessmentService.associateExistingOrCreate(request.oasysAssessmentPk, request.previousOasysAssessmentPk)
-
-    val assessmentVersion = AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags())
-      .let { assessmentVersionService.find(it) }
-
-    return OasysAssessmentResponse.from(assessment.uuid, assessmentVersion.versionNumber)
+    return oasysAssessmentService.associateExistingOrCreate(
+      request.oasysAssessmentPk,
+      request.previousOasysAssessmentPk,
+      request.regionPrisonCode,
+    )
+      .let { assessmentVersionService.find(AssessmentVersionCriteria(it.uuid, Tag.validatedTags())) }
+      .run(OasysAssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/merge"], method = [RequestMethod.POST])
@@ -162,8 +164,58 @@ class OasysAssessmentController(
     @RequestBody
     request: SignAssessmentRequest,
   ): OasysAssessmentResponse {
-    val signedVersion = oasysAssessmentService.sign(oasysAssessmentPK, request.counterSignType)
-    return OasysAssessmentResponse.from(signedVersion.assessment.uuid, signedVersion.versionNumber)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()))
+      }
+      .let {
+        val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
+        assessmentVersionService.sign(it, request.signType, signer)
+      }
+      .run(OasysAssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/counter-sign"], method = [RequestMethod.POST])
+  @Operation(description = "Marks an assessment version as counter-signed.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version counter-signed successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The assessment could not be counter-signed. See details in error message.",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun counterSign(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+    @RequestBody
+    request: CounterSignAssessmentRequest,
+  ): OasysAssessmentResponse {
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(
+          AssessmentVersionCriteria(it.assessment.uuid, versionNumber = request.sanVersionNumber),
+        )
+      }
+      .let {
+        val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
+        assessmentVersionService.counterSign(it, counterSigner, request.outcome)
+      }
+      .run(OasysAssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/lock"], method = [RequestMethod.POST])
@@ -194,7 +246,13 @@ class OasysAssessmentController(
     @PathVariable
     oasysAssessmentPK: String,
   ): OasysAssessmentResponse {
-    val lockedVersion = oasysAssessmentService.lock(oasysAssessmentPK)
-    return OasysAssessmentResponse.from(lockedVersion.assessment.uuid, lockedVersion.versionNumber)
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .let {
+        assessmentVersionService.find(
+          AssessmentVersionCriteria(it.assessment.uuid, Tag.validatedTags()),
+        )
+      }
+      .run(assessmentVersionService::lock)
+      .run(OasysAssessmentResponse::from)
   }
 }

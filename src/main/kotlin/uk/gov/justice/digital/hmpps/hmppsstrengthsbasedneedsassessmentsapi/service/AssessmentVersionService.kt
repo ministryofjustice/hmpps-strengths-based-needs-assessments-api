@@ -1,15 +1,22 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
+import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
@@ -19,6 +26,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class AssessmentVersionService(
   val assessmentVersionRepository: AssessmentVersionRepository,
+  val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val dataMappingService: DataMappingService,
 ) {
   private fun versionUpdatedToday(assessmentVersion: AssessmentVersion): Boolean {
@@ -100,16 +108,69 @@ class AssessmentVersionService(
     }
   }
 
-  fun cloneAndTag(assessmentVersion: AssessmentVersion, tag: Tag): AssessmentVersion {
-    return assessmentVersionRepository.save(
-      AssessmentVersion(
-        tag = tag,
-        assessment = assessmentVersion.assessment,
-        answers = assessmentVersion.answers,
-        versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessmentVersion.assessment.uuid),
-      ),
-    ).also {
-      log.info("Assessment version ${it.uuid} was cloned from ${assessmentVersion.uuid} and tagged ${tag.name}.")
+  @Transactional
+  fun lock(assessmentVersion: AssessmentVersion): AssessmentVersion {
+    if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
+      throw ConflictException("The current assessment version is already locked")
+    }
+
+    val oldStatus = assessmentVersion.tag
+    assessmentVersion.tag = Tag.LOCKED_INCOMPLETE
+
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+    }
+  }
+
+  @Transactional
+  fun sign(assessmentVersion: AssessmentVersion, signType: SignType, signer: UserDetails): AssessmentVersion {
+    if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
+      throw ConflictException("The current assessment version is not completed.")
+    }
+
+    val newStatus: Tag = signType.into()
+    val oldStatus = assessmentVersion.tag
+
+    if (assessmentVersion.tag == newStatus) {
+      throw ConflictException("The current assessment version is already ${newStatus.name}.")
+    }
+
+    assessmentVersion.tag = newStatus
+
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        userDetails = signer,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
+    }
+  }
+
+  @Transactional
+  fun counterSign(assessmentVersion: AssessmentVersion, counterSigner: UserDetails, outcome: Tag): AssessmentVersion {
+    if (!setOf(Tag.COUNTERSIGNED, Tag.AWAITING_DOUBLE_COUNTERSIGN, Tag.DOUBLE_COUNTERSIGNED, Tag.REJECTED).contains(outcome)) {
+      throw ConflictException("Invalid outcome status ${outcome.name}.")
+    }
+
+    val oldStatus = assessmentVersion.tag
+    if (!setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).contains(oldStatus)) {
+      throw ConflictException("Cannot counter-sign this assessment version. Unexpected status ${oldStatus.name}.")
+    }
+
+    assessmentVersion.tag = outcome
+
+    return assessmentVersionRepository.save(assessmentVersion).also {
+      AssessmentVersionAudit(
+        assessmentVersion = it,
+        userDetails = counterSigner,
+        statusFrom = oldStatus,
+        statusTo = it.tag,
+      ).let { audit -> assessmentVersionAuditRepository.save(audit) }
     }
   }
 

@@ -349,7 +349,7 @@ class AssessmentVersionServiceTest {
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
 
-      val result = assessmentVersionService.sign(unsignedVersion, signType, signer)
+      val result = assessmentVersionService.sign(unsignedVersion, signer, signType)
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
@@ -374,7 +374,7 @@ class AssessmentVersionServiceTest {
       )
 
       val exception = assertThrows<ConflictException> {
-        assessmentVersionService.sign(signedVersion, signType, UserDetails())
+        assessmentVersionService.sign(signedVersion, UserDetails(), signType)
       }
       assertEquals("The current assessment version is already ${signedVersion.tag.name}.", exception.message)
 
@@ -385,7 +385,7 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it throws an exception when the assessment is not completed`() {
       val exception = assertThrows<ConflictException> {
-        assessmentVersionService.sign(assessmentVersion, SignType.SELF, UserDetails())
+        assessmentVersionService.sign(assessmentVersion, UserDetails(), SignType.SELF)
       }
       assertEquals("The current assessment version is not completed.", exception.message)
 

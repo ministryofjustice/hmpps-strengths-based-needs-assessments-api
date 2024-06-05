@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -169,8 +168,7 @@ class OasysAssessmentController(
       .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
       .run(assessmentVersionService::find)
       .let {
-        val signer = UserDetails(request.oasysUserID, request.oasysUserName, UserType.OASYS)
-        assessmentVersionService.sign(it, request.signType, signer)
+        assessmentVersionService.sign(it, UserDetails.from(request), request.signType)
       }
       .run(OasysAssessmentResponse::from)
   }
@@ -209,8 +207,7 @@ class OasysAssessmentController(
       .run { AssessmentVersionCriteria(assessment.uuid, versionNumber = request.sanVersionNumber) }
       .run(assessmentVersionService::find)
       .let {
-        val counterSigner = UserDetails(request.counterSignerID, request.counterSignerName, UserType.OASYS)
-        assessmentVersionService.counterSign(it, counterSigner, request.outcome)
+        assessmentVersionService.counterSign(it, UserDetails.from(request), request.outcome)
       }
       .run(OasysAssessmentResponse::from)
   }
@@ -283,7 +280,7 @@ class OasysAssessmentController(
     return oasysAssessmentService.find(oasysAssessmentPK)
       .run { AssessmentVersionCriteria(assessment.uuid, versionNumber = request.sanVersionNumber) }
       .run(assessmentVersionService::find)
-      .let { assessmentVersionService.rollback(it, UserDetails.from(request.userDetails)) }
+      .let { assessmentVersionService.rollback(it, UserDetails.from(request)) }
       .run(OasysAssessmentResponse::from)
   }
 }

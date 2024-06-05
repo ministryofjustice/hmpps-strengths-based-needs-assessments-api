@@ -6,10 +6,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 class CounterSignAssessmentRequest(
   @Schema(description = "The SAN Assessment version number that was returned from the Sign Assessment API call.", example = "2")
   val sanVersionNumber: Long,
-  @Schema(description = "OASys user identifier of the counter-signing practitioner.", example = "111111")
-  val counterSignerID: String,
-  @Schema(description = "Forename and Surname of counter-signing practitioner.", example = "John Doe")
-  val counterSignerName: String,
   @Schema(description = "Indicates what type of case this is")
   val outcome: Tag,
-)
+  @Schema(description = "OASys User")
+  override val userDetails: OasysUserDetails,
+): AuditableOasysRequest

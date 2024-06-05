@@ -70,8 +70,7 @@ class SignTest(
       val request = """
         {
           "signType": "SELF",
-          "oasysUserID": "123",
-          "oasysUserName": "John Doe"
+          "userDetails": { "id": "user-id", "name": "John Doe" }
         }
       """.trimIndent()
 
@@ -88,8 +87,7 @@ class SignTest(
       val request = """
         {
           "signType": "SELF",
-          "oasysUserID": "123",
-          "oasysUserName": "John Doe"
+          "userDetails": { "id": "user-id", "name": "John Doe" }
         }
       """.trimIndent()
 
@@ -119,7 +117,7 @@ class SignTest(
       val audit = signedVersion.assessmentVersionAudit.first()
       Assertions.assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
       Assertions.assertThat(audit.statusTo).isEqualTo(Tag.SELF_SIGNED)
-      Assertions.assertThat(audit.userDetails.id).isEqualTo("123")
+      Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
       Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
       Assertions.assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
@@ -130,7 +128,7 @@ class SignTest(
 
     @Test
     fun `it returns Conflict when the assessment is already signed`() {
-      assessment.assessmentVersions = assessment.assessmentVersions + AssessmentVersion(
+      assessment.assessmentVersions += AssessmentVersion(
         assessment = assessment,
         answers = mapOf("assessment_complete" to Answer(value = "YES")),
         createdAt = LocalDateTime.now().minusHours(1),
@@ -142,8 +140,7 @@ class SignTest(
       val request = """
         {
           "signType": "SELF",
-          "oasysUserID": "123",
-          "oasysUserName": "John Doe"
+          "userDetails": { "id": "user-id", "name": "John Doe" }
         }
       """.trimIndent()
 

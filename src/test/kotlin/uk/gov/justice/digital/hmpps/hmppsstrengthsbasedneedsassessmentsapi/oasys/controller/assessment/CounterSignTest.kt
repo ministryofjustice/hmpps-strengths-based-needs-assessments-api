@@ -52,8 +52,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "COUNTERSIGNED"
         }
       """.trimIndent()
@@ -80,8 +79,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "COUNTERSIGNED"
         }
       """.trimIndent()
@@ -121,8 +119,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "COUNTERSIGNED"
         }
       """.trimIndent()
@@ -145,8 +142,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "COUNTERSIGNED"
         }
       """.trimIndent()
@@ -179,8 +175,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "SELF_SIGNED"
         }
       """.trimIndent()
@@ -212,8 +207,7 @@ class CounterSignTest(
       val request = """
         {
           "sanVersionNumber": 1,
-          "counterSignerID": "user-id",
-          "counterSignerName": "John Doe",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
           "outcome": "COUNTERSIGNED"
         }
       """.trimIndent()

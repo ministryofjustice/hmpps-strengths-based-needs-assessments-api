@@ -6,8 +6,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 class SignAssessmentRequest(
   @Schema(description = "Indicates what type of case this is")
   val signType: SignType,
-  @Schema(description = "OASys User ID", example = "111111")
-  val oasysUserID: String,
-  @Schema(description = "OASys User name", example = "John Doe")
-  val oasysUserName: String,
-)
+  @Schema(description = "OASys User")
+  override val userDetails: OasysUserDetails,
+) : AuditableOasysRequest

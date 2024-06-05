@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysUserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditableOasysRequest
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -21,7 +21,8 @@ data class UserDetails(
   val type: UserType = UserType.SAN,
 ) {
   companion object {
-    fun from(user: OasysUserDetails) = UserDetails(user.id, user.name, UserType.OASYS)
+    fun from(request: AuditableOasysRequest) =
+      with(request) { UserDetails(userDetails.id, userDetails.name, UserType.OASYS) }
   }
 }
 

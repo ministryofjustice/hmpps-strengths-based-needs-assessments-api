@@ -131,7 +131,7 @@ class AssessmentVersionService(
   }
 
   @Transactional
-  fun sign(assessmentVersion: AssessmentVersion, signType: SignType, signer: UserDetails): AssessmentVersion {
+  fun sign(assessmentVersion: AssessmentVersion, signer: UserDetails, signType: SignType): AssessmentVersion {
     if (assessmentVersion.answers[Field.ASSESSMENT_COMPLETE.lower]?.value != Value.YES.name) {
       throw ConflictException("The current assessment version is not completed.")
     }

@@ -66,6 +66,10 @@ enum class Tag {
     fun lockedTags(): Set<Tag> {
       return Tag.values().subtract(setOf(UNSIGNED, UNVALIDATED))
     }
+
+    fun tagsThatCanRollback(): Set<Tag> {
+      return setOf(AWAITING_COUNTERSIGN, REJECTED, LOCKED_INCOMPLETE)
+    }
   }
 }
 

@@ -283,4 +283,71 @@ class OasysAssessmentController(
       .let { assessmentVersionService.rollback(it, UserDetails.from(request)) }
       .run(OasysAssessmentResponse::from)
   }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/soft-delete"], method = [RequestMethod.POST])
+  @Operation(description = "Soft-deletes an OASys assessment.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OASys assessment has been soft-deleted"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to soft-delete an assessment that has already been soft-deleted",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun softDelete(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+  ): Message {
+    return oasysAssessmentService.find(oasysAssessmentPK)
+      .run(oasysAssessmentService::softDelete)
+      .run { Message("Successfully soft-deleted OASys assessment PK $oasysAssessmentPK") }
+  }
+
+  @RequestMapping(path = ["/{oasysAssessmentPK}/undelete"], method = [RequestMethod.POST])
+  @Operation(description = "Undeletes an OASys assessment.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OASys assessment has been undeleted"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to undelete an assessment that is not deleted",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun undelete(
+    @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
+    @PathVariable
+    oasysAssessmentPK: String,
+  ): OasysAssessmentResponse {
+    return oasysAssessmentService.undelete(oasysAssessmentPK)
+      .run { AssessmentVersionCriteria(assessment.uuid) }
+      .run(assessmentVersionService::find)
+      .run(OasysAssessmentResponse::from)
+  }
 }

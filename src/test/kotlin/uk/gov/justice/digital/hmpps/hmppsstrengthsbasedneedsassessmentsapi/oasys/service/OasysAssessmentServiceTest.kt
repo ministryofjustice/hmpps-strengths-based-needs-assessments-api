@@ -16,10 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
@@ -143,6 +145,91 @@ class OasysAssessmentServiceTest {
       assertThat(association.captured.assessment).isEqualTo(assessment)
       assertThat(association.captured.regionPrisonCode).isEqualTo(regionPrisonCode)
       assertThat(result.uuid).isEqualTo(assessment.uuid)
+    }
+  }
+
+  @Nested
+  @DisplayName("softDelete")
+  inner class SoftDelete {
+    @Test
+    fun `it soft-deletes an assessment for a given OASys assessment PK`() {
+      val assessment = OasysAssessment()
+
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+
+      val result = oasysAssessmentService.softDelete(assessment)
+
+      assertThat(result.uuid).isEqualTo(assessment.uuid)
+      assertThat(result.deleted).isTrue
+
+      verify(exactly = 1) { oasysAssessmentRepository.save(any()) }
+    }
+
+    @Test
+    fun `it throws a Conflict when the assessment is already deleted`() {
+      val assessment = OasysAssessment(deleted = true, oasysAssessmentPk = "1234")
+
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+
+      val exception = assertThrows<ConflictException> { oasysAssessmentService.softDelete(assessment) }
+      assertThat(exception.message).isEqualTo("OASys assessment 1234 has already been soft-deleted.")
+
+      assertThat(assessment.deleted).isTrue
+
+      verify(exactly = 0) { oasysAssessmentRepository.save(any()) }
+    }
+  }
+
+  @Nested
+  @DisplayName("undelete")
+  inner class Undelete {
+    @Test
+    fun `it undeletes an assessment for a given OASys assessment PK`() {
+      val assessment = OasysAssessment(deleted = true, oasysAssessmentPk = "1234")
+
+      every { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(match { it == assessment.oasysAssessmentPk }) } returns assessment
+      every { oasysAssessmentRepository.save(any()) } returnsArgument 0
+
+      val result = oasysAssessmentService.undelete(assessment.oasysAssessmentPk)
+
+      assertThat(result.uuid).isEqualTo(assessment.uuid)
+      assertThat(result.deleted).isFalse
+
+      verify(exactly = 1) { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(any()) }
+      verify(exactly = 1) { oasysAssessmentRepository.save(any()) }
+    }
+
+    @Test
+    fun `it throws a Conflict when the assessment is not deleted`() {
+      val assessment = OasysAssessment(oasysAssessmentPk = "1234")
+
+      every { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(match { it == assessment.oasysAssessmentPk }) } returns null
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(match { it == assessment.oasysAssessmentPk }) } returns assessment
+
+      val exception = assertThrows<ConflictException> { oasysAssessmentService.undelete(assessment.oasysAssessmentPk) }
+      assertThat(exception.message)
+        .isEqualTo("Cannot undelete OASys assessment PK ${assessment.oasysAssessmentPk} because it is not deleted.")
+
+      assertThat(assessment.deleted).isFalse
+
+      verify(exactly = 1) { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(any()) }
+      verify(exactly = 1) { oasysAssessmentRepository.findByOasysAssessmentPk(any()) }
+      verify(exactly = 0) { oasysAssessmentRepository.save(any()) }
+    }
+
+    @Test
+    fun `it throws a Not Found when the assessment is not found`() {
+      val oasysAssessmentPk = "1234"
+
+      every { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(match { it == oasysAssessmentPk }) } returns null
+      every { oasysAssessmentRepository.findByOasysAssessmentPk(match { it == oasysAssessmentPk }) } returns null
+
+      val exception = assertThrows<OasysAssessmentNotFoundException> { oasysAssessmentService.undelete(oasysAssessmentPk) }
+      assertThat(exception.message).isEqualTo("No OASys assessment found for PK $oasysAssessmentPk")
+
+      verify(exactly = 1) { oasysAssessmentRepository.findDeletedByOasysAssessmentPk(any()) }
+      verify(exactly = 1) { oasysAssessmentRepository.findByOasysAssessmentPk(any()) }
+      verify(exactly = 0) { oasysAssessmentRepository.save(any()) }
     }
   }
 }

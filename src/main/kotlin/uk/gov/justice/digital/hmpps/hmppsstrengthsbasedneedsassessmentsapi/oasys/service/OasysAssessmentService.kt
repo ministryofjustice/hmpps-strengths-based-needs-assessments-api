@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 
 @Service
 class OasysAssessmentService(
@@ -85,6 +86,29 @@ class OasysAssessmentService(
         }
       }
     }
+  }
+
+  fun softDelete(oasysAssessment: OasysAssessment): OasysAssessment {
+    if (oasysAssessment.deleted) {
+      throw ConflictException("OASys assessment ${oasysAssessment.oasysAssessmentPk} has already been soft-deleted.")
+    }
+
+    return oasysAssessment.apply { deleted = true }
+      .run(oasysAssessmentRepository::save)
+      .also {
+        log.info("Successfully soft-deleted OASys assessment PK ${oasysAssessment.oasysAssessmentPk}")
+      }
+  }
+
+  fun undelete(oasysAssessmentPk: String): OasysAssessment {
+    return oasysAssessmentRepository.findDeletedByOasysAssessmentPk(oasysAssessmentPk)
+      ?.apply { deleted = false }
+      ?.run(oasysAssessmentRepository::save)
+      ?.also { log.info("Successfully undeleted OASys assessment PK ${it.oasysAssessmentPk}") }
+      ?: run {
+        find(oasysAssessmentPk)
+        throw ConflictException("Cannot undelete OASys assessment PK $oasysAssessmentPk because it is not deleted.")
+      }
   }
 
   companion object {

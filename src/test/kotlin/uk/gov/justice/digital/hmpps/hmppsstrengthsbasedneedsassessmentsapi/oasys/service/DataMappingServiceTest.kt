@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
@@ -19,7 +20,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.servi
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field as FormField
 
 class DataMappingServiceTest {
@@ -45,11 +45,9 @@ class DataMappingServiceTest {
       val sut = DataMappingService(mockFormConfigProvider, mockMappingProvider)
 
       listOf(Assessment()).forEach {
-        val exception = assertFailsWith<FormVersionNotFoundException>(
-          block = {
-            sut.getOasysEquivalent(AssessmentVersion(id = 123, assessment = it))
-          },
-        )
+        val exception = assertThrows<FormVersionNotFoundException> {
+          sut.getOasysEquivalent(AssessmentVersion(id = 123, assessment = it))
+        }
         assertEquals("No form version found for assessment ID 123", exception.message)
       }
     }

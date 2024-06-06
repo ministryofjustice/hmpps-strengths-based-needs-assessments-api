@@ -174,7 +174,7 @@ class OasysAssessmentServiceTest {
       val exception = assertThrows<ConflictException> { oasysAssessmentService.softDelete(assessment) }
       assertThat(exception.message).isEqualTo("OASys assessment 1234 has already been soft-deleted.")
 
-      assertThat(assessment.deleted).isFalse
+      assertThat(assessment.deleted).isTrue
 
       verify(exactly = 0) { oasysAssessmentRepository.save(any()) }
     }
@@ -208,7 +208,7 @@ class OasysAssessmentServiceTest {
 
       val exception = assertThrows<ConflictException> { oasysAssessmentService.undelete(assessment.oasysAssessmentPk) }
       assertThat(exception.message)
-        .isEqualTo("Cannot undelete OASys assessment PK $assessment.oasysAssessmentPk because it is not deleted.")
+        .isEqualTo("Cannot undelete OASys assessment PK ${assessment.oasysAssessmentPk} because it is not deleted.")
 
       assertThat(assessment.deleted).isFalse
 

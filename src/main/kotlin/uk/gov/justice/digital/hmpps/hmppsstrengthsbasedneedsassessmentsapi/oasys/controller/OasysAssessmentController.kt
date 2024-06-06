@@ -295,6 +295,11 @@ class OasysAssessmentController(
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
       ),
       ApiResponse(
+        responseCode = "409",
+        description = "Unable to soft-delete an assessment that has already been soft-deleted",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
         responseCode = "500",
         description = "Unexpected error",
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
@@ -320,6 +325,11 @@ class OasysAssessmentController(
       ApiResponse(
         responseCode = "404",
         description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to undelete an assessment that is not deleted",
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
       ),
       ApiResponse(

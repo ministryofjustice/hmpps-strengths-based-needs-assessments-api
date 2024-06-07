@@ -53,12 +53,15 @@ class MergeTest(
   @Test
   fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
     val request = """
-          [
-            {
-              "newOasysAssessmentPK": "NEW_OASYS_ASSESSMENT_PK",
-              "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
-            }
-          ]
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "NEW_OASYS_ASSESSMENT_PK",
+            "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" }
+      }
     """.trimIndent()
 
     webTestClient.post().uri(endpoint)
@@ -72,12 +75,15 @@ class MergeTest(
   @Test
   fun `it returns Not Found when the old OASys PK does not exist`() {
     val request = """
-          [
-            {
-              "newOasysAssessmentPK": "NEW_OASYS_ASSESSMENT_PK",
-              "oldOasysAssessmentPK": "FOO_OASYS_ASSESSMENT"
-            }
-          ]
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "NEW_OASYS_ASSESSMENT_PK",
+            "oldOasysAssessmentPK": "FOO_OASYS_ASSESSMENT"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" }
+      }
     """.trimIndent()
 
     webTestClient.post().uri(endpoint)
@@ -91,12 +97,15 @@ class MergeTest(
   @Test
   fun `it returns Conflict when the new OASys PK already exists`() {
     val request = """
-          [
-            {
-              "newOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}",
-              "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
-            }
-          ]
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}",
+            "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" }
+      }
     """.trimIndent()
 
     webTestClient.post().uri(endpoint)
@@ -113,16 +122,19 @@ class MergeTest(
     val newAssessmentPkY = UUID.randomUUID().toString()
 
     val request = """
-          [
-            {
-              "newOasysAssessmentPK": "$newAssessmentPkX",
-              "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
-            },
-            {
-              "newOasysAssessmentPK": "$newAssessmentPkY",
-              "oldOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}"
-            }
-          ]
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "$newAssessmentPkX",
+            "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
+          },
+          {
+            "newOasysAssessmentPK": "$newAssessmentPkY",
+            "oldOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" }
+      }
     """.trimIndent()
 
     val response = webTestClient.post().uri(endpoint)
@@ -160,16 +172,19 @@ class MergeTest(
     val newAssessmentPkY = UUID.randomUUID().toString()
 
     val request = """
-          [
-            {
-              "newOasysAssessmentPK": "$newAssessmentPkX",
-              "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
-            },
-            {
-              "newOasysAssessmentPK": "${oasysAssessmentC.oasysAssessmentPk}",
-              "oldOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}"
-            }
-          ]
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "$newAssessmentPkX",
+            "oldOasysAssessmentPK": "${oasysAssessmentA.oasysAssessmentPk}"
+          },
+          {
+            "newOasysAssessmentPK": "${oasysAssessmentC.oasysAssessmentPk}",
+            "oldOasysAssessmentPK": "${oasysAssessmentB.oasysAssessmentPk}"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" }
+      }
     """.trimIndent()
 
     webTestClient.post().uri(endpoint)

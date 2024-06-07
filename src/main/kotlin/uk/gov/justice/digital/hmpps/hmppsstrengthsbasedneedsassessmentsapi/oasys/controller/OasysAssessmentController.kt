@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditedRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.LockAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.MergeAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.RollbackAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.TransferAssociationRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
@@ -129,10 +129,10 @@ class OasysAssessmentController(
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun merge(
     @RequestBody
-    request: List<TransferAssociationRequest>,
+    request: MergeAssessmentRequest,
   ): Message {
-    oasysAssessmentService.transferAssociation(request)
-    return Message("Successfully processed all ${request.size} merge elements")
+    oasysAssessmentService.transferAssociation(request.merge)
+    return Message("Successfully processed all ${request.merge.size} merge elements")
   }
 
   @RequestMapping(path = ["/{oasysAssessmentPK}/sign"], method = [RequestMethod.POST])
@@ -241,7 +241,7 @@ class OasysAssessmentController(
     @PathVariable
     oasysAssessmentPK: String,
     @RequestBody
-    request: LockAssessmentRequest,
+    request: AuditedRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
       .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
@@ -314,6 +314,8 @@ class OasysAssessmentController(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
     oasysAssessmentPK: String,
+    @RequestBody
+    request: AuditedRequest,
   ): Message {
     return oasysAssessmentService.find(oasysAssessmentPK)
       .run(oasysAssessmentService::softDelete)
@@ -347,6 +349,8 @@ class OasysAssessmentController(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
     oasysAssessmentPK: String,
+    @RequestBody
+    request: AuditedRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.undelete(oasysAssessmentPK)
       .run { AssessmentVersionCriteria(assessment.uuid) }

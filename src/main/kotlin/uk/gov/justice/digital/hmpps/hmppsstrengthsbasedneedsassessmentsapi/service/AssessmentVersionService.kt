@@ -113,7 +113,7 @@ class AssessmentVersionService(
   }
 
   @Transactional
-  fun lock(assessmentVersion: AssessmentVersion): AssessmentVersion {
+  fun lock(assessmentVersion: AssessmentVersion, userDetails: UserDetails): AssessmentVersion {
     if (assessmentVersion.tag == Tag.LOCKED_INCOMPLETE) {
       throw ConflictException("The current assessment version is already locked")
     }
@@ -124,6 +124,7 @@ class AssessmentVersionService(
     return assessmentVersionRepository.save(assessmentVersion).also {
       AssessmentVersionAudit(
         assessmentVersion = it,
+        userDetails = userDetails,
         statusFrom = originalStatus,
         statusTo = it.tag,
       ).run(assessmentVersionAuditRepository::save)

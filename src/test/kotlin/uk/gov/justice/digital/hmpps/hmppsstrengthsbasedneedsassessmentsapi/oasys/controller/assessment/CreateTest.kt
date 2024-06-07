@@ -54,7 +54,8 @@ class CreateTest(
     val request = """
           {
             "oasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
-            "previousOasysAssessmentPk": "${oasysAss2.oasysAssessmentPk}"
+            "previousOasysAssessmentPk": "${oasysAss2.oasysAssessmentPk}",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
           }
     """.trimIndent()
 
@@ -71,7 +72,8 @@ class CreateTest(
     val request = """
           {
             "oasysAssessmentPk": "${oasysAss2.oasysAssessmentPk}",
-            "previousOasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}"
+            "previousOasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
           }
     """.trimIndent()
 
@@ -91,7 +93,8 @@ class CreateTest(
     val request = """
           {
             "oasysAssessmentPk": "$newOasysPK",
-            "regionPrisonCode": "$regionPrisonCode"
+            "regionPrisonCode": "$regionPrisonCode",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
           }
     """.trimIndent()
 

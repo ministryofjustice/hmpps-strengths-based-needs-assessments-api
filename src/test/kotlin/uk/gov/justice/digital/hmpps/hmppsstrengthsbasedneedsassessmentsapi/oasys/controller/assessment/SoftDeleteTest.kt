@@ -40,24 +40,39 @@ class SoftDeleteTest(
   fun `it returns Unauthorized when there is no JWT`() {
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .bodyValue(request)
       .exchange()
       .expectStatus().isUnauthorized
   }
 
   @Test
   fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation())
+      .bodyValue(request)
       .exchange()
       .expectStatus().isForbidden
   }
 
   @Test
   fun `it returns Not Found when the OASys PK does not exist`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     webTestClient.post().uri(endpoint("non-existent-pk"))
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
       .exchange()
       .expectStatus().isNotFound
   }
@@ -67,18 +82,32 @@ class SoftDeleteTest(
     oasysAssessment.deleted = true
     oasysAssessmentRepository.save(oasysAssessment)
 
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
       .exchange()
       .expectStatus().isNotFound
   }
 
   @Test
   fun `it returns a success message when the OASys assessment is soft-deleted`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     val response = webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
       .exchange()
       .expectStatus().isOk
       .expectBody(Message::class.java)

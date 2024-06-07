@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class LockAssessmentRequest(
+class AuditedRequest(
   @Schema(description = "OASys User")
   override val userDetails: OasysUserDetails,
 ) : AuditableOasysRequest

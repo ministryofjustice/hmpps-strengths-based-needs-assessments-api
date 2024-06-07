@@ -40,7 +40,6 @@ class SoftDeleteTest(
   fun `it returns Unauthorized when there is no JWT`() {
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
-      .bodyValue(request)
       .exchange()
       .expectStatus().isUnauthorized
   }

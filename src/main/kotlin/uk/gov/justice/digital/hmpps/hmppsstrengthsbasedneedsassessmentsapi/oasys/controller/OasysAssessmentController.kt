@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CreateAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.LockAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.RollbackAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
@@ -239,11 +240,13 @@ class OasysAssessmentController(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
     oasysAssessmentPK: String,
+    @RequestBody
+    request: LockAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
       .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
       .run(assessmentVersionService::find)
-      .run(assessmentVersionService::lock)
+      .let { assessmentVersionService.lock(it, UserDetails.from(request)) }
       .run(OasysAssessmentResponse::from)
   }
 

@@ -61,18 +61,32 @@ class LockTest(
 
   @Test
   fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_OASYS' is not present on the JWT`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation())
+      .bodyValue(request)
       .exchange()
       .expectStatus().isForbidden
   }
 
   @Test
   fun `it updates and returns the version of the assessment as Locked`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     val response = webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
       .exchange()
       .expectStatus().isOk
       .expectBody(OasysAssessmentResponse::class.java)
@@ -95,8 +109,8 @@ class LockTest(
     val audit = lockedVersion.assessmentVersionAudit.first()
     Assertions.assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
     Assertions.assertThat(audit.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
-    Assertions.assertThat(audit.userDetails.id).isEqualTo("")
-    Assertions.assertThat(audit.userDetails.name).isEqualTo("")
+    Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
+    Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
     Assertions.assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
     Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(lockedVersion.versionNumber).isEqualTo(1)
@@ -114,9 +128,16 @@ class LockTest(
     )
     assessmentRepository.save(assessment)
 
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
     webTestClient.post().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
       .exchange()
       .expectStatus().isEqualTo(409)
   }

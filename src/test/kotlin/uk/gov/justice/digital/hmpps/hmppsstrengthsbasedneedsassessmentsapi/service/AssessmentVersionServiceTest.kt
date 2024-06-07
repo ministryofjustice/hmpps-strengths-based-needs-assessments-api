@@ -288,6 +288,7 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it locks an assessment successfully`() {
       val assessmentVersion = AssessmentVersion(assessment = assessment, tag = Tag.UNSIGNED)
+      val user = UserDetails("user-id", "User Name")
 
       val lockedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(lockedVersion)) } returnsArgument 0
@@ -295,7 +296,7 @@ class AssessmentVersionServiceTest {
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
 
-      val result = assessmentVersionService.lock(assessmentVersion)
+      val result = assessmentVersionService.lock(assessmentVersion, user)
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
@@ -307,7 +308,7 @@ class AssessmentVersionServiceTest {
       assertThat(audit.captured.assessmentVersion).isEqualTo(lockedVersion.captured)
       assertThat(audit.captured.statusFrom).isEqualTo(Tag.UNSIGNED)
       assertThat(audit.captured.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
-      assertThat(audit.captured.userDetails).isEqualTo(UserDetails())
+      assertThat(audit.captured.userDetails).isEqualTo(user)
     }
 
     @Test
@@ -317,7 +318,7 @@ class AssessmentVersionServiceTest {
         tag = Tag.LOCKED_INCOMPLETE,
       )
 
-      val exception = assertThrows<ConflictException> { assessmentVersionService.lock(lockedVersion) }
+      val exception = assertThrows<ConflictException> { assessmentVersionService.lock(lockedVersion, UserDetails()) }
       assertThat(exception.message).isEqualTo("The current assessment version is already locked")
 
       verify(exactly = 0) { assessmentVersionRepository.save(any()) }

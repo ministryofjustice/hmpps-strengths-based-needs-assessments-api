@@ -31,41 +31,25 @@ class OffenceAnalysis : SectionMapping() {
 
   private fun q2Violence(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.VIOLENCE_OR_COERCION))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.VIOLENCE_OR_COERCION))) "YES" else "NO"
     }
   }
 
   private fun q2DomesticAbuse(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.DOMESTIC_ABUSE))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.DOMESTIC_ABUSE))) "YES" else "NO"
     }
   }
 
   private fun q2ExcessiveViolence(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.EXCESSIVE_OR_SADISTIC_VIOLENCE))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.EXCESSIVE_OR_SADISTIC_VIOLENCE))) "YES" else "NO"
     }
   }
 
   private fun q2Sexual(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.SEXUAL_ELEMENT))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.SEXUAL_ELEMENT))) "YES" else "NO"
     }
   }
 
@@ -79,11 +63,7 @@ class OffenceAnalysis : SectionMapping() {
 
   private fun q72(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.let {
-      if (it.contains(ap.get(Value.PRESSURISED))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.PRESSURISED))) "YES" else "NO"
     }
   }
 
@@ -93,41 +73,25 @@ class OffenceAnalysis : SectionMapping() {
 
   private fun q9Sexual(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.let {
-      if (it.contains(ap.get(Value.SEXUAL_DESIRES))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.SEXUAL_DESIRES))) "YES" else "NO"
     }
   }
 
   private fun q9Financial(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.let {
-      if (it.contains(ap.get(Value.BASIC_FINANCIAL_NEEDS))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.BASIC_FINANCIAL_NEEDS))) "YES" else "NO"
     }
   }
 
   private fun q9Addiction(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.let {
-      if (it.contains(ap.get(Value.SUPPORTING_DRUG_USE))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.SUPPORTING_DRUG_USE))) "YES" else "NO"
     }
   }
 
   private fun q9Emotional(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.let {
-      if (it.contains(ap.get(Value.EMOTIONS_CLOUDED_JUDGEMENT))) {
-        "YES"
-      } else {
-        "NO"
-      }
+      if (it.contains(ap.get(Value.EMOTIONS_CLOUDED_JUDGEMENT))) "YES" else "NO"
     }
   }
 

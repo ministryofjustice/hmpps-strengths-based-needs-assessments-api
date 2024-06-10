@@ -56,7 +56,6 @@ enum class Tag {
   DOUBLE_COUNTERSIGNED,
   REJECTED,
   ROLLED_BACK,
-  UNVALIDATED,
   ;
 
   fun isNotLocked(): Boolean {

@@ -63,7 +63,7 @@ class AssessmentController(
   ): AssessmentResponse {
     return AssessmentVersionCriteria(
       assessmentUuid,
-      tag?.let { if (it == Tag.UNVALIDATED) Tag.UNSIGNED else it }?.run(::setOf),
+      tag?.run(::setOf),
       after,
       until,
     )

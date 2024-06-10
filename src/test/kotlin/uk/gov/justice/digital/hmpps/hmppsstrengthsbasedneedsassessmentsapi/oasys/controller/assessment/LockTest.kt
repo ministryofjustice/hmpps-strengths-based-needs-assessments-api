@@ -32,21 +32,6 @@ class LockTest(
   fun setUp() {
     assessment = Assessment()
     oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-    assessment.assessmentVersions = listOf(
-      AssessmentVersion(
-        assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
-        tag = Tag.UNSIGNED,
-        versionNumber = 1,
-        answers = mapOf("q1" to Answer(value = "val1")),
-      ),
-      AssessmentVersion(
-        assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
-        tag = Tag.UNVALIDATED,
-        versionNumber = 0,
-      ),
-    )
     assessment.oasysAssessments = listOf(oasysAssessment)
     assessmentRepository.save(assessment)
   }
@@ -77,6 +62,22 @@ class LockTest(
 
   @Test
   fun `it updates and returns the version of the assessment as Locked`() {
+    val latestVersion = AssessmentVersion(
+      assessment = assessment,
+      updatedAt = LocalDateTime.now().minusDays(1),
+      versionNumber = 1,
+      answers = mapOf("q1" to Answer(value = "val1")),
+    )
+
+    val previousVersion = AssessmentVersion(
+      assessment = assessment,
+      updatedAt = LocalDateTime.now().minusDays(2),
+      versionNumber = 0,
+    )
+
+    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessmentRepository.save(assessment)
+
     val request = """
         {
           "userDetails": { "id": "user-id", "name": "John Doe" }
@@ -96,36 +97,40 @@ class LockTest(
     val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
     Assertions.assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
-    val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNSIGNED }
-    val unvalidatedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNVALIDATED }
-    val lockedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.LOCKED_INCOMPLETE }
 
-    Assertions.assertThat(initialVersion).isNull()
-    Assertions.assertThat(unvalidatedVersion).isNotNull
-    Assertions.assertThat(lockedVersion).isNotNull
+    val updatedLatestVersion = updatedAssessment.assessmentVersions.find { it.uuid == latestVersion.uuid }
+    val updatedPreviousVersion = updatedAssessment.assessmentVersions.find { it.uuid == previousVersion.uuid }
 
-    Assertions.assertThat(lockedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+    Assertions.assertThat(updatedLatestVersion).isNotNull
+    Assertions.assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
+    Assertions.assertThat(updatedPreviousVersion).isNotNull
+    Assertions.assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    val audit = lockedVersion.assessmentVersionAudit.first()
+    Assertions.assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+
+    val audit = updatedLatestVersion.assessmentVersionAudit.first()
     Assertions.assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
     Assertions.assertThat(audit.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
     Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
     Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
     Assertions.assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
-    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(lockedVersion.versionNumber).isEqualTo(1)
+    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
     Assertions.assertThat(response?.sentencePlanId).isNull()
     Assertions.assertThat(response?.sentencePlanVersion).isNull()
   }
 
   @Test
   fun `it returns Conflict when the assessment is already locked`() {
-    assessment.assessmentVersions += AssessmentVersion(
-      assessment = assessment,
-      createdAt = LocalDateTime.now().minusHours(1),
-      tag = Tag.LOCKED_INCOMPLETE,
-      versionNumber = 2,
+    assessment.assessmentVersions = listOf(
+      AssessmentVersion(
+        assessment = assessment,
+        createdAt = LocalDateTime.now().minusHours(1),
+        tag = Tag.LOCKED_INCOMPLETE,
+        versionNumber = 0,
+      ),
     )
+
     assessmentRepository.save(assessment)
 
     val request = """

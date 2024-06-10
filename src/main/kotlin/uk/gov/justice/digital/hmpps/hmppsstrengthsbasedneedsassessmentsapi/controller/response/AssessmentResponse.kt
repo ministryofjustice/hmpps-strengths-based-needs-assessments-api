@@ -35,7 +35,7 @@ data class AssessmentResponse(
           assessmentVersion.assessment.info?.formVersion,
         ),
         assessmentVersion.answers,
-        assessmentVersion.oasys_equivalent,
+        assessmentVersion.oasysEquivalents,
       )
     }
   }

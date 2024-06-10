@@ -91,7 +91,7 @@ class AssessmentVersionServiceTest {
         )
       } returns assessmentVersions
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(assessment)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.uuid).isEqualTo(secondAssessmentVersion.uuid)
       assertThat(result?.answers?.get("test")?.value).isEqualTo("val")
@@ -115,7 +115,7 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
       } returns assessmentVersions.totalElements
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(assessment)
       assertThat(result?.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.answers?.get("foo")?.value).isEqualTo("Foo answer")
@@ -138,7 +138,7 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
       } returns assessmentVersions.totalElements
 
-      val result = assessmentVersionService.getPreviousOrCreate(tag, assessment)
+      val result = assessmentVersionService.getPreviousOrCreate(assessment)
       assertThat(result?.tag).isEqualTo(tag)
       assertThat(result?.answers).isEmpty()
       assertThat(result?.versionNumber).isEqualTo(0)
@@ -197,9 +197,9 @@ class AssessmentVersionServiceTest {
     fun `it sets OASys equivalent data`() {
       every { dataMappingService.getOasysEquivalent(match { it.uuid == assessmentVersion.uuid }) } returns oasysEquivalent
 
-      assessmentVersionService.setOasysEquivalent(assessmentVersion)
+      assessmentVersionService.setOasysEquivalents(assessmentVersion)
 
-      assertThat(assessmentVersion.oasys_equivalent).isEqualTo(oasysEquivalent)
+      assertThat(assessmentVersion.oasysEquivalents).isEqualTo(oasysEquivalent)
 
       verify(exactly = 1) { dataMappingService.getOasysEquivalent(any()) }
     }
@@ -232,7 +232,6 @@ class AssessmentVersionServiceTest {
     @Test
     fun `it updates answers for a given assessment`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(tag),
         answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
         answersToRemove = listOf("baz"),
       )
@@ -260,23 +259,8 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.answers["foo"]?.value).isEqualTo("updated")
       assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
       assertThat(savedVersion.captured.answers["baz"]).isNull()
-      assertThat(savedVersion.captured.oasys_equivalent).isEqualTo(oasysEquivalents)
+      assertThat(savedVersion.captured.oasysEquivalents).isEqualTo(oasysEquivalents)
       assertThat(savedVersion.captured.updatedAt).isAfter(assessmentVersions.maxOf { it.updatedAt })
-    }
-
-    @Test
-    fun `it throws an exception when attempting to update a locked assessment version`() {
-      val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.LOCKED_INCOMPLETE),
-        answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
-        answersToRemove = listOf("baz"),
-      )
-
-      assertThrows<ConflictException> { assessmentVersionService.updateAnswers(assessment, request) }
-
-      verify(exactly = 0) { assessmentVersionRepository.findAll(any<Specification<AssessmentVersion>>(), any<PageRequest>()) }
-      verify(exactly = 0) { dataMappingService.getOasysEquivalent(any()) }
-      verify(exactly = 0) { assessmentVersionRepository.save(any()) }
     }
   }
 

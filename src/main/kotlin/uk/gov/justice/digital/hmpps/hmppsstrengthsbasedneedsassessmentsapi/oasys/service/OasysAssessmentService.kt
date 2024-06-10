@@ -18,16 +18,12 @@ class OasysAssessmentService(
   val oasysAssessmentRepository: OasysAssessmentRepository,
 ) {
   fun createAssessmentWithOasysId(oasysAssessmentPk: String, regionPrisonCode: String?): OasysAssessment {
-    return assessmentService.create()
-      .run {
-        oasysAssessmentRepository.save(
-          OasysAssessment(
-            oasysAssessmentPk = oasysAssessmentPk,
-            assessment = this,
-            regionPrisonCode = regionPrisonCode,
-          ),
-        )
-      }
+    return OasysAssessment(
+      oasysAssessmentPk = oasysAssessmentPk,
+      assessment = assessmentService.create(),
+      regionPrisonCode = regionPrisonCode,
+    )
+      .run(oasysAssessmentRepository::save)
       .also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
   }
 
@@ -40,15 +36,16 @@ class OasysAssessmentService(
       ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
   }
 
-  private fun associate(oasysAssessmentPk: String, previousOasysAssessmentPk: String, regionPrisonCode: String?): OasysAssessment {
-    return find(previousOasysAssessmentPk).let {
-      val oasysAssessment = OasysAssessment(
-        oasysAssessmentPk = oasysAssessmentPk,
-        assessment = it.assessment,
-        regionPrisonCode = regionPrisonCode,
-      )
-      oasysAssessmentRepository.save(oasysAssessment)
-    }
+  private fun associate(
+    oasysAssessmentPk: String,
+    previousOasysAssessmentPk: String,
+    regionPrisonCode: String?,
+  ): OasysAssessment {
+    return OasysAssessment(
+      oasysAssessmentPk = oasysAssessmentPk,
+      assessment = find(previousOasysAssessmentPk).assessment,
+      regionPrisonCode = regionPrisonCode,
+    ).run(oasysAssessmentRepository::save)
   }
 
   fun associateExistingOrCreate(
@@ -69,20 +66,18 @@ class OasysAssessmentService(
   @Transactional
   fun transferAssociation(request: List<TransferAssociationRequest>) {
     request.forEach {
-      with(it) {
-        find(oldOasysAssessmentPK).let { oldAssociation ->
-          OasysAssessment(
-            oasysAssessmentPk = newOasysAssessmentPK,
-            assessment = oldAssociation.assessment,
-          ).also { newAssociation ->
-            oasysAssessmentRepository.findByOasysAssessmentPk(newAssociation.oasysAssessmentPk)
-              ?.run { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+      find(it.oldOasysAssessmentPK).let { oldAssociation ->
+        OasysAssessment(
+          oasysAssessmentPk = it.newOasysAssessmentPK,
+          assessment = oldAssociation.assessment,
+        ).also { newAssociation ->
+          oasysAssessmentRepository.findByOasysAssessmentPk(newAssociation.oasysAssessmentPk)
+            ?.run { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
 
-            oasysAssessmentRepository.save(newAssociation)
-            oasysAssessmentRepository.delete(oldAssociation)
+          oasysAssessmentRepository.save(newAssociation)
+          oasysAssessmentRepository.delete(oldAssociation)
 
-            log.info("Successfully transferred association for ${oldAssociation.oasysAssessmentPk} to ${newAssociation.oasysAssessmentPk}")
-          }
+          log.info("Successfully transferred association for ${oldAssociation.oasysAssessmentPk} to ${newAssociation.oasysAssessmentPk}")
         }
       }
     }

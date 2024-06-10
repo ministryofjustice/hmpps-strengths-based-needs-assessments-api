@@ -33,21 +33,6 @@ class SignTest(
   fun setUp() {
     assessment = Assessment()
     oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-    assessment.assessmentVersions = listOf(
-      AssessmentVersion(
-        assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
-        tag = Tag.UNSIGNED,
-        versionNumber = 1,
-        answers = mapOf("assessment_complete" to Answer(value = "YES")),
-      ),
-      AssessmentVersion(
-        assessment = assessment,
-        createdAt = LocalDateTime.now().minusDays(1),
-        tag = Tag.UNVALIDATED,
-        versionNumber = 0,
-      ),
-    )
     assessment.oasysAssessments = listOf(oasysAssessment)
 
     assessmentRepository.save(assessment)
@@ -80,6 +65,21 @@ class SignTest(
 
   @Test
   fun `it updates the latest version of the assessment as Signed and returns it`() {
+    val latestVersion = AssessmentVersion(
+      assessment = assessment,
+      updatedAt = LocalDateTime.now().minusDays(1),
+      versionNumber = 1,
+      answers = mapOf("assessment_complete" to Answer(value = "YES")),
+    )
+    val previousVersion = AssessmentVersion(
+      assessment = assessment,
+      updatedAt = LocalDateTime.now().minusDays(2),
+      versionNumber = 0,
+    )
+
+    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessmentRepository.save(assessment)
+
     val request = """
         {
           "signType": "SELF",
@@ -100,36 +100,37 @@ class SignTest(
     val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
     Assertions.assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
-    val initialVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNSIGNED }
-    val unvalidatedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.UNVALIDATED }
-    val signedVersion = updatedAssessment.assessmentVersions.find { it.tag == Tag.SELF_SIGNED }
+    val updatedLatestVersion = updatedAssessment.assessmentVersions.find { it.uuid == latestVersion.uuid }
+    val updatedPreviousVersion = updatedAssessment.assessmentVersions.find { it.uuid == previousVersion.uuid }
 
-    Assertions.assertThat(initialVersion).isNull()
-    Assertions.assertThat(unvalidatedVersion).isNotNull
-    Assertions.assertThat(signedVersion).isNotNull
+    Assertions.assertThat(updatedLatestVersion).isNotNull
+    Assertions.assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.SELF_SIGNED)
+    Assertions.assertThat(updatedPreviousVersion).isNotNull
+    Assertions.assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    Assertions.assertThat(signedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+    Assertions.assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = signedVersion.assessmentVersionAudit.first()
+    val audit = updatedLatestVersion.assessmentVersionAudit.first()
     Assertions.assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
     Assertions.assertThat(audit.statusTo).isEqualTo(Tag.SELF_SIGNED)
     Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
     Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
     Assertions.assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
-    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(signedVersion.versionNumber).isEqualTo(1)
+    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
     Assertions.assertThat(response?.sentencePlanId).isNull()
     Assertions.assertThat(response?.sentencePlanVersion).isNull()
   }
 
   @Test
   fun `it returns Conflict when the assessment is already signed`() {
-    assessment.assessmentVersions += AssessmentVersion(
-      assessment = assessment,
-      answers = mapOf("assessment_complete" to Answer(value = "YES")),
-      createdAt = LocalDateTime.now().minusHours(1),
-      tag = Tag.SELF_SIGNED,
-      versionNumber = 2,
+    assessment.assessmentVersions = listOf(
+      AssessmentVersion(
+        assessment = assessment,
+        answers = mapOf("assessment_complete" to Answer(value = "YES")),
+        tag = Tag.SELF_SIGNED,
+        versionNumber = 2,
+      ),
     )
     assessmentRepository.save(assessment)
 

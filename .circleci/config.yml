@@ -94,7 +94,7 @@ jobs:
             make e2e-ci
       - run:
           name: Store container logs
-          command: make save-logs OUTPUT_LOGS_DIR=~/docker-logs
+          command: make save-logs OUTPUT_LOGS_DIR=~/docker-logs PROJECT_NAME="hmpps-strengths-based-needs-assessments-test"
           when: on_fail
       - store_test_results:
           path: e2e-test-ui/test_results

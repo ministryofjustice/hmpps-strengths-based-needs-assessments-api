@@ -49,8 +49,7 @@ data class Assessment(
           )
 
           assessmentVersions = listOf(
-            AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNVALIDATED),
-            AssessmentVersion(assessment = this, versionNumber = 1, tag = Tag.UNSIGNED),
+            AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNSIGNED),
           )
         }
     }

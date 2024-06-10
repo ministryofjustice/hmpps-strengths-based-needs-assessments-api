@@ -13,11 +13,11 @@ class DataMappingService(
   val formConfigProvider: FormConfigProvider,
   val mappingProvider: MappingProvider,
 ) {
-  fun getOasysEquivalent(assessment: AssessmentVersion): OasysEquivalent {
-    val formInfo = assessment.assessment.info
-      ?: throw FormVersionNotFoundException("No form version found for assessment ID ${assessment.id}")
+  fun getOasysEquivalent(assessmentVersion: AssessmentVersion): OasysEquivalent {
+    val formInfo = assessmentVersion.assessment.info
+      ?: throw FormVersionNotFoundException("No form version found for assessment ID ${assessmentVersion.id}")
     val formConfig = formConfigProvider.get(formInfo)
-    val answersProvider = AnswersProvider(assessment.answers, formConfig)
+    val answersProvider = AnswersProvider(assessmentVersion.answers, formConfig)
 
     val mapping = mappingProvider.get(formInfo)
 

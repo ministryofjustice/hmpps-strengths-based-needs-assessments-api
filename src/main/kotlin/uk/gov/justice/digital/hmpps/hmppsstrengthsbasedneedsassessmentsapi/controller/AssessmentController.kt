@@ -61,7 +61,12 @@ class AssessmentController(
     @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "UNSIGNED")
     tag: Tag? = null,
   ): AssessmentResponse {
-    return AssessmentVersionCriteria(assessmentUuid, tag?.run(::setOf), after, until)
+    return AssessmentVersionCriteria(
+      assessmentUuid,
+      tag?.let { if (it == Tag.UNVALIDATED) Tag.UNSIGNED else it }?.run(::setOf),
+      after,
+      until,
+    )
       .run(assessmentVersionService::find)
       .run(AssessmentResponse::from)
   }

@@ -14,5 +14,5 @@ class CreateAssessmentRequest(
   @Schema(description = "Region prison code", example = "111111")
   val regionPrisonCode: String? = null,
   @Schema(description = "OASys User")
-  val userDetails: OasysUserDetails? = null,
-)
+  override val userDetails: OasysUserDetails,
+) : AuditableOasysRequest

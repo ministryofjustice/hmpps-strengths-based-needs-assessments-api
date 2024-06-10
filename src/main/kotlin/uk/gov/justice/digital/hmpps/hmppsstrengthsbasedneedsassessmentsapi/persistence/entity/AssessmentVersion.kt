@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.Type
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 enum class AnswerType {
@@ -46,7 +47,6 @@ typealias Answers = Map<String, Answer>
 typealias OasysEquivalent = Map<String, Any?>
 
 enum class Tag {
-  UNVALIDATED,
   UNSIGNED,
   LOCKED_INCOMPLETE,
   SELF_SIGNED,
@@ -58,13 +58,13 @@ enum class Tag {
   ROLLED_BACK,
   ;
 
-  companion object {
-    fun validatedTags(): Set<Tag> {
-      return Tag.values().filter { it !== UNVALIDATED }.toSet()
-    }
+  fun isNotLocked(): Boolean {
+    return this == UNSIGNED
+  }
 
+  companion object {
     fun lockedTags(): Set<Tag> {
-      return Tag.values().subtract(setOf(UNSIGNED, UNVALIDATED))
+      return entries.toTypedArray().subtract(setOf(UNSIGNED))
     }
 
     fun tagsThatCanRollback(): Set<Tag> {
@@ -105,7 +105,7 @@ data class AssessmentVersion(
 
   @Column(name = "tag")
   @Enumerated(EnumType.STRING)
-  var tag: Tag = Tag.UNVALIDATED,
+  var tag: Tag = Tag.UNSIGNED,
 
   @Type(JsonType::class)
   @Column(name = "answers")
@@ -113,7 +113,7 @@ data class AssessmentVersion(
 
   @Type(JsonType::class)
   @Column(name = "oasys_equivalent")
-  var oasys_equivalent: OasysEquivalent = mutableMapOf(),
+  var oasysEquivalents: OasysEquivalent = mutableMapOf(),
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "assessment_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
@@ -124,4 +124,17 @@ data class AssessmentVersion(
 
   @OneToMany(mappedBy = "assessmentVersion", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var assessmentVersionAudit: List<AssessmentVersionAudit> = listOf(),
-)
+) {
+  fun isUpdatable(): Boolean {
+    val versionUpdatedDate = updatedAt.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    val today = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+    return versionUpdatedDate == today && tag.isNotLocked()
+  }
+
+  fun setAnswers(answersToAdd: Answers, answersToRemove: List<String>) {
+    answers = answers.plus(answersToAdd)
+      .filterNot { answersToRemove.contains(it.key) }
+    updatedAt = LocalDateTime.now()
+  }
+}

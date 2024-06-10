@@ -43,8 +43,7 @@ class AssessmentControllerTest(
 
     private lateinit var assessment: Assessment
     private lateinit var latestVersion: AssessmentVersion
-    private lateinit var latestValidatedVersion: AssessmentVersion
-    private lateinit var oldValidatedVersion: AssessmentVersion
+    private lateinit var previousVersion: AssessmentVersion
     private lateinit var oasysAss1: OasysAssessment
     private lateinit var oasysAss2: OasysAssessment
 
@@ -54,31 +53,23 @@ class AssessmentControllerTest(
 
       latestVersion = AssessmentVersion(
         assessment = assessment,
-        answers = mapOf("q1" to Answer(value = "val1")),
-        oasys_equivalent = mapOf("q1" to "1"),
-        versionNumber = 3,
-      )
-      latestValidatedVersion = AssessmentVersion(
-        tag = Tag.UNSIGNED,
-        assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(1),
         answers = mapOf("q2" to Answer(value = "val2")),
-        oasys_equivalent = mapOf("q2" to "2"),
-        versionNumber = 2,
+        oasysEquivalents = mapOf("q2" to "2"),
+        versionNumber = 1,
       )
-      oldValidatedVersion = AssessmentVersion(
-        tag = Tag.UNSIGNED,
+      previousVersion = AssessmentVersion(
         assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(3),
         answers = mapOf("q3" to Answer(value = "val3")),
-        oasys_equivalent = mapOf("q3" to "3"),
-        versionNumber = 1,
+        oasysEquivalents = mapOf("q3" to "3"),
+        versionNumber = 0,
       )
 
       oasysAss1 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
       oasysAss2 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
 
-      assessment.assessmentVersions = listOf(latestVersion, latestValidatedVersion, oldValidatedVersion)
+      assessment.assessmentVersions = listOf(latestVersion, previousVersion)
       assessment.oasysAssessments = listOf(oasysAss1, oasysAss2)
       assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
@@ -134,7 +125,7 @@ class AssessmentControllerTest(
       assertThat(response?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
       assertThat(response?.assessment?.keys).isEqualTo(latestVersion.answers.keys)
       assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(latestVersion.answers.values.map { it.value })
-      assertThat(response?.oasysEquivalent).isEqualTo(latestVersion.oasys_equivalent)
+      assertThat(response?.oasysEquivalent).isEqualTo(latestVersion.oasysEquivalents)
     }
 
     @Test
@@ -160,17 +151,17 @@ class AssessmentControllerTest(
         oasysAss1.oasysAssessmentPk,
         oasysAss2.oasysAssessmentPk,
       )
-      assertThat(response?.metaData?.versionTag).isEqualTo(latestValidatedVersion.tag)
+      assertThat(response?.metaData?.versionTag).isEqualTo(latestVersion.tag)
       assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(
-        latestValidatedVersion.createdAt.withNano(
+        latestVersion.createdAt.withNano(
           0,
         ),
       )
-      assertThat(response?.metaData?.versionUuid).isEqualTo(latestValidatedVersion.uuid)
+      assertThat(response?.metaData?.versionUuid).isEqualTo(latestVersion.uuid)
       assertThat(response?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
-      assertThat(response?.assessment?.keys).isEqualTo(latestValidatedVersion.answers.keys)
-      assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(latestValidatedVersion.answers.values.map { it.value })
-      assertThat(response?.oasysEquivalent).isEqualTo(latestValidatedVersion.oasys_equivalent)
+      assertThat(response?.assessment?.keys).isEqualTo(latestVersion.answers.keys)
+      assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(latestVersion.answers.values.map { it.value })
+      assertThat(response?.oasysEquivalent).isEqualTo(latestVersion.oasysEquivalents)
     }
 
     @Test
@@ -196,13 +187,13 @@ class AssessmentControllerTest(
         oasysAss1.oasysAssessmentPk,
         oasysAss2.oasysAssessmentPk,
       )
-      assertThat(response?.metaData?.versionTag).isEqualTo(oldValidatedVersion.tag)
-      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(oldValidatedVersion.createdAt.withNano(0))
-      assertThat(response?.metaData?.versionUuid).isEqualTo(oldValidatedVersion.uuid)
+      assertThat(response?.metaData?.versionTag).isEqualTo(previousVersion.tag)
+      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(previousVersion.createdAt.withNano(0))
+      assertThat(response?.metaData?.versionUuid).isEqualTo(previousVersion.uuid)
       assertThat(response?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
-      assertThat(response?.assessment?.keys).isEqualTo(oldValidatedVersion.answers.keys)
-      assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(oldValidatedVersion.answers.values.map { it.value })
-      assertThat(response?.oasysEquivalent).isEqualTo(oldValidatedVersion.oasys_equivalent)
+      assertThat(response?.assessment?.keys).isEqualTo(previousVersion.answers.keys)
+      assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(previousVersion.answers.values.map { it.value })
+      assertThat(response?.oasysEquivalent).isEqualTo(previousVersion.oasysEquivalents)
     }
 
     @Test
@@ -225,26 +216,10 @@ class AssessmentControllerTest(
   @DisplayName("/assessment/{assessmentUuid}/answers")
   inner class Answers {
     private lateinit var assessment: Assessment
-    private lateinit var unvalidatedAssessmentVersion: AssessmentVersion
-    private lateinit var unsignedAssessmentVersion: AssessmentVersion
-    private lateinit var lockedAssessmentVersion: AssessmentVersion
 
     @BeforeEach
     fun setUp() {
       assessment = Assessment()
-      unvalidatedAssessmentVersion = AssessmentVersion(
-        assessment = assessment,
-        answers = mapOf("q1" to Answer(value = "val1"), "q2" to Answer(value = "val2")),
-      )
-      unsignedAssessmentVersion = AssessmentVersion(assessment = assessment, tag = Tag.UNSIGNED, versionNumber = 1)
-      lockedAssessmentVersion = AssessmentVersion(
-        assessment = assessment,
-        tag = Tag.LOCKED_INCOMPLETE,
-        versionNumber = 2,
-        answers = mapOf("q1" to Answer(value = "val1-locked"), "q2" to Answer(value = "val2-locked")),
-      )
-      assessment.assessmentVersions =
-        listOf(unvalidatedAssessmentVersion, unsignedAssessmentVersion, lockedAssessmentVersion)
       assessment.oasysAssessments =
         listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
       assessment.info = AssessmentFormInfo(formVersion = "1.0", formName = "sbna-poc", assessment = assessment)
@@ -267,7 +242,6 @@ class AssessmentControllerTest(
     @Test
     fun `it returns Forbidden when the role 'ROLE_STRENGTHS_AND_NEEDS_WRITE' is not present on the JWT`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = emptyList(),
       )
@@ -283,7 +257,6 @@ class AssessmentControllerTest(
     @Test
     fun `it returns Not Found when the assessment does not exist`() {
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = emptyList(),
       )
@@ -298,8 +271,19 @@ class AssessmentControllerTest(
 
     @Test
     fun `it adds answers for an assessment`() {
+      val assessmentVersion = AssessmentVersion(
+        assessment = assessment,
+        versionNumber = 0,
+        answers = mapOf(
+          "q1" to Answer(value = "val1"),
+          "q2" to Answer(value = "val2"),
+        ),
+      )
+
+      assessment.assessmentVersions = listOf(assessmentVersion)
+      assessmentRepository.save(assessment)
+
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
         answersToRemove = emptyList(),
       )
@@ -311,7 +295,7 @@ class AssessmentControllerTest(
         .exchange()
         .expectStatus().isOk
 
-      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(unvalidatedAssessmentVersion.uuid)
+      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
 
       assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
       assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val1", "val2", "TEST"))
@@ -319,8 +303,19 @@ class AssessmentControllerTest(
 
     @Test
     fun `it removes answers for an assessment`() {
+      val assessmentVersion = AssessmentVersion(
+        assessment = assessment,
+        versionNumber = 0,
+        answers = mapOf(
+          "q1" to Answer(value = "val1"),
+          "q2" to Answer(value = "val2"),
+        ),
+      )
+
+      assessment.assessmentVersions = listOf(assessmentVersion)
+      assessmentRepository.save(assessment)
+
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.UNVALIDATED),
         answersToAdd = emptyMap(),
         answersToRemove = listOf("q1"),
       )
@@ -332,7 +327,7 @@ class AssessmentControllerTest(
         .exchange()
         .expectStatus().isOk
 
-      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(unvalidatedAssessmentVersion.uuid)
+      val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
 
       assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2"))
       assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2"))
@@ -340,8 +335,20 @@ class AssessmentControllerTest(
 
     @Test
     fun `it clones from the latest locked version and adds answers for an assessment`() {
+      val assessmentVersion = AssessmentVersion(
+        assessment = assessment,
+        tag = Tag.LOCKED_INCOMPLETE,
+        versionNumber = 0,
+        answers = mapOf(
+          "q1" to Answer(value = "val1"),
+          "q2" to Answer(value = "val2"),
+        ),
+      )
+
+      assessment.assessmentVersions = listOf(assessmentVersion)
+      assessmentRepository.save(assessment)
+
       val request = UpdateAssessmentAnswersRequest(
-        tags = setOf(Tag.UNSIGNED),
         answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
         answersToRemove = emptyList(),
       )
@@ -356,7 +363,7 @@ class AssessmentControllerTest(
       val spec = Specification { root, query, builder ->
         query.where(
           builder.equal(root.get(AssessmentVersion_.assessment).get(Assessment_.uuid), assessment.uuid),
-          builder.equal(root.get(AssessmentVersion_.versionNumber), 3),
+          builder.equal(root.get(AssessmentVersion_.versionNumber), 1),
         ).restriction
       }
 
@@ -365,7 +372,7 @@ class AssessmentControllerTest(
       assertThat(clonedAssessmentVersion.tag).isEqualTo(Tag.UNSIGNED)
       assertThat(clonedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
       assertThat(clonedAssessmentVersion.answers.values.map { it.value })
-        .isEqualTo(listOf("val1-locked", "val2-locked", "TEST"))
+        .isEqualTo(listOf("val1", "val2", "TEST"))
     }
   }
 }

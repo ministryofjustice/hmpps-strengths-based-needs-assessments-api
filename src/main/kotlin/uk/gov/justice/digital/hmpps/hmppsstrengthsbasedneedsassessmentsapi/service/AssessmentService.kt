@@ -21,7 +21,7 @@ class AssessmentService(
 
   fun create(): Assessment {
     return Assessment.new(formConfigProvider.getLatest())
-      .apply { assessmentVersions.forEach { assessmentVersionService.setOasysEquivalent(it) } }
+      .apply { assessmentVersions.forEach { assessmentVersionService.setOasysEquivalents(it) } }
       .also { assessmentRepository.save(it).run { log.info("Created assessment with UUID $uuid") } }
   }
 

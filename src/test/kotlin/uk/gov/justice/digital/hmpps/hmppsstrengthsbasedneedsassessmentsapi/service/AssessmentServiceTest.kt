@@ -40,13 +40,13 @@ class AssessmentServiceTest {
 
       every { assessmentRepository.save(capture(assessmentSlot)) } returnsArgument 0
       every { formConfigProvider.getLatest() } returns formConfig
-      every { assessmentVersionService.setOasysEquivalent(any()) } returnsArgument 0
+      every { assessmentVersionService.setOasysEquivalents(any()) } returnsArgument 0
 
       val result = assessmentService.create()
 
       verify(exactly = 1) { formConfigProvider.getLatest() }
       verify(exactly = 1) { assessmentRepository.save(any()) }
-      verify(exactly = 2) { assessmentVersionService.setOasysEquivalent(any()) }
+      verify(exactly = 1) { assessmentVersionService.setOasysEquivalents(any()) }
 
       assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
       assertThat(result.info?.formName).isEqualTo(formConfig.name)

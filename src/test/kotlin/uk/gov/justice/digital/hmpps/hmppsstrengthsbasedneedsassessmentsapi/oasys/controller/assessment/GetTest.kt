@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
@@ -28,8 +27,7 @@ class GetTest(
   private lateinit var assessment: Assessment
   private lateinit var oasysAssessment: OasysAssessment
   private lateinit var latestVersion: AssessmentVersion
-  private lateinit var latestValidatedVersion: AssessmentVersion
-  private lateinit var oldValidatedVersion: AssessmentVersion
+  private lateinit var previousVersion: AssessmentVersion
 
   private val endpoint = { "/oasys/assessment/${oasysAssessment.oasysAssessmentPk}" }
 
@@ -39,28 +37,20 @@ class GetTest(
     oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
     latestVersion = AssessmentVersion(
       assessment = assessment,
-      answers = mapOf("q1" to Answer(value = "val1")),
-      oasys_equivalent = mapOf("q1" to "1"),
-      versionNumber = 3,
-    )
-    latestValidatedVersion = AssessmentVersion(
-      tag = Tag.UNSIGNED,
-      assessment = assessment,
       updatedAt = LocalDateTime.now().minusDays(1),
       answers = mapOf("q2" to Answer(value = "val2")),
-      oasys_equivalent = mapOf("q2" to "2"),
+      oasysEquivalents = mapOf("q2" to "2"),
       versionNumber = 2,
     )
-    oldValidatedVersion = AssessmentVersion(
-      tag = Tag.UNSIGNED,
+    previousVersion = AssessmentVersion(
       assessment = assessment,
       updatedAt = LocalDateTime.now().minusDays(3),
       answers = mapOf("q3" to Answer(value = "val3")),
-      oasys_equivalent = mapOf("q3" to "3"),
+      oasysEquivalents = mapOf("q3" to "3"),
       versionNumber = 1,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, latestValidatedVersion, oldValidatedVersion)
+    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
     assessment.oasysAssessments = listOf(oasysAssessment)
     assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
@@ -94,7 +84,7 @@ class GetTest(
   }
 
   @Test
-  fun `it returns the latest validated assessment for a given oasysAssessmentPk`() {
+  fun `it returns the latest assessment for a given oasysAssessmentPk`() {
     val response = webTestClient.get().uri(endpoint())
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
@@ -105,9 +95,9 @@ class GetTest(
       .responseBody
 
     Assertions.assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
-    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(latestValidatedVersion.versionNumber)
+    Assertions.assertThat(response?.sanAssessmentVersion).isEqualTo(latestVersion.versionNumber)
     Assertions.assertThat(response?.lastUpdatedTimestamp?.withNano(0))
-      .isEqualTo(latestValidatedVersion.updatedAt.withNano(0))
+      .isEqualTo(latestVersion.updatedAt.withNano(0))
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.uuid).isEqualTo(assessment.uuid)
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.createdAt?.withNano(0)).isEqualTo(
       assessment.createdAt.withNano(
@@ -116,18 +106,18 @@ class GetTest(
     )
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.oasys_pks)
       .containsExactly(oasysAssessment.oasysAssessmentPk)
-    Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionTag).isEqualTo(latestValidatedVersion.tag)
+    Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionTag).isEqualTo(latestVersion.tag)
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(
-      latestValidatedVersion.createdAt.withNano(
+      latestVersion.createdAt.withNano(
         0,
       ),
     )
-    Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionUuid).isEqualTo(latestValidatedVersion.uuid)
+    Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionUuid).isEqualTo(latestVersion.uuid)
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
-    Assertions.assertThat(response?.sanAssessmentData?.assessment?.keys).isEqualTo(latestValidatedVersion.answers.keys)
+    Assertions.assertThat(response?.sanAssessmentData?.assessment?.keys).isEqualTo(latestVersion.answers.keys)
     Assertions.assertThat(response?.sanAssessmentData?.assessment?.values?.map { it.value })
-      .isEqualTo(latestValidatedVersion.answers.values.map { it.value })
+      .isEqualTo(latestVersion.answers.values.map { it.value })
     Assertions.assertThat(response?.sanAssessmentData?.oasysEquivalent)
-      .isEqualTo(latestValidatedVersion.oasys_equivalent)
+      .isEqualTo(latestVersion.oasysEquivalents)
   }
 }

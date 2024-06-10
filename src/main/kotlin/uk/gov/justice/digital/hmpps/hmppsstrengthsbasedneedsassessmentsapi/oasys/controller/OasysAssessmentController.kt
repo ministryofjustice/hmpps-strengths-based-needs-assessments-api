@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.OasysAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
@@ -62,7 +61,7 @@ class OasysAssessmentController(
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run { AssessmentVersionCriteria(assessment.uuid) }
       .run(assessmentVersionService::find)
       .run(OasysAssessmentVersionResponse::from)
   }
@@ -99,7 +98,7 @@ class OasysAssessmentController(
       request.previousOasysAssessmentPk,
       request.regionPrisonCode,
     )
-      .run { AssessmentVersionCriteria(uuid, Tag.validatedTags()) }
+      .run { AssessmentVersionCriteria(uuid) }
       .run(assessmentVersionService::find)
       .run(OasysAssessmentResponse::from)
   }
@@ -166,7 +165,7 @@ class OasysAssessmentController(
     request: SignAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run { AssessmentVersionCriteria(assessment.uuid) }
       .run(assessmentVersionService::find)
       .let {
         assessmentVersionService.sign(it, UserDetails.from(request), request.signType)
@@ -244,7 +243,7 @@ class OasysAssessmentController(
     request: AuditedRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
-      .run { AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()) }
+      .run { AssessmentVersionCriteria(assessment.uuid) }
       .run(assessmentVersionService::find)
       .let { assessmentVersionService.lock(it, UserDetails.from(request)) }
       .run(OasysAssessmentResponse::from)

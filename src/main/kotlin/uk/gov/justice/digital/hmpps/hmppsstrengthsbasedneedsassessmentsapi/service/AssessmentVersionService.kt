@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
@@ -20,8 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Service
 class AssessmentVersionService(
@@ -29,46 +28,20 @@ class AssessmentVersionService(
   val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val dataMappingService: DataMappingService,
 ) {
-  private fun versionUpdatedToday(assessmentVersion: AssessmentVersion): Boolean {
-    val versionUpdatedDate = assessmentVersion.updatedAt.format(DateTimeFormatter.ISO_LOCAL_DATE)
-    val today = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
-
-    return versionUpdatedDate == today
+  fun getPreviousOrCreate(assessment: Assessment): AssessmentVersion? {
+    return findOrNull(AssessmentVersionCriteria(assessment.uuid))?.let { assessmentVersion ->
+      if (assessmentVersion.isUpdatable()) assessmentVersion else createWith(assessment, assessmentVersion.answers)
+    } ?: createWith(assessment)
   }
 
-  fun getPreviousOrCreate(tag: Tag, assessment: Assessment): AssessmentVersion? {
-    if (!Tag.validatedTags().contains(tag)) {
-      return findOrNull(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
-    }
-
-    return findOrNull(AssessmentVersionCriteria(assessment.uuid, Tag.validatedTags()))?.let {
-      getPrevious(it, tag, assessment)
-    } ?: createNew(tag, assessment)
-  }
-
-  private fun createNew(
-    tag: Tag,
+  private fun createWith(
     assessment: Assessment,
+    answers: Answers = emptyMap(),
   ) = AssessmentVersion(
-    tag = tag,
     assessment = assessment,
     versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
+    answers = answers,
   )
-
-  private fun getPrevious(
-    assessmentVersion: AssessmentVersion,
-    tag: Tag,
-    assessment: Assessment,
-  ) = if (versionUpdatedToday(assessmentVersion) && !Tag.lockedTags().contains(assessmentVersion.tag)) {
-    assessmentVersion
-  } else {
-    AssessmentVersion(
-      tag = tag,
-      assessment = assessment,
-      answers = assessmentVersion.answers,
-      versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
-    )
-  }
 
   fun findOrNull(criteria: AssessmentVersionCriteria): AssessmentVersion? {
     val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "updatedAt"))
@@ -86,30 +59,18 @@ class AssessmentVersionService(
   }
 
   fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
-    if (request.tags.intersect(Tag.lockedTags()).isNotEmpty()) {
-      throw ConflictException("Locked versions cannot be updated")
-    }
+    log.info("Adding answers to assessment with UUID ${assessment.uuid}")
 
-    log.info("Adding answers to assessment with UUID ${assessment.uuid} for tags ${request.tags}")
-
-    request.tags.map { tag ->
-      getPreviousOrCreate(tag, assessment)?.run {
-        answers = answers.plus(request.answersToAdd)
-          .filterNot { thisAnswer -> request.answersToRemove.contains(thisAnswer.key) }
-        updatedAt = LocalDateTime.now()
-        setOasysEquivalent(this)
-
-        assessmentVersionRepository.save(this)
-
-        log.info("Saved answers to assessment version UUID $uuid")
-      } ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessment.uuid, setOf(tag)))
-    }
+    getPreviousOrCreate(assessment)
+      ?.apply { setAnswers(request.answersToAdd, request.answersToRemove) }
+      ?.run(::setOasysEquivalents)
+      ?.run(assessmentVersionRepository::save)
+      ?.also { log.info("Saved answers to assessment version UUID ${it.uuid}") }
+      ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessment.uuid, setOf(Tag.UNSIGNED)))
   }
 
-  fun setOasysEquivalent(assessmentVersion: AssessmentVersion): AssessmentVersion {
-    return assessmentVersion.apply {
-      oasys_equivalent = dataMappingService.getOasysEquivalent(assessmentVersion)
-    }
+  fun setOasysEquivalents(assessmentVersion: AssessmentVersion) = assessmentVersion.apply {
+    oasysEquivalents = dataMappingService.getOasysEquivalent(assessmentVersion)
   }
 
   @Transactional

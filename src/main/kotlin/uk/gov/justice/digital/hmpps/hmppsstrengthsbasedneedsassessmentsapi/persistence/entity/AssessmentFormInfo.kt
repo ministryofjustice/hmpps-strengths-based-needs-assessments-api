@@ -25,9 +25,6 @@ class AssessmentFormInfo(
   @Column(name = "created_at")
   val createdAt: LocalDateTime = LocalDateTime.now(),
 
-  @Column(name = "form_name")
-  val formName: String = "",
-
   @Column(name = "form_version")
   val formVersion: String = "",
 

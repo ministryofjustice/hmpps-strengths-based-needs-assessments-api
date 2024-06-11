@@ -222,7 +222,7 @@ class AssessmentControllerTest(
       assessment = Assessment()
       assessment.oasysAssessments =
         listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
-      assessment.info = AssessmentFormInfo(formVersion = "1.0", formName = "sbna-poc", assessment = assessment)
+      assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
       assessmentRepository.save(assessment)
     }

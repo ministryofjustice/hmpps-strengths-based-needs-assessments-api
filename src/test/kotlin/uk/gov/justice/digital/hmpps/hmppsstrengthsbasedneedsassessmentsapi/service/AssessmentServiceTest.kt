@@ -35,7 +35,7 @@ class AssessmentServiceTest {
   inner class Create {
     @Test
     fun `it creates and returns an assessment`() {
-      val formConfig = FormConfig("name", "version")
+      val formConfig = FormConfig("version")
       val assessmentSlot = slot<Assessment>()
 
       every { assessmentRepository.save(capture(assessmentSlot)) } returnsArgument 0
@@ -49,7 +49,6 @@ class AssessmentServiceTest {
       verify(exactly = 1) { assessmentVersionService.setOasysEquivalents(any()) }
 
       assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
-      assertThat(result.info?.formName).isEqualTo(formConfig.name)
       assertThat(result.info?.formVersion).isEqualTo(formConfig.version)
     }
   }

@@ -19,10 +19,7 @@ import kotlin.test.assertFailsWith
 class FormConfigProviderTest {
   private val mockHttpClient: HttpClient = mockk()
   private val appConfig: ApplicationConfig = ApplicationConfig(
-    formBaseUrl = "http://test-url",
     formConfigBaseUrl = "http://test-url",
-    formName = "form-name",
-    sessionMaxAge = 1,
   )
   private val sut = FormConfigProvider(appConfig, mockHttpClient, jacksonObjectMapper())
 
@@ -42,10 +39,10 @@ class FormConfigProviderTest {
 
       val exception = assertFailsWith<FormConfigNotFoundException>(
         block = {
-          sut.get(AssessmentFormInfo(formVersion = "1.0", formName = "test-form-name"))
+          sut.get(AssessmentFormInfo(formVersion = "1.0"))
         },
       )
-      assertEquals("Unable to fetch form config from http://test-url/test-form-name/1/0/fields", exception.message)
+      assertEquals("Unable to fetch form config from http://test-url/1/0/fields", exception.message)
     }
 
     @Test
@@ -55,7 +52,6 @@ class FormConfigProviderTest {
       every { mockResponse.body() } returns
         """
         {
-          "name": "test-form-name",
           "version": "1.1",
           "fields": {
             "test-field": {
@@ -74,16 +70,15 @@ class FormConfigProviderTest {
 
       assertEquals(
         FormConfig(
-          "test-form-name",
           "1.1",
           mapOf("test-field" to Field("test-field", listOf(Option("val-1")))),
         ),
-        sut.get(AssessmentFormInfo(formVersion = "1.1", formName = "test-form-name")),
+        sut.get(AssessmentFormInfo(formVersion = "1.1")),
       )
 
       verify(exactly = 1) {
         mockHttpClient.send(
-          withArg { assertEquals("http://test-url/test-form-name/1/1/fields", it.uri().toString()) },
+          withArg { assertEquals("http://test-url/1/1/fields", it.uri().toString()) },
           any<HttpResponse.BodyHandler<String>>(),
         )
       }

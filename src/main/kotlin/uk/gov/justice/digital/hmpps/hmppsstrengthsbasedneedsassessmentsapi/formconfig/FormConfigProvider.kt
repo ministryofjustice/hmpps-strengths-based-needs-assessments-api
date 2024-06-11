@@ -13,7 +13,6 @@ import java.net.http.HttpResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class FormConfig(
-  val name: String,
   val version: String,
   val fields: Map<String, Field> = emptyMap(),
 )
@@ -37,7 +36,7 @@ class FormConfigProvider(
 ) {
   fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formName}/${formInfo.formVersion.replace(".", "/")}/fields"))
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formVersion.replace(".", "/")}/fields"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
@@ -50,7 +49,7 @@ class FormConfigProvider(
 
   fun getLatest(): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("${appConfig.formConfigBaseUrl}/${appConfig.formName}/fields"))
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/fields"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

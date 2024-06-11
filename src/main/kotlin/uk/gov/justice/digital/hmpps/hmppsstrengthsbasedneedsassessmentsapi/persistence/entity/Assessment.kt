@@ -43,7 +43,6 @@ data class Assessment(
       return Assessment()
         .apply {
           info = AssessmentFormInfo(
-            formName = formConfig.name,
             formVersion = formConfig.version,
             assessment = this,
           )

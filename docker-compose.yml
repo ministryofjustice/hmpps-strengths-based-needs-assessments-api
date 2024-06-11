@@ -47,7 +47,6 @@ services:
       SPRING_PROFILES_ACTIVE: dev,postgres
       DATABASE_ENDPOINT: postgres:5432
       OAUTH_ENDPOINT_URL: http://hmpps-auth:9090/auth
-      LINK_BASE_URL: http://localhost:3000/form
       FORM_CONFIG_BASE_URL: http://ui:3000/form
 
   ui:

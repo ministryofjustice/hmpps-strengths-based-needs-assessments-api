@@ -24,7 +24,7 @@ abstract class SectionMappingTest(
   private lateinit var formConfigProvider: FormConfigProvider
 
   private val formConfig: FormConfig by lazy {
-    val formInfo = AssessmentFormInfo(formName = appConfig.formName, formVersion = version)
+    val formInfo = AssessmentFormInfo(formVersion = version)
     formConfigProvider.get(formInfo)
   }
 

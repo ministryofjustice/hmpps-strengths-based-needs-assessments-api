@@ -87,7 +87,7 @@ class EmotionalWellbeingTest : SectionMappingTest(EmotionalWellbeing(), "1.0") {
   @Test
   fun qHistoryOfHeadInjury() {
     test(
-      "o10-7-V2-HISTHEADINJ",
+      "o10-7_V2_HISTHEADINJ",
       Given().expect(null),
       Given(Field.HEALTH_WELLBEING_HEAD_INJURY_OR_ILLNESS, Value.YES).expect("YES"),
       Given(Field.HEALTH_WELLBEING_HEAD_INJURY_OR_ILLNESS, Value.NO).expect("NO"),
@@ -97,7 +97,7 @@ class EmotionalWellbeingTest : SectionMappingTest(EmotionalWellbeing(), "1.0") {
   @Test
   fun qHistoryOfPsychTreatment() {
     test(
-      "o10.7_V2_HISTPSYCH",
+      "o10-7_V2_HISTPSYCH",
       Given().expect(null),
       Given(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION, Value.YES_ONGOING_SEVERE).expect("YES"),
       Given(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION, Value.YES_ONGOING).expect("YES"),
@@ -109,7 +109,7 @@ class EmotionalWellbeingTest : SectionMappingTest(EmotionalWellbeing(), "1.0") {
   @Test
   fun qCurrentPsychTreatment() {
     test(
-      "o10.7_V2_PSYCHTREAT",
+      "o10-7_V2_PSYCHTREAT",
       Given().expect(null),
       Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.YES).expect("YES"),
       Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.PENDING_TREATMENT).expect("YES"),

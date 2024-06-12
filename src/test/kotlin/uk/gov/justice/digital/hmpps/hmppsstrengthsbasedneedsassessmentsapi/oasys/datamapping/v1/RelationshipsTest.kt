@@ -52,6 +52,68 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
   }
 
   @Test
+  fun q7da() {
+    test(
+      "o6-7da",
+      Given().expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO)
+        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
+        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO)
+        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
+    )
+  }
+
+  @Test
+  fun q711da() {
+    test(
+      "o6-7-1-1da",
+      Given().expect(null),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, null).expect(null),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+    )
+  }
+
+  @Test
+  fun q712da() {
+    test(
+      "o6-7-1-2da",
+      Given().expect(null),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, null).expect(null),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, Value.FAMILY_MEMBER).expect("YES"),
+      Given(Field.DOMESTIC_ABUSE_VICTIM_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+    )
+  }
+
+  @Test
+  fun q721da() {
+    test(
+      "o6-7-2-1da",
+      Given().expect(null),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, null).expect(null),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+    )
+  }
+
+  @Test
+  fun q722da() {
+    test(
+      "o6-7-2-2da",
+      Given().expect(null),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, null).expect(null),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, Value.FAMILY_MEMBER).expect("YES"),
+      Given(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+    )
+  }
+
+  @Test
   fun q9() {
     test(
       "o6-9",

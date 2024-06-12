@@ -16,8 +16,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    LINK_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/form
-    FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/form
+    FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/config
 
   allowlist:
     capita-dev: 51.104.16.30/31

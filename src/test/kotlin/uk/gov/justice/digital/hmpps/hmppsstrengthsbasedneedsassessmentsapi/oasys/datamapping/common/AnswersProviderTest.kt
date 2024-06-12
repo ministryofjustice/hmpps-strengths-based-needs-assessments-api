@@ -24,7 +24,6 @@ class AnswersProviderTest {
   @BeforeTest
   fun setUp() {
     val testFormConfig = FormConfig(
-      "form-name",
       "1.0",
       mapOf(
         Field.CURRENT_ACCOMMODATION.lower to uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field(

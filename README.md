@@ -18,6 +18,8 @@ The service is on http://localhost:8080
 
 To check the status, go to http://localhost:8080/health
 
+The UI can be accessed on http://localhost:7072
+
 To update containers
 
 `make down update up`

@@ -31,7 +31,6 @@ class DataMappingServiceTest {
   fun setUp() {
     clearAllMocks()
     val testConfig = FormConfig(
-      "form-name",
       "1.0",
       mapOf(Field.TEST_FIELD.lower to FormField(Field.TEST_FIELD.lower)),
     )

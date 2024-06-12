@@ -36,7 +36,7 @@ class FormConfigProvider(
 ) {
   fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formVersion.replace(".", "/")}/fields"))
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formVersion.replace(".", "/")}"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
@@ -49,7 +49,7 @@ class FormConfigProvider(
 
   fun getLatest(): FormConfig {
     val request = HttpRequest.newBuilder()
-      .uri(URI.create("${appConfig.formConfigBaseUrl}/fields"))
+      .uri(URI.create("${appConfig.formConfigBaseUrl}/latest"))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 

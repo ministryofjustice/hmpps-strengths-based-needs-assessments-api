@@ -73,7 +73,7 @@ management:
 
 app:
   form-config:
-    base-url: ${form-config.base-url:http://localhost:3000/form}
+    base-url: ${form-config.base-url:http://localhost:3000/config}
 
 logging:
   level:

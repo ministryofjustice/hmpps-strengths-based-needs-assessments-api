@@ -12,6 +12,11 @@ class Relationships : SectionMapping() {
       "o6-3" to ::q3,
       "o6-4" to ::q4,
       "o6-6" to ::q6,
+      "o6-7da" to ::q7da,
+      "o6-7-1-1da" to ::q711da,
+      "o6-7-1-2da" to ::q712da,
+      "o6-7-2-1da" to ::q721da,
+      "o6-7-2-2da" to ::q722da,
       "o6-9" to ::q9,
       "o6-10" to ::q10,
       "o6-11" to ::q11,
@@ -54,6 +59,54 @@ class Relationships : SectionMapping() {
       ap.get(Value.STABLE_RELATIONSHIPS) -> "0"
       ap.get(Value.POSITIVE_AND_NEGATIVE_RELATIONSHIPS) -> "1"
       ap.get(Value.UNSTABLE_RELATIONSHIPS) -> "2"
+      else -> null
+    }
+  }
+
+  private fun q7da(): Any? {
+    return when (true) {
+      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
+      (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
+      -> "YES"
+      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO)),
+      (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO)),
+      -> "NO"
+      else -> null
+    }
+  }
+
+  private fun q711da(): Any? {
+    return when (ap.answer(Field.DOMESTIC_ABUSE_VICTIM_TYPE).value) {
+      ap.get(Value.INTIMATE_PARTNER),
+      ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER),
+      -> "YES"
+      else -> null
+    }
+  }
+
+  private fun q712da(): Any? {
+    return when (ap.answer(Field.DOMESTIC_ABUSE_VICTIM_TYPE).value) {
+      ap.get(Value.FAMILY_MEMBER),
+      ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER),
+      -> "YES"
+      else -> null
+    }
+  }
+
+  private fun q721da(): Any? {
+    return when (ap.answer(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE).value) {
+      ap.get(Value.INTIMATE_PARTNER),
+      ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER),
+      -> "YES"
+      else -> null
+    }
+  }
+
+  private fun q722da(): Any? {
+    return when (ap.answer(Field.DOMESTIC_ABUSE_PERPETRATOR_TYPE).value) {
+      ap.get(Value.FAMILY_MEMBER),
+      ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER),
+      -> "YES"
       else -> null
     }
   }

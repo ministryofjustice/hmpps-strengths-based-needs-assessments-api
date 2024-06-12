@@ -57,8 +57,9 @@ services:
       - redis
       - hmpps-auth
       - arns-handover
+      - oasys-ui
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://ui:3000/health" ]
+      test: [ "CMD", "node", "./docker/healthcheck.js" ]
       interval: 5s
       retries: 10
     environment:
@@ -97,6 +98,32 @@ services:
       HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
       SERVER_ERROR_WHITELABEL_ENABLED: true
+
+  oasys-ui:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest
+    networks:
+      - hmpps
+    depends_on:
+      - redis
+    healthcheck:
+      test: [ "CMD", "node", "/healthcheck.js" ]
+    environment:
+      REDIS_ENABLED: "true"
+      SYSTEM_CLIENT_SECRET: clientsecret
+      SYSTEM_CLIENT_ID: hmpps-strengths-and-needs-ui-client
+      SESSION_SECRET: sessionsecret
+      REDIS_HOST: redis
+      INGRESS_URL: http://localhost:7072
+      HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      TOKEN_VERIFICATION_ENABLED: "false"
+      TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
+      SBNA_API_URL: "http://api:8080"
+      ENVIRONMENT_NAME: DEV
+      AUDIT_ENABLED: "false"
+      PRODUCT_ID: FOO
+    volumes:
+      - ./docker/healthcheck.js:/healthcheck.js
 
 networks:
   hmpps:

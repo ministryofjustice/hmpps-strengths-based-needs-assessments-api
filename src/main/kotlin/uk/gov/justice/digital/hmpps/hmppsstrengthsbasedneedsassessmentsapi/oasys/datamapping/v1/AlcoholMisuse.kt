@@ -99,7 +99,7 @@ class AlcoholMisuse : SectionMapping() {
           else -> null
         }
       }
-
+      ap.get(Value.NO) -> "0"
       else -> null
     }
   }

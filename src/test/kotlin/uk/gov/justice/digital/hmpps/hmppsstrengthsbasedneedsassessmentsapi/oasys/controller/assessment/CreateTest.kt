@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.assessment
 
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -77,12 +79,43 @@ class CreateTest(
           }
     """.trimIndent()
 
-    webTestClient.post().uri(endpoint)
+    val response = webTestClient.post().uri(endpoint)
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
       .bodyValue(request)
       .exchange()
       .expectStatus().isEqualTo(409)
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.developerMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} already exists.")
+  }
+
+  @Test
+  fun `it returns Conflict when the association already exists and is soft deleted`() {
+    oasysAss2.deleted = true
+    oasysAssessmentRepository.save(oasysAss2)
+
+    val request = """
+          {
+            "oasysAssessmentPk": "${oasysAss2.oasysAssessmentPk}",
+            "previousOasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
+          }
+    """.trimIndent()
+
+    val response = webTestClient.post().uri(endpoint)
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isEqualTo(409)
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.developerMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} is soft deleted.")
   }
 
   @Test

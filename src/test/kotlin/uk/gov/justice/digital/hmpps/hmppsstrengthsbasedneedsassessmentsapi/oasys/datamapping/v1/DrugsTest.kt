@@ -832,7 +832,7 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun q97() {
     test(
       "o8-97",
-      *PractitionerAnalysisScenarios("DRUGS").notes(),
+      *PractitionerAnalysisScenarios("DRUG_USE").notes(),
     )
   }
 
@@ -840,7 +840,7 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun q98() {
     test(
       "o8-98",
-      *PractitionerAnalysisScenarios("DRUGS").riskOfSeriousHarm(),
+      *PractitionerAnalysisScenarios("DRUG_USE").riskOfSeriousHarm(),
     )
   }
 
@@ -848,7 +848,7 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun q99() {
     test(
       "o8-99",
-      *PractitionerAnalysisScenarios("DRUGS").riskOfReoffending(),
+      *PractitionerAnalysisScenarios("DRUG_USE").riskOfReoffending(),
     )
   }
 
@@ -856,7 +856,7 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun qStrength() {
     test(
       "o8_SAN_STRENGTH",
-      *PractitionerAnalysisScenarios("DRUGS").strengthsOrProtectiveFactors(),
+      *PractitionerAnalysisScenarios("DRUG_USE").strengthsOrProtectiveFactors(),
     )
   }
 }

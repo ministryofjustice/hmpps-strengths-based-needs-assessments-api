@@ -192,7 +192,7 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
       "o9-2",
       Given().expect(null),
       Given(Field.ALCOHOL_USE, null).expect(null),
-      Given(Field.ALCOHOL_USE, Value.NO).expect(0),
+      Given(Field.ALCOHOL_USE, Value.NO).expect("0"),
       Given(Field.ALCOHOL_USE, Value.YES_WITHIN_LAST_THREE_MONTHS)
         .and(Field.ALCOHOL_EVIDENCE_OF_EXCESS_DRINKING, Value.NO_EVIDENCE)
         .expect("0"),

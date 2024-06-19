@@ -11,6 +11,9 @@ interface OasysAssessmentRepository : JpaRepository<OasysAssessment, Long> {
   fun findByUuid(uuid: UUID): OasysAssessment?
   fun findByOasysAssessmentPk(oasysAssessmentPk: String): OasysAssessment?
 
+  @Query("SELECT * FROM oasys_assessments WHERE oasys_assessment_pk = :oasysAssessmentPk", nativeQuery = true)
+  fun findByOasysAssessmentPkInclDeleted(oasysAssessmentPk: String): OasysAssessment?
+
   @Query("SELECT * FROM oasys_assessments WHERE oasys_assessment_pk = :oasysAssessmentPk AND deleted = TRUE", nativeQuery = true)
   fun findDeletedByOasysAssessmentPk(oasysAssessmentPk: String): OasysAssessment?
 }

@@ -1,13 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service
 
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.TransferAssociationRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentAlreadyExistsException
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.exception.OasysAssessmentNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
@@ -27,13 +26,12 @@ class OasysAssessmentService(
       .also { log.info("Assessment created for OASys PK $oasysAssessmentPk") }
   }
 
-  fun findOrNull(oasysAssessmentPk: String): OasysAssessment? {
-    return oasysAssessmentRepository.findByOasysAssessmentPk(oasysAssessmentPk)
-  }
-
   fun find(oasysAssessmentPk: String): OasysAssessment {
-    return findOrNull(oasysAssessmentPk)
-      ?: throw OasysAssessmentNotFoundException(oasysAssessmentPk)
+    return oasysAssessmentRepository.findByOasysAssessmentPkInclDeleted(oasysAssessmentPk)
+      ?.also {
+        if (it.deleted) throw EntityNotFoundException("OASys assessment PK $oasysAssessmentPk is soft deleted")
+      }
+      ?: throw EntityNotFoundException("No OASys assessment found for PK $oasysAssessmentPk")
   }
 
   private fun associate(
@@ -53,7 +51,14 @@ class OasysAssessmentService(
     previousOasysAssessmentPk: String? = null,
     regionPrisonCode: String? = null,
   ): Assessment {
-    return findOrNull(oasysAssessmentPk)?.let { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+    return oasysAssessmentRepository.findByOasysAssessmentPkInclDeleted(oasysAssessmentPk)
+      ?.let {
+        if (it.deleted) {
+          throw ConflictException("OASys assessment with ID $oasysAssessmentPk is soft deleted.")
+        } else {
+          throw ConflictException("OASys assessment with ID $oasysAssessmentPk already exists.")
+        }
+      }
       ?: run {
         previousOasysAssessmentPk?.let {
           associate(oasysAssessmentPk, previousOasysAssessmentPk, regionPrisonCode).assessment
@@ -72,7 +77,7 @@ class OasysAssessmentService(
           assessment = oldAssociation.assessment,
         ).also { newAssociation ->
           oasysAssessmentRepository.findByOasysAssessmentPk(newAssociation.oasysAssessmentPk)
-            ?.run { throw OasysAssessmentAlreadyExistsException(oasysAssessmentPk) }
+            ?.run { throw ConflictException("OASys assessment with ID $oasysAssessmentPk already exists") }
 
           oasysAssessmentRepository.save(newAssociation)
           oasysAssessmentRepository.delete(oldAssociation)

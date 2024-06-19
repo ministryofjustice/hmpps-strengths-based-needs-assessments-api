@@ -390,18 +390,18 @@ class Drugs : SectionMapping() {
   }
 
   private fun q97(): Any? {
-    return PractitionerAnalysis("DRUGS", ap).notes()
+    return PractitionerAnalysis("DRUG_USE", ap).notes()
   }
 
   private fun q98(): Any? {
-    return PractitionerAnalysis("DRUGS", ap).riskOfSeriousHarm()
+    return PractitionerAnalysis("DRUG_USE", ap).riskOfSeriousHarm()
   }
 
   private fun q99(): Any? {
-    return PractitionerAnalysis("DRUGS", ap).riskOfReoffending()
+    return PractitionerAnalysis("DRUG_USE", ap).riskOfReoffending()
   }
 
   private fun qStrength(): Any? {
-    return PractitionerAnalysis("DRUGS", ap).strengthsOrProtectiveFactors()
+    return PractitionerAnalysis("DRUG_USE", ap).strengthsOrProtectiveFactors()
   }
 }

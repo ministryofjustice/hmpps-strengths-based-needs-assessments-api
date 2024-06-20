@@ -31,6 +31,8 @@ generic-service:
     cymulate-app-sec-one: 54.217.50.18/32
     cymulate-app-sec-two: 52.208.202.111/32
     cymulate-app-sec-three: 52.49.144.209/32
+    joel-app-sec-one: 86.181.168.250/32
+    joel-app-sec-two: 100.64.10.206/32
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

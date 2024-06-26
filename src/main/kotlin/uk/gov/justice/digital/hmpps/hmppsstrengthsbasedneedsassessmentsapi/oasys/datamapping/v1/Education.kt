@@ -101,7 +101,13 @@ class Education : SectionMapping() {
   private fun q71(): Any? {
     val difficulties = ap.answer(Field.EDUCATION_DIFFICULTIES).values
 
-    return difficulties?.joinToString(",")?.ifEmpty { null }
+    return difficulties?.let {
+      when (true) {
+        it.isEmpty() -> null
+        it.contains(ap.get(Value.NONE)) -> null
+        else -> it
+      }
+    }
   }
 
   private fun q8(): Any? {

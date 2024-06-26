@@ -64,7 +64,7 @@ class Relationships : SectionMapping() {
   }
 
   private fun q7da(): Any? {
-    return when (true) {
+    return when {
       (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
       (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
       -> "YES"

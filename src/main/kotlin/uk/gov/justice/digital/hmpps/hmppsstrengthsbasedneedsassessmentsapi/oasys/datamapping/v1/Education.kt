@@ -88,7 +88,7 @@ class Education : SectionMapping() {
       ap.get(Value.NUMERACY) to Field.EDUCATION_DIFFICULTIES_NUMERACY_SEVERITY,
     )
 
-    return when (true) {
+    return when {
       difficulties.contains(ap.get(Value.NONE)) -> "0"
       difficulties.isNotEmpty() ->
         categories
@@ -102,7 +102,7 @@ class Education : SectionMapping() {
     val difficulties = ap.answer(Field.EDUCATION_DIFFICULTIES).values
 
     return difficulties?.let {
-      when (true) {
+      when {
         it.isEmpty() -> null
         it.contains(ap.get(Value.NONE)) -> null
         else -> it

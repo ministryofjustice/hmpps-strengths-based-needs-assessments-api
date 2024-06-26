@@ -65,7 +65,7 @@ class EmotionalWellbeing : SectionMapping() {
       },
     )
 
-    return when (true) {
+    return when {
       values.any { it == "YES" } -> "YES"
       values.any { it == "NO" } -> "NO"
       else -> null

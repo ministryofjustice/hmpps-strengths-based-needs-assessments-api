@@ -42,7 +42,7 @@ class FinancialManagement : SectionMapping() {
       Value.OTHER,
     ).map { ap.get(it) }
 
-    return when (true) {
+    return when {
       (income == null) -> null
       (!income.contains(ap.get(Value.OFFENDING))) -> "0"
       (income.any { it in nonOffendingIncomes }) -> "1"

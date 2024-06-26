@@ -13,7 +13,7 @@ class Predictors : SectionMapping() {
   }
 
   private fun q30(): Any? {
-    return when (true) {
+    return when {
       ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.contains(ap.get(Value.SEXUAL_ELEMENT)) -> "YES"
       ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values?.contains(ap.get(Value.SEXUAL_DESIRES)) -> "YES"
       else -> null

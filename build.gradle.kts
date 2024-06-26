@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.1"
   kotlin("plugin.spring") version "2.0.0"
   id("org.jetbrains.kotlin.kapt") version "2.0.0"
   // TODO: re-enable Detekt when it supports Kotlin 2.0
@@ -42,8 +42,8 @@ dependencies {
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
   // Dev dependencies
   developmentOnly("org.springframework.boot:spring-boot-devtools")

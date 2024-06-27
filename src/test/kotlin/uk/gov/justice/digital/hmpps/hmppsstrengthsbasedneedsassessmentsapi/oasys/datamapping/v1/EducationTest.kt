@@ -108,11 +108,12 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
       "o4-7-1",
       Given().expect(null),
       Given(Field.EDUCATION_DIFFICULTIES, emptyList()).expect(null),
-      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.READING)).expect("READING"),
-      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.WRITING)).expect("WRITING"),
-      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NUMERACY)).expect("NUMERACY"),
+      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NONE)).expect(null),
+      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.READING)).expect(listOf("READING")),
+      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.WRITING)).expect(listOf("WRITING")),
+      Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NUMERACY)).expect(listOf("NUMERACY")),
       Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.READING, Value.WRITING, Value.NUMERACY))
-        .expect("READING,WRITING,NUMERACY"),
+        .expect(listOf("READING", "WRITING", "NUMERACY")),
     )
   }
 

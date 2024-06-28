@@ -83,7 +83,7 @@ class Drugs : SectionMapping() {
 
   private fun isUsing(field: Field, frequencies: Set<Value>): Boolean {
     val usage = ap.answer(field).value ?: return false
-    return when (true) {
+    return when {
       frequencies.map { ap.get(it) }.contains(usage) -> true
       else -> false
     }
@@ -310,13 +310,13 @@ class Drugs : SectionMapping() {
 
   private fun q4(): Any {
     val frequencies = setOf(Value.DAILY, Value.WEEKLY, Value.MONTHLY, Value.OCCASIONALLY)
-    return when (true) {
-      isUsing(Field.DRUG_USAGE_HEROIN, frequencies),
-      isUsing(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, frequencies),
-      isUsing(Field.DRUG_USAGE_OTHER_OPIATES, frequencies),
-      isUsing(Field.DRUG_USAGE_CRACK, frequencies),
-      isUsing(Field.DRUG_USAGE_COCAINE, frequencies),
-      isUsing(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, frequencies),
+    return when {
+      isUsing(Field.DRUG_USAGE_HEROIN, frequencies) ||
+        isUsing(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, frequencies) ||
+        isUsing(Field.DRUG_USAGE_OTHER_OPIATES, frequencies) ||
+        isUsing(Field.DRUG_USAGE_CRACK, frequencies) ||
+        isUsing(Field.DRUG_USAGE_COCAINE, frequencies) ||
+        isUsing(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, frequencies)
       -> "2"
       else -> "0"
     }
@@ -343,7 +343,7 @@ class Drugs : SectionMapping() {
       Field.DRUG_USAGE_OTHER_DRUG,
     )
 
-    return when (true) {
+    return when {
       drugs.any { isUsing(it, dailyOrWeekly) } -> "2"
       drugs.any { isUsing(it, monthlyOrOccasionally) } -> "0"
       else -> null
@@ -351,29 +351,29 @@ class Drugs : SectionMapping() {
   }
 
   private fun q6(): Any {
-    return when (true) {
-      isYes(Field.INJECTING_DRUG_HEROIN),
-      isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED),
-      isYes(Field.INJECTING_DRUG_OTHER_OPIATES),
-      isYes(Field.INJECTING_DRUG_CRACK),
-      isYes(Field.INJECTING_DRUG_COCAINE),
-      isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS),
-      isYes(Field.INJECTING_DRUG_BENZODIAZEPINES),
-      isYes(Field.INJECTING_DRUG_AMPHETAMINES),
-      isYes(Field.INJECTING_DRUG_STEROIDS),
-      isYes(Field.INJECTING_DRUG_OTHER_DRUG),
+    return when {
+      isYes(Field.INJECTING_DRUG_HEROIN) ||
+        isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED) ||
+        isYes(Field.INJECTING_DRUG_OTHER_OPIATES) ||
+        isYes(Field.INJECTING_DRUG_CRACK) ||
+        isYes(Field.INJECTING_DRUG_COCAINE) ||
+        isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS) ||
+        isYes(Field.INJECTING_DRUG_BENZODIAZEPINES) ||
+        isYes(Field.INJECTING_DRUG_AMPHETAMINES) ||
+        isYes(Field.INJECTING_DRUG_STEROIDS) ||
+        isYes(Field.INJECTING_DRUG_OTHER_DRUG)
       -> "2"
 
-      isYes(Field.PAST_INJECTING_DRUG_HEROIN),
-      isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED),
-      isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES),
-      isYes(Field.PAST_INJECTING_DRUG_CRACK),
-      isYes(Field.PAST_INJECTING_DRUG_COCAINE),
-      isYes(Field.PAST_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS),
-      isYes(Field.PAST_INJECTING_DRUG_BENZODIAZEPINES),
-      isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES),
-      isYes(Field.PAST_INJECTING_DRUG_STEROIDS),
-      isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG),
+      isYes(Field.PAST_INJECTING_DRUG_HEROIN) ||
+        isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED) ||
+        isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES) ||
+        isYes(Field.PAST_INJECTING_DRUG_CRACK) ||
+        isYes(Field.PAST_INJECTING_DRUG_COCAINE) ||
+        isYes(Field.PAST_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS) ||
+        isYes(Field.PAST_INJECTING_DRUG_BENZODIAZEPINES) ||
+        isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES) ||
+        isYes(Field.PAST_INJECTING_DRUG_STEROIDS) ||
+        isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG)
       -> "1"
 
       else -> "0"

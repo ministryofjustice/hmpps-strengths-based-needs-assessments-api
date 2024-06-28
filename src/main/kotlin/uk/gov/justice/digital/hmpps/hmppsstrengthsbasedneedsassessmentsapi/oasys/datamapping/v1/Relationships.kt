@@ -64,12 +64,12 @@ class Relationships : SectionMapping() {
   }
 
   private fun q7da(): Any? {
-    return when (true) {
-      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
-      (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)),
+    return when {
+      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES)) ||
+        (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.YES))
       -> "YES"
-      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO)),
-      (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO)),
+      (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO)) ||
+        (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value == ap.get(Value.NO))
       -> "NO"
       else -> null
     }

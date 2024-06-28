@@ -88,7 +88,7 @@ class Education : SectionMapping() {
       ap.get(Value.NUMERACY) to Field.EDUCATION_DIFFICULTIES_NUMERACY_SEVERITY,
     )
 
-    return when (true) {
+    return when {
       difficulties.contains(ap.get(Value.NONE)) -> "0"
       difficulties.isNotEmpty() ->
         categories
@@ -101,7 +101,13 @@ class Education : SectionMapping() {
   private fun q71(): Any? {
     val difficulties = ap.answer(Field.EDUCATION_DIFFICULTIES).values
 
-    return difficulties?.joinToString(",")?.ifEmpty { null }
+    return difficulties?.let {
+      when {
+        it.isEmpty() -> null
+        it.contains(ap.get(Value.NONE)) -> null
+        else -> it
+      }
+    }
   }
 
   private fun q8(): Any? {

@@ -35,71 +35,95 @@ class NewSections : SectionMapping() {
     return PractitionerAnalysis("THINKING_BEHAVIOURS_ATTITUDES", ap).strengthsOrProtectiveFactors()
   }
 
-  private fun qAccommodationComplete(): Any? {
-    return when (ap.answer(Field.ACCOMMODATION_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qAccommodationComplete(): Any {
+    return if (
+      ap.answer(Field.ACCOMMODATION_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qEducationEmploymentComplete(): Any? {
-    return when (ap.answer(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qEducationEmploymentComplete(): Any {
+    return if (
+      ap.answer(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qFinanceComplete(): Any? {
-    return when (ap.answer(Field.FINANCE_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qFinanceComplete(): Any {
+    return if (
+      ap.answer(Field.FINANCE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.FINANCE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qDrugsComplete(): Any? {
-    return when (ap.answer(Field.DRUG_USE_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qDrugsComplete(): Any {
+    return if (
+      ap.answer(Field.DRUG_USE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qAlcoholCompletes(): Any? {
-    return when (ap.answer(Field.ALCOHOL_USE_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qAlcoholCompletes(): Any {
+    return if (
+      ap.answer(Field.ALCOHOL_USE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qHealthWellbeingComplete(): Any? {
-    return when (ap.answer(Field.HEALTH_WELLBEING_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qHealthWellbeingComplete(): Any {
+    return if (
+      ap.answer(Field.HEALTH_WELLBEING_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qPersonalRelationshipsComplete(): Any? {
-    return when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qPersonalRelationshipsComplete(): Any {
+    return if (
+      ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qThinkingBehavioursAttitudesComplete(): Any? {
-    return when (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
+  private fun qThinkingBehavioursAttitudesComplete(): Any {
+    return if (
+      ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE).value == ap.get(Value.YES) &&
+      ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
+    ) {
+      "YES"
+    } else {
+      "NO"
     }
   }
 
-  private fun qOffenceAnalysisComplete(): Any? {
-    return null
+  private fun qOffenceAnalysisComplete(): Any {
+    return if (ap.answer(Field.OFFENCE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)) "YES" else "NO"
   }
 }

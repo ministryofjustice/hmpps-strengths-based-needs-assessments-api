@@ -61,6 +61,23 @@ class SoftDeleteTest(
   }
 
   @Test
+  fun `it returns Bad Request when the request body contains unknown parameters`() {
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" },
+          "foo": "bar"
+        }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
   fun `it returns Not Found when the OASys PK does not exist`() {
     val request = """
         {

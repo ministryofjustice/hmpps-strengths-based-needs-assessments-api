@@ -73,6 +73,29 @@ class MergeTest(
   }
 
   @Test
+  fun `it returns Bad Request when the request body contains unknown parameters`() {
+    val request = """
+      {
+        "merge": [
+          {
+            "newOasysAssessmentPK": "NEW_OASYS_ASSESSMENT_PK",
+            "oldOasysAssessmentPK": "FOO_OASYS_ASSESSMENT"
+          }
+        ],
+        "userDetails": { "id": "user-id", "name": "John Doe" },
+        "foo": "bar"
+      }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint)
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
   fun `it returns Not Found when the old OASys PK does not exist`() {
     val request = """
       {

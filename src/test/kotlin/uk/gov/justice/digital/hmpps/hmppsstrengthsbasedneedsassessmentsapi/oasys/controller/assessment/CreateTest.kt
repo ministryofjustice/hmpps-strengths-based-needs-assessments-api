@@ -70,6 +70,24 @@ class CreateTest(
   }
 
   @Test
+  fun `it returns Bad Request when the request body contains unknown parameters`() {
+    val request = """
+          {
+            "oasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
+            "previousOasysAssessmentPK": "${oasysAss2.oasysAssessmentPk}",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
+          }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint)
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
   fun `it returns Conflict when the association already exists`() {
     val request = """
           {

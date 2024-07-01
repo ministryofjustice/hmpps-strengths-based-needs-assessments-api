@@ -64,6 +64,24 @@ class SignTest(
   }
 
   @Test
+  fun `it returns Bad Request when the request body contains unknown parameters`() {
+    val request = """
+        {
+          "signType": "SELF",
+          "userDetails": { "id": "user-id", "name": "John Doe" },
+          "foo": "bar"
+        }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
   fun `it updates the latest version of the assessment as Signed and returns it`() {
     val latestVersion = AssessmentVersion(
       assessment = assessment,

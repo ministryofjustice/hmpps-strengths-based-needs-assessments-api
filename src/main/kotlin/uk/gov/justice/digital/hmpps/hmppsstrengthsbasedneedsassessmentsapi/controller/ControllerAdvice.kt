@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
@@ -68,6 +69,18 @@ class ControllerAdvice {
       .body(
         ErrorResponse(
           userMessage = "Access denied",
+          developerMessage = ex.message ?: "",
+        ),
+      )
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  fun handle(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          userMessage = "Bad request",
           developerMessage = ex.message ?: "",
         ),
       )

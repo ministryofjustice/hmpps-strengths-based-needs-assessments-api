@@ -38,6 +38,8 @@ spring:
   jackson:
     mapper:
       accept-case-insensitive-enums: true
+    deserialization:
+      fail-on-unknown-properties: true
 
 server:
   port: 8080

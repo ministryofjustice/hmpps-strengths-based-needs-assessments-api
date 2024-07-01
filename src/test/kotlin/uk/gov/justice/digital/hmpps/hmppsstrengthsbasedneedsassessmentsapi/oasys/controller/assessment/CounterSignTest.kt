@@ -62,6 +62,25 @@ class CounterSignTest(
   }
 
   @Test
+  fun `it returns Bad Request when the request body contains unknown parameters`() {
+    val request = """
+        {
+          "sanVersionNumber": 1,
+          "userDetails": { "id": "user-id", "name": "John Doe" },
+          "outcome": "COUNTERSIGNED",
+          "foo": "bar"
+        }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
   fun `it updates the assessment version and returns it as counter-signed`() {
     assessment.assessmentVersions = listOf(
       AssessmentVersion(

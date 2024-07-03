@@ -54,7 +54,8 @@ jobs:
   e2e_test:
     machine:
       image: ubuntu-2204:current
-    parallelism: 6
+      resource_class: medium
+    parallelism: 10
     steps:
       - checkout
       - attach_workspace:

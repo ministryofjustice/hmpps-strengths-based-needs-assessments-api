@@ -119,6 +119,7 @@ services:
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       SBNA_API_URL: "http://api:8080"
+      SP_API_URL: "http://¯\_(ツ)_/¯"
       ENVIRONMENT_NAME: DEV
       AUDIT_ENABLED: "false"
       PRODUCT_ID: FOO

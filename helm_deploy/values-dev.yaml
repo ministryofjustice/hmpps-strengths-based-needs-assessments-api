@@ -28,10 +28,6 @@ generic-service:
     capita-developers-vms-four: 85.115.53.200/29
     capita-developers-vms-five: 85.115.54.180/32
     capita-developers-vms-six: 85.115.54.200/29
-    cymulate-app-sec-one: 54.217.50.18/32
-    cymulate-app-sec-two: 52.208.202.111/32
-    cymulate-app-sec-three: 52.49.144.209/32
-    moj-appsec-test-ip: 80.195.27.199/32
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

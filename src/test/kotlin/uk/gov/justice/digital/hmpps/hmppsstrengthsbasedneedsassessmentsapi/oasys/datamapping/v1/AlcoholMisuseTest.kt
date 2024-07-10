@@ -218,7 +218,7 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
   fun q97() {
     test(
       "o9-97",
-      *PractitionerAnalysisScenarios("ALCOHOL").notes(),
+      *PractitionerAnalysisScenarios("ALCOHOL_USE").notes(),
     )
   }
 
@@ -226,7 +226,7 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
   fun q98() {
     test(
       "o9-98",
-      *PractitionerAnalysisScenarios("ALCOHOL").riskOfSeriousHarm(),
+      *PractitionerAnalysisScenarios("ALCOHOL_USE").riskOfSeriousHarm(),
     )
   }
 
@@ -234,7 +234,7 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
   fun q99() {
     test(
       "o9-99",
-      *PractitionerAnalysisScenarios("ALCOHOL").riskOfReoffending(),
+      *PractitionerAnalysisScenarios("ALCOHOL_USE").riskOfReoffending(),
     )
   }
 
@@ -242,7 +242,7 @@ class AlcoholMisuseTest : SectionMappingTest(AlcoholMisuse(), "1.0") {
   fun qStrength() {
     test(
       "o9_SAN_STRENGTH",
-      *PractitionerAnalysisScenarios("ALCOHOL").strengthsOrProtectiveFactors(),
+      *PractitionerAnalysisScenarios("ALCOHOL_USE").strengthsOrProtectiveFactors(),
     )
   }
 }

@@ -105,18 +105,18 @@ class AlcoholMisuse : SectionMapping() {
   }
 
   private fun q97(): Any? {
-    return PractitionerAnalysis("ALCOHOL", ap).notes()
+    return PractitionerAnalysis("ALCOHOL_USE", ap).notes()
   }
 
   private fun q98(): Any? {
-    return PractitionerAnalysis("ALCOHOL", ap).riskOfSeriousHarm()
+    return PractitionerAnalysis("ALCOHOL_USE", ap).riskOfSeriousHarm()
   }
 
   private fun q99(): Any? {
-    return PractitionerAnalysis("ALCOHOL", ap).riskOfReoffending()
+    return PractitionerAnalysis("ALCOHOL_USE", ap).riskOfReoffending()
   }
 
   private fun qStrength(): Any? {
-    return PractitionerAnalysis("ALCOHOL", ap).strengthsOrProtectiveFactors()
+    return PractitionerAnalysis("ALCOHOL_USE", ap).strengthsOrProtectiveFactors()
   }
 }

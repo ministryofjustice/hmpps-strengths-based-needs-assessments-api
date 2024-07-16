@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import java.util.UUID
@@ -47,25 +46,15 @@ class AssessmentController(
     @PathVariable
     assessmentUuid: UUID,
     @Parameter(
-      description = "Timestamp after which the latest assessment should be returned",
+      description = "Version number",
       `in` = ParameterIn.QUERY,
-      example = "1706879012",
+      example = "1",
     )
-    after: Long? = null,
-    @Parameter(
-      description = "Timestamp until which the latest assessment should be returned",
-      `in` = ParameterIn.QUERY,
-      example = "1706879012",
-    )
-    until: Long? = null,
-    @Parameter(description = "Assessment version tag to filter by", `in` = ParameterIn.QUERY, example = "UNSIGNED")
-    tag: Tag? = null,
+    versionNumber: Long? = null,
   ): AssessmentResponse {
     return AssessmentVersionCriteria(
-      assessmentUuid,
-      tag?.run(::setOf),
-      after,
-      until,
+      assessmentUuid = assessmentUuid,
+      versionNumber = versionNumber,
     )
       .run(assessmentVersionService::find)
       .run(AssessmentResponse::from)

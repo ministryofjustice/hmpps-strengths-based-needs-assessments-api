@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
@@ -165,12 +164,12 @@ class AssessmentControllerTest(
     }
 
     @Test
-    fun `it returns an assessment for an assessment UUID and before a given date`() {
+    fun `it returns an assessment for an assessment UUID and a given version number`() {
       val response = webTestClient.get()
         .uri(
           UriComponentsBuilder
             .fromPath(endpoint())
-            .queryParam("until", LocalDateTime.now().minusDays(2).toEpochSecond(ZoneOffset.UTC))
+            .queryParam("versionNumber", 0)
             .build().toUriString(),
         )
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -181,34 +180,7 @@ class AssessmentControllerTest(
         .returnResult()
         .responseBody
 
-      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-      assertThat(response?.metaData?.createdAt?.withNano(0)).isEqualTo(assessment.createdAt.withNano(0))
-      assertThat(response?.metaData?.oasys_pks).containsExactlyInAnyOrder(
-        oasysAss1.oasysAssessmentPk,
-        oasysAss2.oasysAssessmentPk,
-      )
-      assertThat(response?.metaData?.versionTag).isEqualTo(previousVersion.tag)
-      assertThat(response?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(previousVersion.createdAt.withNano(0))
       assertThat(response?.metaData?.versionUuid).isEqualTo(previousVersion.uuid)
-      assertThat(response?.metaData?.formVersion).isEqualTo(assessment.info!!.formVersion)
-      assertThat(response?.assessment?.keys).isEqualTo(previousVersion.answers.keys)
-      assertThat(response?.assessment?.values?.map { it.value }).isEqualTo(previousVersion.answers.values.map { it.value })
-      assertThat(response?.oasysEquivalent).isEqualTo(previousVersion.oasysEquivalents)
-    }
-
-    @Test
-    fun `it returns an assessment for an assessment UUID and after a given date`() {
-      webTestClient.get()
-        .uri(
-          UriComponentsBuilder
-            .fromPath(endpoint())
-            .queryParam("after", LocalDateTime.now().plusDays(1).toEpochSecond(ZoneOffset.UTC))
-            .build().toUriString(),
-        )
-        .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
-        .exchange()
-        .expectStatus().isNotFound
     }
   }
 

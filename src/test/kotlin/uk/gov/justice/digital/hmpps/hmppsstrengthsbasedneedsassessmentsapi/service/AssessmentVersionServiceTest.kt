@@ -455,7 +455,7 @@ class AssessmentVersionServiceTest {
     private val assessmentVersion = AssessmentVersion(assessment = assessment)
 
     @ParameterizedTest
-    @EnumSource(Tag::class, mode = EnumSource.Mode.INCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE"])
+    @EnumSource(Tag::class, mode = EnumSource.Mode.INCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE", "SELF_SIGNED"])
     fun `it does a rollback on the assessment successfully`(tag: Tag) {
       val userDetails = UserDetails("signer-id", "Signer Name")
 
@@ -482,7 +482,7 @@ class AssessmentVersionServiceTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Tag::class, mode = EnumSource.Mode.EXCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE"])
+    @EnumSource(Tag::class, mode = EnumSource.Mode.EXCLUDE, names = ["AWAITING_COUNTERSIGN", "REJECTED", "LOCKED_INCOMPLETE", "SELF_SIGNED"])
     fun `it throws when the requested version status is invalid`(tag: Tag) {
       val userDetails = UserDetails("signer-id", "Signer Name")
 

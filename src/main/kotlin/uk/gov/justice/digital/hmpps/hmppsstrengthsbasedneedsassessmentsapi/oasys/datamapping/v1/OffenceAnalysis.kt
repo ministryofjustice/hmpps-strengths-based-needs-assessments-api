@@ -21,6 +21,7 @@ class OffenceAnalysis : SectionMapping() {
       "o2-9_V2_ADDICTION" to ::q9Addiction,
       "o2-9_V2_EMOTIONAL" to ::q9Emotional,
       "o2-12" to ::q12,
+      "o2-98" to ::q98,
       "o2-99" to ::q99,
     )
   }
@@ -97,6 +98,14 @@ class OffenceAnalysis : SectionMapping() {
 
   private fun q12(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_PATTERNS_OF_OFFENDING).value
+  }
+
+  private fun q98(): Any? {
+    return when (ap.answer(Field.OFFENCE_ANALYSIS_RISK).value) {
+      ap.get(Value.YES) -> ap.answer(Field.YES_OFFENCE_RISK_DETAILS).value
+      ap.get(Value.NO) -> ap.answer(Field.NO_OFFENCE_RISK_DETAILS).value
+      else -> null
+    }
   }
 
   private fun q99(): Any? {

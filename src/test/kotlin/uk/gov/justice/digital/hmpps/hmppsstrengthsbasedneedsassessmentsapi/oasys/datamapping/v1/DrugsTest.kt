@@ -599,9 +599,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   }
 
   @Test
-  fun q2140() {
+  fun q214t() {
     test(
-      "o8-2-14",
+      "o8-2-14-t",
       Given().expect(null),
       Given(Field.OTHER_DRUG_DETAILS, null).expect(null),
       Given(Field.OTHER_DRUG_DETAILS, "").expect(""),
@@ -651,22 +651,22 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun q5() {
     test(
       "o8-5",
-      Given().expect(null),
-      Given(Field.DRUG_USAGE_HEROIN, null).expect(null),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, null).expect(null),
-      Given(Field.DRUG_USAGE_CRACK, null).expect(null),
-      Given(Field.DRUG_USAGE_COCAINE, null).expect(null),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, null).expect(null),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, null).expect(null),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, null).expect(null),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, null).expect(null),
-      Given(Field.DRUG_USAGE_ECSTASY, null).expect(null),
-      Given(Field.DRUG_USAGE_CANNABIS, null).expect(null),
-      Given(Field.DRUG_USAGE_SOLVENTS, null).expect(null),
-      Given(Field.DRUG_USAGE_STEROIDS, null).expect(null),
-      Given(Field.DRUG_USAGE_SPICE, null).expect(null),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, null).expect(null),
+      Given().expect("M"),
+      Given(Field.DRUG_USAGE_HEROIN, null).expect("M"),
+      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect("M"),
+      Given(Field.DRUG_USAGE_OTHER_OPIATES, null).expect("M"),
+      Given(Field.DRUG_USAGE_CRACK, null).expect("M"),
+      Given(Field.DRUG_USAGE_COCAINE, null).expect("M"),
+      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, null).expect("M"),
+      Given(Field.DRUG_USAGE_BENZODIAZEPINES, null).expect("M"),
+      Given(Field.DRUG_USAGE_AMPHETAMINES, null).expect("M"),
+      Given(Field.DRUG_USAGE_HALLUCINOGENICS, null).expect("M"),
+      Given(Field.DRUG_USAGE_ECSTASY, null).expect("M"),
+      Given(Field.DRUG_USAGE_CANNABIS, null).expect("M"),
+      Given(Field.DRUG_USAGE_SOLVENTS, null).expect("M"),
+      Given(Field.DRUG_USAGE_STEROIDS, null).expect("M"),
+      Given(Field.DRUG_USAGE_SPICE, null).expect("M"),
+      Given(Field.DRUG_USAGE_OTHER_DRUG, null).expect("M"),
 
       Given(Field.DRUG_USAGE_HEROIN, Value.DAILY).expect("2"),
       Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),

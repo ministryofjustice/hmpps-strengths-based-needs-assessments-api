@@ -59,7 +59,7 @@ class Drugs : SectionMapping() {
       "o8-2-14-2" to ::q2142,
       "o8-2-14-3" to ::q2143,
       "o8-2-14-4" to ::q2144,
-      "o8-2-14" to ::q2140,
+      "o8-2-14-t" to ::q214t,
       "o8-4" to ::q4,
       "o8-5" to ::q5,
       "o8-6" to ::q6,
@@ -304,7 +304,7 @@ class Drugs : SectionMapping() {
     return if (isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG)) "YES" else null
   }
 
-  private fun q2140(): Any? {
+  private fun q214t(): Any? {
     return ap.answer(Field.OTHER_DRUG_DETAILS).value
   }
 
@@ -322,7 +322,7 @@ class Drugs : SectionMapping() {
     }
   }
 
-  private fun q5(): Any? {
+  private fun q5(): Any {
     val dailyOrWeekly = setOf(Value.DAILY, Value.WEEKLY)
     val monthlyOrOccasionally = setOf(Value.MONTHLY, Value.OCCASIONALLY)
     val drugs = setOf(
@@ -346,7 +346,7 @@ class Drugs : SectionMapping() {
     return when {
       drugs.any { isUsing(it, dailyOrWeekly) } -> "2"
       drugs.any { isUsing(it, monthlyOrOccasionally) } -> "0"
-      else -> null
+      else -> "M"
     }
   }
 

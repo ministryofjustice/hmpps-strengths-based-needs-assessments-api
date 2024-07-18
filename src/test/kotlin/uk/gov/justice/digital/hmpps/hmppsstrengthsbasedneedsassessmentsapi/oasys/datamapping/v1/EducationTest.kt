@@ -256,10 +256,10 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
         .expect("UNEMPLOYED"),
       Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_LOOKING_FOR_WORK)
         .and(Field.HAS_BEEN_EMPLOYED, Value.NO)
-        .expect("0"),
+        .expect("UNEMPLOYED"),
       Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK)
         .and(Field.HAS_BEEN_EMPLOYED, Value.NO)
-        .expect("0"),
+        .expect("UNEMPLOYED"),
     )
   }
 
@@ -268,10 +268,10 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
     test(
       "oSC5",
       Given().expect(null),
-      Given(Field.EMPLOYMENT_STATUS, Value.EMPLOYED).expect("Yes [Score 0]"),
-      Given(Field.EMPLOYMENT_STATUS, Value.SELF_EMPLOYED).expect("Yes [Score 0]"),
-      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_LOOKING_FOR_WORK).expect("No [Score 0]"),
-      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK).expect("No [Score 0]"),
+      Given(Field.EMPLOYMENT_STATUS, Value.EMPLOYED).expect("YES"),
+      Given(Field.EMPLOYMENT_STATUS, Value.SELF_EMPLOYED).expect("YES"),
+      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_LOOKING_FOR_WORK).expect("NO"),
+      Given(Field.EMPLOYMENT_STATUS, Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK).expect("NO"),
     )
   }
 

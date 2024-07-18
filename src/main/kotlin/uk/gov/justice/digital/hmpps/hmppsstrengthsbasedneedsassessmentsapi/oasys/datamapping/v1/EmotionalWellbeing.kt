@@ -106,10 +106,13 @@ class EmotionalWellbeing : SectionMapping() {
   }
 
   private fun qCurrentPsychTreatment(): Any? {
-    return when (ap.answer(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT).value) {
-      ap.get(Value.YES), ap.get(Value.PENDING_TREATMENT) -> "YES"
+    return when (ap.answer(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION).value) {
       ap.get(Value.NO) -> "NO"
-      else -> null
+      else -> when (ap.answer(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT).value) {
+        ap.get(Value.YES), ap.get(Value.PENDING_TREATMENT) -> "YES"
+        ap.get(Value.NO), ap.get(Value.UNKNOWN) -> "NO"
+        else -> null
+      }
     }
   }
 

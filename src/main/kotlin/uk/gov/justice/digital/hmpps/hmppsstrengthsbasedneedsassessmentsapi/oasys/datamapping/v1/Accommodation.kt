@@ -42,6 +42,7 @@ class Accommodation : SectionMapping() {
 
   private fun q5(): Any? {
     return when (ap.answer(Field.CURRENT_ACCOMMODATION).value) {
+      ap.get(Value.SETTLED) -> "0"
       ap.get(Value.NO_ACCOMMODATION) -> "2"
       ap.get(Value.TEMPORARY) -> when (ap.answer(Field.TYPE_OF_TEMPORARY_ACCOMMODATION).value) {
         ap.get(Value.SHORT_TERM) -> "2"

@@ -42,7 +42,7 @@ class AccommodationTest : SectionMappingTest(Accommodation(), "1.0") {
       Given(Field.CURRENT_ACCOMMODATION, Value.TEMPORARY)
         .and(Field.TYPE_OF_TEMPORARY_ACCOMMODATION, Value.SHORT_TERM).expect("2"),
       Given(Field.CURRENT_ACCOMMODATION, Value.NO_ACCOMMODATION).expect("2"),
-      Given(Field.CURRENT_ACCOMMODATION, Value.SETTLED).expect(null),
+      Given(Field.CURRENT_ACCOMMODATION, Value.SETTLED).expect("0"),
     )
   }
 

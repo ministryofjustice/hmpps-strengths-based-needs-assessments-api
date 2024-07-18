@@ -143,6 +143,27 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   }
 
   @Test
+  fun q98() {
+    test(
+      "o2-98",
+      Given().expect(null),
+      Given(Field.OFFENCE_ANALYSIS_RISK, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_RISK, Value.YES).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_RISK, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_RISK, Value.YES)
+        .and(Field.YES_OFFENCE_RISK_DETAILS, null)
+        .expect(null),
+      Given(Field.OFFENCE_ANALYSIS_RISK, Value.YES)
+        .and(Field.YES_OFFENCE_RISK_DETAILS, "some text")
+        .expect("some text"),
+      Given(Field.OFFENCE_ANALYSIS_RISK, Value.NO)
+        .and(Field.NO_OFFENCE_RISK_DETAILS, "some text")
+        .expect("some text"),
+      Given(Field.OFFENCE_ANALYSIS_RISK, "unknown value").expect(null),
+    )
+  }
+
+  @Test
   fun q99() {
     test(
       "o2-99",

@@ -13,8 +13,8 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       "o6-1",
       Given().expect(null),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.UNSTABLE_RELATIONSHIP).expect("2"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.MIXED_RELATIONSHIP).expect("0"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.STABLE_RELATIONSHIP).expect(null),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.MIXED_RELATIONSHIP).expect("1"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.STABLE_RELATIONSHIP).expect("0"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.UNKNOWN).expect(null),
     )
   }
@@ -132,9 +132,9 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
     test(
       "o6-10",
       Given().expect(null),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.YES).expect("Significantproblems"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.NO).expect("Significantproblems"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.SOMETIMES).expect("Someproblems"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.NO).expect("Noproblems"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.YES).expect("Noproblems"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES, Value.UNKNOWN).expect(null),
     )
   }

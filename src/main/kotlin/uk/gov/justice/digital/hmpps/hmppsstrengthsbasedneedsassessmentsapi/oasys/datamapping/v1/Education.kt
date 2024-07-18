@@ -200,14 +200,11 @@ class Education : SectionMapping() {
         -> "PARTTIME"
         else -> null
       }
-      ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK) -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
-        ap.get(Value.NO) -> "UNEMPLOYED"
-        else -> null
-      }
+      ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK),
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
       ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
       -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
-        ap.get(Value.NO) -> "0"
+        ap.get(Value.NO) -> "UNEMPLOYED"
         else -> null
       }
       else -> null
@@ -218,10 +215,10 @@ class Education : SectionMapping() {
     return when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
       ap.get(Value.EMPLOYED),
       ap.get(Value.SELF_EMPLOYED),
-      -> "Yes [Score 0]"
+      -> "YES"
       ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
       ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
-      -> "No [Score 0]"
+      -> "NO"
       else -> null
     }
   }

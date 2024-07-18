@@ -31,7 +31,8 @@ class Relationships : SectionMapping() {
   private fun q1(): Any? {
     return when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP).value) {
       ap.get(Value.UNSTABLE_RELATIONSHIP) -> "2"
-      ap.get(Value.MIXED_RELATIONSHIP) -> "0"
+      ap.get(Value.MIXED_RELATIONSHIP) -> "1"
+      ap.get(Value.STABLE_RELATIONSHIP) -> "0"
       else -> null
     }
   }
@@ -122,9 +123,9 @@ class Relationships : SectionMapping() {
 
   private fun q10(): Any? {
     return when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_PARENTAL_RESPONSIBILITIES).value) {
-      ap.get(Value.YES) -> "Significantproblems"
+      ap.get(Value.NO) -> "Significantproblems"
       ap.get(Value.SOMETIMES) -> "Someproblems"
-      ap.get(Value.NO) -> "Noproblems"
+      ap.get(Value.YES) -> "Noproblems"
       else -> null
     }
   }

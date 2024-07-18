@@ -114,6 +114,11 @@ class EmotionalWellbeingTest : SectionMappingTest(EmotionalWellbeing(), "1.0") {
       Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.YES).expect("YES"),
       Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.PENDING_TREATMENT).expect("YES"),
       Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.NO).expect("NO"),
+      Given(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.UNKNOWN).expect("NO"),
+      Given(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION, Value.NO).expect("NO"),
+      Given(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION, Value.NO)
+        .and(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT, Value.YES)
+        .expect("NO"),
     )
   }
 

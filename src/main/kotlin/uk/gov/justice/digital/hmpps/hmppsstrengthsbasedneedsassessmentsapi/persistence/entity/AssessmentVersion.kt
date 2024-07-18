@@ -68,7 +68,15 @@ enum class Tag {
     }
 
     fun tagsThatCanRollback(): Set<Tag> {
-      return setOf(AWAITING_COUNTERSIGN, REJECTED, LOCKED_INCOMPLETE, SELF_SIGNED)
+      return setOf(
+        AWAITING_COUNTERSIGN,
+        AWAITING_DOUBLE_COUNTERSIGN,
+        COUNTERSIGNED,
+        DOUBLE_COUNTERSIGNED,
+        LOCKED_INCOMPLETE,
+        REJECTED,
+        SELF_SIGNED,
+      )
     }
   }
 }

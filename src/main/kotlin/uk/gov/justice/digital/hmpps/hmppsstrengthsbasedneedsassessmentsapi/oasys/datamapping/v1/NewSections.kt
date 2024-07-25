@@ -36,10 +36,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qAccommodationComplete(): Any {
-    return if (
-      ap.answer(Field.ACCOMMODATION_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.ACCOMMODATION_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -47,10 +44,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qEducationEmploymentComplete(): Any {
-    return if (
-      ap.answer(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -58,10 +52,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qFinanceComplete(): Any {
-    return if (
-      ap.answer(Field.FINANCE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.FINANCE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.FINANCE_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -69,10 +60,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qDrugsComplete(): Any {
-    return if (
-      ap.answer(Field.DRUG_USE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.DRUG_USE_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -80,10 +68,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qAlcoholCompletes(): Any {
-    return if (
-      ap.answer(Field.ALCOHOL_USE_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.ALCOHOL_USE_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -91,10 +76,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qHealthWellbeingComplete(): Any {
-    return if (
-      ap.answer(Field.HEALTH_WELLBEING_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.HEALTH_WELLBEING_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -102,10 +84,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qPersonalRelationshipsComplete(): Any {
-    return if (
-      ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"
@@ -113,10 +92,7 @@ class NewSections : SectionMapping() {
   }
 
   private fun qThinkingBehavioursAttitudesComplete(): Any {
-    return if (
-      ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE).value == ap.get(Value.YES) &&
-      ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE).value == ap.get(Value.YES)
-    ) {
+    return if (ap.answer(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE).value == ap.get(Value.YES)) {
       "YES"
     } else {
       "NO"

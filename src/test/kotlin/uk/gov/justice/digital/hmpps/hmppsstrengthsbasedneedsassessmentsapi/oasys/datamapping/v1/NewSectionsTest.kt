@@ -38,14 +38,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oAC_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.YES)
-        .and(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.YES)
-        .and(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.NO)
-        .and(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.NO)
-        .and(Field.ACCOMMODATION_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.ACCOMMODATION_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -54,14 +48,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oEE_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.YES)
-        .and(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.YES)
-        .and(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.NO)
-        .and(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.NO)
-        .and(Field.EMPLOYMENT_EDUCATION_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.EMPLOYMENT_EDUCATION_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -70,14 +58,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oFI_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.FINANCE_SECTION_COMPLETE, Value.YES)
-        .and(Field.FINANCE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.FINANCE_SECTION_COMPLETE, Value.YES)
-        .and(Field.FINANCE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.FINANCE_SECTION_COMPLETE, Value.NO)
-        .and(Field.FINANCE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.FINANCE_SECTION_COMPLETE, Value.NO)
-        .and(Field.FINANCE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.FINANCE_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.FINANCE_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -86,14 +68,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oSMD_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.YES)
-        .and(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.YES)
-        .and(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.NO)
-        .and(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.NO)
-        .and(Field.DRUG_USE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.DRUG_USE_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -102,14 +78,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oSMA_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.YES)
-        .and(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.YES)
-        .and(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.NO)
-        .and(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.NO)
-        .and(Field.ALCOHOL_USE_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.ALCOHOL_USE_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -118,14 +88,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oHW_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.YES)
-        .and(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.YES)
-        .and(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.NO)
-        .and(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.NO)
-        .and(Field.HEALTH_WELLBEING_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.HEALTH_WELLBEING_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -134,14 +98,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oPRC_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.YES)
-        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.YES)
-        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.NO)
-        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.NO)
-        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 
@@ -150,14 +108,8 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
     test(
       "oTBA_SAN_SECTION_COMP",
       Given().expect("NO"),
-      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.YES)
-        .and(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("YES"),
-      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.YES)
-        .and(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
-      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.NO)
-        .and(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE, Value.YES).expect("NO"),
-      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.NO)
-        .and(Field.THINKING_BEHAVIOURS_ATTITUDES_ANALYSIS_SECTION_COMPLETE, Value.NO).expect("NO"),
+      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.YES).expect("YES"),
+      Given(Field.THINKING_BEHAVIOURS_ATTITUDES_SECTION_COMPLETE, Value.NO).expect("NO"),
     )
   }
 

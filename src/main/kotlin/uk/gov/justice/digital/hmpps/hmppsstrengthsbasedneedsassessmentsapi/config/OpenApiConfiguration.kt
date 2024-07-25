@@ -30,6 +30,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
     .servers(
       listOf(
         Server().url("https://api.strengths-based-needs-dev.hmpps.service.justice.gov.uk").description("Development"),
+        Server().url("https://api.strengths-based-needs-test.hmpps.service.justice.gov.uk").description("Test"),
         Server().url("http://localhost:8080").description("Local"),
       ),
     )

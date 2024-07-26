@@ -63,11 +63,11 @@ lint-fix: ## Runs the Kotlin linter and auto-fixes.
 # 	docker compose ${DEV_COMPOSE_FILES} exec api gradle detektBaseline --parallel
 
 test-up: ## Stands up a test environment.
-	docker compose --progress plain pull --policy missing
-	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait --force-recreate
+	docker compose pull --policy missing
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait --force-recreate
 
 test-down: ## Stops and removes all of the test containers.
-	docker compose --progress plain ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down

@@ -50,6 +50,9 @@ test-unit: ## Runs the unit test suite.
 test-integration: ## Runs the integration test suite.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle integrationTests --parallel
 
+test-dependency:
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle dependencyCheckUpdate dependencyCheckAnalyze
+
 lint: ## Runs the Kotlin linter.
 # TODO: re-enable Detekt when it supports Kotlin 2.0
 # 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck detekt --parallel

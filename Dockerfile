@@ -1,6 +1,6 @@
-FROM gradle:8-jdk22-alpine AS builder
+FROM gradle:8-jdk21-alpine AS builder
 
-FROM eclipse-temurin:22-jre-alpine AS runtime
+FROM eclipse-temurin:21-jre-alpine AS runtime
 
 FROM builder AS build
 WORKDIR /app

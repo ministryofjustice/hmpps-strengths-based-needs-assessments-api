@@ -51,12 +51,12 @@ dependencies {
 }
 
 kotlin {
-  jvmToolchain(22)
+  jvmToolchain(21)
 }
 
 tasks {
   withType<KotlinCompile> {
-    compilerOptions.jvmTarget = JvmTarget.JVM_22
+    compilerOptions.jvmTarget = JvmTarget.JVM_21
   }
   withType<BootRun> {
     jvmArgs = listOf(

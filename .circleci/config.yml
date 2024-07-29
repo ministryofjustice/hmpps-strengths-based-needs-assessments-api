@@ -224,13 +224,13 @@ workflows:
           helm_timeout: 5m
 
   security:
-#    triggers:
-#      - schedule:
-#          cron: "11 8 * * 1-5"
-#          filters:
-#            branches:
-#              only:
-#                - main
+    triggers:
+      - schedule:
+          cron: "11 8 * * 1-5"
+          filters:
+            branches:
+              only:
+                - main
     jobs:
       - hmpps/gradle_owasp_dependency_check:
           jdk_tag: "21.0"

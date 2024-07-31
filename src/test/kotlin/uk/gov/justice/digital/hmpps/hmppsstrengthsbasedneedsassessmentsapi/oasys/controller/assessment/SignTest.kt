@@ -169,7 +169,7 @@ class SignTest(
       .returnResult()
       .responseBody
 
-    Assertions.assertThat(response?.developerMessage)
+    Assertions.assertThat(response?.userMessage)
       .isEqualTo("The current assessment version is already SELF_SIGNED.")
   }
 }

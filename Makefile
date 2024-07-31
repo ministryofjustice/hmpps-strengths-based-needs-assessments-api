@@ -32,6 +32,15 @@ dev-build: ## Builds a development image of the API.
 dev-down: ## Stops and removes the API container.
 	docker compose down api
 
+dev-api-token: ## Generates a JWT for authenticating with the local API.
+	docker compose ${DEV_COMPOSE_FILES} exec api \
+		curl --location 'http://hmpps-auth:9090/auth/oauth/token' \
+  	--header 'authorization: Basic aG1wcHMtc3RyZW5ndGhzLWFuZC1uZWVkcy11aS1jbGllbnQ6Y2xpZW50c2VjcmV0' \
+  	--header 'Content-Type: application/x-www-form-urlencoded' \
+  	--data-urlencode 'grant_type=client_credentials' \
+  	| jq -r '.access_token' \
+  	| xargs printf "\nToken:\n%s\n"
+
 rebuild: ## Re-builds and live-reloads the API.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle compileKotlin --parallel --build-cache --configuration-cache
 

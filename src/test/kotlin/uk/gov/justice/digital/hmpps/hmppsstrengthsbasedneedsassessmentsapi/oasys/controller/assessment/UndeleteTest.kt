@@ -117,7 +117,7 @@ class UndeleteTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage)
+    assertThat(response?.userMessage)
       .isEqualTo("Cannot undelete OASys assessment PK ${oasysAssessment.oasysAssessmentPk} because it is not deleted.")
   }
 

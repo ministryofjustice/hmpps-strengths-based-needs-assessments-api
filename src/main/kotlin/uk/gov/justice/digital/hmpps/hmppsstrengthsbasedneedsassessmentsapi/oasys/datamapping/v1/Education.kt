@@ -104,6 +104,7 @@ class Education : SectionMapping() {
     return difficulties?.let {
       when {
         it.isEmpty() -> null
+        it == listOf("") -> null
         it.contains(ap.get(Value.NONE)) -> null
         else -> it
       }

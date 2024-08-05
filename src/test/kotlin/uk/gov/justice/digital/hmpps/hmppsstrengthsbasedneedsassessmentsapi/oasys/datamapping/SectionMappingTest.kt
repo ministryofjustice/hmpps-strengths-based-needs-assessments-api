@@ -57,10 +57,6 @@ class Given {
     this.answers = answers + mapOf(field.lower to Answer(values = values.map { it.name }))
   }
 
-  constructor(field: Field, valueScenario: ValueScenario) {
-    this.answers = answers + mapOf(field.lower to valueScenario.toAnswer())
-  }
-
   fun and(field: Field, value: String?): Given {
     this.answers = answers + mapOf(field.lower to Answer(value = value))
     return this
@@ -76,24 +72,8 @@ class Given {
     return this
   }
 
-  fun and(field: Field, valueScenario: ValueScenario): Given {
-    this.answers = answers + mapOf(field.lower to valueScenario.toAnswer())
-    return this
-  }
-
   fun expect(expected: Any?): Given {
     this.expected = expected
     return this
-  }
-}
-
-enum class ValueScenario {
-  EmptyCheckbox,
-  ;
-
-  fun toAnswer(): Answer {
-    return when (this) {
-      EmptyCheckbox -> Answer(values = listOf(""))
-    }
   }
 }

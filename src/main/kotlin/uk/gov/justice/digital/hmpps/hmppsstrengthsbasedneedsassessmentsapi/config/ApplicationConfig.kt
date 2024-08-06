@@ -9,9 +9,13 @@ import java.net.http.HttpClient
 class ApplicationConfig(
   @Value("\${app.form-config.base-url}")
   val formConfigBaseUrl: String,
+  @Value("\${spring.profiles.active:}")
+  val activeProfiles: String,
 ) {
   @Bean
   fun httpClient(): HttpClient {
     return HttpClient.newBuilder().build()
   }
+
+  fun isDebugEnabled(): Boolean = activeProfiles.split(",").any { listOf("local", "dev").contains(it) }
 }

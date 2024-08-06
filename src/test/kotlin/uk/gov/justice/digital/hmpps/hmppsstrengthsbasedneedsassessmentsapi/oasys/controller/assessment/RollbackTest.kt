@@ -183,6 +183,6 @@ class RollbackTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("Cannot rollback this assessment version. Unexpected status UNSIGNED.")
+    assertThat(response?.userMessage).isEqualTo("Cannot rollback this assessment version. Unexpected status UNSIGNED.")
   }
 }

@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping
 
 import org.springframework.beans.factory.annotation.Autowired
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.AnswersProvider
@@ -17,9 +16,6 @@ abstract class SectionMappingTest(
   private val sectionMapping: SectionMapping,
   private val version: String,
 ) : IntegrationTest() {
-  @Autowired
-  private lateinit var appConfig: ApplicationConfig
-
   @Autowired
   private lateinit var formConfigProvider: FormConfigProvider
 

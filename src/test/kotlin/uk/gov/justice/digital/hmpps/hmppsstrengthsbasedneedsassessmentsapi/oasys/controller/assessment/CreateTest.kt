@@ -107,7 +107,7 @@ class CreateTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} already exists.")
+    assertThat(response?.userMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} already exists.")
   }
 
   @Test
@@ -133,7 +133,7 @@ class CreateTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} is soft deleted.")
+    assertThat(response?.userMessage).isEqualTo("OASys assessment with ID ${oasysAss2.oasysAssessmentPk} is soft deleted.")
   }
 
   @Test

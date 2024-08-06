@@ -144,7 +144,7 @@ class CounterSignTest(
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
       .bodyValue(request)
       .exchange()
-      .expectStatus().isEqualTo(404)
+      .expectStatus().isNotFound
       .expectBody(ErrorResponse::class.java)
       .returnResult()
       .responseBody
@@ -167,7 +167,7 @@ class CounterSignTest(
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
       .bodyValue(request)
       .exchange()
-      .expectStatus().isEqualTo(404)
+      .expectStatus().isNotFound
       .expectBody(ErrorResponse::class.java)
       .returnResult()
       .responseBody
@@ -205,7 +205,7 @@ class CounterSignTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("Invalid outcome status SELF_SIGNED.")
+    assertThat(response?.userMessage).isEqualTo("Invalid outcome status SELF_SIGNED.")
   }
 
   @Test
@@ -237,6 +237,6 @@ class CounterSignTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("Cannot counter-sign this assessment version. Unexpected status UNSIGNED.")
+    assertThat(response?.userMessage).isEqualTo("Cannot counter-sign this assessment version. Unexpected status UNSIGNED.")
   }
 }

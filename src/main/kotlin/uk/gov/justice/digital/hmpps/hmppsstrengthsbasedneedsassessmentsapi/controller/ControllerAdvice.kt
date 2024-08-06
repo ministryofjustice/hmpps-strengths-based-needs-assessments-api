@@ -27,7 +27,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler(EntityNotFoundException::class)
-  fun handler(ex: EntityNotFoundException): ResponseEntity<ErrorResponse> {
+  fun handle(ex: EntityNotFoundException): ResponseEntity<ErrorResponse> {
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .body(
@@ -39,7 +39,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler(ConflictException::class)
-  fun handler(ex: ConflictException): ResponseEntity<ErrorResponse> {
+  fun handle(ex: ConflictException): ResponseEntity<ErrorResponse> {
     return ResponseEntity
       .status(HttpStatus.CONFLICT)
       .body(
@@ -51,7 +51,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler(ResponseStatusException::class)
-  fun handler(ex: ResponseStatusException): ResponseEntity<ErrorResponse> {
+  fun handle(ex: ResponseStatusException): ResponseEntity<ErrorResponse> {
     return ResponseEntity
       .status(ex.statusCode)
       .body(
@@ -63,7 +63,7 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
-  fun handler(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
+  fun handle(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
     return ResponseEntity
       .status(HttpStatus.FORBIDDEN)
       .body(

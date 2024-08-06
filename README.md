@@ -20,6 +20,8 @@ To check the status, go to http://localhost:8080/health
 
 The UI can be accessed on http://localhost:7072
 
+The Swagger docs are on http://localhost:8080/swagger-ui/index.html 
+
 To update containers
 
 `make down update up`
@@ -37,6 +39,10 @@ To enable live-reload after starting in development mode, run:
 A remote debugger can be attached to the containerised JVM on port 5005
 
 ![debugger.png](.readme/debugger.png)
+
+To generate an authentication token (JWT) for the local API, run:
+
+`make dev-api-token`
 
 Run `make` to see the full list of dev commands.
 

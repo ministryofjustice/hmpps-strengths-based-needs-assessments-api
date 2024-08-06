@@ -20,6 +20,7 @@ class FormConfigProviderTest {
   private val mockHttpClient: HttpClient = mockk()
   private val appConfig: ApplicationConfig = ApplicationConfig(
     formConfigBaseUrl = "http://test-url/config",
+    activeProfiles = "",
   )
   private val sut = FormConfigProvider(appConfig, mockHttpClient, jacksonObjectMapper())
 

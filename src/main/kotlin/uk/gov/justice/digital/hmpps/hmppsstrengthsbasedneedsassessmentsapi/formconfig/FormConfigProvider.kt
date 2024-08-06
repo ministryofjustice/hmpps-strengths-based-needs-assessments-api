@@ -21,6 +21,7 @@ data class FormConfig(
 data class Field(
   val code: String,
   val options: List<Option> = emptyList(),
+  val type: String = "",
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

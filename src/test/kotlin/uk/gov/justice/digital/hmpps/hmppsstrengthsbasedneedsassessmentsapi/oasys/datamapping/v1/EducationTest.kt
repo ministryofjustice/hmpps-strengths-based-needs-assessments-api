@@ -4,7 +4,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Given
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.SectionMappingTest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.ValueScenario
 import kotlin.test.Test
 
 class EducationTest : SectionMappingTest(Education(), "1.0") {
@@ -109,7 +108,6 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
       "o4-7-1",
       Given().expect(null),
       Given(Field.EDUCATION_DIFFICULTIES, emptyList()).expect(null),
-      Given(Field.EDUCATION_DIFFICULTIES, ValueScenario.EmptyCheckbox).expect(null),
       Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.NONE)).expect(null),
       Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.READING)).expect(listOf("READING")),
       Given(Field.EDUCATION_DIFFICULTIES, listOf(Value.WRITING)).expect(listOf("WRITING")),

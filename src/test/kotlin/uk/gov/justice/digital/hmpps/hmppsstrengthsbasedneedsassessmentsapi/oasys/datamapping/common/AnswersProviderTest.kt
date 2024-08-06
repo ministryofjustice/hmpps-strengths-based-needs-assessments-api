@@ -12,11 +12,13 @@ import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field as FormConfigField
 
 class AnswersProviderTest {
   private val testAnswers = mapOf(
     Field.CURRENT_ACCOMMODATION.lower to Answer(value = Value.SETTLED.name),
     Field.SUITABLE_HOUSING.lower to Answer(values = listOf(Value.YES.name)),
+    Field.EDUCATION_DIFFICULTIES.lower to Answer(values = listOf("")),
   )
 
   private lateinit var sut: AnswersProvider
@@ -26,13 +28,18 @@ class AnswersProviderTest {
     val testFormConfig = FormConfig(
       "1.0",
       mapOf(
-        Field.CURRENT_ACCOMMODATION.lower to uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field(
+        Field.CURRENT_ACCOMMODATION.lower to FormConfigField(
           Field.CURRENT_ACCOMMODATION.lower,
           listOf(Option(Value.TEMPORARY.name), Option(Value.NO_ACCOMMODATION.name), Option(Value.SETTLED.name)),
         ),
-        Field.SUITABLE_HOUSING.lower to uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field(
+        Field.SUITABLE_HOUSING.lower to FormConfigField(
           Field.SUITABLE_HOUSING.lower,
           listOf(Option(Value.YES.name), Option(Value.YES_WITH_CONCERNS.name), Option(Value.NO.name)),
+        ),
+        Field.EDUCATION_DIFFICULTIES.lower to FormConfigField(
+          Field.EDUCATION_DIFFICULTIES.lower,
+          listOf(Option("Some value")),
+          "CHECKBOX",
         ),
       ),
     )
@@ -60,6 +67,10 @@ class AnswersProviderTest {
 
       answer = sut.answer(Field.SUITABLE_HOUSING)
       assertEquals(listOf(Value.YES.name), answer.values)
+      assertNull(answer.value)
+
+      answer = sut.answer(Field.EDUCATION_DIFFICULTIES)
+      assertEquals(emptyList(), answer.values)
       assertNull(answer.value)
     }
   }

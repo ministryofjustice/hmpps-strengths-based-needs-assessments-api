@@ -24,7 +24,8 @@ class AnswersProvider(
 
     return config.fields[context]?.code?.let {
       val answer = answers[it]
-      Answer(answer?.value, answer?.values)
+      val answerValues = if (config.fields[context]?.type == "CHECKBOX" && answer?.values == listOf("")) emptyList() else answer?.values
+      Answer(answer?.value, answerValues)
     } ?: throw InvalidMappingException("Field ${field.lower} does not exist in form config version ${config.version}")
   }
 

@@ -128,7 +128,7 @@ data class AssessmentVersion(
   val assessment: Assessment = Assessment(),
 
   @Column(name = "version_number")
-  val versionNumber: Long = 0,
+  val versionNumber: Int = 0,
 
   @OneToMany(mappedBy = "assessmentVersion", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var assessmentVersionAudit: List<AssessmentVersionAudit> = listOf(),

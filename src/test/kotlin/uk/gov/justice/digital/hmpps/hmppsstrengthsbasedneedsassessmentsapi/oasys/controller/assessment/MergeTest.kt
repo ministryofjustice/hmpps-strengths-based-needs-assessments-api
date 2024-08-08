@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
-import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("OasysAssessmentController: /oasys/assessment/merge")
@@ -33,9 +33,9 @@ class MergeTest(
   fun setUp() {
     assessment = Assessment()
 
-    oasysAssessmentA = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-    oasysAssessmentB = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-    oasysAssessmentC = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+    oasysAssessmentA = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+    oasysAssessmentB = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+    oasysAssessmentC = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
 
     assessment.oasysAssessments = listOf(oasysAssessmentA, oasysAssessmentB, oasysAssessmentC)
 
@@ -141,8 +141,8 @@ class MergeTest(
 
   @Test
   fun `it transfers association with an assessment to the new PK`() {
-    val newAssessmentPkX = UUID.randomUUID().toString()
-    val newAssessmentPkY = UUID.randomUUID().toString()
+    val newAssessmentPkX = OasysPKGenerator.new()
+    val newAssessmentPkY = OasysPKGenerator.new()
 
     val request = """
       {
@@ -191,8 +191,8 @@ class MergeTest(
 
   @Test
   fun `it rolls back on failure`() {
-    val newAssessmentPkX = UUID.randomUUID().toString()
-    val newAssessmentPkY = UUID.randomUUID().toString()
+    val newAssessmentPkX = OasysPKGenerator.new()
+    val newAssessmentPkY = OasysPKGenerator.new()
 
     val request = """
       {

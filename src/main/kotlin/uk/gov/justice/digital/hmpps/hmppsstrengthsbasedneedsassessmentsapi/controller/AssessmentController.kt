@@ -50,7 +50,7 @@ class AssessmentController(
       `in` = ParameterIn.QUERY,
       example = "1",
     )
-    versionNumber: Long? = null,
+    versionNumber: Int? = null,
   ): AssessmentResponse {
     return AssessmentVersionCriteria(
       assessmentUuid = assessmentUuid,

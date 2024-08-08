@@ -5,9 +5,9 @@ import java.util.UUID
 
 data class OasysAssessmentResponse(
   val sanAssessmentId: UUID,
-  val sanAssessmentVersion: Long,
+  val sanAssessmentVersion: Int,
   val sentencePlanId: UUID? = null,
-  val sentencePlanVersion: Long? = null,
+  val sentencePlanVersion: Int? = null,
 ) {
   companion object {
     fun from(assessmentVersion: AssessmentVersion): OasysAssessmentResponse {

@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
-import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("OasysAssessmentController: /oasys/assessment/create")
@@ -34,8 +34,8 @@ class CreateTest(
   fun setUp() {
     assessment = Assessment()
 
-    oasysAss1 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-    oasysAss2 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+    oasysAss1 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+    oasysAss2 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
 
     assessment.assessmentVersions = listOf(AssessmentVersion(assessment = assessment))
     assessment.oasysAssessments = listOf(oasysAss1, oasysAss2)
@@ -138,7 +138,7 @@ class CreateTest(
 
   @Test
   fun `it creates an assessment when only an OASys assessment PK provided and no assessment already exists`() {
-    val newOasysPK = UUID.randomUUID().toString()
+    val newOasysPK = OasysPKGenerator.new()
     val regionPrisonCode = "test-prison-code"
 
     val request = """

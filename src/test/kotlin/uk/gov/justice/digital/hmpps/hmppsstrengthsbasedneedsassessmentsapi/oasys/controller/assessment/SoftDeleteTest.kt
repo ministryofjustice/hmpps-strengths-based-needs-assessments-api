@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
-import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("OasysAssessmentController: /oasys/assessment/{oasysPK}/soft-delete")
@@ -31,7 +31,7 @@ class SoftDeleteTest(
   @BeforeEach
   fun setUp() {
     assessment = Assessment()
-    oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+    oasysAssessment = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
     assessment.oasysAssessments = listOf(oasysAssessment)
     assessmentRepository.save(assessment)
   }

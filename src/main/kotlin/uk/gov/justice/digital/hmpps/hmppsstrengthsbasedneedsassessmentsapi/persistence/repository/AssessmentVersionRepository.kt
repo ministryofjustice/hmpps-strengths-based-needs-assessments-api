@@ -12,5 +12,5 @@ interface AssessmentVersionRepository : JpaRepository<AssessmentVersion, Long>, 
   fun findByUuid(uuid: UUID): AssessmentVersion
 
   @Query("SELECT COUNT(e) FROM AssessmentVersion e WHERE e.assessment.uuid=?1")
-  fun countVersionWhereAssessmentUuid(assessmentUuid: UUID): Long
+  fun countVersionWhereAssessmentUuid(assessmentUuid: UUID): Int
 }

@@ -7,7 +7,7 @@ import java.util.UUID
 
 data class OasysAssessmentVersionResponse(
   val sanAssessmentId: UUID,
-  val sanAssessmentVersion: Long,
+  val sanAssessmentVersion: Int,
   val sanAssessmentData: AssessmentResponse,
   val lastUpdatedTimestamp: LocalDateTime,
 ) {

@@ -10,7 +10,7 @@ import java.util.UUID
 data class AssessmentVersionCriteria(
   val assessmentUuid: UUID,
   val tags: Set<Tag>? = null,
-  val versionNumber: Long? = null,
+  val versionNumber: Int? = null,
 ) {
   fun getSpecification(): Specification<AssessmentVersion> {
     return belongsToAssessment()

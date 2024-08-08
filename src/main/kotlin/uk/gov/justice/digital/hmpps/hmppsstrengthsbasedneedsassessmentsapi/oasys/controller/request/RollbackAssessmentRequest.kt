@@ -7,7 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero
 class RollbackAssessmentRequest(
   @Schema(description = "The SAN Assessment version number that was returned from the Sign Assessment API call.", example = "2")
   @PositiveOrZero
-  val sanVersionNumber: Long,
+  val sanVersionNumber: Int,
   @Schema(description = "OASys User")
   @Valid
   override val userDetails: OasysUserDetails,

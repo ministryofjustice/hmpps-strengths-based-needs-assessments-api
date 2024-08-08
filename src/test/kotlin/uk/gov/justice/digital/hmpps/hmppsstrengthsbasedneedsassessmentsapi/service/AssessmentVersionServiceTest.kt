@@ -119,7 +119,7 @@ class AssessmentVersionServiceTest {
 
       every {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements
+      } returns assessmentVersions.totalElements.toInt()
 
       val result = assessmentVersionService.getPreviousOrCreate(assessment)
       assertThat(result?.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
@@ -142,7 +142,7 @@ class AssessmentVersionServiceTest {
 
       every {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements
+      } returns assessmentVersions.totalElements.toInt()
 
       val result = assessmentVersionService.getPreviousOrCreate(assessment)
       assertThat(result?.tag).isEqualTo(tag)
@@ -252,7 +252,7 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions
       every {
         assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements
+      } returns assessmentVersions.totalElements.toInt()
       every { dataMappingService.getOasysEquivalent(any()) } returns oasysEquivalents
 
       val savedVersion = slot<AssessmentVersion>()

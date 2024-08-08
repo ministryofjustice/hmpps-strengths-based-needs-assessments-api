@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
@@ -65,8 +66,8 @@ class AssessmentControllerTest(
         versionNumber = 0,
       )
 
-      oasysAss1 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
-      oasysAss2 = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+      oasysAss1 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+      oasysAss2 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
 
       assessment.assessmentVersions = listOf(latestVersion, previousVersion)
       assessment.oasysAssessments = listOf(oasysAss1, oasysAss2)
@@ -193,7 +194,7 @@ class AssessmentControllerTest(
     fun setUp() {
       assessment = Assessment()
       assessment.oasysAssessments =
-        listOf(OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment))
+        listOf(OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment))
       assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
       assessmentRepository.save(assessment)

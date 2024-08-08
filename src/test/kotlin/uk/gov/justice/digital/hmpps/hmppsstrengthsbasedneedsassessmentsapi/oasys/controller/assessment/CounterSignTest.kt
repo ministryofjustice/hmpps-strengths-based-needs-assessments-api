@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -15,7 +16,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
-import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("OasysAssessmentController: /oasys/assessment/{oasysPK}/counter-sign")
@@ -30,7 +30,7 @@ class CounterSignTest(
   @BeforeEach
   fun setUp() {
     assessment = Assessment()
-    oasysAssessment = OasysAssessment(oasysAssessmentPk = UUID.randomUUID().toString(), assessment = assessment)
+    oasysAssessment = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
     assessment.oasysAssessments = listOf(oasysAssessment)
     assessmentRepository.save(assessment)
   }
@@ -139,7 +139,7 @@ class CounterSignTest(
         }
     """.trimIndent()
 
-    val response = webTestClient.post().uri("/oasys/assessment/non-existent-assessment/counter-sign")
+    val response = webTestClient.post().uri("/oasys/assessment/non-existent-pk/counter-sign")
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
       .bodyValue(request)
@@ -149,7 +149,7 @@ class CounterSignTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.developerMessage).isEqualTo("No OASys assessment found for PK non-existent-assessment")
+    assertThat(response?.developerMessage).isEqualTo("No OASys assessment found for PK non-existent-pk")
   }
 
   @Test

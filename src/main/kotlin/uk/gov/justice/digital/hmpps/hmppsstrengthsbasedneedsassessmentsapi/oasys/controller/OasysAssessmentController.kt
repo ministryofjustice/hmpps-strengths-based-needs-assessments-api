@@ -6,12 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Size
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditedRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.CounterSignAssessmentRequest
@@ -58,6 +61,8 @@ class OasysAssessmentController(
   fun get(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
   ): OasysAssessmentVersionResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -90,7 +95,7 @@ class OasysAssessmentController(
   )
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun create(
-    @RequestBody
+    @RequestBody @Valid
     request: CreateAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.associateExistingOrCreate(
@@ -127,7 +132,7 @@ class OasysAssessmentController(
   )
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun merge(
-    @RequestBody
+    @RequestBody @Valid
     request: MergeAssessmentRequest,
   ): Message {
     oasysAssessmentService.transferAssociation(request.merge)
@@ -160,8 +165,11 @@ class OasysAssessmentController(
   fun sign(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
     @RequestBody
+    @Valid
     request: SignAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -199,8 +207,10 @@ class OasysAssessmentController(
   fun counterSign(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
-    @RequestBody
+    @RequestBody @Valid
     request: CounterSignAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -238,8 +248,10 @@ class OasysAssessmentController(
   fun lock(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
-    @RequestBody
+    @RequestBody @Valid
     request: AuditedRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -275,8 +287,10 @@ class OasysAssessmentController(
   fun rollback(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
-    @RequestBody
+    @RequestBody @Valid
     request: RollbackAssessmentRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -312,8 +326,10 @@ class OasysAssessmentController(
   fun softDelete(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
-    @RequestBody
+    @RequestBody @Valid
     request: AuditedRequest,
   ): Message {
     return oasysAssessmentService.find(oasysAssessmentPK)
@@ -347,8 +363,10 @@ class OasysAssessmentController(
   fun undelete(
     @Parameter(description = "OASys Assessment PK", required = true, example = "oasys-pk-goes-here")
     @PathVariable
+    @Size(min = Constraints.OASYS_PK_MIN_LENGTH, max = Constraints.OASYS_PK_MAX_LENGTH)
+    @Valid
     oasysAssessmentPK: String,
-    @RequestBody
+    @RequestBody @Valid
     request: AuditedRequest,
   ): OasysAssessmentResponse {
     return oasysAssessmentService.undelete(oasysAssessmentPK)

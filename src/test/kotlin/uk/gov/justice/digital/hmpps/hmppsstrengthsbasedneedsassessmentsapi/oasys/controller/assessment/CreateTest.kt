@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.assessment
 
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,8 +13,11 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.repository.OasysAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("OasysAssessmentController: /oasys/assessment/create")
@@ -158,12 +160,85 @@ class CreateTest(
 
     val newOasysAss = oasysAssessmentRepository.findByOasysAssessmentPk(newOasysPK)
 
-    Assertions.assertThat(newOasysAss).isNotNull
-    Assertions.assertThat(newOasysAss?.regionPrisonCode).isEqualTo(regionPrisonCode)
-    Assertions.assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk }).isEqualTo(
+    assertThat(newOasysAss).isNotNull
+    assertThat(newOasysAss?.regionPrisonCode).isEqualTo(regionPrisonCode)
+    assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk }).isEqualTo(
       listOf(
         newOasysPK,
       ),
     )
+  }
+
+  @Test
+  fun `it associates a new OASys assessment to an existing assessment and creates a new Unsigned assessment version`() {
+    val newOasysPK = OasysPKGenerator.new()
+    val regionPrisonCode = "test-prison-code"
+
+    val lockedVersion = assessment.assessmentVersions.first().apply { tag = Tag.LOCKED_INCOMPLETE }
+    assessment.assessmentVersions = listOf(lockedVersion)
+    assessmentRepository.save(assessment)
+
+    val request = """
+          {
+            "oasysAssessmentPk": "$newOasysPK",
+            "previousOasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
+            "regionPrisonCode": "$regionPrisonCode",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
+          }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint)
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isOk
+
+    val newOasysAss = oasysAssessmentRepository.findByOasysAssessmentPk(newOasysPK)
+
+    assertThat(newOasysAss).isNotNull
+    assertThat(newOasysAss?.regionPrisonCode).isEqualTo(regionPrisonCode)
+    assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk })
+      .containsExactlyInAnyOrder(newOasysPK, oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk)
+
+    val assessmentVersions = newOasysAss?.assessment?.assessmentVersions
+    assertNotNull(assessmentVersions)
+    assertEquals(2, assessmentVersions.count())
+    assertThat(mapOf(0 to Tag.LOCKED_INCOMPLETE, 1 to Tag.UNSIGNED))
+      .containsExactlyInAnyOrderEntriesOf(assessmentVersions.associate { it.versionNumber to it.tag })
+  }
+
+  @Test
+  fun `it associates a new OASys assessment to an existing assessment and returns the existing Unsigned assessment version`() {
+    val newOasysPK = OasysPKGenerator.new()
+    val regionPrisonCode = "test-prison-code"
+
+    val request = """
+          {
+            "oasysAssessmentPk": "$newOasysPK",
+            "previousOasysAssessmentPk": "${oasysAss1.oasysAssessmentPk}",
+            "regionPrisonCode": "$regionPrisonCode",
+            "userDetails": { "id": "user-id", "name": "John Doe" }
+          }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint)
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isOk
+
+    val newOasysAss = oasysAssessmentRepository.findByOasysAssessmentPk(newOasysPK)
+
+    assertThat(newOasysAss).isNotNull
+    assertThat(newOasysAss?.regionPrisonCode).isEqualTo(regionPrisonCode)
+    assertThat(newOasysAss?.assessment?.oasysAssessments?.map { it.oasysAssessmentPk })
+      .containsExactlyInAnyOrder(newOasysPK, oasysAss1.oasysAssessmentPk, oasysAss2.oasysAssessmentPk)
+
+    val assessmentVersions = newOasysAss?.assessment?.assessmentVersions
+    assertNotNull(assessmentVersions)
+    assertEquals(1, assessmentVersions.count())
+    assertEquals(assessmentVersions.first().tag, Tag.UNSIGNED)
   }
 }

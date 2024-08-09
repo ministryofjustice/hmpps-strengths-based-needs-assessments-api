@@ -51,21 +51,20 @@ class OasysAssessmentService(
     previousOasysAssessmentPk: String? = null,
     regionPrisonCode: String? = null,
   ): Assessment {
-    return oasysAssessmentRepository.findByOasysAssessmentPkInclDeleted(oasysAssessmentPk)
-      ?.let {
-        if (it.deleted) {
-          throw ConflictException("OASys assessment with ID $oasysAssessmentPk is soft deleted.")
-        } else {
-          throw ConflictException("OASys assessment with ID $oasysAssessmentPk already exists.")
-        }
+    oasysAssessmentRepository.findByOasysAssessmentPkInclDeleted(oasysAssessmentPk)?.let {
+      if (it.deleted) {
+        throw ConflictException("OASys assessment with ID $oasysAssessmentPk is soft deleted.")
+      } else {
+        throw ConflictException("OASys assessment with ID $oasysAssessmentPk already exists.")
       }
-      ?: run {
-        previousOasysAssessmentPk?.let {
-          associate(oasysAssessmentPk, previousOasysAssessmentPk, regionPrisonCode).assessment
-        } ?: createAssessmentWithOasysId(oasysAssessmentPk, regionPrisonCode).assessment
-      }.also {
-        log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${it.uuid}")
-      }
+    }
+
+    return when (previousOasysAssessmentPk) {
+      null -> createAssessmentWithOasysId(oasysAssessmentPk, regionPrisonCode)
+      else -> associate(oasysAssessmentPk, previousOasysAssessmentPk, regionPrisonCode)
+    }.assessment.also {
+      log.info("Associated OASys assessment PK $oasysAssessmentPk with SAN assessment ${it.uuid}")
+    }
   }
 
   @Transactional

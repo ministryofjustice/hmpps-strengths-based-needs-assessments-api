@@ -28,13 +28,13 @@ class AssessmentVersionService(
   val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val dataMappingService: DataMappingService,
 ) {
-  fun getPreviousOrCreate(assessment: Assessment): AssessmentVersion? {
+  fun getPreviousOrCreate(assessment: Assessment): AssessmentVersion {
     return findOrNull(AssessmentVersionCriteria(assessment.uuid))?.let { assessmentVersion ->
       if (assessmentVersion.isUpdatable()) assessmentVersion else createWith(assessment, assessmentVersion.answers)
     } ?: createWith(assessment)
   }
 
-  private fun createWith(
+  fun createWith(
     assessment: Assessment,
     answers: Answers = emptyMap(),
   ) = AssessmentVersion(
@@ -62,11 +62,10 @@ class AssessmentVersionService(
     log.info("Adding answers to assessment with UUID ${assessment.uuid}")
 
     getPreviousOrCreate(assessment)
-      ?.apply { setAnswers(request.answersToAdd, request.answersToRemove) }
-      ?.run(::setOasysEquivalents)
-      ?.run(assessmentVersionRepository::save)
-      ?.also { log.info("Saved answers to assessment version UUID ${it.uuid}") }
-      ?: throw AssessmentVersionNotFoundException(AssessmentVersionCriteria(assessment.uuid, setOf(Tag.UNSIGNED)))
+      .apply { setAnswers(request.answersToAdd, request.answersToRemove) }
+      .run(::setOasysEquivalents)
+      .run(assessmentVersionRepository::save)
+      .also { log.info("Saved answers to assessment version UUID ${it.uuid}") }
   }
 
   fun setOasysEquivalents(assessmentVersion: AssessmentVersion) = assessmentVersion.apply {

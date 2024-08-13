@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
@@ -37,10 +38,12 @@ class AssessmentVersionService(
   fun createWith(
     assessment: Assessment,
     answers: Answers = emptyMap(),
+    oasysEquivalents: OasysEquivalent = emptyMap(),
   ) = AssessmentVersion(
     assessment = assessment,
     versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
     answers = answers,
+    oasysEquivalents = oasysEquivalents,
   )
 
   fun findOrNull(criteria: AssessmentVersionCriteria): AssessmentVersion? {

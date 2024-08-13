@@ -206,6 +206,12 @@ class CreateTest(
     assertEquals(2, assessmentVersions.count())
     assertThat(mapOf(0 to Tag.LOCKED_INCOMPLETE, 1 to Tag.UNSIGNED))
       .containsExactlyInAnyOrderEntriesOf(assessmentVersions.associate { it.versionNumber to it.tag })
+
+    assertThat(assessmentVersions.first().answers)
+      .containsExactlyInAnyOrderEntriesOf(assessmentVersions.last().answers)
+
+    assertThat(assessmentVersions.first().oasysEquivalents)
+      .containsExactlyInAnyOrderEntriesOf(assessmentVersions.last().oasysEquivalents)
   }
 
   @Test

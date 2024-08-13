@@ -109,7 +109,7 @@ class OasysAssessmentController(
       .run {
         when (tag) {
           Tag.UNSIGNED -> this
-          else -> assessmentVersionService.createWith(assessment, answers).run(assessmentVersionService::save)
+          else -> assessmentVersionService.createWith(assessment, answers, oasysEquivalents).run(assessmentVersionService::save)
         }
       }
       .run(OasysAssessmentResponse::from)

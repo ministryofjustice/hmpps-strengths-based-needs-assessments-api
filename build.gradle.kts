@@ -4,8 +4,8 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.3"
-  kotlin("plugin.spring") version "2.0.10"
-  id("org.jetbrains.kotlin.kapt") version "2.0.10"
+  kotlin("plugin.spring") version "2.0.20"
+  id("org.jetbrains.kotlin.kapt") version "2.0.20"
   // TODO: re-enable Detekt when it supports Kotlin 2.0
 //  id("io.gitlab.arturbosch.detekt") version "1.23.6"
   id("org.jetbrains.kotlinx.kover") version "0.8.3"

@@ -25,6 +25,7 @@ enum class AnswerType {
   RADIO,
   CHECKBOX,
   DROPDOWN,
+  AUTOCOMPLETE,
   COLLECTION,
   DATE,
 }

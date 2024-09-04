@@ -25,6 +25,7 @@ enum class AnswerType {
   RADIO,
   CHECKBOX,
   DROPDOWN,
+  AUTOCOMPLETE,
   COLLECTION,
   DATE,
 }
@@ -40,6 +41,7 @@ class Answer(
   val options: List<Option>? = null,
   val value: String? = null,
   val values: List<String>? = null,
+  val collection: List<Answers>? = null,
 )
 
 typealias Answers = Map<String, Answer>

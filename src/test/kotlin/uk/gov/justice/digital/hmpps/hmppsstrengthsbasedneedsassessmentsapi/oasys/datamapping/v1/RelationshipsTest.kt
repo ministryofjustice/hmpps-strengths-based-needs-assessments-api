@@ -15,7 +15,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.UNSTABLE_RELATIONSHIP).expect("2"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.MIXED_RELATIONSHIP).expect("1"),
       Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.STABLE_RELATIONSHIP).expect("0"),
-      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.UNKNOWN).expect(null),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP, Value.UNKNOWN).expect("M"),
     )
   }
 
@@ -56,9 +56,10 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
     test(
       "o6-7-1-1da",
       Given().expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("NO"),
     )
   }
 
@@ -67,9 +68,10 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
     test(
       "o6-7-1-2da",
       Given().expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("YES"),
-//      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("NO"),
     )
   }
 
@@ -78,9 +80,10 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
     test(
       "o6-7-2-1da",
       Given().expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("NO"),
     )
   }
 
@@ -89,9 +92,10 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
     test(
       "o6-7-2-2da",
       Given().expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("YES"),
-//      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, Value.INTIMATE_PARTNER).expect("NO"),
     )
   }
 

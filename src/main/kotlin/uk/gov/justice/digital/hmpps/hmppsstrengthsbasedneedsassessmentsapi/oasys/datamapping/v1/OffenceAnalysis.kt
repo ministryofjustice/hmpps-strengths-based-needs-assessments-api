@@ -4,6 +4,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.FieldsToMap
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer as PersistedAnswer
 
 class OffenceAnalysis : SectionMapping() {
   override fun getFieldsToMap(): FieldsToMap {
@@ -16,14 +17,7 @@ class OffenceAnalysis : SectionMapping() {
       "o2-2_V2_EXCESSIVE" to ::q2ExcessiveOrSadisticViolence,
       "o2-2_V2_PHYSICALDAM" to ::q2PhysicalDamageToProperty,
       "o2-2_V2_SEXUAL" to ::q2SexualElement,
-      "o2-DIRECTCONT" to ::q2DirectContact,
-      "o2-HATE" to ::q2HatredOfIdentifiableGroups,
-      // TODO: Figure this out..
-      // "o-STRANGERS" to ::qStrangers,
-      // "o2-victim.age_of_victim_ELM" to ::qTodo,
-      // "o2-victim.gender_ELM" to ::qTodo,
-      // "o2-victim_ethnic_category_ELM" to ::qTodo,
-      // "o2-2_4_2" to ::q242,
+      "o2-3" to ::q3,
       "o2-6" to ::q6,
       "o2-7" to ::q7,
       "o2-7-1" to ::q71,
@@ -33,17 +27,97 @@ class OffenceAnalysis : SectionMapping() {
       "o2-9_V2_SEXUAL" to ::q9SexualMotivations,
       "o2-9_V2_FINANCIAL" to ::q9FinancialMotivations,
       "o2-9_V2_ADDICTION" to ::q9AddictionMotivations,
-      "o2.9_V2_RACIAL" to ::q9RacialMotivations,
-      "o2-2_9_V2_THRILL" to ::q29ThrillMotivations,
-      "o2-2_9_V2_OTHER" to ::q29OtherMotivations,
-      "o2-2_9t_V2" to ::q29t,
+      "o2-9_V2_RACIAL" to ::q9RacialMotivations,
+      "o2-9_V2_THRILL" to ::q29ThrillMotivations,
+      "o2-9_V2_OTHER" to ::q29OtherMotivations,
+      "o2-9t_V2" to ::q29t,
       "o2-11" to ::q11,
       "o2-11t" to ::q11t,
       "o2-12" to ::q12,
       "o2-13" to ::q13,
       "o2-98" to ::q98,
       "o2-99" to ::q99,
-    )
+    ).plus(buildVictimCollectionAnswers())
+  }
+
+  private fun mapVictimAge(entry: Map<String, PersistedAnswer>): String? {
+    ap.setContext(Field.OFFENCE_ANALYSIS_VICTIM_AGE)
+    return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_AGE.lower]?.value) {
+      ap.get(Value.AGE_0_TO_4_YEARS) -> "0"
+      ap.get(Value.AGE_5_TO_11_YEARS) -> "1"
+      ap.get(Value.AGE_12_TO_15_YEARS) -> "2"
+      ap.get(Value.AGE_16_TO_17_YEARS) -> "3"
+      ap.get(Value.AGE_18_TO_20_YEARS) -> "4"
+      ap.get(Value.AGE_21_TO_25_YEARS) -> "5"
+      ap.get(Value.AGE_26_TO_49_YEARS) -> "6"
+      ap.get(Value.AGE_50_TO_64_YEARS) -> "7"
+      ap.get(Value.AGE_65_AND_OVER) -> "8"
+      else -> null
+    }
+  }
+
+  private fun mapVictimGender(entry: Map<String, PersistedAnswer>): String? {
+    ap.setContext(Field.OFFENCE_ANALYSIS_VICTIM_SEX)
+    return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_SEX.lower]?.value) {
+      ap.get(Value.MALE) -> "1"
+      ap.get(Value.FEMALE) -> "2"
+      else -> null
+    }
+  }
+
+  private fun mapVictimRace(entry: Map<String, PersistedAnswer>): String? {
+    ap.setContext(Field.OFFENCE_ANALYSIS_VICTIM_RACE)
+    return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_RACE.lower]?.value) {
+      ap.get(Value.WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH) -> "W1"
+      ap.get(Value.WHITE_IRISH) -> "W2"
+      ap.get(Value.WHITE_GYPSY_OR_IRISH_TRAVELLER) -> "W4"
+      ap.get(Value.WHITE_ANY_OTHER_WHITE_BACKGROUND) -> "W9"
+      ap.get(Value.MIXED_WHITE_AND_BLACK_CARIBBEAN) -> "M1"
+      ap.get(Value.MIXED_WHITE_AND_BLACK_AFRICAN) -> "M2"
+      ap.get(Value.MIXED_WHITE_AND_ASIAN) -> "M3"
+      ap.get(Value.MIXED_ANY_OTHER_MIXED_OR_MULTIPLE_ETHNIC_BACKGROUND_BACKGROUND) -> "M9"
+      ap.get(Value.ASIAN_OR_ASIAN_BRITISH_INDIAN) -> "A1"
+      ap.get(Value.ASIAN_OR_ASIAN_BRITISH_PAKISTANI) -> "A2"
+      ap.get(Value.ASIAN_OR_ASIAN_BRITISH_BANGLADESHI) -> "A3"
+      ap.get(Value.ASIAN_OR_ASIAN_BRITISH_CHINESE) -> "A4"
+      ap.get(Value.ASIAN_OR_ASIAN_BRITISH_ANY_OTHER_ASIAN_BACKGROUND) -> "A9"
+      ap.get(Value.BLACK_OR_BLACK_BRITISH_CARIBBEAN) -> "B1"
+      ap.get(Value.BLACK_OR_BLACK_BRITISH_AFRICAN) -> "B2"
+      ap.get(Value.BLACK_OR_BLACK_BRITISH_ANY_OTHER_BLACK_BACKGROUND) -> "B9"
+      ap.get(Value.ARAB) -> "O2"
+      ap.get(Value.ANY_OTHER_ETHNIC_GROUP) -> "O9"
+      else -> null
+    }
+  }
+
+  private fun mapVictimRelationship(entry: Map<String, PersistedAnswer>): String? {
+    ap.setContext(Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP)
+    return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower]?.value) {
+      ap.get(Value.STRANGER) -> "0"
+      ap.get(Value.CRIMINAL_JUSTICE_STAFF) -> "12"
+      ap.get(Value.CHILD) -> "14"
+      ap.get(Value.EX_PARTNER) -> "15"
+      ap.get(Value.PARENT_OR_STEP_PARENT) -> "5"
+      ap.get(Value.OTHER_FAMILY_MEMBER) -> "6"
+      ap.get(Value.PARTNER) -> "1"
+      ap.get(Value.OTHER) -> "13"
+      else -> null
+    }
+  }
+
+  private fun buildVictimCollectionAnswers(): FieldsToMap {
+    val collection = ap.answer(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION).collection
+
+    return collection.mapIndexed { index, entry ->
+      "victim$index" to {
+        mapOf(
+          "o-age_of_victim_elm" to mapVictimAge(entry),
+          "o-gender_elm" to mapVictimGender(entry),
+          "o-victim_ethnic_category_elm" to mapVictimRace(entry),
+          "o-relation_elm" to mapVictimRelationship(entry),
+        )
+      }
+    }.toMap()
   }
 
   private fun q1() = ap.answer(Field.OFFENCE_ANALYSIS_DESCRIPTION_OF_OFFENCE).value
@@ -90,26 +164,16 @@ class OffenceAnalysis : SectionMapping() {
     }
   }
 
-  private fun q2DirectContact(): Any? {
-    return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.VICTIM_TARGETED))) "YES" else "NO"
-    }
-  }
+  private fun q3(): Any? {
+    val answers = ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.mapNotNull {
+      when (it) {
+        ap.get(Value.VICTIM_TARGETED) -> "DIRECTCONT"
+        ap.get(Value.HATRED_OF_IDENTIFIABLE_GROUPS) -> "HATE"
+        else -> null
+      }
+    }?.joinToString(",")
 
-  private fun q2HatredOfIdentifiableGroups(): Any? {
-    return ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values?.let {
-      if (it.contains(ap.get(Value.HATRED_OF_IDENTIFIABLE_GROUPS))) "YES" else "NO"
-    }
-  }
-
-  private fun qStrangers(): Any? {
-    return null
-  }
-
-  // ...
-
-  private fun q242(): Any? {
-    return null
+    return if (!answers.isNullOrBlank()) answers else null
   }
 
   private fun q6(): Any? {
@@ -169,10 +233,12 @@ class OffenceAnalysis : SectionMapping() {
         val details = ap.answer(Field.OFFENCE_ANALYSIS_LEADER_YES_DETAILS).value
         listOfNotNull("Yes", details).joinToString(" - ")
       }
+
       ap.get(Value.NO) -> {
         val details = ap.answer(Field.OFFENCE_ANALYSIS_LEADER_NO_DETAILS).value
         listOfNotNull("No", details).joinToString(" - ")
       }
+
       else -> null
     }
   }

@@ -28,12 +28,15 @@ class Relationships : SectionMapping() {
     )
   }
 
-  private fun q1(): Any {
-    return when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP).value) {
-      ap.get(Value.UNSTABLE_RELATIONSHIP) -> "2"
-      ap.get(Value.MIXED_RELATIONSHIP) -> "1"
-      ap.get(Value.STABLE_RELATIONSHIP) -> "0"
-      else -> "M"
+  private fun q1(): Any? {
+    val answer = ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_FAMILY_RELATIONSHIP).value
+    return answer?.let {
+      when (it) {
+        ap.get(Value.UNSTABLE_RELATIONSHIP) -> "2"
+        ap.get(Value.MIXED_RELATIONSHIP) -> "1"
+        ap.get(Value.STABLE_RELATIONSHIP) -> "0"
+        else -> "M"
+      }
     }
   }
 
@@ -69,33 +72,45 @@ class Relationships : SectionMapping() {
   }
 
   private fun q711da(): Any? {
-    return when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE).value) {
-      ap.get(Value.INTIMATE_PARTNER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
-      ap.get(Value.FAMILY_MEMBER) -> "NO"
+    return when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE).value) {
+        ap.get(Value.INTIMATE_PARTNER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
+        ap.get(Value.FAMILY_MEMBER) -> "NO"
+        else -> null
+      }
       else -> null
     }
   }
 
   private fun q712da(): Any? {
-    return when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE).value) {
-      ap.get(Value.FAMILY_MEMBER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
-      ap.get(Value.INTIMATE_PARTNER) -> "NO"
+    return when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE).value) {
+        ap.get(Value.FAMILY_MEMBER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
+        ap.get(Value.INTIMATE_PARTNER) -> "NO"
+        else -> null
+      }
       else -> null
     }
   }
 
   private fun q721da(): Any? {
-    return when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE).value) {
-      ap.get(Value.INTIMATE_PARTNER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
-      ap.get(Value.FAMILY_MEMBER) -> "NO"
+    return when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE).value) {
+        ap.get(Value.INTIMATE_PARTNER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
+        ap.get(Value.FAMILY_MEMBER) -> "NO"
+        else -> null
+      }
       else -> null
     }
   }
 
   private fun q722da(): Any? {
-    return when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE).value) {
-      ap.get(Value.FAMILY_MEMBER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
-      ap.get(Value.INTIMATE_PARTNER) -> "NO"
+    return when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE).value) {
+        ap.get(Value.FAMILY_MEMBER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
+        ap.get(Value.INTIMATE_PARTNER) -> "NO"
+        else -> null
+      }
       else -> null
     }
   }

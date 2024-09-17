@@ -5,6 +5,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Given
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.SectionMappingTest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer as PersistedAnswer
 
 class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
@@ -89,26 +91,19 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   }
 
   @Test
-  fun q2DirectContact() {
+  fun q3() {
     test(
-      "o2-DIRECTCONT",
+      "o2-3",
       Given().expect(null),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, emptyList()).expect("NO"),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.VICTIM_TARGETED)).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, emptyList()).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.VICTIM_TARGETED)).expect("DIRECTCONT"),
+      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.HATRED_OF_IDENTIFIABLE_GROUPS)).expect("HATE"),
+      Given(
+        Field.OFFENCE_ANALYSIS_ELEMENTS,
+        listOf(Value.VICTIM_TARGETED, Value.HATRED_OF_IDENTIFIABLE_GROUPS, Value.STRANGER),
+      ).expect("DIRECTCONT,HATE"),
     )
   }
-
-  @Test
-  fun q2HatredOfIdentifiableGroups() {
-    test(
-      "o2-HATE",
-      Given().expect(null),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, emptyList()).expect("NO"),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.HATRED_OF_IDENTIFIABLE_GROUPS)).expect("YES"),
-    )
-  }
-
-  // TODO: add tests for o-STRANGERS -> o2-2_4_2
 
   @Test
   fun q6() {
@@ -229,7 +224,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q9RacialMotivations() {
     test(
-      "o2.9_V2_RACIAL",
+      "o2-9_V2_RACIAL",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, emptyList()).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.HATRED_OF_IDENTIFIABLE_GROUPS)).expect("YES"),
@@ -239,7 +234,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q29ThrillMotivations() {
     test(
-      "o2-2_9_V2_THRILL",
+      "o2-9_V2_THRILL",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, emptyList()).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.THRILL_SEEKING)).expect("YES"),
@@ -249,7 +244,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q29OtherMotivations() {
     test(
-      "o2-2_9_V2_OTHER",
+      "o2-9_V2_OTHER",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, emptyList()).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.OTHER)).expect("YES"),
@@ -259,7 +254,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q29t() {
     test(
-      "o2-2_9t_V2",
+      "o2-9t_V2",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS_OTHER_DETAILS, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS_OTHER_DETAILS, "").expect(""),
@@ -343,5 +338,160 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Given(Field.OFFENCE_ANALYSIS_RISK, "YES").expect("YES"),
       Given(Field.OFFENCE_ANALYSIS_RISK, "NO").expect("NO"),
     )
+  }
+
+  @Test
+  fun victimAge() {
+    mapOf(
+      Value.AGE_0_TO_4_YEARS.name to "0",
+      Value.AGE_5_TO_11_YEARS.name to "1",
+      Value.AGE_12_TO_15_YEARS.name to "2",
+      Value.AGE_16_TO_17_YEARS.name to "3",
+      Value.AGE_18_TO_20_YEARS.name to "4",
+      Value.AGE_21_TO_25_YEARS.name to "5",
+      Value.AGE_26_TO_49_YEARS.name to "6",
+      Value.AGE_50_TO_64_YEARS.name to "7",
+      Value.AGE_65_AND_OVER.name to "8",
+    ).forEach { (givenValue, expectedValue) ->
+      val entries: List<Map<String, PersistedAnswer>> = listOf(
+        mapOf(
+          Field.OFFENCE_ANALYSIS_VICTIM_AGE.lower to PersistedAnswer(
+            type = AnswerType.RADIO,
+            value = givenValue,
+          ),
+        ),
+      )
+
+      val expectedEntry = mapOf(
+        "o-age_of_victim_elm" to expectedValue,
+        "o-gender_elm" to null,
+        "o-victim_ethnic_category_elm" to null,
+        "o-relation_elm" to null,
+      )
+
+      test(
+        "victim0",
+        Given().expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
+      )
+    }
+  }
+
+  @Test
+  fun victimGender() {
+    mapOf(
+      Value.MALE.name to "1",
+      Value.FEMALE.name to "2",
+      Value.INTERSEX.name to null,
+      Value.UNKNOWN.name to null,
+    ).forEach { (givenValue, expectedValue) ->
+      val entries: List<Map<String, PersistedAnswer>> = listOf(
+        mapOf(
+          Field.OFFENCE_ANALYSIS_VICTIM_SEX.lower to PersistedAnswer(
+            type = AnswerType.RADIO,
+            value = givenValue,
+          ),
+        ),
+      )
+
+      val expectedEntry = mapOf(
+        "o-age_of_victim_elm" to null,
+        "o-gender_elm" to expectedValue,
+        "o-victim_ethnic_category_elm" to null,
+        "o-relation_elm" to null,
+      )
+
+      test(
+        "victim0",
+        Given().expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
+      )
+    }
+  }
+
+  @Test
+  fun victimRace() {
+    mapOf(
+      Value.WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH.name to "W1",
+      Value.WHITE_IRISH.name to "W2",
+      Value.WHITE_GYPSY_OR_IRISH_TRAVELLER.name to "W4",
+      Value.WHITE_ANY_OTHER_WHITE_BACKGROUND.name to "W9",
+      Value.MIXED_WHITE_AND_BLACK_CARIBBEAN.name to "M1",
+      Value.MIXED_WHITE_AND_BLACK_AFRICAN.name to "M2",
+      Value.MIXED_WHITE_AND_ASIAN.name to "M3",
+      Value.MIXED_ANY_OTHER_MIXED_OR_MULTIPLE_ETHNIC_BACKGROUND_BACKGROUND.name to "M9",
+      Value.ASIAN_OR_ASIAN_BRITISH_INDIAN.name to "A1",
+      Value.ASIAN_OR_ASIAN_BRITISH_PAKISTANI.name to "A2",
+      Value.ASIAN_OR_ASIAN_BRITISH_BANGLADESHI.name to "A3",
+      Value.ASIAN_OR_ASIAN_BRITISH_CHINESE.name to "A4",
+      Value.ASIAN_OR_ASIAN_BRITISH_ANY_OTHER_ASIAN_BACKGROUND.name to "A9",
+      Value.BLACK_OR_BLACK_BRITISH_CARIBBEAN.name to "B1",
+      Value.BLACK_OR_BLACK_BRITISH_AFRICAN.name to "B2",
+      Value.BLACK_OR_BLACK_BRITISH_ANY_OTHER_BLACK_BACKGROUND.name to "B9",
+      Value.ARAB.name to "O2",
+      Value.ANY_OTHER_ETHNIC_GROUP.name to "O9",
+    ).forEach { (givenValue, expectedValue) ->
+      val entries: List<Map<String, PersistedAnswer>> = listOf(
+        mapOf(
+          Field.OFFENCE_ANALYSIS_VICTIM_RACE.lower to PersistedAnswer(
+            type = AnswerType.RADIO,
+            value = givenValue,
+          ),
+        ),
+      )
+
+      val expectedEntry = mapOf(
+        "o-age_of_victim_elm" to null,
+        "o-gender_elm" to null,
+        "o-victim_ethnic_category_elm" to expectedValue,
+        "o-relation_elm" to null,
+      )
+
+      test(
+        "victim0",
+        Given().expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
+      )
+    }
+  }
+
+  @Test
+  fun victimRelationship() {
+    mapOf(
+      Value.STRANGER.name to "0",
+      Value.CRIMINAL_JUSTICE_STAFF.name to "12",
+      Value.CHILD.name to "14",
+      Value.EX_PARTNER.name to "15",
+      Value.PARENT_OR_STEP_PARENT.name to "5",
+      Value.OTHER_FAMILY_MEMBER.name to "6",
+      Value.PARTNER.name to "1",
+      Value.OTHER.name to "13",
+    ).forEach { (givenValue, expectedValue) ->
+      val entries: List<Map<String, PersistedAnswer>> = listOf(
+        mapOf(
+          Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower to PersistedAnswer(
+            type = AnswerType.RADIO,
+            value = givenValue,
+          ),
+        ),
+      )
+
+      val expectedEntry = mapOf(
+        "o-age_of_victim_elm" to null,
+        "o-gender_elm" to null,
+        "o-victim_ethnic_category_elm" to null,
+        "o-relation_elm" to expectedValue,
+      )
+
+      test(
+        "victim0",
+        Given().expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
+        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
+      )
+    }
   }
 }

@@ -363,16 +363,14 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o-age_of_victim_elm" to expectedValue,
-        "o-gender_elm" to null,
-        "o-victim_ethnic_category_elm" to null,
-        "o-relation_elm" to null,
+        "o2-age_of_victim_elm" to expectedValue,
+        "o2-gender_elm" to null,
+        "o2-victim_ethnic_category_elm" to null,
+        "o2-relation_elm" to null,
       )
 
       test(
         "victim0",
-        Given().expect(null),
-        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
         Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
       )
     }
@@ -396,16 +394,14 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o-age_of_victim_elm" to null,
-        "o-gender_elm" to expectedValue,
-        "o-victim_ethnic_category_elm" to null,
-        "o-relation_elm" to null,
+        "o2-age_of_victim_elm" to null,
+        "o2-gender_elm" to expectedValue,
+        "o2-victim_ethnic_category_elm" to null,
+        "o2-relation_elm" to null,
       )
 
       test(
         "victim0",
-        Given().expect(null),
-        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
         Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
       )
     }
@@ -443,16 +439,14 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o-age_of_victim_elm" to null,
-        "o-gender_elm" to null,
-        "o-victim_ethnic_category_elm" to expectedValue,
-        "o-relation_elm" to null,
+        "o2-age_of_victim_elm" to null,
+        "o2-gender_elm" to null,
+        "o2-victim_ethnic_category_elm" to expectedValue,
+        "o2-relation_elm" to null,
       )
 
       test(
         "victim0",
-        Given().expect(null),
-        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
         Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
       )
     }
@@ -480,16 +474,14 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o-age_of_victim_elm" to null,
-        "o-gender_elm" to null,
-        "o-victim_ethnic_category_elm" to null,
-        "o-relation_elm" to expectedValue,
+        "o2-age_of_victim_elm" to null,
+        "o2-gender_elm" to null,
+        "o2-victim_ethnic_category_elm" to null,
+        "o2-relation_elm" to expectedValue,
       )
 
       test(
         "victim0",
-        Given().expect(null),
-        Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, emptyList()).expect(null),
         Given.aCollectionOf(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION, entries).expect(expectedEntry),
       )
     }

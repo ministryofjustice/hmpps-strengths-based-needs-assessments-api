@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 abstract class SectionMappingTest(
@@ -28,7 +29,7 @@ abstract class SectionMappingTest(
       val answersProvider = AnswersProvider(scenario.answers, formConfig)
       val result = sectionMapping.map(answersProvider)
 
-      // assertContains(result, questionCode, "Scenario ${scenarioNumber + 1} failed")
+      assertContains(result, questionCode, "Scenario ${scenarioNumber + 1} failed")
       assertEquals(scenario.expected, result[questionCode], "Scenario ${scenarioNumber + 1} failed")
     }
   }

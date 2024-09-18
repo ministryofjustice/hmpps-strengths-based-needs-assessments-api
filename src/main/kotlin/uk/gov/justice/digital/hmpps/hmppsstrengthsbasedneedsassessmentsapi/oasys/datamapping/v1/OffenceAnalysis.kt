@@ -111,10 +111,10 @@ class OffenceAnalysis : SectionMapping() {
     return collection.mapIndexed { index, entry ->
       "victim$index" to {
         mapOf(
-          "o-age_of_victim_elm" to mapVictimAge(entry),
-          "o-gender_elm" to mapVictimGender(entry),
-          "o-victim_ethnic_category_elm" to mapVictimRace(entry),
-          "o-relation_elm" to mapVictimRelationship(entry),
+          "o2-age_of_victim_elm" to mapVictimAge(entry),
+          "o2-gender_elm" to mapVictimGender(entry),
+          "o2-victim_ethnic_category_elm" to mapVictimRace(entry),
+          "o2-relation_elm" to mapVictimRelationship(entry),
         )
       }
     }.toMap()

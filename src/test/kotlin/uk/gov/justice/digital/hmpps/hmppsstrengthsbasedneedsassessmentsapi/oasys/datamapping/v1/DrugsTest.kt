@@ -601,7 +601,7 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   @Test
   fun q214t() {
     test(
-      "o8-2-14-t",
+      "o8-2-14t",
       Given().expect(null),
       Given(Field.OTHER_DRUG_DETAILS, null).expect(null),
       Given(Field.OTHER_DRUG_DETAILS, "").expect(""),

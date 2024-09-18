@@ -6,10 +6,12 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.exception.InvalidMappingException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer as PersistedAnswer
 
 class Answer(
   val value: String?,
   val values: List<String>?,
+  val collection: List<Map<String, PersistedAnswer>>,
 )
 
 class AnswersProvider(
@@ -18,14 +20,18 @@ class AnswersProvider(
 ) {
   private var context: String? = null
 
-  fun answer(field: Field): Answer {
+  fun setContext(field: Field) {
     context = config.fields[field.lower]?.let { field.lower }
       ?: config.fields.entries.find { it.value.code == field.lower }?.key
+  }
+
+  fun answer(field: Field): Answer {
+    setContext(field)
 
     return config.fields[context]?.code?.let {
       val answer = answers[it]
       val answerValues = if (config.fields[context]?.type == "CHECKBOX" && answer?.values == listOf("")) emptyList() else answer?.values
-      Answer(answer?.value, answerValues)
+      Answer(answer?.value, answerValues, answer?.collection.orEmpty())
     } ?: throw InvalidMappingException("Field ${field.lower} does not exist in form config version ${config.version}")
   }
 

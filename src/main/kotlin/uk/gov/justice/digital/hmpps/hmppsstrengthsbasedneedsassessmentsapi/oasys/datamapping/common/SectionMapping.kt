@@ -2,7 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasy
 
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
 
-typealias FieldsToMap = Map<String, () -> Any?>
+typealias MappingFn = () -> Any?
+typealias FieldsToMap = Map<String, MappingFn>
 
 abstract class SectionMapping {
   protected lateinit var ap: AnswersProvider

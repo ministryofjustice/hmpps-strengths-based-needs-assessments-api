@@ -72,4 +72,10 @@ class Given {
     this.expected = expected
     return this
   }
+
+  companion object {
+    fun aCollectionOf(field: Field, collection: List<Map<String, Answer>>): Given {
+      return Given().apply { answers = mapOf(field.lower to Answer(collection = collection)) }
+    }
+  }
 }

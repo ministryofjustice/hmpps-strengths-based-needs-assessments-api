@@ -100,14 +100,14 @@ class EmotionalWellbeing : SectionMapping() {
   private fun qHistoryOfPsychTreatment(): Any? {
     return when (ap.answer(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION).value) {
       ap.get(Value.YES_ONGOING_SEVERE), ap.get(Value.YES_ONGOING), ap.get(Value.YES_IN_THE_PAST) -> "YES"
-      ap.get(Value.NO) -> "NO"
+      ap.get(Value.NO), ap.get(Value.UNKNOWN) -> "NO"
       else -> null
     }
   }
 
   private fun qCurrentPsychTreatment(): Any? {
     return when (ap.answer(Field.HEALTH_WELLBEING_MENTAL_HEALTH_CONDITION).value) {
-      ap.get(Value.NO) -> "NO"
+      ap.get(Value.NO), ap.get(Value.UNKNOWN) -> "NO"
       else -> when (ap.answer(Field.HEALTH_WELLBEING_PSYCHIATRIC_TREATMENT).value) {
         ap.get(Value.YES), ap.get(Value.PENDING_TREATMENT) -> "YES"
         ap.get(Value.NO), ap.get(Value.UNKNOWN) -> "NO"

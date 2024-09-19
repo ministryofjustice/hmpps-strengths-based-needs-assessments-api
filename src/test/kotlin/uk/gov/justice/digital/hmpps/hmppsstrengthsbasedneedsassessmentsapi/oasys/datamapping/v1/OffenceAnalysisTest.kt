@@ -363,10 +363,10 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o2-age_of_victim_elm" to expectedValue,
-        "o2-gender_elm" to null,
-        "o2-victim_ethnic_category_elm" to null,
-        "o2-relation_elm" to null,
+        "oAGE_OF_VICTIM_ELM" to expectedValue,
+        "oGENDER_ELM" to null,
+        "oETHNIC_CATEGORY_ELM" to null,
+        "oVICTIM_RELATION_ELM" to null,
       )
 
       test(
@@ -394,10 +394,10 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o2-age_of_victim_elm" to null,
-        "o2-gender_elm" to expectedValue,
-        "o2-victim_ethnic_category_elm" to null,
-        "o2-relation_elm" to null,
+        "oAGE_OF_VICTIM_ELM" to null,
+        "oGENDER_ELM" to expectedValue,
+        "oETHNIC_CATEGORY_ELM" to null,
+        "oVICTIM_RELATION_ELM" to null,
       )
 
       test(
@@ -439,10 +439,10 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o2-age_of_victim_elm" to null,
-        "o2-gender_elm" to null,
-        "o2-victim_ethnic_category_elm" to expectedValue,
-        "o2-relation_elm" to null,
+        "oAGE_OF_VICTIM_ELM" to null,
+        "oGENDER_ELM" to null,
+        "oETHNIC_CATEGORY_ELM" to expectedValue,
+        "oVICTIM_RELATION_ELM" to null,
       )
 
       test(
@@ -474,10 +474,10 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       )
 
       val expectedEntry = mapOf(
-        "o2-age_of_victim_elm" to null,
-        "o2-gender_elm" to null,
-        "o2-victim_ethnic_category_elm" to null,
-        "o2-relation_elm" to expectedValue,
+        "oAGE_OF_VICTIM_ELM" to null,
+        "oGENDER_ELM" to null,
+        "oETHNIC_CATEGORY_ELM" to null,
+        "oVICTIM_RELATION_ELM" to expectedValue,
       )
 
       test(

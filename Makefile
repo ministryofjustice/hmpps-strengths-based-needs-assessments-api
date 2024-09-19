@@ -60,16 +60,13 @@ test-integration: ## Runs the integration test suite.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle integrationTests --parallel
 
 lint: ## Runs the Kotlin linter.
-# TODO: re-enable Detekt when it supports Kotlin 2.0
-# 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck detekt --parallel
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintCheck --parallel
 
 lint-fix: ## Runs the Kotlin linter and auto-fixes.
 	docker compose ${DEV_COMPOSE_FILES} exec api gradle ktlintFormat --parallel
 
-# TODO: re-enable Detekt when it supports Kotlin 2.0
-# lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
-# 	docker compose ${DEV_COMPOSE_FILES} exec api gradle detektBaseline --parallel
+lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
+	docker compose ${DEV_COMPOSE_FILES} exec api gradle --parallel
 
 test-up: ## Stands up a test environment.
 	docker compose pull --policy missing

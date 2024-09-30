@@ -68,7 +68,22 @@ class Relationships : SectionMapping() {
   }
 
   private fun q7da(): Any? {
-    return null
+    val perpetrator = when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
+    val victim = when (ap.answer(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE).value) {
+      ap.get(Value.YES) -> "YES"
+      ap.get(Value.NO) -> "NO"
+      else -> null
+    }
+
+    return when {
+      perpetrator == "YES" || victim == "YES" -> "YES"
+      perpetrator == "NO" && victim == "NO" -> "NO"
+      else -> null
+    }
   }
 
   private fun q711da(): Any? {

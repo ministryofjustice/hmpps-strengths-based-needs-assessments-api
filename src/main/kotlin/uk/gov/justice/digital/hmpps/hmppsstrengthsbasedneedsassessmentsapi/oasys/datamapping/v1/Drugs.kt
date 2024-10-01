@@ -59,7 +59,7 @@ class Drugs : SectionMapping() {
       "o8-2-14-2" to ::q2142,
       "o8-2-14-3" to ::q2143,
       "o8-2-14-4" to ::q2144,
-      "o8-2-14t" to ::q214t,
+      "o8-2-14-t" to ::q214t,
       "o8-4" to ::q4,
       "o8-5" to ::q5,
       "o8-6" to ::q6,

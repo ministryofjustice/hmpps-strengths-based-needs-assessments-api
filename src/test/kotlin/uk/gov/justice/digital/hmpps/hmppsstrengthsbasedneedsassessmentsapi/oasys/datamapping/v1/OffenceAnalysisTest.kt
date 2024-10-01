@@ -279,7 +279,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q29t() {
     test(
-      "o2-9t_V2",
+      "o2-9-t_V2",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS_OTHER_DETAILS, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS_OTHER_DETAILS, "").expect(""),
@@ -301,7 +301,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   @Test
   fun q11t() {
     test(
-      "o2-11t",
+      "o2-11-t",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_ACCEPT_RESPONSIBILITY, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_ACCEPT_RESPONSIBILITY, "").expect(null),

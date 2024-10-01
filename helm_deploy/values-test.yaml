@@ -19,6 +19,12 @@ generic-service:
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/config
 
   allowlist:
+    mp-nat-egress-one: 13.43.9.198/32
+    mp-nat-egress-two: 13.42.163.245/32
+    mp-nat-egress-three: 18.132.208.127/32    
+    nat-gw-one: 35.178.209.113/31
+    nat-gw-two: 3.8.51.207/31
+    nat-gw-three: 35.177.252.54/31
     capita-dev: 51.104.16.30/31
     captia-further: 172.167.141.40/32
     neil-test: 51.155.102.238/32

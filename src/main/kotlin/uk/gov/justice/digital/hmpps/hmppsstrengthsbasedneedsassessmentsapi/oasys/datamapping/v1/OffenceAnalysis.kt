@@ -171,9 +171,17 @@ class OffenceAnalysis : SectionMapping() {
         ap.get(Value.HATRED_OF_IDENTIFIABLE_GROUPS) -> "HATE"
         else -> null
       }
-    }?.joinToString(",")
+    }.orEmpty().toMutableList()
 
-    return if (!answers.isNullOrBlank()) answers else null
+    ap.answer(Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION).collection.find {
+      ap.setContext(Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP)
+      when (it[Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower]?.value) {
+        ap.get(Value.STRANGER) -> true
+        else -> false
+      }
+    }?.run { answers.add("STRANGERS") }
+
+    return if (answers.isNotEmpty()) answers.joinToString(",") else null
   }
 
   private fun q6(): Any? {

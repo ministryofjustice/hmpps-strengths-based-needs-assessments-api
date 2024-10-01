@@ -63,7 +63,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
         .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
-        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
+        .and(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO)

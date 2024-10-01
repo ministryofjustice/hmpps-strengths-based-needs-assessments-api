@@ -100,8 +100,33 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.HATRED_OF_IDENTIFIABLE_GROUPS)).expect("HATE"),
       Given(
         Field.OFFENCE_ANALYSIS_ELEMENTS,
-        listOf(Value.VICTIM_TARGETED, Value.HATRED_OF_IDENTIFIABLE_GROUPS, Value.STRANGER),
+        listOf(Value.VICTIM_TARGETED, Value.HATRED_OF_IDENTIFIABLE_GROUPS),
       ).expect("DIRECTCONT,HATE"),
+      Given.aCollectionOf(
+        Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION,
+        listOf(
+          mapOf(
+            Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower to PersistedAnswer(
+              type = AnswerType.RADIO,
+              value = "STRANGER",
+            ),
+          ),
+        ),
+      ).expect("STRANGERS"),
+      Given.aCollectionOf(
+        Field.OFFENCE_ANALYSIS_VICTIMS_COLLECTION,
+        listOf(
+          mapOf(
+            Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower to PersistedAnswer(
+              type = AnswerType.RADIO,
+              value = "STRANGER",
+            ),
+          ),
+        ),
+      ).and(
+        Field.OFFENCE_ANALYSIS_ELEMENTS,
+        listOf(Value.VICTIM_TARGETED, Value.HATRED_OF_IDENTIFIABLE_GROUPS),
+      ).expect("DIRECTCONT,HATE,STRANGERS"),
     )
   }
 

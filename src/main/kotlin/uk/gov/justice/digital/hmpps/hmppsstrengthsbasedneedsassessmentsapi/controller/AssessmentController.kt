@@ -84,17 +84,17 @@ class AssessmentController(
     }
   }
 
-  @RequestMapping(path = ["/san"], method = [RequestMethod.POST])
+  @RequestMapping(method = [RequestMethod.POST])
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(description = "Create a SAN and return id")
+  @Operation(description = "Create an assessment and return id")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "201", description = "SAN created"),
+      ApiResponse(responseCode = "201", description = "Assessment created"),
     ],
   )
   @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun createSAN(
     @RequestBody
-    request: UserDetails,
-  ) = assessmentService.create().toVersionedAssessment()
+    userDetails: UserDetails,
+  ) = assessmentService.createAndAudit(userDetails).toVersionedAssessment()
 }

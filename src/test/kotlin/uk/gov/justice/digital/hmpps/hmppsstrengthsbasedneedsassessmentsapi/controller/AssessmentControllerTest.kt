@@ -41,6 +41,7 @@ class AssessmentControllerTest(
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
+
 ) : IntegrationTest() {
   @Nested
   @DisplayName("/assessment/{assessmentUuid}")
@@ -355,9 +356,10 @@ class AssessmentControllerTest(
     }
 
     @Test
-    fun `it creates a SAN`() {
+    fun `it creates an assessment with audit information`() {
+      val userDetails = UserDetails("11", "Test")
       val objectMapper: ObjectMapper = jacksonObjectMapper()
-      val responseJson = webTestClient.post().uri("/assessment/san")
+      val responseJson = webTestClient.post().uri("/assessment")
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
         .bodyValue(UserDetails("11", "Test"))
@@ -369,6 +371,7 @@ class AssessmentControllerTest(
       val response = objectMapper.readValue<VersionedAssessment>(responseJson!!)
       val newAssessment = assessmentRepository.findByUuid(response.id)
       assertThat(response).isEqualTo(newAssessment?.toVersionedAssessment())
+      assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()?.userDetails).isEqualTo(userDetails)
     }
   }
 }

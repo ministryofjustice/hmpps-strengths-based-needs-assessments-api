@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.VersionedAssessment
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
@@ -33,19 +33,18 @@ class AssessmentService(
   }
 
   @Transactional
-  fun createAndAudit(userDetails: UserDetails): Assessment {
-    return create().also {
-      AssessmentVersionAudit(
-        assessmentVersion = it.assessmentVersions.first(),
-        userDetails = userDetails,
-      ).run(assessmentVersionAuditRepository::save)
-    }
+  fun createAndAudit(userDetails: UserDetails): CreateAssessmentResponse {
+    return CreateAssessmentResponse.from(
+      create().also {
+        AssessmentVersionAudit(
+          assessmentVersion = it.assessmentVersions.first(),
+          userDetails = userDetails,
+        ).run(assessmentVersionAuditRepository::save)
+      },
+    )
   }
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 }
-
-fun Assessment.toVersionedAssessment() =
-  VersionedAssessment(id = uuid, version = assessmentVersions.first().versionNumber.toLong())

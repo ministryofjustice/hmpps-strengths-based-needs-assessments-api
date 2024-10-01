@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.toVersionedAssessment
 import java.util.UUID
 import io.swagger.v3.oas.annotations.tags.Tag as SwaggerTag
 
@@ -93,8 +92,8 @@ class AssessmentController(
     ],
   )
   @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
-  fun createSAN(
+  fun createAssessment(
     @RequestBody
     userDetails: UserDetails,
-  ) = assessmentService.createAndAudit(userDetails).toVersionedAssessment()
+  ) = assessmentService.createAndAudit(userDetails)
 }

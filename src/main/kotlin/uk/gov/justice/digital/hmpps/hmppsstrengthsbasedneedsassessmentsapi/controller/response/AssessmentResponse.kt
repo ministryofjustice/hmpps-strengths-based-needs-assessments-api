@@ -40,8 +40,3 @@ data class AssessmentResponse(
     }
   }
 }
-
-data class VersionedAssessment(
-  val id: UUID,
-  val version: Long,
-)

@@ -15,7 +15,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.VersionedAssessment
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
@@ -29,7 +29,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.toVersionedAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
 import java.util.UUID
@@ -365,13 +364,13 @@ class AssessmentControllerTest(
         .bodyValue(UserDetails("11", "Test"))
         .exchange()
         .expectStatus().isCreated
-        .expectBody(VersionedAssessment::class.java)
+        .expectBody(CreateAssessmentResponse::class.java)
         .returnResult()
         .responseBodyContent
-      val response = objectMapper.readValue<VersionedAssessment>(responseJson!!)
+      val response = objectMapper.readValue<CreateAssessmentResponse>(responseJson!!)
       val newAssessment = assessmentRepository.findByUuid(response.id)
-      assertThat(response).isEqualTo(newAssessment?.toVersionedAssessment())
-      assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()?.userDetails).isEqualTo(userDetails)
+      assertThat(response).isEqualTo(CreateAssessmentResponse.from(newAssessment!!))
+      assertThat(newAssessment.assessmentVersions.first().assessmentVersionAudit.first().userDetails).isEqualTo(userDetails)
     }
   }
 }

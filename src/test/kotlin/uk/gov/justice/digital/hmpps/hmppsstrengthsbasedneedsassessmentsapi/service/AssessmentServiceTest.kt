@@ -73,7 +73,7 @@ class AssessmentServiceTest {
 
       assertThat(result.id).isEqualTo(assessmentSlot.captured.uuid)
       assertThat(assessmentVersionAudit.captured.userDetails).isEqualTo(userDetails)
-      assertThat(result.version).isEqualTo(formConfig.version)
+      assertThat(result.version).isEqualTo(0)
     }
   }
 

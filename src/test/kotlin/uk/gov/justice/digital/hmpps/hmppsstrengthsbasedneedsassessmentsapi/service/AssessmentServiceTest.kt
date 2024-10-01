@@ -71,9 +71,9 @@ class AssessmentServiceTest {
 
       val result = assessmentService.createAndAudit(userDetails)
 
-      assertThat(result.id).isEqualTo(assessmentSlot.captured.uuid)
+      assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
       assertThat(assessmentVersionAudit.captured.userDetails).isEqualTo(userDetails)
-      assertThat(result.version).isEqualTo(0)
+      assertThat(result.assessmentVersions.first().versionNumber).isEqualTo(0)
     }
   }
 

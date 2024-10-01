@@ -69,6 +69,7 @@ services:
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      OASYS_URL: http://localhost:7072
       HANDOVER_CLIENT_ID: strengths-and-needs-assessment
       HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false

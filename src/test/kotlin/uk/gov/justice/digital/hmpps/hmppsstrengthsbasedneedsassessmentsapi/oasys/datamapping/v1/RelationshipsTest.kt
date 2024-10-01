@@ -52,6 +52,26 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
   }
 
   @Test
+  fun q7da() {
+    test(
+      "o6-7da",
+      Given().expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, null).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
+        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
+        .and(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO)
+        .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
+    )
+  }
+
+  @Test
   fun q711da() {
     test(
       "o6-7-1-1da",

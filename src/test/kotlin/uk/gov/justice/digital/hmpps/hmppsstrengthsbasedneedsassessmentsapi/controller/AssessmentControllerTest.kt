@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -12,6 +15,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
@@ -22,6 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion_
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment_
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
@@ -35,6 +40,7 @@ class AssessmentControllerTest(
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
+
 ) : IntegrationTest() {
   @Nested
   @DisplayName("/assessment/{assessmentUuid}")
@@ -346,6 +352,25 @@ class AssessmentControllerTest(
       assertThat(clonedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
       assertThat(clonedAssessmentVersion.answers.values.map { it.value })
         .isEqualTo(listOf("val1", "val2", "TEST"))
+    }
+
+    @Test
+    fun `it creates an assessment with audit information`() {
+      val userDetails = UserDetails("11", "Test")
+      val objectMapper: ObjectMapper = jacksonObjectMapper()
+      val responseJson = webTestClient.post().uri("/assessment")
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(UserDetails("11", "Test"))
+        .exchange()
+        .expectStatus().isCreated
+        .expectBody(CreateAssessmentResponse::class.java)
+        .returnResult()
+        .responseBodyContent
+      val response = objectMapper.readValue<CreateAssessmentResponse>(responseJson!!)
+      val newAssessment = assessmentRepository.findByUuid(response.id)
+      assertThat(response).isEqualTo(CreateAssessmentResponse.from(newAssessment!!))
+      assertThat(newAssessment.assessmentVersions.first().assessmentVersionAudit.first().userDetails).isEqualTo(userDetails)
     }
   }
 }

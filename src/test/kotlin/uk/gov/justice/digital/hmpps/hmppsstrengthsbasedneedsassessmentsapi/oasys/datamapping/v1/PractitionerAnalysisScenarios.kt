@@ -9,11 +9,11 @@ class PractitionerAnalysisScenarios(private val sectionPrefix: String) {
     return arrayOf(
       Given().expect(null),
       Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM"), Value.YES)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS"), "Details 2 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_YES_DETAILS"), "Details 2 go here")
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS"), Value.YES)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS"), "Details 1 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_YES_DETAILS"), "Details 1 go here")
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING"), Value.YES)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS"), "Details 3 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_YES_DETAILS"), "Details 3 go here")
         .expect(
           """
           Strengths and protective factor notes - Details 1 go here
@@ -26,11 +26,11 @@ class PractitionerAnalysisScenarios(private val sectionPrefix: String) {
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING"), Value.NO)
         .expect(null),
       Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM"), Value.NO)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS"), "Details 2 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_NO_DETAILS"), "Details 2 go here")
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS"), Value.NO)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS"), "Details 1 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_NO_DETAILS"), "Details 1 go here")
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING"), Value.NO)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS"), "Details 3 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_NO_DETAILS"), "Details 3 go here")
         .expect(
           """
           Area not linked to strengths and positive factors notes - Details 1 go here
@@ -39,10 +39,10 @@ class PractitionerAnalysisScenarios(private val sectionPrefix: String) {
           """.trimIndent(),
         ),
       Given(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM"), Value.YES)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS"), "Details 2 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_YES_DETAILS"), "Details 2 go here")
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS"), Value.NO)
         .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING"), Value.YES)
-        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS"), "Details 3 go here")
+        .and(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_YES_DETAILS"), "Details 3 go here")
         .expect(
           """
           Area linked to serious harm notes - Details 2 go here

@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 class NewSections : SectionMapping() {
   override fun getFieldsToMap(): FieldsToMap {
     return mapOf(
+      "o1-30" to ::q30,
       "oTBA_SAN_LINKED_ROSH" to ::qLinkedToRosh,
       "oTBA_SAN_LINKED_REOFFEND" to ::qLinkedToReoffending,
       "oTBA_SAN_STRENGTH" to ::qStrength,
@@ -21,6 +22,13 @@ class NewSections : SectionMapping() {
       "oTBA_SAN_SECTION_COMP" to ::qThinkingBehavioursAttitudesComplete,
       "oOA_SAN_SECTION_COMP" to ::qOffenceAnalysisComplete,
     )
+  }
+
+  private fun q30(): Any? {
+    val sexualElements = ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values.orEmpty().contains(ap.get(Value.SEXUAL_ELEMENT))
+    val sexualMotivation = ap.answer(Field.OFFENCE_ANALYSIS_MOTIVATIONS).values.orEmpty().contains(ap.get(Value.SEXUAL_MOTIVATION))
+
+    return if (sexualElements || sexualMotivation) "YES" else null
   }
 
   private fun qLinkedToRosh(): Any? {

@@ -15,12 +15,12 @@ class NewSectionsTest : SectionMappingTest(NewSections(), "1.0") {
       Given(Field.OFFENCE_ANALYSIS_ELEMENTS, null)
         .and(Field.OFFENCE_ANALYSIS_MOTIVATIONS, null)
         .expect(null),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, Value.SEXUAL_ELEMENT).expect("YES"),
-      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, Value.SEXUAL_ELEMENT)
+      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.SEXUAL_ELEMENT)).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_ELEMENTS, listOf(Value.SEXUAL_ELEMENT))
         .and(Field.OFFENCE_ANALYSIS_MOTIVATIONS, null)
         .expect("YES"),
-      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, Value.SEXUAL_MOTIVATION).expect("YES"),
-      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, Value.SEXUAL_MOTIVATION)
+      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.SEXUAL_MOTIVATION)).expect("YES"),
+      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.SEXUAL_MOTIVATION))
         .and(Field.OFFENCE_ANALYSIS_ELEMENTS, null)
         .expect("YES"),
     )

@@ -6,38 +6,41 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 
 class PractitionerAnalysis(private val sectionPrefix: String, private val ap: AnswersProvider) {
   private fun strenghtsOrProtectiveFactorsNotes(): String? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS")).value) {
-      ap.get(Value.YES) -> "Strengths and protective factor notes - "
-      ap.get(Value.NO) -> "Area not linked to strengths and positive factors notes - "
+    val yesDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_YES_DETAILS")).value
+    val noDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_NO_DETAILS")).value
+
+    return when {
+      !yesDetails.isNullOrBlank() -> "Strengths and protective factor notes - $yesDetails"
+      !noDetails.isNullOrBlank() -> "Area not linked to strengths and positive factors notes - $noDetails"
       else -> null
-    }?.let { prefix ->
-      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_DETAILS")).value?.let {
-        prefix + it
-      }
     }
   }
 
   private fun seriousHarmNotes(): String? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM")).value) {
-      ap.get(Value.YES) -> "Area linked to serious harm notes - "
-      ap.get(Value.NO) -> "Area not linked to serious harm notes - "
+    val yesDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_YES_DETAILS")).value
+    val noDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_NO_DETAILS")).value
+
+    return when {
+      !yesDetails.isNullOrBlank() -> "Area linked to serious harm notes - $yesDetails"
+      !noDetails.isNullOrBlank() -> "Area not linked to serious harm notes - $noDetails"
       else -> null
-    }?.let { prefix ->
-      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM_DETAILS")).value?.let {
-        prefix + it
-      }
     }
   }
 
   private fun reoffendingNotes(): String? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING")).value) {
-      ap.get(Value.YES) -> "Risk of reoffending notes - "
-      ap.get(Value.NO) -> "Area not linked to reoffending notes - "
+    val yesDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_YES_DETAILS")).value
+    val noDetails =
+      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_NO_DETAILS")).value
+
+    return when {
+      !yesDetails.isNullOrBlank() -> "Risk of reoffending notes - $yesDetails"
+      !noDetails.isNullOrBlank() -> "Area not linked to reoffending notes - $noDetails"
       else -> null
-    }?.let { prefix ->
-      ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING_DETAILS")).value?.let {
-        prefix + it
-      }
     }
   }
 

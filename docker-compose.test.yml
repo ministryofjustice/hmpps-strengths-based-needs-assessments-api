@@ -1,7 +1,7 @@
 services:
-  ui:
+  san-ui:
     environment:
-      INGRESS_URL: http://ui:3000
+      INGRESS_URL: http://san-ui:3000
       HMPPS_AUTH_EXTERNAL_URL: http://hmpps-auth:9090/auth
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
       KEEP_ALIVE: 30000
@@ -14,8 +14,8 @@ services:
   arns-handover:
     environment:
       HMPPS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://ui:3000/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://ui:3000/sign-in
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://san-ui:3000/sign-in/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://san-ui:3000/sign-in
 
 volumes:
   test_results:

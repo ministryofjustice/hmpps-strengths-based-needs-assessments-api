@@ -11,7 +11,7 @@ services:
     ports:
       - "9090:9090"
 
-  api:
+  san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:local
     build:
       target: development
@@ -27,7 +27,7 @@ services:
       - "8080:8080"
       - "5005:5005"
 
-  ui:
+  san-ui:
     ports:
       - "3000:3000"
 

@@ -28,7 +28,7 @@ services:
     tmpfs:
       - /var/lib/postgresql
 
-  api:
+  san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
     build:
       context: .
@@ -37,9 +37,9 @@ services:
     depends_on:
      - postgres
      - hmpps-auth
-     - ui
+     - san-ui
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://api:8080/health/ping"]
+      test: ["CMD", "curl", "-f", "http://san-api:8080/health/ping"]
       interval: 5s
       retries: 100
     environment:
@@ -47,9 +47,9 @@ services:
       SPRING_PROFILES_ACTIVE: dev,postgres
       DATABASE_ENDPOINT: postgres:5432
       OAUTH_ENDPOINT_URL: http://hmpps-auth:9090/auth
-      FORM_CONFIG_BASE_URL: http://ui:3000/config
+      FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
-  ui:
+  san-ui:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-ui:latest
     networks:
       - hmpps
@@ -79,7 +79,7 @@ services:
       API_CLIENT_ID: hmpps-strengths-and-needs-ui
       SYSTEM_CLIENT_ID: hmpps-strengths-and-needs-ui-client
       SESSION_SECRET: sessionsecret
-      SBNA_API_URL: http://api:8080
+      SBNA_API_URL: http://san-api:8080
       INGRESS_URL: http://localhost:3000
       HTTPS: false
 
@@ -119,7 +119,7 @@ services:
       TOKEN_VERIFICATION_ENABLED: "false"
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
-      SBNA_API_URL: "http://api:8080"
+      SBNA_API_URL: "http://san-api:8080"
       SP_API_URL: "http://¯\_(ツ)_/¯"
       ENVIRONMENT_NAME: DEV
       AUDIT_ENABLED: "false"

@@ -1,9 +1,9 @@
 services:
-  api:
+  san-api:
     ports:
       - "8080:8080"
 
-  ui:
+  san-ui:
     ports:
       - "3000:3000"
 

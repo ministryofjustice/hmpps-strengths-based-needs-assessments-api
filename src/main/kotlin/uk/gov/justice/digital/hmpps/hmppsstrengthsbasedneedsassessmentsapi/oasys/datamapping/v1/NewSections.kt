@@ -26,9 +26,9 @@ class NewSections : SectionMapping() {
 
   private fun q30(): Any? {
     val sexualElements = ap.answer(Field.OFFENCE_ANALYSIS_ELEMENTS).values.orEmpty().contains(ap.get(Value.SEXUAL_ELEMENT))
-    val sexualDesires = ap.answer(Field.OFFENCE_ANALYSIS_GAIN).values.orEmpty().contains(ap.get(Value.SEXUAL_DESIRES))
+    val sexualMotivation = ap.answer(Field.OFFENCE_ANALYSIS_MOTIVATIONS).values.orEmpty().contains(ap.get(Value.SEXUAL_MOTIVATION))
 
-    return if (sexualElements || sexualDesires) "YES" else null
+    return if (sexualElements || sexualMotivation) "YES" else null
   }
 
   private fun qLinkedToRosh(): Any? {

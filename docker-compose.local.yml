@@ -1,4 +1,8 @@
 services:
+  coordinator-api:
+    ports:
+      - "8070:8080"
+
   san-api:
     ports:
       - "8080:8080"

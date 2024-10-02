@@ -28,6 +28,33 @@ services:
     tmpfs:
       - /var/lib/postgresql
 
+  coordinator-api:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-coordinator-api:latest
+    networks:
+      - hmpps
+    depends_on:
+      - postgres
+      - hmpps-auth
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://coordinator-api:8080/health/ping" ]
+      interval: 5s
+      retries: 60
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: postgres
+      APP_DB_ENDPOINT: postgres:5432
+      APP_DB_NAME: postgres
+      APP_DB_USERNAME: root
+      APP_DB_PASSWORD: dev
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090/auth
+      SAN_API_BASE_URL: http://san-api:8080
+      # TODO: Need to get some proper credentials for below
+      SAN_API_CLIENT_ID: hmpps-strengths-and-needs-ui-client
+      SAN_API_CLIENT_SECRET: clientsecret
+      SP_API_BASE_URL: http://sp-api:8080
+      SP_API_CLIENT_ID: hmpps-strengths-and-needs-ui-client
+      SP_API_CLIENT_SECRET: clientsecret
+
   san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
     build:
@@ -58,6 +85,7 @@ services:
       - hmpps-auth
       - arns-handover
       - oasys-ui
+      - coordinator-api
     healthcheck:
       test: [ "CMD", "node", "./docker/healthcheck.js" ]
       interval: 5s

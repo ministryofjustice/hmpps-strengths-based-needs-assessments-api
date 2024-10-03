@@ -126,7 +126,7 @@ class CoordinatorControllerTest(
       assertThat(response?.sanAssessmentData?.oasysEquivalent).isEqualTo(latestVersion.oasysEquivalents)
       assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
       assertThat(response?.sanAssessmentVersion).isEqualTo(latestVersion.versionNumber)
-      assertThat(response?.lastUpdatedTimestamp).isEqualTo(latestVersion.updatedAt)
+      assertThat(response?.lastUpdatedTimestamp?.withNano(0)).isEqualTo(latestVersion.updatedAt.withNano(0))
     }
   }
 

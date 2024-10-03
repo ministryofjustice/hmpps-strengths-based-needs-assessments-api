@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
@@ -361,7 +362,7 @@ class AssessmentControllerTest(
       val responseJson = webTestClient.post().uri("/assessment")
         .header(HttpHeaders.CONTENT_TYPE, "application/json")
         .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
-        .bodyValue(UserDetails("11", "Test"))
+        .bodyValue(CreateAssessmentRequest(userDetails = UserDetails("11", "Test")))
         .exchange()
         .expectStatus().isCreated
         .expectBody(CreateAssessmentResponse::class.java)

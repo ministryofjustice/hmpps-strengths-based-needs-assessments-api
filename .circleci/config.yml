@@ -105,6 +105,31 @@ jobs:
 
 workflows:
   version: 2
+  hacky-build:
+    jobs:
+      - hmpps/build_docker:
+          name: build_docker
+          publish: false
+          persist_container_image: true
+          jira_update: true
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - build-push
+      - hmpps/publish_docker:
+          name: publish_docker
+          publish_latest_tag: true
+          context: hmpps-common-vars
+          requires:
+            - build_docker
+          filters:
+            branches:
+              only:
+                - build-push
+
   build-test-and-deploy:
     when:
       not: << pipeline.parameters.deploy >>

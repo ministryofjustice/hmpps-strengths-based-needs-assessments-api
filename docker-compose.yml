@@ -12,6 +12,8 @@ services:
       - hmpps
     healthcheck:
       test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
+      interval: 5s
+      retries: 60
     environment:
       SERVER_PORT: 9090
       SPRING_PROFILES_ACTIVE: dev
@@ -117,6 +119,8 @@ services:
       - redis
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://arns-handover:7070/health/ping" ]
+      interval: 5s
+      retries: 60
     environment:
       SERVER_PORT: 7070
       REDIS_HOST: redis
@@ -137,6 +141,8 @@ services:
       - redis
     healthcheck:
       test: [ "CMD", "node", "/healthcheck.js" ]
+      interval: 5s
+      retries: 60
     environment:
       REDIS_ENABLED: "true"
       SYSTEM_CLIENT_SECRET: clientsecret

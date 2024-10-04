@@ -126,6 +126,8 @@ services:
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
       SERVER_ERROR_WHITELABEL_ENABLED: true
       COORDINATOR_API_BASE_URL: http://coordinator-api:8080
+      CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
+      CLIENT_SECRET: clientsecret
 
   oasys-ui:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest

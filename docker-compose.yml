@@ -7,7 +7,7 @@ services:
       ALLOW_EMPTY_PASSWORD: yes
 
   hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
+    image: quay.io/hmpps/hmpps-auth:2024-10-02.25761.db2ce3c
     networks:
       - hmpps
     healthcheck:
@@ -51,6 +51,7 @@ services:
       SP_API_BASE_URL: http://sp-api:8080
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
+      APP_STRATEGIES_PLAN: false
 
   san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
@@ -124,6 +125,7 @@ services:
       HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
       SERVER_ERROR_WHITELABEL_ENABLED: true
+      COORDINATOR_API_BASE_URL: http://coordinator-api:8080
 
   oasys-ui:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest

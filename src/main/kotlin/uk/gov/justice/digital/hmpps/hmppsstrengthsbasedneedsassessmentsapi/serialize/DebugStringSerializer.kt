@@ -12,7 +12,7 @@ class DebugStringSerializerConfig {
   }
 }
 
-class DebugStringSerializer(): JsonSerializer<String>() {
+class DebugStringSerializer() : JsonSerializer<String>() {
   override fun serialize(value: String?, gen: JsonGenerator?, serializers: SerializerProvider?) {
     val msg = if (DebugStringSerializerConfig.isDebugEnabled()) value else "Check the logs or enable Debug mode for more information."
     StringSerializer().serialize(msg, gen, serializers)

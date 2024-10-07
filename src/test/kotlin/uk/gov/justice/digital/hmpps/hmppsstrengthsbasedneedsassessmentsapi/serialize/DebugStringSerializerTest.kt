@@ -4,16 +4,15 @@ import com.fasterxml.jackson.core.JsonGenerator
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
 import org.junit.jupiter.api.Nested
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class DebugStringSerializerTest {
-  private val mockAppConfig: ApplicationConfig = mockk()
   private val mockJsonGenerator: JsonGenerator = mockk()
-  private val sut = DebugStringSerializer(mockAppConfig)
+  private val sut = DebugStringSerializer()
 
   @BeforeTest
   fun setUp() {
@@ -25,7 +24,8 @@ class DebugStringSerializerTest {
   inner class Serialize {
     @Test
     fun `serializes debug message when Debug is enabled`() {
-      every { mockAppConfig.isDebugEnabled() } returns true
+      mockkObject(DebugStringSerializerConfig)
+      every { DebugStringSerializerConfig.Companion.isDebugEnabled() } returns true
 
       sut.serialize("test debug message", mockJsonGenerator, null)
 
@@ -36,7 +36,8 @@ class DebugStringSerializerTest {
 
     @Test
     fun `hides debug message when Debug is disabled`() {
-      every { mockAppConfig.isDebugEnabled() } returns false
+      mockkObject(DebugStringSerializerConfig)
+      every { DebugStringSerializerConfig.Companion.isDebugEnabled() } returns false
 
       sut.serialize("test debug message", mockJsonGenerator, null)
 

@@ -4,17 +4,28 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.AuditedRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CounterSignAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.RollbackAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.SignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import java.util.UUID
@@ -41,7 +52,7 @@ class AssessmentController(
     ],
   )
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
-  fun getAssessment(
+  fun get(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     assessmentUuid: UUID,
@@ -57,6 +68,25 @@ class AssessmentController(
       versionNumber = versionNumber,
     )
       .run(assessmentVersionService::find)
+      .run(AssessmentResponse::from)
+  }
+
+  @RequestMapping(method = [RequestMethod.POST])
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(description = "Create an assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "201", description = "Assessment created"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun create(
+    @RequestBody
+    request: AuditedRequest,
+  ): AssessmentResponse {
+    return UserDetails.from(request)
+      .run(assessmentService::createAndAudit)
+      .run { assessmentVersions.first() }
       .run(AssessmentResponse::from)
   }
 
@@ -78,5 +108,226 @@ class AssessmentController(
     assessmentService.findByUuid(assessmentUuid).let {
       assessmentVersionService.updateAnswers(it, request)
     }
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/sign"], method = [RequestMethod.POST])
+  @Operation(description = "Signs the latest version of an assessment identified by the provided Assessment UUID")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version signed successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The assessment could not be signed. See details in error message.",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun sign(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody
+    @Valid
+    request: SignAssessmentRequest,
+  ): AssessmentResponse {
+    return AssessmentVersionCriteria(assessmentUuid)
+      .run(assessmentVersionService::find)
+      .let {
+        assessmentVersionService.sign(it, UserDetails.from(request), request.signType)
+      }
+      .run(AssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/counter-sign"], method = [RequestMethod.POST])
+  @Operation(description = "Marks an assessment version as counter-signed.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version counter-signed successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The assessment could not be counter-signed. See details in error message.",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun counterSign(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: CounterSignAssessmentRequest,
+  ): AssessmentResponse {
+    return AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
+      .run(assessmentVersionService::find)
+      .let {
+        assessmentVersionService.counterSign(it, UserDetails.from(request), request.outcome)
+      }
+      .run(AssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/lock"], method = [RequestMethod.POST])
+  @Operation(description = "Locks the latest version of an assessment identified by the provided Assessment UUID")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment version locked successfully"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "The latest version of the assessment has already been locked",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun lock(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: AuditedRequest,
+  ): AssessmentResponse {
+    return AssessmentVersionCriteria(assessmentUuid)
+      .run(assessmentVersionService::find)
+      .let { assessmentVersionService.lock(it, UserDetails.from(request)) }
+      .run(AssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/rollback"], method = [RequestMethod.POST])
+  @Operation(description = "Create a new \"ROLLBACK\" version of an existing assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "ROLLBACK version created"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to create ROLLBACK for latest assessment version",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun rollback(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: RollbackAssessmentRequest,
+  ): AssessmentResponse {
+    return AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
+      .run(assessmentVersionService::find)
+      .let { assessmentVersionService.rollback(it, UserDetails.from(request)) }
+      .run(AssessmentResponse::from)
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/soft-delete"], method = [RequestMethod.POST])
+  @Operation(description = "Soft-deletes an assessment.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment has been soft-deleted"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to soft-delete an assessment that has already been soft-deleted",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun softDelete(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: AuditedRequest,
+  ): Message {
+//    TODO: implement
+//    return assessmentService.softDelete(assessmentUuid, UserDetails.from(request))
+//      .run { Message("Successfully soft-deleted assessment UUID $assessmentUuid") }
+    return Message("Soft-deletion is not implemented")
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])
+  @Operation(description = "Undeletes an OASys assessment.")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "OASys assessment has been undeleted"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "409",
+        description = "Unable to undelete an assessment that is not deleted",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun undelete(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: AuditedRequest,
+  ): Message {
+//    TODO: implement
+//    return assessmentService.undelete(assessmentUuid)
+//      .run(AssessmentResponse::from)
+    return Message("Soft-deletion is not implemented")
   }
 }

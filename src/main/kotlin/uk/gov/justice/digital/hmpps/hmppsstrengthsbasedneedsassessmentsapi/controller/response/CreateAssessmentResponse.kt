@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.cont
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import java.util.UUID
 
+// TODO: delete
 data class CreateAssessmentResponse(
   val id: UUID,
   val version: Long,

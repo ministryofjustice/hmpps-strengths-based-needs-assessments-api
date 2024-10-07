@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditedRequest
@@ -48,8 +47,8 @@ class CoordinatorController(
   @PreAuthorize("hasRole('ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun createAssessment(
     @RequestBody
-    createAssessmentRequest: CreateAssessmentRequest,
-  ) = assessmentService.createAndAudit(createAssessmentRequest.userDetails).run(CreateAssessmentResponse::from)
+    createAssessmentRequest: AuditedRequest,
+  ) = assessmentService.createAndAudit(UserDetails.from(createAssessmentRequest)).run(CreateAssessmentResponse::from)
 
   @RequestMapping(path = ["/{assessmentUuid}"], method = [RequestMethod.GET])
   @Operation(description = "Get the latest version of an assessment by OASys Assessment PK")

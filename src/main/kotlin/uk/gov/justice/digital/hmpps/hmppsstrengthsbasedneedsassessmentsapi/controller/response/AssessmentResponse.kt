@@ -12,9 +12,11 @@ data class AssessmentMetadata(
   val createdAt: LocalDateTime,
   val oasys_pks: List<String>,
   val versionUuid: UUID,
+  val versionNumber: Int,
   val versionCreatedAt: LocalDateTime,
   val versionTag: Tag,
   val formVersion: String?,
+  val lastUpdatedTimestamp: LocalDateTime,
 )
 
 data class AssessmentResponse(
@@ -30,9 +32,11 @@ data class AssessmentResponse(
           assessmentVersion.assessment.createdAt,
           assessmentVersion.assessment.oasysAssessments.map { it.oasysAssessmentPk },
           assessmentVersion.uuid,
+          assessmentVersion.versionNumber,
           assessmentVersion.createdAt,
           assessmentVersion.tag,
           assessmentVersion.assessment.info?.formVersion,
+          assessmentVersion.updatedAt,
         ),
         assessmentVersion.answers,
         assessmentVersion.oasysEquivalents,

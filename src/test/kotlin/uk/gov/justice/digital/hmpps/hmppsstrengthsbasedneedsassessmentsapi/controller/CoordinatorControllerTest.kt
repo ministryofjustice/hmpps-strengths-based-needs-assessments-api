@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditedRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysUserDetails
@@ -23,7 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
@@ -133,31 +130,6 @@ class CoordinatorControllerTest(
       assertThat(response?.sanAssessmentId).isEqualTo(assessment.uuid)
       assertThat(response?.sanAssessmentVersion).isEqualTo(latestVersion.versionNumber)
       assertThat(response?.lastUpdatedTimestamp?.withNano(0)).isEqualTo(latestVersion.updatedAt.withNano(0))
-    }
-  }
-
-  @Nested
-  @DisplayName("Create Assessment")
-  inner class CreateAssessment {
-    private lateinit var assessment: Assessment
-
-    val endpoint = "/coordinator/assessment"
-
-    @Test
-    fun `it creates an assessment with audit information`() {
-      val userDetails = UserDetails("11", "Test")
-      val response = webTestClient.post().uri(endpoint)
-        .header(HttpHeaders.CONTENT_TYPE, "application/json")
-        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
-        .bodyValue(CreateAssessmentRequest(userDetails = UserDetails("11", "Test")))
-        .exchange()
-        .expectStatus().isCreated
-        .expectBody(CreateAssessmentResponse::class.java)
-        .returnResult()
-        .responseBody
-      val newAssessment = assessmentRepository.findByUuid(response!!.id)
-      assertThat(response).isEqualTo(CreateAssessmentResponse.from(newAssessment!!))
-      assertThat(newAssessment.assessmentVersions.first().assessmentVersionAudit.first().userDetails).isEqualTo(userDetails)
     }
   }
 

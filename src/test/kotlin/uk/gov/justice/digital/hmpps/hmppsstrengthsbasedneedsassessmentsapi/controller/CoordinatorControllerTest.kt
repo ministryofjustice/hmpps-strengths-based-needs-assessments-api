@@ -11,12 +11,18 @@ import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CreateAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.CreateAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.OasysPKGenerator
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditedRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.OasysUserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.SignAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.response.OasysAssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
@@ -152,6 +158,126 @@ class CoordinatorControllerTest(
       val newAssessment = assessmentRepository.findByUuid(response!!.id)
       assertThat(response).isEqualTo(CreateAssessmentResponse.from(newAssessment!!))
       assertThat(newAssessment.assessmentVersions.first().assessmentVersionAudit.first().userDetails).isEqualTo(userDetails)
+    }
+  }
+
+  @Nested
+  @DisplayName("Sign Assessment")
+  inner class SignAssessment {
+    private lateinit var assessment: Assessment
+
+    private val endpoint = { "/coordinator/assessment/${assessment.uuid}/sign" }
+
+    private lateinit var latestVersion: AssessmentVersion
+    private lateinit var previousVersion: AssessmentVersion
+    private lateinit var oasysAss1: OasysAssessment
+    private lateinit var oasysAss2: OasysAssessment
+
+    @BeforeEach
+    fun setUp() {
+      assessment = Assessment(uuid = UUID.randomUUID())
+
+      latestVersion = AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(1),
+        answers = mapOf("q2" to Answer(value = "val2"), "assessment_complete" to Answer(value = "YES")),
+        oasysEquivalents = mapOf("q2" to "2"),
+        versionNumber = 1,
+      )
+      previousVersion = AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(3),
+        answers = mapOf("q3" to Answer(value = "val3")),
+        oasysEquivalents = mapOf("q3" to "3"),
+        versionNumber = 0,
+      )
+
+      oasysAss1 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+      oasysAss2 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+
+      assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+      assessment.oasysAssessments = listOf(oasysAss1, oasysAss2)
+      assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
+
+      assessmentRepository.save(assessment)
+    }
+
+    @Test
+    fun `it signs an assessment with audit information`() {
+      val userDetails = OasysUserDetails("11", "Test")
+      val response = webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(SignAssessmentRequest(signType = SignType.SELF, userDetails = OasysUserDetails("11", "Test")))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(OasysAssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+      val signedAssessment = assessmentRepository.findByUuid(response!!.sanAssessmentId)!!
+      assertThat(signedAssessment.assessmentVersions.last().assessmentVersionAudit.last().userDetails.id).isEqualTo(userDetails.id)
+      assertThat(signedAssessment.assessmentVersions.last().tag).isEqualTo(Tag.SELF_SIGNED)
+    }
+  }
+
+  @Nested
+  @DisplayName("Lock Assessment")
+  inner class LockAssessment {
+    private lateinit var assessment: Assessment
+
+    private val endpoint = { "/coordinator/assessment/${assessment.uuid}/lock" }
+
+    private lateinit var latestVersion: AssessmentVersion
+    private lateinit var previousVersion: AssessmentVersion
+    private lateinit var oasysAss1: OasysAssessment
+    private lateinit var oasysAss2: OasysAssessment
+
+    @BeforeEach
+    fun setUp() {
+      assessment = Assessment(uuid = UUID.randomUUID())
+
+      latestVersion = AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(1),
+        answers = mapOf("q2" to Answer(value = "val2")),
+        oasysEquivalents = mapOf("q2" to "2"),
+        versionNumber = 1,
+      )
+      previousVersion = AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(3),
+        answers = mapOf("q3" to Answer(value = "val3")),
+        oasysEquivalents = mapOf("q3" to "3"),
+        versionNumber = 0,
+      )
+
+      oasysAss1 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+      oasysAss2 = OasysAssessment(oasysAssessmentPk = OasysPKGenerator.new(), assessment = assessment)
+
+      assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+      assessment.oasysAssessments = listOf(oasysAss1, oasysAss2)
+      assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
+
+      assessmentRepository.save(assessment)
+    }
+
+    @Test
+    fun `it locks an assessment with audit information`() {
+      val userDetails = OasysUserDetails("11", "Test")
+      val response = webTestClient.post().uri(endpoint())
+        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+        .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_WRITE")))
+        .bodyValue(AuditedRequest(userDetails = userDetails))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(OasysAssessmentResponse::class.java)
+        .returnResult()
+        .responseBody
+      val lockedAssessment = assessmentRepository.findByUuid(response!!.sanAssessmentId)!!
+
+      val audit = lockedAssessment.assessmentVersions.last().assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
+      assertThat(audit.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
     }
   }
 }

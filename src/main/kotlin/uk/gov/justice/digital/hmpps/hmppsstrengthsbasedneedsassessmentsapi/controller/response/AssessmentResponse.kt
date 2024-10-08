@@ -10,10 +10,10 @@ import java.util.UUID
 data class AssessmentMetadata(
   val uuid: UUID,
   val createdAt: LocalDateTime,
-  val updatedAt: LocalDateTime,
   val versionUuid: UUID,
   val versionNumber: Int,
   val versionCreatedAt: LocalDateTime,
+  val versionUpdatedAt: LocalDateTime,
   val versionTag: Tag,
   val formVersion: String?,
 )
@@ -29,13 +29,12 @@ data class AssessmentResponse(
         AssessmentMetadata(
           assessmentVersion.assessment.uuid,
           assessmentVersion.assessment.createdAt,
-          assessmentVersion.assessment.oasysAssessments.map { it.oasysAssessmentPk },
           assessmentVersion.uuid,
           assessmentVersion.versionNumber,
           assessmentVersion.createdAt,
+          assessmentVersion.updatedAt,
           assessmentVersion.tag,
           assessmentVersion.assessment.info?.formVersion,
-          assessmentVersion.updatedAt,
         ),
         assessmentVersion.answers,
         assessmentVersion.oasysEquivalents,

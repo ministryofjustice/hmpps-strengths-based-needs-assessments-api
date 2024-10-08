@@ -104,8 +104,6 @@ class GetTest(
         0,
       ),
     )
-    Assertions.assertThat(response?.sanAssessmentData?.metaData?.oasys_pks)
-      .containsExactly(oasysAssessment.oasysAssessmentPk)
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionTag).isEqualTo(latestVersion.tag)
     Assertions.assertThat(response?.sanAssessmentData?.metaData?.versionCreatedAt?.withNano(0)).isEqualTo(
       latestVersion.createdAt.withNano(

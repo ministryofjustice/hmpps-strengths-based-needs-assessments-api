@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
 
 class AuditedRequest(
-  @Schema(description = "OASys User")
+  @Schema(description = "User")
   @Valid
-  override val userDetails: OasysUserDetails,
-) : AuditableOasysRequest
+  override val userDetails: UserDetails,
+) : AuditableRequest

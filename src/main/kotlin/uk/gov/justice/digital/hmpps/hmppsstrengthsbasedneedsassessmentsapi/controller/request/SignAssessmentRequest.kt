@@ -9,5 +9,5 @@ class SignAssessmentRequest(
   val signType: SignType,
   @Schema(description = "OASys User")
   @Valid
-  override val userDetails: OasysUserDetails,
-) : AuditableOasysRequest
+  override val userDetails: UserDetails,
+) : AuditableRequest

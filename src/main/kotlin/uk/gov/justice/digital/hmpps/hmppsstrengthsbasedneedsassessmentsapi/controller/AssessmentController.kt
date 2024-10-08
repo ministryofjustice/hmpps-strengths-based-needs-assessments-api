@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
 import java.util.UUID
@@ -84,7 +83,7 @@ class AssessmentController(
     @RequestBody
     request: AuditedRequest,
   ): AssessmentResponse {
-    return UserDetails.from(request)
+    return request.userDetails
       .run(assessmentService::createAndAudit)
       .run { assessmentVersions.first() }
       .run(AssessmentResponse::from)
@@ -144,7 +143,7 @@ class AssessmentController(
     return AssessmentVersionCriteria(assessmentUuid)
       .run(assessmentVersionService::find)
       .let {
-        assessmentVersionService.sign(it, UserDetails.from(request), request.signType)
+        assessmentVersionService.sign(it, request.userDetails, request.signType)
       }
       .run(AssessmentResponse::from)
   }
@@ -182,7 +181,7 @@ class AssessmentController(
     return AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
       .run(assessmentVersionService::find)
       .let {
-        assessmentVersionService.counterSign(it, UserDetails.from(request), request.outcome)
+        assessmentVersionService.counterSign(it, request.userDetails, request.outcome)
       }
       .run(AssessmentResponse::from)
   }
@@ -219,7 +218,7 @@ class AssessmentController(
   ): AssessmentResponse {
     return AssessmentVersionCriteria(assessmentUuid)
       .run(assessmentVersionService::find)
-      .let { assessmentVersionService.lock(it, UserDetails.from(request)) }
+      .let { assessmentVersionService.lock(it, request.userDetails) }
       .run(AssessmentResponse::from)
   }
 
@@ -255,7 +254,7 @@ class AssessmentController(
   ): AssessmentResponse {
     return AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
       .run(assessmentVersionService::find)
-      .let { assessmentVersionService.rollback(it, UserDetails.from(request)) }
+      .let { assessmentVersionService.rollback(it, request.userDetails) }
       .run(AssessmentResponse::from)
   }
 

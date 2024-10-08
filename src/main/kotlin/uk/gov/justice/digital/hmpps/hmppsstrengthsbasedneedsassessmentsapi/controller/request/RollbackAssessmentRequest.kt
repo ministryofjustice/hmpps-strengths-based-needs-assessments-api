@@ -10,5 +10,5 @@ class RollbackAssessmentRequest(
   val versionNumber: Int,
   @Schema(description = "OASys User")
   @Valid
-  override val userDetails: OasysUserDetails,
-) : AuditableOasysRequest
+  override val userDetails: UserDetails,
+) : AuditableRequest

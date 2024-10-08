@@ -10,13 +10,12 @@ import java.util.UUID
 data class AssessmentMetadata(
   val uuid: UUID,
   val createdAt: LocalDateTime,
-  val oasys_pks: List<String>,
+  val updatedAt: LocalDateTime,
   val versionUuid: UUID,
   val versionNumber: Int,
   val versionCreatedAt: LocalDateTime,
   val versionTag: Tag,
   val formVersion: String?,
-  val lastUpdatedTimestamp: LocalDateTime,
 )
 
 data class AssessmentResponse(

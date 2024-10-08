@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 class SignAssessmentRequest(
   @Schema(description = "Indicates what type of case this is")
   val signType: SignType,
-  @Schema(description = "OASys User")
+  @Schema(description = "User")
   @Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest

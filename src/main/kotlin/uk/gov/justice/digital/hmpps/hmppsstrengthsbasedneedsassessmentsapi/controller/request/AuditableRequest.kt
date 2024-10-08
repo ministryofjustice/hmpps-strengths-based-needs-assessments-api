@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.cont
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Size
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.request.AuditableOasysRequest
 
 interface AuditableRequest {
   val userDetails: UserDetails
@@ -18,12 +17,7 @@ data class UserDetails(
   val name: String = "",
   @Schema(description = "User type", example = "SAN")
   val type: UserType = UserType.SAN,
-) {
-  companion object {
-    fun from(request: AuditableOasysRequest) =
-      with(request) { UserDetails(userDetails.id, userDetails.name, UserType.OASYS) }
-  }
-}
+)
 
 enum class UserType {
   OASYS,

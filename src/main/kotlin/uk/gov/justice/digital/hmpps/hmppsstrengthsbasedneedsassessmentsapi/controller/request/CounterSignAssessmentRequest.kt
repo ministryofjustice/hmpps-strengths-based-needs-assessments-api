@@ -11,7 +11,7 @@ class CounterSignAssessmentRequest(
   val versionNumber: Int,
   @Schema(description = "Indicates what type of case this is")
   val outcome: Tag,
-  @Schema(description = "OASys User")
+  @Schema(description = "User")
   @Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest

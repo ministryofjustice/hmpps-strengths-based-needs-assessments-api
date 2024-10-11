@@ -17,6 +17,7 @@ generic-service:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/config
+    SPRING_PROFILES_ACTIVE: "logstash, postgres, dev"
 
   allowlist:
     capita-dev: 51.104.16.30/31

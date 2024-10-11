@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.servi
 class ControllerAdvice {
   @ExceptionHandler(UserNotAuthenticatedException::class)
   fun handle(ex: UserNotAuthenticatedException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.UNAUTHORIZED)
       .body(
@@ -28,6 +29,7 @@ class ControllerAdvice {
 
   @ExceptionHandler(EntityNotFoundException::class)
   fun handle(ex: EntityNotFoundException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .body(
@@ -40,6 +42,7 @@ class ControllerAdvice {
 
   @ExceptionHandler(ConflictException::class)
   fun handle(ex: ConflictException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.CONFLICT)
       .body(
@@ -52,6 +55,7 @@ class ControllerAdvice {
 
   @ExceptionHandler(ResponseStatusException::class)
   fun handle(ex: ResponseStatusException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(ex.statusCode)
       .body(
@@ -64,6 +68,7 @@ class ControllerAdvice {
 
   @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
   fun handle(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.FORBIDDEN)
       .body(
@@ -76,6 +81,7 @@ class ControllerAdvice {
 
   @ExceptionHandler(HttpMessageNotReadableException::class)
   fun handle(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+    log.info("Exception: ", ex)
     return ResponseEntity
       .status(HttpStatus.BAD_REQUEST)
       .body(

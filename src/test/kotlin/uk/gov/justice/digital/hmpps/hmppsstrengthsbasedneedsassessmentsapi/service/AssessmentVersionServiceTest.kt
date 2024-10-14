@@ -41,6 +41,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.servi
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("AssessmentVersionService")
@@ -541,6 +542,100 @@ class AssessmentVersionServiceTest {
       verify(exactly = 0) { assessmentVersionAuditRepository.save(any()) }
 
       assertThat(exception.message).isEqualTo("Cannot rollback this assessment version. Unexpected status ${tag.name}.")
+    }
+  }
+
+  @Nested
+  @DisplayName("softDelete")
+  inner class SoftDelete {
+    @BeforeEach
+    fun setUp() {
+      every { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) } returnsArgument 0
+    }
+
+    @Test
+    fun `it soft-deletes the provided assessment versions`() {
+      val assessmentVersions = listOf(
+        AssessmentVersion(),
+        AssessmentVersion(),
+      )
+
+      assessmentVersionService.softDelete(assessmentVersions, UserDetails("user-id", "User Name"))
+        .run {
+          assertThat(count()).isEqualTo(2)
+          assertTrue(all { version -> version.deleted })
+        }
+
+      verify(exactly = 1) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
+    }
+
+    @Test
+    fun `it throws a Conflict when the assessment versions are already deleted`() {
+      val assessmentVersions = listOf(
+        AssessmentVersion(deleted = true),
+        AssessmentVersion(deleted = true),
+      )
+
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.softDelete(assessmentVersions, UserDetails("user-id", "User Name"))
+      }
+      assertThat(exception.message).isEqualTo("No assessment versions found for deletion")
+
+      verify(exactly = 0) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
+    }
+  }
+
+  @Nested
+  @DisplayName("undelete")
+  inner class Undelete {
+    @BeforeEach
+    fun setUp() {
+      every { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) } returnsArgument 0
+    }
+
+    @Test
+    fun `it undeletes the requested assessment versions`() {
+      val assessment = Assessment()
+      val assessmentVersions = listOf(
+        AssessmentVersion(deleted = true, versionNumber = 0),
+        AssessmentVersion(deleted = true, versionNumber = 1),
+        AssessmentVersion(deleted = true, versionNumber = 2),
+        AssessmentVersion(deleted = true, versionNumber = 3),
+      )
+
+      every { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) } returns assessmentVersions
+
+      assessmentVersionService.undelete(assessment, 1, 3, UserDetails("user-id", "User Name"))
+        .run {
+          assertThat(count()).isEqualTo(2)
+          assertThat(all { version -> with(version) { !deleted && versionNumber in listOf(1, 2) } })
+        }
+
+      verify(exactly = 1) { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) }
+      verify(exactly = 1) {
+        assessmentVersionRepository.saveAll<AssessmentVersion>(
+          match { versions ->
+            versions.count() == 2 &&
+              versions.all { version -> with(version) { !deleted && versionNumber in listOf(1, 2) } }
+          },
+        )
+      }
+    }
+
+    @Test
+    fun `it throws a Conflict when the assessment is not deleted`() {
+      val assessment = Assessment()
+
+      every { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) } returns emptyList()
+
+      val exception = assertThrows<ConflictException> {
+        assessmentVersionService.undelete(assessment, 0, null, UserDetails("user-id", "User Name"))
+      }
+      assertThat(exception.message)
+        .isEqualTo("No assessment versions found for un-deletion")
+
+      verify(exactly = 1) { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) }
+      verify(exactly = 0) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
     }
   }
 }

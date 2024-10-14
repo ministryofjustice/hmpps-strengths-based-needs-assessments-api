@@ -11,11 +11,15 @@ data class AssessmentVersionCriteria(
   val assessmentUuid: UUID,
   val tags: Set<Tag>? = null,
   val versionNumber: Int? = null,
+  val versionNumberFrom: Int? = null,
+  val versionNumberTo: Int? = null,
 ) {
   fun getSpecification(): Specification<AssessmentVersion> {
     return belongsToAssessment()
       .and(hasTag())
       .and(isVersionNumber())
+      .and(versionNumberFrom())
+      .and(versionNumberTo())
   }
 
   private fun belongsToAssessment(): Specification<AssessmentVersion> {
@@ -34,6 +38,22 @@ data class AssessmentVersionCriteria(
     return Specification<AssessmentVersion> { root, _, builder ->
       versionNumber?.let {
         builder.equal(root.get(AssessmentVersion_.versionNumber), it)
+      }
+    }
+  }
+
+  private fun versionNumberFrom(): Specification<AssessmentVersion> {
+    return Specification<AssessmentVersion> { root, _, builder ->
+      versionNumberFrom?.let {
+        builder.greaterThanOrEqualTo(root.get(AssessmentVersion_.versionNumber), it)
+      }
+    }
+  }
+
+  private fun versionNumberTo(): Specification<AssessmentVersion> {
+    return Specification<AssessmentVersion> { root, _, builder ->
+      versionNumberTo?.let {
+        builder.lessThan(root.get(AssessmentVersion_.versionNumber), it)
       }
     }
   }

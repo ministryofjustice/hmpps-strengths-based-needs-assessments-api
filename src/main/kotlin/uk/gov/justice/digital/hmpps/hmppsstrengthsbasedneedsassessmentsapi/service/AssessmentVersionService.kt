@@ -57,6 +57,9 @@ class AssessmentVersionService(
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
+  fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> =
+    assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
+
   fun save(assessmentVersion: AssessmentVersion): AssessmentVersion {
     return assessmentVersionRepository.save(assessmentVersion)
   }
@@ -164,6 +167,38 @@ class AssessmentVersionService(
           statusFrom = originalStatus,
           statusTo = it.tag,
         ).run(assessmentVersionAuditRepository::save)
+      }
+  }
+
+  @Transactional
+  fun softDelete(assessmentVersions: List<AssessmentVersion>, userDetails: UserDetails): List<AssessmentVersion> {
+    return assessmentVersions
+      .filter { !it.deleted }
+      .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
+      .map { it.apply { deleted = true } }
+      .run(assessmentVersionRepository::saveAll)
+      .also {
+        val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
+        log.info("Successfully soft-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
+      }
+  }
+
+  @Transactional
+  fun undelete(assessment: Assessment, fromVersion: Int, toVersion: Int?, userDetails: UserDetails): List<AssessmentVersion> {
+    return assessmentVersionRepository.findAllDeleted(assessment.uuid)
+      .filter {
+        if (toVersion == null) {
+          it.versionNumber >= fromVersion
+        } else {
+          it.versionNumber >= fromVersion && it.versionNumber < toVersion
+        }
+      }
+      .ifEmpty { throw ConflictException("No assessment versions found for un-deletion") }
+      .map { it.apply { deleted = false } }
+      .run(assessmentVersionRepository::saveAll)
+      .also {
+        val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
+        log.info("Successfully un-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
       }
   }
 

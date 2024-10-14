@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.annotations.SQLRestriction
 import org.hibernate.annotations.Type
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -98,6 +99,7 @@ enum class SignType {
 
 @Entity
 @Table(name = "assessments_versions")
+@SQLRestriction("deleted IS FALSE")
 data class AssessmentVersion(
   @Id
   @Column(name = "id")
@@ -134,6 +136,9 @@ data class AssessmentVersion(
 
   @OneToMany(mappedBy = "assessmentVersion", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   var assessmentVersionAudit: List<AssessmentVersionAudit> = listOf(),
+
+  @Column(name = "deleted")
+  var deleted: Boolean = false,
 ) {
   fun isUpdatable(): Boolean {
     val versionUpdatedDate = updatedAt.format(DateTimeFormatter.ISO_LOCAL_DATE)

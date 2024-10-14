@@ -20,6 +20,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.CounterSignAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.RollbackAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.SignAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.SoftDeleteRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UnDeleteRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
@@ -259,10 +261,10 @@ class AssessmentController(
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/soft-delete"], method = [RequestMethod.POST])
-  @Operation(description = "Soft-deletes an assessment.")
+  @Operation(description = "Soft-deletes a range of assessment versions.")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "200", description = "Assessment has been soft-deleted"),
+      ApiResponse(responseCode = "200", description = "Assessment versions have been soft-deleted"),
       ApiResponse(
         responseCode = "404",
         description = "Assessment not found",
@@ -270,7 +272,7 @@ class AssessmentController(
       ),
       ApiResponse(
         responseCode = "409",
-        description = "Unable to soft-delete an assessment that has already been soft-deleted",
+        description = "Unable to soft-delete requested assessment versions",
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
       ),
       ApiResponse(
@@ -286,19 +288,20 @@ class AssessmentController(
     @PathVariable
     assessmentUuid: UUID,
     @RequestBody @Valid
-    request: AuditedRequest,
+    request: SoftDeleteRequest,
   ): Message {
-//    TODO: implement
-//    return assessmentService.softDelete(assessmentUuid, UserDetails.from(request))
-//      .run { Message("Successfully soft-deleted assessment UUID $assessmentUuid") }
-    return Message("Soft-deletion is not implemented")
+    return request.toAssessmentVersionCriteria(assessmentUuid)
+      .also { assessmentService.findByUuid(assessmentUuid) }
+      .run(assessmentVersionService::findAll)
+      .let { assessmentVersionService.softDelete(it, request.userDetails) }
+      .let { Message("Successfully soft-deleted ${it.count()} assessment versions") }
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])
   @Operation(description = "Undeletes an OASys assessment.")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "200", description = "OASys assessment has been undeleted"),
+      ApiResponse(responseCode = "200", description = "Assessment versions have been un-deleted"),
       ApiResponse(
         responseCode = "404",
         description = "Assessment not found",
@@ -306,7 +309,7 @@ class AssessmentController(
       ),
       ApiResponse(
         responseCode = "409",
-        description = "Unable to undelete an assessment that is not deleted",
+        description = "Unable to un-delete the requested assessment versions",
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
       ),
       ApiResponse(
@@ -322,11 +325,10 @@ class AssessmentController(
     @PathVariable
     assessmentUuid: UUID,
     @RequestBody @Valid
-    request: AuditedRequest,
+    request: UnDeleteRequest,
   ): Message {
-//    TODO: implement
-//    return assessmentService.undelete(assessmentUuid)
-//      .run(AssessmentResponse::from)
-    return Message("Soft-deletion is not implemented")
+    return assessmentService.findByUuid(assessmentUuid)
+      .let { with(request) { assessmentVersionService.undelete(it, versionFrom, versionTo, userDetails) } }
+      .let { Message("Successfully un-deleted ${it.count()} assessment versions") }
   }
 }

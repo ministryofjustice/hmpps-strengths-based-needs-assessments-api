@@ -86,7 +86,7 @@ class AssessmentController(
     request: AuditedRequest,
   ): AssessmentResponse {
     return assessmentService.create()
-      .run { assessmentVersions.first() }
+      .assessmentVersions.first()
       .audit(request.userDetails)
       .run(assessmentVersionService::saveAudit)
       .run { AssessmentResponse.from(assessmentVersion) }

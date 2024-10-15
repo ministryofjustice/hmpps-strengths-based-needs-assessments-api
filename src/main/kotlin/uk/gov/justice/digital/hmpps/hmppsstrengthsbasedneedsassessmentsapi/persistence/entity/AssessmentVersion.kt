@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.annotations.Type
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -152,4 +153,9 @@ data class AssessmentVersion(
       .filterNot { answersToRemove.contains(it.key) }
     updatedAt = LocalDateTime.now()
   }
+
+  fun audit(userDetails: UserDetails) = AssessmentVersionAudit(
+    assessmentVersion = this,
+    userDetails = userDetails,
+  )
 }

@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
@@ -55,25 +53,6 @@ class AssessmentServiceTest {
 
       assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
       assertThat(result.info?.formVersion).isEqualTo(formConfig.version)
-    }
-
-    @Test
-    fun `it creates and returns an assessment with audit`() {
-      val formConfig = FormConfig("version")
-      val assessmentSlot = slot<Assessment>()
-      val assessmentVersionAudit = slot<AssessmentVersionAudit>()
-      val userDetails = UserDetails("1", "TestUser")
-
-      every { assessmentRepository.save(capture(assessmentSlot)) } returnsArgument 0
-      every { formConfigProvider.getLatest() } returns formConfig
-      every { assessmentVersionService.setOasysEquivalents(any()) } returnsArgument 0
-      every { assessmentVersionAuditRepository.save(capture(assessmentVersionAudit)) } returnsArgument 0
-
-      val result = assessmentService.createAndAudit(userDetails)
-
-      assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
-      assertThat(assessmentVersionAudit.captured.userDetails).isEqualTo(userDetails)
-      assertThat(result.assessmentVersions.first().versionNumber).isEqualTo(0)
     }
   }
 

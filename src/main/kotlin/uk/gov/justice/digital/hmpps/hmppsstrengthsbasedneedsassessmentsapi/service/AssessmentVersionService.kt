@@ -1,10 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
@@ -29,12 +29,14 @@ class AssessmentVersionService(
   val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val dataMappingService: DataMappingService,
 ) {
+  @Transactional
   fun getPreviousOrCreate(assessment: Assessment): AssessmentVersion {
     return findOrNull(AssessmentVersionCriteria(assessment.uuid))?.let { assessmentVersion ->
       if (assessmentVersion.isUpdatable()) assessmentVersion else createWith(assessment, assessmentVersion.answers)
     } ?: createWith(assessment)
   }
 
+  @Transactional
   fun createWith(
     assessment: Assessment,
     answers: Answers = emptyMap(),
@@ -64,6 +66,8 @@ class AssessmentVersionService(
     return assessmentVersionRepository.save(assessmentVersion)
   }
 
+  fun saveAudit(assessmentVersionAudit: AssessmentVersionAudit) = assessmentVersionAuditRepository.save(assessmentVersionAudit)
+
   fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
     log.info("Adding answers to assessment with UUID ${assessment.uuid}")
 
@@ -87,14 +91,14 @@ class AssessmentVersionService(
     val originalStatus = assessmentVersion.tag
     assessmentVersion.tag = Tag.LOCKED_INCOMPLETE
 
-    return assessmentVersionRepository.save(assessmentVersion).also {
-      AssessmentVersionAudit(
-        assessmentVersion = it,
-        userDetails = userDetails,
-        statusFrom = originalStatus,
-        statusTo = it.tag,
-      ).run(assessmentVersionAuditRepository::save)
-    }
+    return assessmentVersionRepository.save(assessmentVersion)
+      .audit(userDetails)
+      .apply {
+        statusFrom = originalStatus
+        statusTo = assessmentVersion.tag
+      }
+      .run(::saveAudit)
+      .assessmentVersion
   }
 
   @Transactional
@@ -112,14 +116,14 @@ class AssessmentVersionService(
 
     assessmentVersion.tag = newStatus
 
-    return assessmentVersionRepository.save(assessmentVersion).also {
-      AssessmentVersionAudit(
-        assessmentVersion = it,
-        userDetails = signer,
-        statusFrom = originalStatus,
-        statusTo = it.tag,
-      ).run(assessmentVersionAuditRepository::save)
-    }
+    return assessmentVersionRepository.save(assessmentVersion)
+      .audit(signer)
+      .apply {
+        statusFrom = originalStatus
+        statusTo = assessmentVersion.tag
+      }
+      .run(::saveAudit)
+      .assessmentVersion
   }
 
   @Transactional
@@ -139,14 +143,13 @@ class AssessmentVersionService(
     assessmentVersion.tag = outcome
 
     return assessmentVersionRepository.save(assessmentVersion)
-      .also {
-        AssessmentVersionAudit(
-          assessmentVersion = it,
-          userDetails = counterSigner,
-          statusFrom = originalStatus,
-          statusTo = it.tag,
-        ).run(assessmentVersionAuditRepository::save)
+      .audit(counterSigner)
+      .apply {
+        statusFrom = originalStatus
+        statusTo = assessmentVersion.tag
       }
+      .run(::saveAudit)
+      .assessmentVersion
   }
 
   @Transactional
@@ -160,14 +163,13 @@ class AssessmentVersionService(
     assessmentVersion.tag = Tag.ROLLED_BACK
 
     return assessmentVersionRepository.save(assessmentVersion)
-      .also {
-        AssessmentVersionAudit(
-          assessmentVersion = it,
-          userDetails = userDetails,
-          statusFrom = originalStatus,
-          statusTo = it.tag,
-        ).run(assessmentVersionAuditRepository::save)
+      .audit(userDetails)
+      .apply {
+        statusFrom = originalStatus
+        statusTo = assessmentVersion.tag
       }
+      .run(::saveAudit)
+      .assessmentVersion
   }
 
   @Transactional

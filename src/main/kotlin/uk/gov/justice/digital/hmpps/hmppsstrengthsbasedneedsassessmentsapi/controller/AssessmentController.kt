@@ -85,9 +85,37 @@ class AssessmentController(
     @RequestBody
     request: AuditedRequest,
   ): AssessmentResponse {
-    return request.userDetails
-      .run(assessmentService::createAndAudit)
-      .run { assessmentVersions.first() }
+    return assessmentService.create()
+      .assessmentVersions.first()
+      .audit(request.userDetails)
+      .run(assessmentVersionService::saveAudit)
+      .run { AssessmentResponse.from(assessmentVersion) }
+  }
+
+  @RequestMapping(path = ["/{assessmentUuid}/clone"], method = [RequestMethod.POST])
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(description = "Clone the latest version of an assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "201", description = "Assessment version created"),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun clone(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody
+    request: AuditedRequest,
+  ): AssessmentResponse {
+    return AssessmentVersionCriteria(assessmentUuid)
+      .run(assessmentVersionService::find)
+      .run { assessmentVersionService.createWith(assessment, answers, oasysEquivalents) }
+      .run(assessmentVersionService::save)
+      .apply {
+        audit(request.userDetails)
+          .run(assessmentVersionService::saveAudit)
+      }
       .run(AssessmentResponse::from)
   }
 

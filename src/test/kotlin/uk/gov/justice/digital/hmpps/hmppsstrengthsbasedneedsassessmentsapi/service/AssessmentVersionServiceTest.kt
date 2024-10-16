@@ -77,7 +77,7 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
-  @DisplayName("clonePreviousOrCreateNew")
+  @DisplayName("getPreviousOrCreate")
   inner class GetPreviousOrCreate {
     @Test
     fun `it returns the previous assessment version if it was created today`() {
@@ -93,10 +93,10 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions
 
       val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result?.tag).isEqualTo(tag)
-      assertThat(result?.uuid).isEqualTo(secondAssessmentVersion.uuid)
-      assertThat(result?.answers?.get("test")?.value).isEqualTo("val")
-      assertThat(result?.versionNumber).isEqualTo(1)
+      assertThat(result.tag).isEqualTo(tag)
+      assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
+      assertThat(result.answers["test"]?.value).isEqualTo("val")
+      assertThat(result.versionNumber).isEqualTo(1)
     }
 
     @Test
@@ -117,10 +117,10 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions.totalElements.toInt()
 
       val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result?.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
-      assertThat(result?.tag).isEqualTo(tag)
-      assertThat(result?.answers?.get("foo")?.value).isEqualTo("Foo answer")
-      assertThat(result?.versionNumber).isEqualTo(1)
+      assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
+      assertThat(result.tag).isEqualTo(tag)
+      assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
+      assertThat(result.versionNumber).isEqualTo(1)
     }
 
     @Test
@@ -140,9 +140,9 @@ class AssessmentVersionServiceTest {
       } returns assessmentVersions.totalElements.toInt()
 
       val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result?.tag).isEqualTo(tag)
-      assertThat(result?.answers).isEmpty()
-      assertThat(result?.versionNumber).isEqualTo(0)
+      assertThat(result.tag).isEqualTo(tag)
+      assertThat(result.answers).isEmpty()
+      assertThat(result.versionNumber).isEqualTo(0)
     }
   }
 

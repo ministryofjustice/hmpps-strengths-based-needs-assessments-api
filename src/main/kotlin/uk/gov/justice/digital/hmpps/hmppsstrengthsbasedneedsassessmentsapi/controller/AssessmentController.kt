@@ -110,7 +110,7 @@ class AssessmentController(
   ): AssessmentResponse {
     return AssessmentVersionCriteria(assessmentUuid)
       .run(assessmentVersionService::find)
-      .run { assessmentVersionService.createWith(assessment, answers, oasysEquivalents) }
+      .run(assessmentVersionService::clone)
       .run(assessmentVersionService::save)
       .apply {
         audit(request.userDetails)

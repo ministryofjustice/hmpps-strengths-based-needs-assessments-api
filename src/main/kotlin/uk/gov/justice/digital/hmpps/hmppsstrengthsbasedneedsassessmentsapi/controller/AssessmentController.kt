@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentVersionService
@@ -317,12 +316,14 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SoftDeleteRequest,
-  ): Message {
+  ): AssessmentResponse {
     return request.toAssessmentVersionCriteria(assessmentUuid)
       .also { assessmentService.findByUuid(assessmentUuid) }
       .run(assessmentVersionService::findAll)
       .let { assessmentVersionService.softDelete(it, request.userDetails) }
-      .let { Message("Successfully soft-deleted ${it.count()} assessment versions") }
+      .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
+      .run(assessmentVersionService::find)
+      .run(AssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])
@@ -354,9 +355,11 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: UnDeleteRequest,
-  ): Message {
+  ): AssessmentResponse {
     return assessmentService.findByUuid(assessmentUuid)
       .let { with(request) { assessmentVersionService.undelete(it, versionFrom, versionTo, userDetails) } }
-      .let { Message("Successfully un-deleted ${it.count()} assessment versions") }
+      .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
+      .run(assessmentVersionService::find)
+      .run(AssessmentResponse::from)
   }
 }

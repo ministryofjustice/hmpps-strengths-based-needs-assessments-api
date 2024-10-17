@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
@@ -129,7 +129,7 @@ class SoftDeleteTest(
   }
 
   @Test
-  fun `it returns a success message when the latest assessment versions are soft-deleted`() {
+  fun `it returns the latest non-deleted version when the latest versions are soft-deleted`() {
     val request = """
         {
           "versionFrom": 2,
@@ -143,11 +143,12 @@ class SoftDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isOk
-      .expectBody(Message::class.java)
+      .expectBody(AssessmentResponse::class.java)
       .returnResult()
       .responseBody
 
-    assertThat(response?.message).isEqualTo("Successfully soft-deleted 2 assessment versions")
+    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    assertThat(response?.metaData?.versionNumber).isEqualTo(1)
 
     assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
       assertThat(count()).isEqualTo(2)
@@ -176,11 +177,12 @@ class SoftDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isOk
-      .expectBody(Message::class.java)
+      .expectBody(AssessmentResponse::class.java)
       .returnResult()
       .responseBody
 
-    assertThat(response?.message).isEqualTo("Successfully soft-deleted 2 assessment versions")
+    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    assertThat(response?.metaData?.versionNumber).isEqualTo(3)
 
     assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
       assertThat(count()).isEqualTo(2)

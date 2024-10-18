@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.Message
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
@@ -34,9 +34,9 @@ class UnDeleteTest(
     assessment = Assessment()
     assessment.assessmentVersions = listOf(
       AssessmentVersion(assessment = assessment, versionNumber = 0),
-      AssessmentVersion(assessment = assessment, versionNumber = 1, deleted = true),
+      AssessmentVersion(assessment = assessment, versionNumber = 1),
       AssessmentVersion(assessment = assessment, versionNumber = 2, deleted = true),
-      AssessmentVersion(assessment = assessment, versionNumber = 3),
+      AssessmentVersion(assessment = assessment, versionNumber = 3, deleted = true),
     )
     assessmentRepository.save(assessment)
   }
@@ -108,7 +108,8 @@ class UnDeleteTest(
   fun `it returns Conflict when the assessment version has not been soft-deleted`() {
     val request = """
         {
-          "versionFrom": 3,
+          "versionFrom": 1,
+          "versionTo": 2,
           "userDetails": { "id": "user-id", "name": "John Doe" }
         }
     """.trimIndent()
@@ -144,29 +145,27 @@ class UnDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isOk
-      .expectBody(Message::class.java)
+      .expectBody(AssessmentResponse::class.java)
       .returnResult()
       .responseBody
 
-    assertThat(response?.message).isEqualTo("Successfully un-deleted 1 assessment versions")
+    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    assertThat(response?.metaData?.versionNumber).isEqualTo(3)
 
     assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
-      assertThat(count()).isEqualTo(3)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 2, 3) } })
+      assertThat(count()).isEqualTo(4)
+      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2, 3) } })
     }
 
-    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
-      assertThat(count()).isEqualTo(1)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(1) } })
-    }
+    assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid)).isEmpty()
   }
 
   @Test
   fun `it undeletes a specific range of assessment versions`() {
     val request = """
         {
-          "versionFrom": 1,
-          "versionTo": 2,
+          "versionFrom": 2,
+          "versionTo": 3,
           "userDetails": { "id": "user-id", "name": "John Doe" }
         }
     """.trimIndent()
@@ -177,20 +176,21 @@ class UnDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isOk
-      .expectBody(Message::class.java)
+      .expectBody(AssessmentResponse::class.java)
       .returnResult()
       .responseBody
 
-    assertThat(response?.message).isEqualTo("Successfully un-deleted 1 assessment versions")
+    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    assertThat(response?.metaData?.versionNumber).isEqualTo(2)
 
     assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
       assertThat(count()).isEqualTo(3)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 3) } })
+      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2) } })
     }
 
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(1)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(2) } })
+      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(3) } })
     }
   }
 }

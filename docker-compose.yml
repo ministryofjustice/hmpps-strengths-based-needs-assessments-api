@@ -132,6 +132,9 @@ services:
       COORDINATOR_API_BASE_URL: http://coordinator-api:8080
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
+      CLIENT_SAN_SECRET: san-secret
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
 
   oasys-ui:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest

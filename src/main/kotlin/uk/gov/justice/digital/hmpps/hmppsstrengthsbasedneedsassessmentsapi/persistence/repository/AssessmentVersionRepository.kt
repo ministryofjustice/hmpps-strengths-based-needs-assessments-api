@@ -14,6 +14,6 @@ interface AssessmentVersionRepository : JpaRepository<AssessmentVersion, Long>, 
   @Query("SELECT * FROM assessments_versions WHERE assessment_uuid = :assessmentUuid AND deleted = TRUE", nativeQuery = true)
   fun findAllDeleted(assessmentUuid: UUID): List<AssessmentVersion>
 
-  @Query("SELECT COUNT(e) FROM AssessmentVersion e WHERE e.assessment.uuid=?1")
+  @Query("SELECT COUNT(1) FROM assessments_versions WHERE assessment_uuid = :assessmentUuid", nativeQuery = true)
   fun countVersionWhereAssessmentUuid(assessmentUuid: UUID): Int
 }

@@ -128,4 +128,62 @@ class CloneTest(
     Assertions.assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     Assertions.assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
   }
+
+  @Test
+  fun `it clones from the latest non-deleted version of the assessment`() {
+    assessment.assessmentVersions = listOf(
+      AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(2),
+        versionNumber = 0,
+      ),
+      AssessmentVersion(
+        assessment = assessment,
+        updatedAt = LocalDateTime.now().minusDays(1),
+        versionNumber = 1,
+        tag = Tag.LOCKED_INCOMPLETE,
+        answers = mapOf("q1" to Answer(value = "val1")),
+        deleted = true,
+      ),
+    )
+    assessmentRepository.save(assessment)
+
+    val request = """
+        {
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
+    val response: AssessmentResponse? = webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isCreated
+      .expectBody(AssessmentResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+
+    Assertions.assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
+
+    val clonedVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 2 }
+    val previousVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 0 }
+
+    Assertions.assertThat(clonedVersion).isNotNull
+    Assertions.assertThat(previousVersion).isNotNull
+    Assertions.assertThat(clonedVersion?.tag).isEqualTo(previousVersion?.tag)
+
+    Assertions.assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+
+    val audit = clonedVersion.assessmentVersionAudit.first()
+    Assertions.assertThat(audit.statusFrom).isNull()
+    Assertions.assertThat(audit.statusTo).isNull()
+    Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
+    Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
+
+    Assertions.assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    Assertions.assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
+  }
 }

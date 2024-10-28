@@ -115,7 +115,7 @@ class CloneTest(
 
     Assertions.assertThat(clonedVersion).isNotNull
     Assertions.assertThat(previousVersion).isNotNull
-    Assertions.assertThat(clonedVersion?.tag).isEqualTo(previousVersion?.tag)
+    Assertions.assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
     Assertions.assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
@@ -173,7 +173,7 @@ class CloneTest(
 
     Assertions.assertThat(clonedVersion).isNotNull
     Assertions.assertThat(previousVersion).isNotNull
-    Assertions.assertThat(clonedVersion?.tag).isEqualTo(previousVersion?.tag)
+    Assertions.assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
     Assertions.assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 

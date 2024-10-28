@@ -47,7 +47,7 @@ class AssessmentVersionService(
     AssessmentVersion(
       assessment = assessment,
       versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
-      tag = tag,
+      tag = Tag.UNSIGNED,
       answers = answers,
       oasysEquivalents = oasysEquivalents,
     )

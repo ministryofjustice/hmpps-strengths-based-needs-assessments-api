@@ -2,7 +2,7 @@
 # Per environment values which override defaults in hmpps-strengths-based-needs-assessments-api/values.yaml
 
 generic-service:
-  replicaCount: 2
+  replicaCount: 4
 
   ingress:
     host: api.strengths-based-needs-test.hmpps.service.justice.gov.uk

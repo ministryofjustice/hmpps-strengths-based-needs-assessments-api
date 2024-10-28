@@ -154,39 +154,42 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
-  #      - hmpps/deploy_env:
-  #          name: deploy_preprod
-  #          env: "preprod"
-  #          jira_update: true
-  #          jira_env_type: staging
-  #          pipeline_id: << pipeline.id >>
-  #          pipeline_number: << pipeline.number >>
-  #          context:
-  #            - hmpps-common-vars
-  #            - hmpps-strengths-based-needs-assessments-api-preprod
-  #          requires:
-  #            - deploy_dev
-  #            - e2e_test_dev
-  #          helm_timeout: 5m
-  #      - request-prod-approval:
-  #          type: approval
-  #          requires:
-  #            - deploy_preprod
-  #      - hmpps/deploy_env:
-  #          name: deploy_prod
-  #          env: "prod"
-  #          jira_update: true
-  #          jira_env_type: production
-  #          pipeline_id: << pipeline.id >>
-  #          pipeline_number: << pipeline.number >>
-  #          slack_notification: true
-  #          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-  #          context:
-  #            - hmpps-common-vars
-  #            - hmpps-strengths-based-needs-assessments-api-prod
-  #          requires:
-  #            - request-prod-approval
-  #          helm_timeout: 5m
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          jira_update: true
+          jira_env_type: staging
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context:
+            - hmpps-common-vars
+            - hmpps-strengths-based-needs-assessments-preprod
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - deploy_dev
+          helm_timeout: 5m
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          jira_update: true
+          jira_env_type: production
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - hmpps-strengths-based-needs-assessments-prod
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - deploy_preprod
+          helm_timeout: 5m
 
   deploy-to-test-env:
     when:
@@ -202,7 +205,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-strengths-based-needs-assessments-api-test
+            - hmpps-strengths-based-needs-assessments-test
       - hmpps/publish_docker:
           name: publish_docker
           publish_latest_tag: false
@@ -218,7 +221,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-strengths-based-needs-assessments-api-test
+            - hmpps-strengths-based-needs-assessments-test
           requires:
             - publish_docker
           helm_timeout: 5m

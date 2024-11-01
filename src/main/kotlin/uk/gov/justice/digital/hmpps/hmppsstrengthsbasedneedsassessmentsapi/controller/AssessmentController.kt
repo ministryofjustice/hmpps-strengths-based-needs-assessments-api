@@ -81,7 +81,7 @@ class AssessmentController(
   )
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun create(
-    @RequestBody
+    @RequestBody @Valid
     request: AuditedRequest,
   ): AssessmentResponse {
     return assessmentService.create()
@@ -104,7 +104,7 @@ class AssessmentController(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     assessmentUuid: UUID,
-    @RequestBody
+    @RequestBody @Valid
     request: AuditedRequest,
   ): AssessmentResponse {
     return AssessmentVersionCriteria(assessmentUuid)
@@ -165,8 +165,7 @@ class AssessmentController(
     @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
     @PathVariable
     assessmentUuid: UUID,
-    @RequestBody
-    @Valid
+    @RequestBody @Valid
     request: SignAssessmentRequest,
   ): AssessmentResponse {
     return AssessmentVersionCriteria(assessmentUuid)

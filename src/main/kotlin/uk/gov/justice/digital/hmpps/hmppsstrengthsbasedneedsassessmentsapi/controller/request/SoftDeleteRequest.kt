@@ -8,13 +8,13 @@ import java.util.UUID
 
 class SoftDeleteRequest(
   @Schema(description = "The Assessment version number (inclusive) to delete from.", example = "1")
-  @PositiveOrZero
+  @get:PositiveOrZero
   val versionFrom: Int,
   @Schema(description = "The Assessment version number (exclusive) to delete to.", example = "2")
-  @PositiveOrZero
+  @get:PositiveOrZero
   val versionTo: Int? = null,
   @Schema(description = "User")
-  @Valid
+  @get:Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest {
   fun toAssessmentVersionCriteria(assessmentUuid: UUID) =

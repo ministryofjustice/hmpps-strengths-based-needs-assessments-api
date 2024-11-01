@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -82,6 +83,95 @@ class SoftDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `it returns Bad Request when the versionFrom is negative`() {
+    val request = """
+        {
+          "versionFrom": -1,
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
+    val response = webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.userMessage).isEqualTo("Validation failure: [versionFrom - must be greater than or equal to 0]")
+  }
+
+  @Test
+  fun `it returns Bad Request when the versionTo is negative`() {
+    val request = """
+        {
+          "versionFrom": 0,
+          "versionTo": -1,
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
+    val response = webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.userMessage).isEqualTo("Validation failure: [versionTo - must be greater than or equal to 0]")
+  }
+
+  @Test
+  fun `it returns Bad Request when User ID is over the limit`() {
+    val request = """
+        {
+          "versionFrom": 0,
+          "userDetails": { "id": "${"1".repeat(Constraints.OASYS_USER_ID_MAX_LENGTH + 1)}", "name": "John Doe" }
+        }
+    """.trimIndent()
+
+    val response = webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+  }
+
+  @Test
+  fun `it returns Bad Request when User Name is over the limit`() {
+    val request = """
+        {
+          "versionFrom": 0,
+          "userDetails": { "id": "12345", "name": "${"A".repeat(Constraints.OASYS_USER_NAME_MAX_LENGTH + 1)}" }
+        }
+    """.trimIndent()
+
+    val response = webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
   }
 
   @Test

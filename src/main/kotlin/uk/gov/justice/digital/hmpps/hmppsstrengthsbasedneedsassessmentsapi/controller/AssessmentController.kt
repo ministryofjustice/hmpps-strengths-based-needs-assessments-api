@@ -315,14 +315,14 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SoftDeleteRequest,
-  ): AssessmentResponse {
+  ): AssessmentResponse? {
     return request.toAssessmentVersionCriteria(assessmentUuid)
       .also { assessmentService.findByUuid(assessmentUuid) }
       .run(assessmentVersionService::findAll)
       .let { assessmentVersionService.softDelete(it, request.userDetails) }
       .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
-      .run(assessmentVersionService::find)
-      .run(AssessmentResponse::from)
+      .run(assessmentVersionService::findOrNull)
+      ?.run(AssessmentResponse::from)
   }
 
   @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])

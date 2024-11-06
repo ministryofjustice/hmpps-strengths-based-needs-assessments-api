@@ -194,4 +194,28 @@ class SoftDeleteTest(
       assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(1, 2) } })
     }
   }
+
+  @Test
+  fun `it returns null when all assessment versions are soft-deleted`() {
+    val request = """
+        {
+          "versionFrom": 0,
+          "userDetails": { "id": "user-id", "name": "John Doe" }
+        }
+    """.trimIndent()
+
+    webTestClient.post().uri(endpoint())
+      .header(HttpHeaders.CONTENT_TYPE, "application/json")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
+      .bodyValue(request)
+      .exchange()
+      .expectStatus().isOk
+
+    assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions).isEmpty()
+
+    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
+      assertThat(count()).isEqualTo(4)
+      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(0, 1, 2, 3) } })
+    }
+  }
 }

@@ -95,11 +95,11 @@ class OffenceAnalysis : SectionMapping() {
     return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_RELATIONSHIP.lower]?.value) {
       ap.get(Value.STRANGER) -> "0"
       ap.get(Value.CRIMINAL_JUSTICE_STAFF) -> "12"
-      ap.get(Value.CHILD) -> "14"
-      ap.get(Value.EX_PARTNER) -> "15"
-      ap.get(Value.PARENT_OR_STEP_PARENT) -> "5"
+//      ap.get(Value.CHILD) -> "14"
+//      ap.get(Value.EX_PARTNER) -> "15"
+//      ap.get(Value.PARENT_OR_STEP_PARENT) -> "5"
       ap.get(Value.OTHER_FAMILY_MEMBER) -> "6"
-      ap.get(Value.PARTNER) -> "1"
+//      ap.get(Value.PARTNER) -> "1"
       ap.get(Value.OTHER) -> "13"
       else -> null
     }

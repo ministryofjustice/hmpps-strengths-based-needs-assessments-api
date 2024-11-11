@@ -482,11 +482,11 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
     mapOf(
       Value.STRANGER.name to "0",
       Value.CRIMINAL_JUSTICE_STAFF.name to "12",
-      Value.CHILD.name to "14",
-      Value.EX_PARTNER.name to "15",
-      Value.PARENT_OR_STEP_PARENT.name to "5",
+      Value.POP_PARENT_OR_STEP_PARENT.name to "14",
+      Value.POP_EX_PARTNER.name to "15",
+      Value.POP_CHILD_OR_STEP_CHILD.name to "5",
       Value.OTHER_FAMILY_MEMBER.name to "6",
-      Value.PARTNER.name to "1",
+      Value.POP_PARTNER.name to "1",
       Value.OTHER.name to "13",
     ).forEach { (givenValue, expectedValue) ->
       val entries: List<Map<String, PersistedAnswer>> = listOf(

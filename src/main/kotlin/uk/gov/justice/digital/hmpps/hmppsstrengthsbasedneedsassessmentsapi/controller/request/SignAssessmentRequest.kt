@@ -8,6 +8,6 @@ class SignAssessmentRequest(
   @Schema(description = "Indicates what type of case this is")
   val signType: SignType,
   @Schema(description = "User")
-  @Valid
+  @get:Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest

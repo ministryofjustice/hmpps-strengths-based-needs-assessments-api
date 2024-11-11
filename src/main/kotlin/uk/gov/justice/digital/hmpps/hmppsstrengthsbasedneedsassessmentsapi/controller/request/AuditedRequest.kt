@@ -5,6 +5,6 @@ import jakarta.validation.Valid
 
 class AuditedRequest(
   @Schema(description = "User")
-  @Valid
+  @get:Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest

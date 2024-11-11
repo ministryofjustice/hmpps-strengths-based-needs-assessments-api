@@ -7,11 +7,11 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 
 class CounterSignAssessmentRequest(
   @Schema(description = "The Assessment version number that was returned from the Sign Assessment API call.", example = "2")
-  @PositiveOrZero
+  @get:PositiveOrZero
   val versionNumber: Int,
   @Schema(description = "Indicates what type of case this is")
   val outcome: Tag,
   @Schema(description = "User")
-  @Valid
+  @get:Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest

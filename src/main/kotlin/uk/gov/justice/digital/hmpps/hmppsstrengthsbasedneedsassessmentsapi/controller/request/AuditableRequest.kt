@@ -10,10 +10,10 @@ interface AuditableRequest {
 
 data class UserDetails(
   @Schema(description = "User ID", example = "111111")
-  @Size(max = Constraints.OASYS_USER_ID_MAX_LENGTH)
+  @get:Size(max = Constraints.OASYS_USER_ID_MAX_LENGTH)
   val id: String = "",
   @Schema(description = "User name", example = "John Doe")
-  @Size(max = Constraints.OASYS_USER_NAME_MAX_LENGTH)
+  @get:Size(max = Constraints.OASYS_USER_NAME_MAX_LENGTH)
   val name: String = "",
   @Schema(description = "User type", example = "SAN")
   val type: UserType = UserType.SAN,

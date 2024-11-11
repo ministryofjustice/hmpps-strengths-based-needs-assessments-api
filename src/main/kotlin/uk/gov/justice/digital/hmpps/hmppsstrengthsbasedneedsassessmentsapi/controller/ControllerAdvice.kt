@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
@@ -90,6 +91,21 @@ class ControllerAdvice {
           developerMessage = ex.message ?: "",
         ),
       )
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException::class)
+  fun handleArgumentNotValidationException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+    return "Validation failure: ${ex.bindingResult.fieldErrors.map { "${it.field} - ${it.defaultMessage}" }}".let {
+      log.info(it)
+      ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(
+          ErrorResponse(
+            userMessage = it,
+            developerMessage = ex.message ?: "",
+          ),
+        )
+    }
   }
 
   @ExceptionHandler(Exception::class)

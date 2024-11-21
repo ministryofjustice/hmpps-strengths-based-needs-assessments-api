@@ -603,9 +603,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-t",
       Given().expect(null),
-//      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, null).expect(null),
-//      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "").expect(""),
-//      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "some text").expect("some text"),
+      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, null).expect(null),
+      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "").expect(""),
+      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "some text").expect("some text"),
     )
   }
 

@@ -305,7 +305,8 @@ class Drugs : SectionMapping() {
   }
 
   private fun q214t(): Any? {
-    return ap.answer(Field.OTHER_DRUG_DETAILS).value
+    return ap.answer(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS).value
+    return null
   }
 
   private fun q4(): Any {

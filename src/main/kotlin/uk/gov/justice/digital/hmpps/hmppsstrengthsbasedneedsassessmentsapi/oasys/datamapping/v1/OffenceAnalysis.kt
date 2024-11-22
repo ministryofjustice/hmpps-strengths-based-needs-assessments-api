@@ -27,6 +27,7 @@ class OffenceAnalysis : SectionMapping() {
       "o2-9_V2_SEXUAL" to ::q9SexualMotivations,
       "o2-9_V2_FINANCIAL" to ::q9FinancialMotivations,
       "o2-9_V2_ADDICTION" to ::q9AddictionMotivations,
+      "o2-9_V2_EMOTIONAL" to ::q9EmotionalMotivations,
       "o2-9_V2_RACIAL" to ::q9RacialMotivations,
       "o2-9_V2_THRILL" to ::q29ThrillMotivations,
       "o2-9_V2_OTHER" to ::q29OtherMotivations,
@@ -270,6 +271,12 @@ class OffenceAnalysis : SectionMapping() {
   private fun q9AddictionMotivations(): Any? {
     return ap.answer(Field.OFFENCE_ANALYSIS_MOTIVATIONS).values?.let {
       if (it.contains(ap.get(Value.ADDICTIONS_OR_PERCEIVED_NEEDS))) "YES" else "NO"
+    }
+  }
+
+  private fun q9EmotionalMotivations(): Any? {
+    return ap.answer(Field.OFFENCE_ANALYSIS_MOTIVATIONS).values?.let {
+      if (it.contains(ap.get(Value.EMOTIONAL_STATE))) "YES" else "NO"
     }
   }
 

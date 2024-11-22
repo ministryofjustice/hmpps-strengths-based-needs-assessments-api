@@ -247,6 +247,16 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
   }
 
   @Test
+  fun q9EmotionalMotivations() {
+    test(
+      "o2-9_V2_EMOTIONAL",
+      Given().expect(null),
+      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, emptyList()).expect("NO"),
+      Given(Field.OFFENCE_ANALYSIS_MOTIVATIONS, listOf(Value.EMOTIONAL_STATE)).expect("YES"),
+    )
+  }
+
+  @Test
   fun q9RacialMotivations() {
     test(
       "o2-9_V2_RACIAL",

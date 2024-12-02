@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
@@ -27,13 +28,9 @@ class AssessmentVersionService(
   val assessmentVersionRepository: AssessmentVersionRepository,
   val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val dataMappingService: DataMappingService,
+  val telemetryService: TelemetryService,
+  val formConfigProvider: FormConfigProvider,
 ) {
-  fun getPreviousOrCreate(assessment: Assessment): AssessmentVersion {
-    return findOrNull(AssessmentVersionCriteria(assessment.uuid))?.let { assessmentVersion ->
-      if (assessmentVersion.isUpdatable()) assessmentVersion else createWith(assessment, assessmentVersion.answers)
-    } ?: createWith(assessment)
-  }
-
   fun createWith(
     assessment: Assessment,
     answers: Answers = emptyMap(),
@@ -73,14 +70,71 @@ class AssessmentVersionService(
 
   fun saveAudit(assessmentVersionAudit: AssessmentVersionAudit) = assessmentVersionAuditRepository.save(assessmentVersionAudit)
 
-  fun updateAnswers(assessment: Assessment, request: UpdateAssessmentAnswersRequest) {
-    log.info("Adding answers to assessment with UUID ${assessment.uuid}")
+  fun updateAnswers(existingVersion: AssessmentVersion, request: UpdateAssessmentAnswersRequest) {
+    log.info("Adding answers to assessment with UUID ${existingVersion.assessment.uuid}")
+    val assessmentVersion = existingVersion.run { takeIf { isUpdatable() } ?: createWith(assessment, answers) }
 
-    getPreviousOrCreate(assessment)
+    assessmentVersion
       .apply { setAnswers(request.answersToAdd, request.answersToRemove) }
       .run(::setOasysEquivalents)
       .run(assessmentVersionRepository::save)
+      .also { updateAnswersTelemetry(request, it, existingVersion) }
       .also { log.info("Saved answers to assessment version UUID ${it.uuid}") }
+  }
+
+  private fun updateAnswersTelemetry(
+    request: UpdateAssessmentAnswersRequest,
+    assessmentVersion: AssessmentVersion,
+    existingVersion: AssessmentVersion,
+  ) {
+    fun isUserSubmitted() = request.answersToAdd.entries
+      .find { (code, answer) -> code.endsWith("_user_submitted") && answer.value == "YES" } != null
+
+    if (!isUserSubmitted()) return
+
+    telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, existingVersion.tag)
+
+    fun isAssessmentComplete(assessmentVersion: AssessmentVersion) =
+      assessmentVersion.answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
+
+    if (isAssessmentComplete(assessmentVersion) && !isAssessmentComplete(existingVersion)) {
+      telemetryService.assessmentCompleted(assessmentVersion, request.userDetails.id)
+    }
+
+    val formConfig = assessmentVersion.assessment.info?.run(formConfigProvider::get)
+    fun getSectionCode(questionCode: String) = formConfig?.fields[questionCode]?.section ?: "Unknown"
+
+    request.answersToAdd.entries
+      .filter { (code, answer) -> code.endsWith("_section_complete") && answer.value == "YES" && existingVersion.answers[code]?.value != "YES" }
+      .map { (fieldCode, _) -> telemetryService.sectionCompleted(assessmentVersion, request.userDetails.id, getSectionCode(fieldCode)) }
+
+    val sectionsUpdated = mutableSetOf<String>()
+
+    listOf(
+      request.answersToRemove.filter { assessmentVersion.answers.keys.contains(it) }.map { it to true },
+      request.answersToAdd
+        .filter { assessmentVersion.answers[it.key]?.takeIf { existingAnswer -> existingAnswer.equals(it) } == null }
+        .map { it.key to false },
+    )
+      .flatten()
+      .forEach { (questionCode, isRemoved) ->
+        telemetryService.questionUpdated(
+          assessmentVersion,
+          request.userDetails.id,
+          existingVersion.tag,
+          getSectionCode(questionCode),
+          questionCode,
+          isRemoved,
+        )
+
+        getSectionCode(questionCode)
+          .takeIf { it != "Unknown" }
+          ?.run(sectionsUpdated::add)
+      }
+
+    sectionsUpdated.forEach {
+      telemetryService.sectionUpdated(assessmentVersion, request.userDetails.id, existingVersion.tag, it)
+    }
   }
 
   fun setOasysEquivalents(assessmentVersion: AssessmentVersion) = assessmentVersion.apply {

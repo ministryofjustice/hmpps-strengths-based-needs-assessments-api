@@ -30,7 +30,6 @@ class AssessmentServiceTest {
     formConfigProvider = formConfigProvider,
     assessmentRepository = assessmentRepository,
     assessmentVersionService = assessmentVersionService,
-    assessmentVersionAuditRepository = assessmentVersionAuditRepository,
   )
 
   @Nested

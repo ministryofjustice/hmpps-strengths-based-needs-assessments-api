@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.domain.Specification
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
@@ -49,10 +50,14 @@ class AssessmentVersionServiceTest {
   private val assessmentVersionRepository: AssessmentVersionRepository = mockk()
   private val assessmentVersionAuditRepository: AssessmentVersionAuditRepository = mockk()
   private val dataMappingService: DataMappingService = mockk()
+  private val telemetryService: TelemetryService = mockk()
+  private val formConfigProvider: FormConfigProvider = mockk()
   private val assessmentVersionService = AssessmentVersionService(
     assessmentVersionRepository = assessmentVersionRepository,
-    dataMappingService = dataMappingService,
     assessmentVersionAuditRepository = assessmentVersionAuditRepository,
+    dataMappingService = dataMappingService,
+    telemetryService = telemetryService,
+    formConfigProvider = formConfigProvider,
   )
 
   private val tag = Tag.UNSIGNED
@@ -74,76 +79,6 @@ class AssessmentVersionServiceTest {
   @BeforeEach
   fun setUp() {
     clearAllMocks()
-  }
-
-  @Nested
-  @DisplayName("getPreviousOrCreate")
-  inner class GetPreviousOrCreate {
-    @Test
-    fun `it returns the previous assessment version if it was created today`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(secondAssessmentVersion, firstAssessmentVersion))
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
-      assertThat(result.answers["test"]?.value).isEqualTo("val")
-      assertThat(result.versionNumber).isEqualTo(1)
-    }
-
-    @Test
-    fun `it clones from a previous assessment version if it wasn't created today`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(firstAssessmentVersion))
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
-      assertThat(result.versionNumber).isEqualTo(1)
-    }
-
-    @Test
-    fun `it returns a new version when there is no previous one to clone from`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> = Page.empty()
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers).isEmpty()
-      assertThat(result.versionNumber).isEqualTo(0)
-    }
   }
 
   @Nested
@@ -209,51 +144,37 @@ class AssessmentVersionServiceTest {
   @Nested
   @DisplayName("updateAnswers")
   inner class UpdateAnswers {
-    private val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
+    private val assessment = Assessment()
+    private val oasysEquivalents = mapOf("foo" to "bar")
 
-    private val assessmentVersions: Page<AssessmentVersion> = PageImpl(
-      listOf(
-        AssessmentVersion(
-          tag = tag,
-          updatedAt = LocalDateTime.of(2023, 12, 1, 12, 0),
-          answers = mapOf(
-            "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
-            "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
-            "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
-          ),
-        ),
-        AssessmentVersion(
-          tag = tag,
-          updatedAt = LocalDateTime.of(2023, 6, 1, 12, 0),
-          answers = emptyMap(),
-        ),
-      ),
+    private val request = UpdateAssessmentAnswersRequest(
+      answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
+      answersToRemove = listOf("baz"),
     )
 
-    @Test
-    fun `it updates answers for a given assessment`() {
-      val request = UpdateAssessmentAnswersRequest(
-        answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
-        answersToRemove = listOf("baz"),
-      )
-
-      val oasysEquivalents = mapOf("foo" to "bar")
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
+    @BeforeEach
+    fun setUp() {
       every { dataMappingService.getOasysEquivalent(any()) } returns oasysEquivalents
+      every { assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid) } returns 1
+    }
+
+    @Test
+    fun `it updates answers for a given assessment version`() {
+      val latestVersion = AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        answers = mapOf(
+          "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
+          "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
+          "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
+        ),
+        versionNumber = 0,
+      )
 
       val savedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
 
-      assessmentVersionService.updateAnswers(assessment, request)
+      assessmentVersionService.updateAnswers(latestVersion, request)
 
       assertThat(savedVersion.captured.assessment).isEqualTo(assessment)
       assertThat(savedVersion.captured.tag).isEqualTo(tag)
@@ -261,7 +182,34 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
       assertThat(savedVersion.captured.answers["baz"]).isNull()
       assertThat(savedVersion.captured.oasysEquivalents).isEqualTo(oasysEquivalents)
-      assertThat(savedVersion.captured.updatedAt).isAfter(assessmentVersions.maxOf { it.updatedAt })
+      assertThat(savedVersion.captured.versionNumber).isEqualTo(0)
+    }
+
+    @Test
+    fun `it clones from a previous assessment version if it wasn't created today`() {
+      val latestVersion = AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        updatedAt = LocalDateTime.of(2023, 12, 1, 12, 0),
+        answers = mapOf(
+          "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
+          "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
+          "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
+        ),
+      )
+
+      val savedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
+
+      assessmentVersionService.updateAnswers(latestVersion, request)
+
+      assertThat(savedVersion.captured.assessment).isEqualTo(assessment)
+      assertThat(savedVersion.captured.tag).isEqualTo(tag)
+      assertThat(savedVersion.captured.answers["foo"]?.value).isEqualTo("updated")
+      assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
+      assertThat(savedVersion.captured.answers["baz"]).isNull()
+      assertThat(savedVersion.captured.oasysEquivalents).isEqualTo(oasysEquivalents)
+      assertThat(savedVersion.captured.versionNumber).isEqualTo(1)
     }
   }
 

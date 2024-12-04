@@ -15,7 +15,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formc
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
 import java.util.UUID
 
@@ -25,7 +24,6 @@ class AssessmentServiceTest {
   private val assessmentRepository: AssessmentRepository = mockk()
   private val formConfigProvider: FormConfigProvider = mockk()
   private val assessmentVersionService: AssessmentVersionService = mockk()
-  private val assessmentVersionAuditRepository: AssessmentVersionAuditRepository = mockk()
   private val assessmentService = AssessmentService(
     formConfigProvider = formConfigProvider,
     assessmentRepository = assessmentRepository,

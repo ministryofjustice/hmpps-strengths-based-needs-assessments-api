@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
+import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.just
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +42,7 @@ class RollbackTest(
     assessment = Assessment()
     assessmentRepository.save(assessment)
     clearAllMocks()
-    every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } returns Unit
+    every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
   }
 
   @Test

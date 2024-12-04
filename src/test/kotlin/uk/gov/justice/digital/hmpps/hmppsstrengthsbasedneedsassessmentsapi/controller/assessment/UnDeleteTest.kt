@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.assessment
 
+import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.just
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -48,7 +50,7 @@ class UnDeleteTest(
     )
     assessmentRepository.save(assessment)
     clearAllMocks()
-    every { telemetryService.assessmentUndeleted(any(), any(), any()) } returns Unit
+    every { telemetryService.assessmentUndeleted(any(), any(), any()) } just Runs
   }
 
   @Test

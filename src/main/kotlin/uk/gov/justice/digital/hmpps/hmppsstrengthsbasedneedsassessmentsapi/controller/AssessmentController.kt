@@ -312,6 +312,7 @@ class AssessmentController(
     request: SoftDeleteRequest,
   ): AssessmentResponse? =
     request.toAssessmentVersionCriteria(assessmentUuid)
+      .also { assessmentService.findByUuid(assessmentUuid) }
       .run(assessmentVersionService::findAll)
       .let { assessmentVersionService.softDelete(it, request.userDetails) }
       .let { AssessmentVersionCriteria(it.first().assessment.uuid) }

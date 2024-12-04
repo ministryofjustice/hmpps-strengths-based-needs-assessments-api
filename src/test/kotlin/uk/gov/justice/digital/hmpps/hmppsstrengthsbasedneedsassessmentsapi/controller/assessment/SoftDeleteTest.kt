@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.assessment
 
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,8 +17,10 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @AutoConfigureWebTestClient(timeout = "6000000")
@@ -25,6 +30,8 @@ class SoftDeleteTest(
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private fun endpoint(assessmentUuid: UUID? = null) =
@@ -40,6 +47,8 @@ class SoftDeleteTest(
       AssessmentVersion(assessment = assessment, versionNumber = 3),
     )
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentSoftDeleted(any(), any(), any()) } returns Unit
   }
 
   @Test
@@ -105,6 +114,7 @@ class SoftDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionFrom - must be greater than or equal to 0]")
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -128,6 +138,7 @@ class SoftDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionTo - must be greater than or equal to 0]")
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -150,6 +161,7 @@ class SoftDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -172,6 +184,7 @@ class SoftDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -189,6 +202,8 @@ class SoftDeleteTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isNotFound
+
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -216,6 +231,8 @@ class SoftDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("No assessment versions found for deletion")
+
+    verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
   }
 
   @Test
@@ -248,6 +265,13 @@ class SoftDeleteTest(
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(2)
       assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(2, 3) } })
+      verify(exactly = 1) {
+        telemetryService.assessmentSoftDeleted(
+          withArg { assertEquals(assessment.uuid, it.uuid) },
+          "user-id",
+          withArg { assertTrue(it.all { version -> version.versionNumber in listOf(2, 3) }) },
+        )
+      }
     }
   }
 
@@ -282,6 +306,13 @@ class SoftDeleteTest(
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(2)
       assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(1, 2) } })
+      verify(exactly = 1) {
+        telemetryService.assessmentSoftDeleted(
+          withArg { assertEquals(assessment.uuid, it.uuid) },
+          "user-id",
+          withArg { assertTrue(it.all { version -> version.versionNumber in listOf(1, 2) }) },
+        )
+      }
     }
   }
 
@@ -306,6 +337,14 @@ class SoftDeleteTest(
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(4)
       assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(0, 1, 2, 3) } })
+    }
+
+    verify(exactly = 1) {
+      telemetryService.assessmentSoftDeleted(
+        withArg { assertEquals(assessment.uuid, it.uuid) },
+        "user-id",
+        withArg { assertTrue(it.all { version -> version.versionNumber in listOf(0, 1, 2, 3) }) },
+      )
     }
   }
 }

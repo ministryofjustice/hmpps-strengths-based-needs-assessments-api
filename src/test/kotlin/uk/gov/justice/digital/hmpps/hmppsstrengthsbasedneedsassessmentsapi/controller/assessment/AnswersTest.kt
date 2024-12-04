@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -9,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -19,8 +23,10 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
+import kotlin.test.assertEquals
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/answers")
@@ -29,6 +35,8 @@ class AnswersTest(
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
 
@@ -37,6 +45,9 @@ class AnswersTest(
     assessment = Assessment()
     assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentAnswersUpdated(any(), any(), any()) } returns Unit
+    every { telemetryService.questionUpdated(any(), any(), any(), any(), any(), any()) } returns Unit
   }
 
   private fun endpointWith(assessmentUUID: UUID): String {
@@ -79,6 +90,9 @@ class AnswersTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isNotFound
+
+    verify(exactly = 0) { telemetryService.assessmentAnswersUpdated(any(), any(), any()) }
+    verify(exactly = 0) { telemetryService.questionUpdated(any(), any(), any(), any(), any(), any()) }
   }
 
   @Test
@@ -98,6 +112,7 @@ class AnswersTest(
     val request = UpdateAssessmentAnswersRequest(
       answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
       answersToRemove = emptyList(),
+      userDetails = UserDetails("user-id"),
     )
 
     webTestClient.post().uri(endpointWith(assessment.uuid))
@@ -111,6 +126,25 @@ class AnswersTest(
 
     assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
     assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val1", "val2", "TEST"))
+
+    verify(exactly = 1) {
+      telemetryService.assessmentAnswersUpdated(
+        withArg { assertEquals(updatedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        Tag.UNSIGNED,
+      )
+    }
+
+    verify(exactly = 1) {
+      telemetryService.questionUpdated(
+        withArg { assertEquals(updatedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        assessmentVersion.tag,
+        "Unknown",
+        "field_name",
+        false,
+      )
+    }
   }
 
   @Test
@@ -130,6 +164,7 @@ class AnswersTest(
     val request = UpdateAssessmentAnswersRequest(
       answersToAdd = emptyMap(),
       answersToRemove = listOf("q1"),
+      userDetails = UserDetails("user-id"),
     )
 
     webTestClient.post().uri(endpointWith(assessment.uuid))
@@ -143,6 +178,25 @@ class AnswersTest(
 
     assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2"))
     assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2"))
+
+    verify(exactly = 1) {
+      telemetryService.assessmentAnswersUpdated(
+        withArg { assertEquals(updatedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        assessmentVersion.tag,
+      )
+    }
+
+    verify(exactly = 1) {
+      telemetryService.questionUpdated(
+        withArg { assertEquals(updatedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        assessmentVersion.tag,
+        "Unknown",
+        "q1",
+        true,
+      )
+    }
   }
 
   @Test
@@ -163,6 +217,7 @@ class AnswersTest(
     val request = UpdateAssessmentAnswersRequest(
       answersToAdd = mapOf("field_name" to Answer(type = AnswerType.TEXT, description = "Field", value = "TEST")),
       answersToRemove = emptyList(),
+      userDetails = UserDetails("user-id"),
     )
 
     webTestClient.post().uri(endpointWith(assessment.uuid))
@@ -185,5 +240,24 @@ class AnswersTest(
     assertThat(clonedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
     assertThat(clonedAssessmentVersion.answers.values.map { it.value })
       .isEqualTo(listOf("val1", "val2", "TEST"))
+
+    verify(exactly = 1) {
+      telemetryService.assessmentAnswersUpdated(
+        withArg { assertEquals(clonedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        assessmentVersion.tag,
+      )
+    }
+
+    verify(exactly = 1) {
+      telemetryService.questionUpdated(
+        withArg { assertEquals(clonedAssessmentVersion.uuid, it.uuid) },
+        "user-id",
+        assessmentVersion.tag,
+        "Unknown",
+        "field_name",
+        false,
+      )
+    }
   }
 }

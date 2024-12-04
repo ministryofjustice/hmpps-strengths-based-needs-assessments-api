@@ -170,13 +170,10 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SignAssessmentRequest,
-  ): AssessmentResponse {
-    val originalVersion = AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
-    return originalVersion
+  ): AssessmentResponse =
+    AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
       .let { assessmentVersionService.sign(it, request.userDetails, request.signType) }
-      .also { telemetryService.assessmentStatusUpdated(it, request.userDetails.id, originalVersion.tag) }
       .run(AssessmentResponse::from)
-  }
 
   @RequestMapping(path = ["/{assessmentUuid}/counter-sign"], method = [RequestMethod.POST])
   @Operation(description = "Marks an assessment version as counter-signed.")
@@ -212,7 +209,6 @@ class AssessmentController(
       .run(assessmentVersionService::find)
     return originalVersion
       .let { assessmentVersionService.counterSign(it, request.userDetails, request.outcome) }
-      .also { telemetryService.assessmentStatusUpdated(it, request.userDetails.id, originalVersion.tag) }
       .run(AssessmentResponse::from)
   }
 
@@ -245,13 +241,10 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: AuditedRequest,
-  ): AssessmentResponse {
-    val originalVersion = AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
-    return originalVersion
+  ): AssessmentResponse =
+    AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
       .let { assessmentVersionService.lock(it, request.userDetails) }
-      .also { telemetryService.assessmentStatusUpdated(it, request.userDetails.id, originalVersion.tag) }
       .run(AssessmentResponse::from)
-  }
 
   @RequestMapping(path = ["/{assessmentUuid}/rollback"], method = [RequestMethod.POST])
   @Operation(description = "Create a new \"ROLLBACK\" version of an existing assessment")
@@ -282,14 +275,11 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: RollbackAssessmentRequest,
-  ): AssessmentResponse {
-    val originalVersion = AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
+  ): AssessmentResponse =
+    AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
       .run(assessmentVersionService::find)
-    return originalVersion
       .let { assessmentVersionService.rollback(it, request.userDetails) }
-      .also { telemetryService.assessmentStatusUpdated(it, request.userDetails.id, originalVersion.tag) }
       .run(AssessmentResponse::from)
-  }
 
   @RequestMapping(path = ["/{assessmentUuid}/soft-delete"], method = [RequestMethod.POST])
   @Operation(description = "Soft-deletes a range of assessment versions.")
@@ -320,16 +310,13 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SoftDeleteRequest,
-  ): AssessmentResponse? {
-    val assessment = assessmentService.findByUuid(assessmentUuid)
-    return request.toAssessmentVersionCriteria(assessmentUuid)
+  ): AssessmentResponse? =
+    request.toAssessmentVersionCriteria(assessmentUuid)
       .run(assessmentVersionService::findAll)
       .let { assessmentVersionService.softDelete(it, request.userDetails) }
-      .also { telemetryService.assessmentSoftDeleted(assessment, request.userDetails.id, it) }
       .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
       .run(assessmentVersionService::findOrNull)
       ?.run(AssessmentResponse::from)
-  }
 
   @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])
   @Operation(description = "Undeletes an OASys assessment.")
@@ -360,13 +347,10 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: UnDeleteRequest,
-  ): AssessmentResponse {
-    val assessment = assessmentService.findByUuid(assessmentUuid)
-    return assessment
+  ): AssessmentResponse =
+    assessmentService.findByUuid(assessmentUuid)
       .let { with(request) { assessmentVersionService.undelete(it, versionFrom, versionTo, userDetails) } }
-      .also { telemetryService.assessmentUndeleted(assessment, request.userDetails.id, it) }
       .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
       .run(assessmentVersionService::find)
       .run(AssessmentResponse::from)
-  }
 }

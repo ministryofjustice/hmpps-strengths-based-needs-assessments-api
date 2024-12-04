@@ -73,31 +73,33 @@ class AssessmentVersionService(
   fun updateAnswers(existingVersion: AssessmentVersion, request: UpdateAssessmentAnswersRequest) {
     log.info("Adding answers to assessment with UUID ${existingVersion.assessment.uuid}")
     val assessmentVersion = existingVersion.run { takeIf { isUpdatable() } ?: createWith(assessment, answers) }
+    val originalStatus = existingVersion.tag
+    val originalAnswers = existingVersion.answers
 
     assessmentVersion
       .apply { setAnswers(request.answersToAdd, request.answersToRemove) }
       .run(::setOasysEquivalents)
       .run(assessmentVersionRepository::save)
-      .also { updateAnswersTelemetry(request, it, existingVersion) }
+      .also { updateAnswersTelemetry(request, it, originalStatus, originalAnswers) }
       .also { log.info("Saved answers to assessment version UUID ${it.uuid}") }
   }
 
   private fun updateAnswersTelemetry(
     request: UpdateAssessmentAnswersRequest,
     assessmentVersion: AssessmentVersion,
-    existingVersion: AssessmentVersion,
+    originalStatus: Tag,
+    originalAnswers: Answers,
   ) {
-    fun isUserSubmitted() = request.answersToAdd.entries
-      .find { (code, answer) -> code.endsWith("_user_submitted") && answer.value == "YES" } != null
+    if (request.answersToAdd.entries.find {
+      (code, answer) -> code.endsWith("_user_submitted") && answer.value == "NO"
+    } != null) return
 
-    if (!isUserSubmitted()) return
+    telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, originalStatus)
 
-    telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, existingVersion.tag)
+    fun isAssessmentComplete(answers: Answers) =
+      answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
 
-    fun isAssessmentComplete(assessmentVersion: AssessmentVersion) =
-      assessmentVersion.answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
-
-    if (isAssessmentComplete(assessmentVersion) && !isAssessmentComplete(existingVersion)) {
+    if (isAssessmentComplete(assessmentVersion.answers) && !isAssessmentComplete(originalAnswers)) {
       telemetryService.assessmentCompleted(assessmentVersion, request.userDetails.id)
     }
 
@@ -105,13 +107,13 @@ class AssessmentVersionService(
     fun getSectionCode(questionCode: String) = formConfig?.fields[questionCode]?.section ?: "Unknown"
 
     request.answersToAdd.entries
-      .filter { (code, answer) -> code.endsWith("_section_complete") && answer.value == "YES" && existingVersion.answers[code]?.value != "YES" }
+      .filter { (code, answer) -> code.endsWith("_section_complete") && answer.value == "YES" && originalAnswers[code]?.value != "YES" }
       .map { (fieldCode, _) -> telemetryService.sectionCompleted(assessmentVersion, request.userDetails.id, getSectionCode(fieldCode)) }
 
     val sectionsUpdated = mutableSetOf<String>()
 
     listOf(
-      request.answersToRemove.filter { assessmentVersion.answers.keys.contains(it) }.map { it to true },
+      request.answersToRemove.filter { originalAnswers.keys.contains(it) }.map { it to true },
       request.answersToAdd
         .filter { assessmentVersion.answers[it.key]?.takeIf { existingAnswer -> existingAnswer.equals(it) } == null }
         .map { it.key to false },
@@ -121,7 +123,7 @@ class AssessmentVersionService(
         telemetryService.questionUpdated(
           assessmentVersion,
           request.userDetails.id,
-          existingVersion.tag,
+          originalStatus,
           getSectionCode(questionCode),
           questionCode,
           isRemoved,
@@ -133,7 +135,7 @@ class AssessmentVersionService(
       }
 
     sectionsUpdated.forEach {
-      telemetryService.sectionUpdated(assessmentVersion, request.userDetails.id, existingVersion.tag, it)
+      telemetryService.sectionUpdated(assessmentVersion, request.userDetails.id, originalStatus, it)
     }
   }
 
@@ -149,6 +151,8 @@ class AssessmentVersionService(
 
     val originalStatus = assessmentVersion.tag
     assessmentVersion.tag = Tag.LOCKED_INCOMPLETE
+
+    telemetryService.assessmentStatusUpdated(assessmentVersion, userDetails.id, originalStatus)
 
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(userDetails)
@@ -174,6 +178,8 @@ class AssessmentVersionService(
     }
 
     assessmentVersion.tag = newStatus
+
+    telemetryService.assessmentStatusUpdated(assessmentVersion, signer.id, originalStatus)
 
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(signer)
@@ -201,6 +207,8 @@ class AssessmentVersionService(
 
     assessmentVersion.tag = outcome
 
+    telemetryService.assessmentStatusUpdated(assessmentVersion, counterSigner.id, originalStatus)
+
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(counterSigner)
       .apply {
@@ -220,6 +228,8 @@ class AssessmentVersionService(
     }
 
     assessmentVersion.tag = Tag.ROLLED_BACK
+
+    telemetryService.assessmentStatusUpdated(assessmentVersion, userDetails.id, originalStatus)
 
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(userDetails)
@@ -241,6 +251,7 @@ class AssessmentVersionService(
       .also {
         val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
         log.info("Successfully soft-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
+        telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it)
       }
   }
 
@@ -260,6 +271,7 @@ class AssessmentVersionService(
       .also {
         val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
         log.info("Successfully un-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
+        telemetryService.assessmentUndeleted(assessment, userDetails.id, it)
       }
   }
 

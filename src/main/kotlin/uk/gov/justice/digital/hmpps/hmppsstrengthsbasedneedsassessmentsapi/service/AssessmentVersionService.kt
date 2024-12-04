@@ -91,8 +91,12 @@ class AssessmentVersionService(
     originalAnswers: Answers,
   ) {
     if (request.answersToAdd.entries.find {
-      (code, answer) -> code.endsWith("_user_submitted") && answer.value == "NO"
-    } != null) return
+          (code, answer) ->
+        code.endsWith("_user_submitted") && answer.value == "NO"
+      } != null
+    ) {
+      return
+    }
 
     telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, originalStatus)
 
@@ -115,7 +119,7 @@ class AssessmentVersionService(
     listOf(
       request.answersToRemove.filter { originalAnswers.keys.contains(it) }.map { it to true },
       request.answersToAdd
-        .filter { assessmentVersion.answers[it.key]?.takeIf { existingAnswer -> existingAnswer.equals(it) } == null }
+        .filter { originalAnswers[it.key]?.takeIf { existingAnswer -> existingAnswer.equals(it.value) } == null }
         .map { it.key to false },
     )
       .flatten()
@@ -129,9 +133,9 @@ class AssessmentVersionService(
           isRemoved,
         )
 
-        getSectionCode(questionCode)
+        val sectionCode = getSectionCode(questionCode)
           .takeIf { it != "Unknown" }
-          ?.run(sectionsUpdated::add)
+        sectionCode?.run(sectionsUpdated::add)
       }
 
     sectionsUpdated.forEach {

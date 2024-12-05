@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
+import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -23,13 +25,16 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.domain.Specification
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Field
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.service.DataMappingService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AnswerType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OasysEquivalent
@@ -42,6 +47,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field as MappingField
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("AssessmentVersionService")
@@ -49,10 +55,14 @@ class AssessmentVersionServiceTest {
   private val assessmentVersionRepository: AssessmentVersionRepository = mockk()
   private val assessmentVersionAuditRepository: AssessmentVersionAuditRepository = mockk()
   private val dataMappingService: DataMappingService = mockk()
+  private val telemetryService: TelemetryService = mockk()
+  private val formConfigProvider: FormConfigProvider = mockk()
   private val assessmentVersionService = AssessmentVersionService(
     assessmentVersionRepository = assessmentVersionRepository,
-    dataMappingService = dataMappingService,
     assessmentVersionAuditRepository = assessmentVersionAuditRepository,
+    dataMappingService = dataMappingService,
+    telemetryService = telemetryService,
+    formConfigProvider = formConfigProvider,
   )
 
   private val tag = Tag.UNSIGNED
@@ -74,76 +84,7 @@ class AssessmentVersionServiceTest {
   @BeforeEach
   fun setUp() {
     clearAllMocks()
-  }
-
-  @Nested
-  @DisplayName("getPreviousOrCreate")
-  inner class GetPreviousOrCreate {
-    @Test
-    fun `it returns the previous assessment version if it was created today`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(secondAssessmentVersion, firstAssessmentVersion))
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.uuid).isEqualTo(secondAssessmentVersion.uuid)
-      assertThat(result.answers["test"]?.value).isEqualTo("val")
-      assertThat(result.versionNumber).isEqualTo(1)
-    }
-
-    @Test
-    fun `it clones from a previous assessment version if it wasn't created today`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> =
-        PageImpl(listOf(firstAssessmentVersion))
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.uuid).isNotEqualTo(firstAssessmentVersion.uuid)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers["foo"]?.value).isEqualTo("Foo answer")
-      assertThat(result.versionNumber).isEqualTo(1)
-    }
-
-    @Test
-    fun `it returns a new version when there is no previous one to clone from`() {
-      val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
-      val assessmentVersions: Page<AssessmentVersion> = Page.empty()
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
-
-      val result = assessmentVersionService.getPreviousOrCreate(assessment)
-      assertThat(result.tag).isEqualTo(tag)
-      assertThat(result.answers).isEmpty()
-      assertThat(result.versionNumber).isEqualTo(0)
-    }
+    every { formConfigProvider.getLatest() } returns FormConfig("1.0")
   }
 
   @Nested
@@ -209,51 +150,179 @@ class AssessmentVersionServiceTest {
   @Nested
   @DisplayName("updateAnswers")
   inner class UpdateAnswers {
-    private val assessment = Assessment(id = 1, uuid = UUID.randomUUID())
+    private val assessment = Assessment(info = AssessmentFormInfo(formVersion = "1.0"))
+    private val oasysEquivalents = mapOf("foo" to "bar")
 
-    private val assessmentVersions: Page<AssessmentVersion> = PageImpl(
-      listOf(
-        AssessmentVersion(
-          tag = tag,
-          updatedAt = LocalDateTime.of(2023, 12, 1, 12, 0),
-          answers = mapOf(
-            "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
-            "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
-            "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
-          ),
-        ),
-        AssessmentVersion(
-          tag = tag,
-          updatedAt = LocalDateTime.of(2023, 6, 1, 12, 0),
-          answers = emptyMap(),
-        ),
+    private val request = UpdateAssessmentAnswersRequest(
+      answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
+      answersToRemove = listOf("baz"),
+    )
+
+    private val testConfig = FormConfig(
+      "1.0",
+      mapOf(
+        "foo" to Field(code = "foo", section = "foo"),
+        "foo_2" to Field(code = "foo_2", section = "foo"),
+        "bar" to Field(code = "bar", section = "bar"),
+        "baz" to Field(code = "baz", section = "baz"),
+        "qux" to Field(code = "qux", section = "qux"),
+        "foo_section_complete" to Field(code = "foo_section_complete", section = "foo"),
+        "bar_section_complete" to Field(code = "bar_section_complete", section = "bar"),
+        "baz_section_complete" to Field(code = "baz_section_complete", section = "baz"),
+        "qux_section_complete" to Field(code = "qux_section_complete", section = "qux"),
       ),
     )
 
-    @Test
-    fun `it updates answers for a given assessment`() {
-      val request = UpdateAssessmentAnswersRequest(
-        answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
-        answersToRemove = listOf("baz"),
-      )
-
-      val oasysEquivalents = mapOf("foo" to "bar")
-
-      every {
-        assessmentVersionRepository.findAll(
-          any<Specification<AssessmentVersion>>(),
-          any<PageRequest>(),
-        )
-      } returns assessmentVersions
-      every {
-        assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid)
-      } returns assessmentVersions.totalElements.toInt()
+    @BeforeEach
+    fun setUp() {
       every { dataMappingService.getOasysEquivalent(any()) } returns oasysEquivalents
+      every { assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid) } returns 1
+      every { formConfigProvider.get(assessment.info!!) } returns testConfig
+      every { telemetryService.assessmentAnswersUpdated(any(), any(), any()) } just Runs
+      every { telemetryService.assessmentCompleted(any(), any()) } just Runs
+      every { telemetryService.sectionCompleted(any(), any(), any()) } just Runs
+      every { telemetryService.sectionUpdated(any(), any(), any(), any()) } just Runs
+      every { telemetryService.questionUpdated(any(), any(), any(), any(), any(), any()) } just Runs
+    }
+
+    @Test
+    fun `it updates answers for a given assessment version`() {
+      val latestVersion = AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        answers = mapOf(
+          "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
+          "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
+          "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
+          "qux_section_complete" to Answer(AnswerType.TEXT, "Section complete", null, "YES", null),
+        ),
+        versionNumber = 0,
+      )
 
       val savedVersion = slot<AssessmentVersion>()
       every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
 
-      assessmentVersionService.updateAnswers(assessment, request)
+      val request = UpdateAssessmentAnswersRequest(
+        answersToAdd = mapOf(
+          "foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null),
+          "foo_2" to Answer(AnswerType.TEXT, "Foo 2 question", null, "added", null),
+          "foo_section_complete" to Answer(AnswerType.TEXT, "Section complete", null, "YES", null),
+          "bar_section_complete" to Answer(AnswerType.TEXT, "Section complete", null, "YES", null),
+          "baz_section_complete" to Answer(AnswerType.TEXT, "Section complete", null, "NO", null),
+          "qux_section_complete" to Answer(AnswerType.TEXT, "Section complete", null, "YES", null),
+          "assessment_complete" to Answer(AnswerType.TEXT, "Assessment complete", null, "YES", null),
+        ),
+        answersToRemove = listOf("baz"),
+        userDetails = UserDetails("user-id"),
+      )
+
+      assessmentVersionService.updateAnswers(latestVersion, request)
+
+      assertThat(savedVersion.captured.assessment).isEqualTo(assessment)
+      assertThat(savedVersion.captured.tag).isEqualTo(tag)
+      assertThat(savedVersion.captured.answers["foo"]?.value).isEqualTo("updated")
+      assertThat(savedVersion.captured.answers["foo_2"]?.value).isEqualTo("added")
+      assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
+      assertThat(savedVersion.captured.answers["baz"]).isNull()
+      assertThat(savedVersion.captured.answers["foo_section_complete"]?.value).isEqualTo("YES")
+      assertThat(savedVersion.captured.answers["bar_section_complete"]?.value).isEqualTo("YES")
+      assertThat(savedVersion.captured.answers["baz_section_complete"]?.value).isEqualTo("NO")
+      assertThat(savedVersion.captured.answers["qux_section_complete"]?.value).isEqualTo("YES")
+      assertThat(savedVersion.captured.answers["assessment_complete"]?.value).isEqualTo("YES")
+      assertThat(savedVersion.captured.oasysEquivalents).isEqualTo(oasysEquivalents)
+      assertThat(savedVersion.captured.versionNumber).isEqualTo(0)
+
+      verify(exactly = 1) { telemetryService.assessmentAnswersUpdated(any(), any(), any()) }
+      verify(exactly = 1) { telemetryService.assessmentCompleted(any(), any()) }
+      verify(exactly = 2) { telemetryService.sectionCompleted(any(), any(), any()) }
+      verify(exactly = 3) { telemetryService.sectionUpdated(any(), any(), any(), any()) }
+      verify(exactly = 7) { telemetryService.questionUpdated(any(), any(), any(), any(), any(), any()) }
+
+      verify(exactly = 1) {
+        telemetryService.assessmentAnswersUpdated(
+          withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+          request.userDetails.id,
+          Tag.UNSIGNED,
+        )
+      }
+
+      verify(exactly = 1) {
+        telemetryService.assessmentCompleted(
+          withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+          request.userDetails.id,
+        )
+      }
+
+      listOf("foo", "bar").forEach {
+        verify(exactly = 1) {
+          telemetryService.sectionCompleted(
+            withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+            request.userDetails.id,
+            it,
+          )
+        }
+      }
+
+      listOf("foo", "bar", "baz").forEach {
+        verify(exactly = 1) {
+          telemetryService.sectionUpdated(
+            withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+            request.userDetails.id,
+            Tag.UNSIGNED,
+            it,
+          )
+        }
+      }
+
+      mapOf(
+        "foo" to "foo",
+        "foo_2" to "foo",
+        "foo_section_complete" to "foo",
+        "bar_section_complete" to "bar",
+        "baz_section_complete" to "baz",
+        "assessment_complete" to "Unknown",
+      ).forEach { (code, section) ->
+        verify(exactly = 1) {
+          telemetryService.questionUpdated(
+            withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+            request.userDetails.id,
+            Tag.UNSIGNED,
+            section,
+            code,
+            false,
+          )
+        }
+      }
+
+      verify(exactly = 1) {
+        telemetryService.questionUpdated(
+          withArg { assertEquals(savedVersion.captured.uuid, it.uuid) },
+          request.userDetails.id,
+          Tag.UNSIGNED,
+          "baz",
+          "baz",
+          true,
+        )
+      }
+    }
+
+    @Test
+    fun `it clones from a previous assessment version if it wasn't created today`() {
+      val latestVersion = AssessmentVersion(
+        tag = tag,
+        assessment = assessment,
+        updatedAt = LocalDateTime.of(2023, 12, 1, 12, 0),
+        answers = mapOf(
+          "foo" to Answer(AnswerType.TEXT, "Foo question", null, "not updated", null),
+          "bar" to Answer(AnswerType.TEXT, "Bar question", null, "not updated", null),
+          "baz" to Answer(AnswerType.TEXT, "Baz question", null, "should be removed", null),
+        ),
+      )
+
+      val savedVersion = slot<AssessmentVersion>()
+      every { assessmentVersionRepository.save(capture(savedVersion)) } returnsArgument 0
+
+      assessmentVersionService.updateAnswers(latestVersion, request)
 
       assertThat(savedVersion.captured.assessment).isEqualTo(assessment)
       assertThat(savedVersion.captured.tag).isEqualTo(tag)
@@ -261,7 +330,7 @@ class AssessmentVersionServiceTest {
       assertThat(savedVersion.captured.answers["bar"]?.value).isEqualTo("not updated")
       assertThat(savedVersion.captured.answers["baz"]).isNull()
       assertThat(savedVersion.captured.oasysEquivalents).isEqualTo(oasysEquivalents)
-      assertThat(savedVersion.captured.updatedAt).isAfter(assessmentVersions.maxOf { it.updatedAt })
+      assertThat(savedVersion.captured.versionNumber).isEqualTo(1)
     }
   }
 
@@ -280,11 +349,13 @@ class AssessmentVersionServiceTest {
 
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+      every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
 
       val result = assessmentVersionService.lock(assessmentVersion, user)
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(assessmentVersion, user.id, Tag.UNSIGNED) }
 
       assertThat(result).isEqualTo(lockedVersion.captured)
       assertThat(result.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
@@ -323,7 +394,7 @@ class AssessmentVersionServiceTest {
       val unsignedVersion = AssessmentVersion(
         assessment = assessment,
         tag = Tag.UNSIGNED,
-        answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+        answers = mapOf(MappingField.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
       )
 
       val expectedTag: Tag = signType.into()
@@ -334,11 +405,13 @@ class AssessmentVersionServiceTest {
 
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+      every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
 
       val result = assessmentVersionService.sign(unsignedVersion, signer, signType)
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(withArg { assertEquals(signedVersion.captured.uuid, it.uuid) }, signer.id, Tag.UNSIGNED) }
 
       assertThat(result).isEqualTo(signedVersion.captured)
       assertThat(result.tag).isEqualTo(expectedTag)
@@ -356,7 +429,7 @@ class AssessmentVersionServiceTest {
       val signedVersion = AssessmentVersion(
         assessment = assessment,
         tag = signType.into(),
-        answers = mapOf(Field.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
+        answers = mapOf(MappingField.ASSESSMENT_COMPLETE.lower to Answer(value = Value.YES.name)),
       )
 
       val exception = assertThrows<ConflictException> {
@@ -409,6 +482,7 @@ class AssessmentVersionServiceTest {
 
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+      every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
 
       assessmentVersion.tag = initialStatus
 
@@ -416,6 +490,7 @@ class AssessmentVersionServiceTest {
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(assessmentVersion, counterSigner.id, initialStatus) }
 
       assertThat(result).isEqualTo(counterSignedVersion.captured)
       assertThat(result.tag).isEqualTo(outcome)
@@ -493,6 +568,7 @@ class AssessmentVersionServiceTest {
 
       val audit = slot<AssessmentVersionAudit>()
       every { assessmentVersionAuditRepository.save(capture(audit)) } returnsArgument 0
+      every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
 
       assessmentVersion.tag = tag
 
@@ -500,6 +576,7 @@ class AssessmentVersionServiceTest {
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
+      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(assessmentVersion, userDetails.id, tag) }
 
       assertThat(result).isEqualTo(rolledBackVersion.captured)
       assertThat(result.tag).isEqualTo(Tag.ROLLED_BACK)
@@ -551,22 +628,25 @@ class AssessmentVersionServiceTest {
     @BeforeEach
     fun setUp() {
       every { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) } returnsArgument 0
+      every { telemetryService.assessmentSoftDeleted(any(), any(), any()) } just Runs
     }
 
     @Test
     fun `it soft-deletes the provided assessment versions`() {
-      val assessmentVersions = listOf(
-        AssessmentVersion(),
-        AssessmentVersion(),
+      val user = UserDetails("user-id", "User Name")
+      val assessment = Assessment()
+      assessment.assessmentVersions = listOf(
+        AssessmentVersion(assessment = assessment),
+        AssessmentVersion(assessment = assessment),
       )
 
-      assessmentVersionService.softDelete(assessmentVersions, UserDetails("user-id", "User Name"))
-        .run {
-          assertThat(count()).isEqualTo(2)
-          assertTrue(all { version -> version.deleted })
-        }
+      val deletedVersions = assessmentVersionService.softDelete(assessment.assessmentVersions, user)
+
+      assertThat(deletedVersions.count()).isEqualTo(2)
+      assertTrue(deletedVersions.all { version -> version.deleted })
 
       verify(exactly = 1) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
+      verify(exactly = 1) { telemetryService.assessmentSoftDeleted(withArg { assertEquals(assessment.uuid, it.uuid) }, user.id, withArg { assertEquals(it.count(), 2) }) }
     }
 
     @Test
@@ -582,6 +662,7 @@ class AssessmentVersionServiceTest {
       assertThat(exception.message).isEqualTo("No assessment versions found for deletion")
 
       verify(exactly = 0) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
+      verify(exactly = 0) { telemetryService.assessmentSoftDeleted(any(), any(), any()) }
     }
   }
 
@@ -591,25 +672,26 @@ class AssessmentVersionServiceTest {
     @BeforeEach
     fun setUp() {
       every { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) } returnsArgument 0
+      every { telemetryService.assessmentUndeleted(any(), any(), any()) } just Runs
     }
 
     @Test
     fun `it undeletes the requested assessment versions`() {
+      val user = UserDetails("user-id", "User Name")
       val assessment = Assessment()
       val assessmentVersions = listOf(
-        AssessmentVersion(deleted = true, versionNumber = 0),
-        AssessmentVersion(deleted = true, versionNumber = 1),
-        AssessmentVersion(deleted = true, versionNumber = 2),
-        AssessmentVersion(deleted = true, versionNumber = 3),
+        AssessmentVersion(deleted = true, versionNumber = 0, assessment = assessment),
+        AssessmentVersion(deleted = true, versionNumber = 1, assessment = assessment),
+        AssessmentVersion(deleted = true, versionNumber = 2, assessment = assessment),
+        AssessmentVersion(deleted = true, versionNumber = 3, assessment = assessment),
       )
 
       every { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) } returns assessmentVersions
 
-      assessmentVersionService.undelete(assessment, 1, 3, UserDetails("user-id", "User Name"))
-        .run {
-          assertThat(count()).isEqualTo(2)
-          assertThat(all { version -> with(version) { !deleted && versionNumber in listOf(1, 2) } })
-        }
+      val undeletedVersions = assessmentVersionService.undelete(assessment, 1, 3, user)
+
+      assertThat(undeletedVersions.count()).isEqualTo(2)
+      assertTrue(undeletedVersions.all { version -> with(version) { !deleted && versionNumber in listOf(1, 2) } })
 
       verify(exactly = 1) { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) }
       verify(exactly = 1) {
@@ -620,6 +702,7 @@ class AssessmentVersionServiceTest {
           },
         )
       }
+      verify(exactly = 1) { telemetryService.assessmentUndeleted(assessment, user.id, undeletedVersions) }
     }
 
     @Test
@@ -636,6 +719,7 @@ class AssessmentVersionServiceTest {
 
       verify(exactly = 1) { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) }
       verify(exactly = 0) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
+      verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
     }
   }
 }

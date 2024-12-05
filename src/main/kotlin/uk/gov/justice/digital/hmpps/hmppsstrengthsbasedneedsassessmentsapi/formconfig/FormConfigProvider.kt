@@ -22,6 +22,7 @@ data class Field(
   val code: String,
   val options: List<Option> = emptyList(),
   val type: String = "",
+  val section: String = "",
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

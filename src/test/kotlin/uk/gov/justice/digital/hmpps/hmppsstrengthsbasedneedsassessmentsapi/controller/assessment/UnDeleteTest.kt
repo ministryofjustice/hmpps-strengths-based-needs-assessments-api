@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.controller.assessment
 
+import io.mockk.Runs
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,8 +19,10 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @AutoConfigureWebTestClient(timeout = "6000000")
@@ -25,6 +32,8 @@ class UnDeleteTest(
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private fun endpoint(assessmentUuid: UUID? = null) =
@@ -40,6 +49,8 @@ class UnDeleteTest(
       AssessmentVersion(assessment = assessment, versionNumber = 3, deleted = true),
     )
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentUndeleted(any(), any(), any()) } just Runs
   }
 
   @Test
@@ -105,6 +116,7 @@ class UnDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionFrom - must be greater than or equal to 0]")
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -128,6 +140,7 @@ class UnDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionTo - must be greater than or equal to 0]")
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -150,6 +163,7 @@ class UnDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -172,6 +186,7 @@ class UnDeleteTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -192,6 +207,7 @@ class UnDeleteTest(
 
     assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
     assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -218,6 +234,7 @@ class UnDeleteTest(
 
     assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
     assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
   @Test
@@ -248,6 +265,14 @@ class UnDeleteTest(
     }
 
     assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid)).isEmpty()
+
+    verify(exactly = 1) {
+      telemetryService.assessmentUndeleted(
+        withArg { assertEquals(assessment.uuid, it.uuid) },
+        "user-id",
+        withArg { assertTrue(it.all { version -> version.versionNumber in listOf(2, 3) }) },
+      )
+    }
   }
 
   @Test
@@ -281,6 +306,17 @@ class UnDeleteTest(
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(1)
       assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(3) } })
+    }
+
+    verify(exactly = 1) {
+      telemetryService.assessmentUndeleted(
+        withArg { assertEquals(assessment.uuid, it.uuid) },
+        "user-id",
+        withArg {
+          assertEquals(it.count(), 1)
+          assertEquals(it.first().versionNumber, 2)
+        },
+      )
     }
   }
 }

@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serialize
 
 import com.fasterxml.jackson.core.JsonGenerator
+import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
@@ -17,7 +19,7 @@ class DebugStringSerializerTest {
   @BeforeTest
   fun setUp() {
     clearAllMocks()
-    every { mockJsonGenerator.writeString(any<String>()) } returns Unit
+    every { mockJsonGenerator.writeString(any<String>()) } just Runs
   }
 
   @Nested

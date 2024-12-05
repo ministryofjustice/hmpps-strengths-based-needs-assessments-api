@@ -1,6 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
-import org.assertj.core.api.Assertions
+import io.mockk.Runs
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -16,14 +20,18 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
+import kotlin.test.assertEquals
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/sign")
 class SignTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private val endpoint = { "/assessment/${assessment.uuid}/sign" }
@@ -32,6 +40,8 @@ class SignTest(
   fun setUp() {
     assessment = Assessment()
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
   }
 
   @Test
@@ -97,6 +107,7 @@ class SignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -119,6 +130,7 @@ class SignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -157,25 +169,33 @@ class SignTest(
 
     val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    Assertions.assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
+    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
     val updatedLatestVersion = updatedAssessment.assessmentVersions.find { it.uuid == latestVersion.uuid }
     val updatedPreviousVersion = updatedAssessment.assessmentVersions.find { it.uuid == previousVersion.uuid }
 
-    Assertions.assertThat(updatedLatestVersion).isNotNull
-    Assertions.assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.SELF_SIGNED)
-    Assertions.assertThat(updatedPreviousVersion).isNotNull
-    Assertions.assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
+    assertThat(updatedLatestVersion).isNotNull
+    assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.SELF_SIGNED)
+    assertThat(updatedPreviousVersion).isNotNull
+    assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    Assertions.assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+    assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
     val audit = updatedLatestVersion.assessmentVersionAudit.first()
-    Assertions.assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
-    Assertions.assertThat(audit.statusTo).isEqualTo(Tag.SELF_SIGNED)
-    Assertions.assertThat(audit.userDetails.id).isEqualTo("user-id")
-    Assertions.assertThat(audit.userDetails.name).isEqualTo("John Doe")
+    assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
+    assertThat(audit.statusTo).isEqualTo(Tag.SELF_SIGNED)
+    assertThat(audit.userDetails.id).isEqualTo("user-id")
+    assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    Assertions.assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    Assertions.assertThat(response?.metaData?.versionNumber).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
+    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+    assertThat(response?.metaData?.versionNumber).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
+
+    verify(exactly = 1) {
+      telemetryService.assessmentStatusUpdated(
+        withArg { assertEquals(updatedLatestVersion.uuid, it.uuid) },
+        "user-id",
+        Tag.UNSIGNED,
+      )
+    }
   }
 
   @Test
@@ -207,7 +227,8 @@ class SignTest(
       .returnResult()
       .responseBody
 
-    Assertions.assertThat(response?.userMessage)
-      .isEqualTo("The current assessment version is already SELF_SIGNED.")
+    assertThat(response?.userMessage).isEqualTo("The current assessment version is already SELF_SIGNED.")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 }

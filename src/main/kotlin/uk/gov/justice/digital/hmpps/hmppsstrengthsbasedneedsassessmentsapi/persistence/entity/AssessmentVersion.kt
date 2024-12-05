@@ -32,12 +32,12 @@ enum class AnswerType {
   DATE,
 }
 
-class Option(
+data class Option(
   val value: String,
   val text: String,
 )
 
-class Answer(
+data class Answer(
   val type: AnswerType = AnswerType.TEXT,
   val description: String = "",
   val options: List<Option>? = null,

@@ -110,6 +110,7 @@ services:
       SBNA_API_URL: http://san-api:8080
       INGRESS_URL: http://localhost:3000
       HTTPS: false
+      NODE_ENV: development
 
   arns-handover:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:latest

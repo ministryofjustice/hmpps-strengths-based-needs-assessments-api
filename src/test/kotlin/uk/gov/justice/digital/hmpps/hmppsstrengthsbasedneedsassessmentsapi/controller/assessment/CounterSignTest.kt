@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
+import io.mockk.Runs
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,13 +19,17 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
+import kotlin.test.assertEquals
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/counter-sign")
 class CounterSignTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private val endpoint = { "/assessment/${assessment.uuid}/counter-sign" }
@@ -29,6 +38,8 @@ class CounterSignTest(
   fun setUp() {
     assessment = Assessment()
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
   }
 
   @Test
@@ -74,6 +85,8 @@ class CounterSignTest(
       .bodyValue(request)
       .exchange()
       .expectStatus().isBadRequest
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -97,6 +110,8 @@ class CounterSignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionNumber - must be greater than or equal to 0]")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -120,6 +135,8 @@ class CounterSignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -143,6 +160,8 @@ class CounterSignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -190,6 +209,14 @@ class CounterSignTest(
 
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(1)
+
+    verify(exactly = 1) {
+      telemetryService.assessmentStatusUpdated(
+        withArg { assertEquals(counterSignedVersion.uuid, it.uuid) },
+        "user-id",
+        Tag.AWAITING_COUNTERSIGN,
+      )
+    }
   }
 
   @Test
@@ -214,6 +241,8 @@ class CounterSignTest(
 
     assertThat(response?.developerMessage).startsWith("No assessment version found that matches criteria")
     assertThat(response?.developerMessage).contains("versionNumber=1")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -246,6 +275,8 @@ class CounterSignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Invalid outcome status SELF_SIGNED.")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -278,5 +309,7 @@ class CounterSignTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Cannot counter-sign this assessment version. Unexpected status UNSIGNED.")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 }

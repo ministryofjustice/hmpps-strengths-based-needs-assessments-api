@@ -19,7 +19,7 @@ import java.time.Duration
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @ContextConfiguration
 @SpringBootTest(
-  classes = [HmppsStrengthsBasedNeedsAssessmentsApi::class],
+  classes = [HmppsStrengthsBasedNeedsAssessmentsApi::class, IntegrationTestConfiguration::class],
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @ActiveProfiles(profiles = ["test"])

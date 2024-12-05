@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
+import io.mockk.Runs
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,14 +19,18 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
+import kotlin.test.assertEquals
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/rollback")
 class RollbackTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private fun endpoint(assessmentUuid: UUID? = null) =
     "/assessment/${assessmentUuid ?: assessment.uuid}/rollback"
@@ -32,6 +41,8 @@ class RollbackTest(
   fun setUp() {
     assessment = Assessment()
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentStatusUpdated(any(), any(), any()) } just Runs
   }
 
   @Test
@@ -105,6 +116,7 @@ class RollbackTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [versionNumber - must be greater than or equal to 0]")
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -127,6 +139,7 @@ class RollbackTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -149,6 +162,7 @@ class RollbackTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -172,6 +186,8 @@ class RollbackTest(
 
     assertThat(response?.developerMessage).startsWith("No assessment version found that matches criteria")
     assertThat(response?.developerMessage).contains("assessmentUuid=00000000-0000-0000-0000-000000000000")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 
   @Test
@@ -215,6 +231,14 @@ class RollbackTest(
 
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(1)
+
+    verify(exactly = 1) {
+      telemetryService.assessmentStatusUpdated(
+        withArg { assertEquals(rolledBackVersion.uuid, it.uuid) },
+        "user-id",
+        Tag.AWAITING_COUNTERSIGN,
+      )
+    }
   }
 
   @Test
@@ -243,5 +267,7 @@ class RollbackTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Cannot rollback this assessment version. Unexpected status UNSIGNED.")
+
+    verify(exactly = 0) { telemetryService.assessmentStatusUpdated(any(), any(), any()) }
   }
 }

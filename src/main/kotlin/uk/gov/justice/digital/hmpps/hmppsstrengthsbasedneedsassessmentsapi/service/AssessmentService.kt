@@ -6,14 +6,12 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentNotFoundException
 import java.util.UUID
 
 @Service
 class AssessmentService(
   val assessmentRepository: AssessmentRepository,
-  val assessmentVersionAuditRepository: AssessmentVersionAuditRepository,
   val formConfigProvider: FormConfigProvider,
   val assessmentVersionService: AssessmentVersionService,
 ) {

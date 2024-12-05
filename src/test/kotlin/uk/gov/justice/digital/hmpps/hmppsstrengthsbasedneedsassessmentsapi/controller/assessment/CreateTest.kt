@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.assessment
 
+import io.mockk.Runs
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -13,13 +18,17 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
+import kotlin.test.assertEquals
 
 @AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: POST /assessment")
 class CreateTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
+  @Autowired
+  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private val endpoint = "/assessment"
   private lateinit var assessment: Assessment
@@ -29,6 +38,8 @@ class CreateTest(
     assessment = Assessment()
     assessment.assessmentVersions = listOf(AssessmentVersion(assessment = assessment))
     assessmentRepository.save(assessment)
+    clearAllMocks()
+    every { telemetryService.assessmentCreated(any(), any(), any()) } just Runs
   }
 
   @Test
@@ -91,6 +102,7 @@ class CreateTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.id - size must be between 0 and ${Constraints.OASYS_USER_ID_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentCreated(any(), any(), any()) }
   }
 
   @Test
@@ -112,6 +124,7 @@ class CreateTest(
       .responseBody
 
     assertThat(response?.userMessage).isEqualTo("Validation failure: [userDetails.name - size must be between 0 and ${Constraints.OASYS_USER_NAME_MAX_LENGTH}]")
+    verify(exactly = 0) { telemetryService.assessmentCreated(any(), any(), any()) }
   }
 
   @Test
@@ -144,5 +157,13 @@ class CreateTest(
     assertThat(audit.statusTo).isNull()
     assertThat(audit.userDetails.id).isEqualTo("user-id")
     assertThat(audit.userDetails.name).isEqualTo("John Doe")
+
+    verify(exactly = 1) {
+      telemetryService.assessmentCreated(
+        withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
+        "user-id",
+        null,
+      )
+    }
   }
 }

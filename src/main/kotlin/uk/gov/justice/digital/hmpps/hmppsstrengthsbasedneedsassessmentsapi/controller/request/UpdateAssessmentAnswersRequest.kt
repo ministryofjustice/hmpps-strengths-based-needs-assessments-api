@@ -9,5 +9,5 @@ class UpdateAssessmentAnswersRequest(
   val answersToRemove: List<String> = emptyList(),
   @Schema(description = "User")
   @get:Valid
-  override val userDetails: UserDetails = UserDetails(),
+  override val userDetails: UserDetails,
 ) : AuditableRequest

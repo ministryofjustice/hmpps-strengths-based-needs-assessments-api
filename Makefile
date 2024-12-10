@@ -89,3 +89,17 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
+
+DB_PORT_FORWARD_PORT=5434
+db-port-forward:
+	kubectl delete pod --ignore-not-found=true port-forward-pod
+	INSTANCE_ADDRESS=$$(kubectl get secret hmpps-strengths-based-needs-assessments-rds-instance -o json | jq -r '.data.rds_instance_address' | base64 --decode) \
+	; kubectl run port-forward-pod --image=ministryofjustice/port-forward --port=5432 --env="REMOTE_HOST=$$INSTANCE_ADDRESS" --env="LOCAL_PORT=5432" --env="REMOTE_PORT=5432"
+	kubectl wait --for=jsonpath='{.status.phase}'=Running pod/port-forward-pod
+	kubectl port-forward port-forward-pod ${DB_PORT_FORWARD_PORT}:5432
+
+db-connect:
+	DATABASE_USERNAME=$$(kubectl get secret hmpps-strengths-based-needs-assessments-rds-instance -o json | jq -r '.data.database_username' | base64 --decode) \
+	DATABASE_PASSWORD=$$(kubectl get secret hmpps-strengths-based-needs-assessments-rds-instance -o json | jq -r '.data.database_password' | base64 --decode) \
+	DATABASE_NAME=$$(kubectl get secret hmpps-strengths-based-needs-assessments-rds-instance -o json | jq -r '.data.database_name' | base64 --decode) \
+	; psql --pset=pager=off postgres://$$DATABASE_USERNAME:$$DATABASE_PASSWORD@localhost:${DB_PORT_FORWARD_PORT}/$$DATABASE_NAME

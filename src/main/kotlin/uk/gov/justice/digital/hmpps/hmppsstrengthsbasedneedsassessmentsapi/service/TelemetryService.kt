@@ -21,6 +21,7 @@ enum class Event {
 
 enum class Property {
   ASSESSMENT_ID,
+  ASSESSMENT_VERSION,
   CLONED_FROM_VERSION,
   FORM_VERSION,
   PREVIOUS_STATUS,
@@ -31,7 +32,6 @@ enum class Property {
   TIMESTAMP,
   USER_ID,
   VERSION_FROM,
-  VERSION_NUMBER,
   VERSION_TO,
 }
 
@@ -125,7 +125,7 @@ class TelemetryService(
       Property.USER_ID to userId,
       Property.TIMESTAMP to LocalDateTime.now().toString(),
       Property.ASSESSMENT_ID to assessmentVersion.assessment.uuid.toString(),
-      Property.VERSION_NUMBER to assessmentVersion.versionNumber.toString(),
+      Property.ASSESSMENT_VERSION to assessmentVersion.versionNumber.toString(),
       Property.STATUS to assessmentVersion.tag.toString(),
       Property.FORM_VERSION to (assessmentVersion.assessment.info?.formVersion ?: "Unknown"),
     )

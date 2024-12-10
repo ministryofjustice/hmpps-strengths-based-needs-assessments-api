@@ -69,6 +69,7 @@ class AnswersTest(
     val request = UpdateAssessmentAnswersRequest(
       answersToAdd = emptyMap(),
       answersToRemove = emptyList(),
+      userDetails = UserDetails(),
     )
 
     webTestClient.post().uri(endpointWith(UUID.randomUUID()))
@@ -84,6 +85,7 @@ class AnswersTest(
     val request = UpdateAssessmentAnswersRequest(
       answersToAdd = emptyMap(),
       answersToRemove = emptyList(),
+      userDetails = UserDetails(),
     )
 
     webTestClient.post().uri(endpointWith(UUID.fromString("00000000-0000-0000-0000-000000000000")))

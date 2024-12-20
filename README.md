@@ -77,6 +77,10 @@ or
 
 `make db-connection-string` to output a connection string for your database IDE
 
+To export the remote DB (saved locally as out.sql), run:
+
+`make db-export`
+
 ## Service dependencies
 
 * [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) - for authentication using OAuth/JWT

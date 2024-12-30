@@ -252,11 +252,7 @@ class AssessmentVersionService(
       .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
       .map { it.apply { deleted = true } }
       .run(assessmentVersionRepository::saveAll)
-      .also {
-        val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
-        log.info("Successfully soft-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
-        telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it)
-      }
+      .also { telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it) }
   }
 
   @Transactional
@@ -272,11 +268,7 @@ class AssessmentVersionService(
       .ifEmpty { throw ConflictException("No assessment versions found for un-deletion") }
       .map { it.apply { deleted = false } }
       .run(assessmentVersionRepository::saveAll)
-      .also {
-        val versionNumbers = it.map { version -> version.versionNumber }.joinToString(", ")
-        log.info("Successfully un-deleted assessment versions $versionNumbers. User ID ${userDetails.id}")
-        telemetryService.assessmentUndeleted(assessment, userDetails.id, it)
-      }
+      .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
   }
 
   companion object {

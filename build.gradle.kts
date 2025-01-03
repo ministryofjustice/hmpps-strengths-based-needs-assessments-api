@@ -21,7 +21,7 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   constraints {
-    implementation("com.nimbusds:nimbus-jose-jwt:9.47") {
+    implementation("com.nimbusds:nimbus-jose-jwt:10.0") {
       because("previous versions have a high vulnerability CVE-2023-52428")
     }
   }

@@ -24,7 +24,7 @@ kind: CronJob
 metadata:
   name: db-refresh-job
 spec:
-  schedule: "0 8 * * 0"
+  schedule: "45 5 * * 0"
   concurrencyPolicy: "Forbid"
   jobTemplate:
     spec:

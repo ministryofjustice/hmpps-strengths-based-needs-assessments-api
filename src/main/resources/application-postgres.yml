@@ -1,6 +1,10 @@
 spring:
   datasource:
     url: jdbc:postgresql://${database.endpoint:localhost:5432}/${database.name:postgres}?currentSchema=${database.schema.name:strengthsbasedneedsapi}&user=${database.username:root}&password=${database.password:dev}&stringtype=unspecified
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 15000
+      leakDetectionThreshold: 20000
   flyway:
     schemas: strengthsbasedneedsapi
     locations: classpath:/db/migration

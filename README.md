@@ -63,6 +63,24 @@ To deploy a branch manually to the Test environment, open the project in CircleC
 3. Add a string parameter named "deploy" with value "test"
 4. Press "Trigger Pipeline"
 
+## Connecting to a remote Database in dev/preprod/prod
+
+1. Switch to the Kubernetes context/namespace of the database you are connecting to
+2. `make db-port-forward-pod` to create a DB port-forwarding pod in the namespace
+3. `make db-port-forward` to forward traffic from your machine to the pod
+
+Then open a new terminal and either:
+
+`make db-connect` to connect to the remote DB on the command line
+
+or
+
+`make db-connection-string` to output a connection string for your database IDE
+
+To export the remote DB (saved locally as out.sql), run:
+
+`make db-export`
+
 ## Service dependencies
 
 * [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) - for authentication using OAuth/JWT

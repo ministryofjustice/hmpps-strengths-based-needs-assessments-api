@@ -156,6 +156,7 @@ class AssessmentVersionServiceTest {
     private val request = UpdateAssessmentAnswersRequest(
       answersToAdd = mapOf("foo" to Answer(AnswerType.TEXT, "Foo question", null, "updated", null)),
       answersToRemove = listOf("baz"),
+      userDetails = UserDetails(),
     )
 
     private val testConfig = FormConfig(

@@ -94,18 +94,16 @@ class ControllerAdvice {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException::class)
-  fun handleArgumentNotValidationException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
-    return "Validation failure: ${ex.bindingResult.fieldErrors.map { "${it.field} - ${it.defaultMessage}" }}".let {
-      log.info(it)
-      ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(
-          ErrorResponse(
-            userMessage = it,
-            developerMessage = ex.message ?: "",
-          ),
-        )
-    }
+  fun handleArgumentNotValidationException(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> = "Validation failure: ${ex.bindingResult.fieldErrors.map { "${it.field} - ${it.defaultMessage}" }}".let {
+    log.info(it)
+    ResponseEntity
+      .status(HttpStatus.BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          userMessage = it,
+          developerMessage = ex.message ?: "",
+        ),
+      )
   }
 
   @ExceptionHandler(Exception::class)

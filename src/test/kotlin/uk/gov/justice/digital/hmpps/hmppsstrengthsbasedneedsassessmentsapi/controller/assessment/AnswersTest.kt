@@ -52,9 +52,7 @@ class AnswersTest(
     every { telemetryService.questionUpdated(any(), any(), any(), any(), any(), any()) } just Runs
   }
 
-  private fun endpointWith(assessmentUUID: UUID): String {
-    return "/assessment/$assessmentUUID/answers"
-  }
+  private fun endpointWith(assessmentUUID: UUID): String = "/assessment/$assessmentUUID/answers"
 
   @Test
   fun `it returns Unauthorized when there is no JWT`() {

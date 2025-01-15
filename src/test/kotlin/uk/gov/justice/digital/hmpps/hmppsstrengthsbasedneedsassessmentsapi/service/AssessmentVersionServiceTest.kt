@@ -460,16 +460,14 @@ class AssessmentVersionServiceTest {
     private val assessment = Assessment()
     private val assessmentVersion = AssessmentVersion(assessment = assessment)
 
-    private fun validCounterSignStatusesProvider(): List<Arguments> {
-      return setOf(
-        Tag.COUNTERSIGNED,
-        Tag.AWAITING_DOUBLE_COUNTERSIGN,
-        Tag.DOUBLE_COUNTERSIGNED,
-        Tag.REJECTED,
-      ).flatMap { outcome ->
-        setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).map { initialStatus ->
-          Arguments.of(initialStatus, outcome)
-        }
+    private fun validCounterSignStatusesProvider(): List<Arguments> = setOf(
+      Tag.COUNTERSIGNED,
+      Tag.AWAITING_DOUBLE_COUNTERSIGN,
+      Tag.DOUBLE_COUNTERSIGNED,
+      Tag.REJECTED,
+    ).flatMap { outcome ->
+      setOf(Tag.AWAITING_COUNTERSIGN, Tag.AWAITING_DOUBLE_COUNTERSIGN).map { initialStatus ->
+        Arguments.of(initialStatus, outcome)
       }
     }
 

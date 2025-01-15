@@ -17,6 +17,5 @@ class SoftDeleteRequest(
   @get:Valid
   override val userDetails: UserDetails,
 ) : AuditableRequest {
-  fun toAssessmentVersionCriteria(assessmentUuid: UUID) =
-    AssessmentVersionCriteria(assessmentUuid, versionNumberFrom = versionFrom, versionNumberTo = versionTo)
+  fun toAssessmentVersionCriteria(assessmentUuid: UUID) = AssessmentVersionCriteria(assessmentUuid, versionNumberFrom = versionFrom, versionNumberTo = versionTo)
 }

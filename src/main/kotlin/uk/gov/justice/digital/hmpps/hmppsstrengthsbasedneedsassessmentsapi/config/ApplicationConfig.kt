@@ -13,9 +13,7 @@ class ApplicationConfig(
   val activeProfiles: String,
 ) {
   @Bean
-  fun httpClient(): HttpClient {
-    return HttpClient.newBuilder().build()
-  }
+  fun httpClient(): HttpClient = HttpClient.newBuilder().build()
 
   fun isDebugEnabled(): Boolean = activeProfiles.split(",").any { listOf("local", "dev").contains(it) }
 }

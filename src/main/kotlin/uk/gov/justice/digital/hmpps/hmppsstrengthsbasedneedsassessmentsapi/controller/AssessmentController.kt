@@ -64,14 +64,12 @@ class AssessmentController(
       example = "1",
     )
     versionNumber: Int? = null,
-  ): AssessmentResponse {
-    return AssessmentVersionCriteria(
-      assessmentUuid = assessmentUuid,
-      versionNumber = versionNumber,
-    )
-      .run(assessmentVersionService::find)
-      .run(AssessmentResponse::from)
-  }
+  ): AssessmentResponse = AssessmentVersionCriteria(
+    assessmentUuid = assessmentUuid,
+    versionNumber = versionNumber,
+  )
+    .run(assessmentVersionService::find)
+    .run(AssessmentResponse::from)
 
   @RequestMapping(method = [RequestMethod.POST])
   @ResponseStatus(HttpStatus.CREATED)
@@ -85,14 +83,12 @@ class AssessmentController(
   fun create(
     @RequestBody @Valid
     request: AuditedRequest,
-  ): AssessmentResponse {
-    return assessmentService.create()
-      .assessmentVersions.first()
-      .audit(request.userDetails)
-      .run(assessmentVersionService::saveAudit)
-      .also { telemetryService.assessmentCreated(it.assessmentVersion, request.userDetails.id) }
-      .run { AssessmentResponse.from(assessmentVersion) }
-  }
+  ): AssessmentResponse = assessmentService.create()
+    .assessmentVersions.first()
+    .audit(request.userDetails)
+    .run(assessmentVersionService::saveAudit)
+    .also { telemetryService.assessmentCreated(it.assessmentVersion, request.userDetails.id) }
+    .run { AssessmentResponse.from(assessmentVersion) }
 
   @RequestMapping(path = ["/{assessmentUuid}/clone"], method = [RequestMethod.POST])
   @ResponseStatus(HttpStatus.CREATED)
@@ -170,10 +166,9 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SignAssessmentRequest,
-  ): AssessmentResponse =
-    AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
-      .let { assessmentVersionService.sign(it, request.userDetails, request.signType) }
-      .run(AssessmentResponse::from)
+  ): AssessmentResponse = AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
+    .let { assessmentVersionService.sign(it, request.userDetails, request.signType) }
+    .run(AssessmentResponse::from)
 
   @RequestMapping(path = ["/{assessmentUuid}/counter-sign"], method = [RequestMethod.POST])
   @Operation(description = "Marks an assessment version as counter-signed.")
@@ -241,10 +236,9 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: AuditedRequest,
-  ): AssessmentResponse =
-    AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
-      .let { assessmentVersionService.lock(it, request.userDetails) }
-      .run(AssessmentResponse::from)
+  ): AssessmentResponse = AssessmentVersionCriteria(assessmentUuid).run(assessmentVersionService::find)
+    .let { assessmentVersionService.lock(it, request.userDetails) }
+    .run(AssessmentResponse::from)
 
   @RequestMapping(path = ["/{assessmentUuid}/rollback"], method = [RequestMethod.POST])
   @Operation(description = "Create a new \"ROLLBACK\" version of an existing assessment")
@@ -275,11 +269,10 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: RollbackAssessmentRequest,
-  ): AssessmentResponse =
-    AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
-      .run(assessmentVersionService::find)
-      .let { assessmentVersionService.rollback(it, request.userDetails) }
-      .run(AssessmentResponse::from)
+  ): AssessmentResponse = AssessmentVersionCriteria(assessmentUuid, versionNumber = request.versionNumber)
+    .run(assessmentVersionService::find)
+    .let { assessmentVersionService.rollback(it, request.userDetails) }
+    .run(AssessmentResponse::from)
 
   @RequestMapping(path = ["/{assessmentUuid}/soft-delete"], method = [RequestMethod.POST])
   @Operation(description = "Soft-deletes a range of assessment versions.")
@@ -310,14 +303,13 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: SoftDeleteRequest,
-  ): AssessmentResponse? =
-    request.toAssessmentVersionCriteria(assessmentUuid)
-      .also { assessmentService.findByUuid(assessmentUuid) }
-      .run(assessmentVersionService::findAll)
-      .let { assessmentVersionService.softDelete(it, request.userDetails) }
-      .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
-      .run(assessmentVersionService::findOrNull)
-      ?.run(AssessmentResponse::from)
+  ): AssessmentResponse? = request.toAssessmentVersionCriteria(assessmentUuid)
+    .also { assessmentService.findByUuid(assessmentUuid) }
+    .run(assessmentVersionService::findAll)
+    .let { assessmentVersionService.softDelete(it, request.userDetails) }
+    .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
+    .run(assessmentVersionService::findOrNull)
+    ?.run(AssessmentResponse::from)
 
   @RequestMapping(path = ["/{assessmentUuid}/undelete"], method = [RequestMethod.POST])
   @Operation(description = "Undeletes an OASys assessment.")
@@ -348,10 +340,9 @@ class AssessmentController(
     assessmentUuid: UUID,
     @RequestBody @Valid
     request: UnDeleteRequest,
-  ): AssessmentResponse =
-    assessmentService.findByUuid(assessmentUuid)
-      .let { with(request) { assessmentVersionService.undelete(it, versionFrom, versionTo, userDetails) } }
-      .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
-      .run(assessmentVersionService::find)
-      .run(AssessmentResponse::from)
+  ): AssessmentResponse = assessmentService.findByUuid(assessmentUuid)
+    .let { with(request) { assessmentVersionService.undelete(it, versionFrom, versionTo, userDetails) } }
+    .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
+    .run(assessmentVersionService::find)
+    .run(AssessmentResponse::from)
 }

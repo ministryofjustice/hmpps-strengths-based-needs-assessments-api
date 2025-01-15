@@ -8,7 +8,9 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import java.util.UUID
 
 @Repository
-interface AssessmentVersionRepository : JpaRepository<AssessmentVersion, Long>, JpaSpecificationExecutor<AssessmentVersion> {
+interface AssessmentVersionRepository :
+  JpaRepository<AssessmentVersion, Long>,
+  JpaSpecificationExecutor<AssessmentVersion> {
   fun findByUuid(uuid: UUID): AssessmentVersion
 
   @Query("SELECT * FROM assessments_versions WHERE assessment_uuid = :assessmentUuid AND deleted = TRUE", nativeQuery = true)

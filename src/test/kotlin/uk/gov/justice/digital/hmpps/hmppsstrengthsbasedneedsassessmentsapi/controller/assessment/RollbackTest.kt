@@ -32,8 +32,7 @@ class RollbackTest(
   @Autowired
   val telemetryService: TelemetryService,
 ) : IntegrationTest() {
-  private fun endpoint(assessmentUuid: UUID? = null) =
-    "/assessment/${assessmentUuid ?: assessment.uuid}/rollback"
+  private fun endpoint(assessmentUuid: UUID? = null) = "/assessment/${assessmentUuid ?: assessment.uuid}/rollback"
 
   private lateinit var assessment: Assessment
 

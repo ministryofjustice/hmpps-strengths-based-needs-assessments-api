@@ -62,26 +62,20 @@ enum class Tag {
   ROLLED_BACK,
   ;
 
-  fun isNotLocked(): Boolean {
-    return this == UNSIGNED
-  }
+  fun isNotLocked(): Boolean = this == UNSIGNED
 
   companion object {
-    fun lockedTags(): Set<Tag> {
-      return entries.toTypedArray().subtract(setOf(UNSIGNED))
-    }
+    fun lockedTags(): Set<Tag> = entries.toTypedArray().subtract(setOf(UNSIGNED))
 
-    fun tagsThatCanRollback(): Set<Tag> {
-      return setOf(
-        AWAITING_COUNTERSIGN,
-        AWAITING_DOUBLE_COUNTERSIGN,
-        COUNTERSIGNED,
-        DOUBLE_COUNTERSIGNED,
-        LOCKED_INCOMPLETE,
-        REJECTED,
-        SELF_SIGNED,
-      )
-    }
+    fun tagsThatCanRollback(): Set<Tag> = setOf(
+      AWAITING_COUNTERSIGN,
+      AWAITING_DOUBLE_COUNTERSIGN,
+      COUNTERSIGNED,
+      DOUBLE_COUNTERSIGNED,
+      LOCKED_INCOMPLETE,
+      REJECTED,
+      SELF_SIGNED,
+    )
   }
 }
 
@@ -90,11 +84,9 @@ enum class SignType {
   COUNTERSIGN,
   ;
 
-  fun into(): Tag {
-    return when (this) {
-      SELF -> Tag.SELF_SIGNED
-      COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
-    }
+  fun into(): Tag = when (this) {
+    SELF -> Tag.SELF_SIGNED
+    COUNTERSIGN -> Tag.AWAITING_COUNTERSIGN
   }
 }
 

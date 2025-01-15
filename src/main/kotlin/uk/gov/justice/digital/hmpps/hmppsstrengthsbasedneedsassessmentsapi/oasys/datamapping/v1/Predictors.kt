@@ -4,7 +4,5 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
 class Predictors : SectionMapping() {
-  override fun getFieldsToMap(): FieldsToMap {
-    return emptyMap()
-  }
+  override fun getFieldsToMap(): FieldsToMap = emptyMap()
 }

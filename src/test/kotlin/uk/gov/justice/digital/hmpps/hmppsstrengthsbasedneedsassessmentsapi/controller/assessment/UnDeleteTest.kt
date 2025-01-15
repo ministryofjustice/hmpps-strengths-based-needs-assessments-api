@@ -36,8 +36,7 @@ class UnDeleteTest(
   val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
-  private fun endpoint(assessmentUuid: UUID? = null) =
-    "/assessment/${assessmentUuid ?: assessment.uuid}/undelete"
+  private fun endpoint(assessmentUuid: UUID? = null) = "/assessment/${assessmentUuid ?: assessment.uuid}/undelete"
 
   @BeforeEach
   fun setUp() {

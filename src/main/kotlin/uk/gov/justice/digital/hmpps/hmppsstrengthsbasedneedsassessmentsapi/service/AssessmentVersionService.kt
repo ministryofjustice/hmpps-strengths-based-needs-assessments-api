@@ -61,12 +61,9 @@ class AssessmentVersionService(
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
-  fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> =
-    assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
+  fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> = assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
 
-  fun save(assessmentVersion: AssessmentVersion): AssessmentVersion {
-    return assessmentVersionRepository.save(assessmentVersion)
-  }
+  fun save(assessmentVersion: AssessmentVersion): AssessmentVersion = assessmentVersionRepository.save(assessmentVersion)
 
   fun saveAudit(assessmentVersionAudit: AssessmentVersionAudit) = assessmentVersionAuditRepository.save(assessmentVersionAudit)
 
@@ -90,8 +87,7 @@ class AssessmentVersionService(
     originalStatus: Tag,
     originalAnswers: Answers,
   ) {
-    if (request.answersToAdd.entries.find {
-          (code, answer) ->
+    if (request.answersToAdd.entries.find { (code, answer) ->
         code.endsWith("_user_submitted") && answer.value == "NO"
       } != null
     ) {
@@ -100,8 +96,7 @@ class AssessmentVersionService(
 
     telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, originalStatus)
 
-    fun isAssessmentComplete(answers: Answers) =
-      answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
+    fun isAssessmentComplete(answers: Answers) = answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
 
     if (isAssessmentComplete(assessmentVersion.answers) && !isAssessmentComplete(originalAnswers)) {
       telemetryService.assessmentCompleted(assessmentVersion, request.userDetails.id)
@@ -246,30 +241,26 @@ class AssessmentVersionService(
   }
 
   @Transactional
-  fun softDelete(assessmentVersions: List<AssessmentVersion>, userDetails: UserDetails): List<AssessmentVersion> {
-    return assessmentVersions
-      .filter { !it.deleted }
-      .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
-      .map { it.apply { deleted = true } }
-      .run(assessmentVersionRepository::saveAll)
-      .also { telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it) }
-  }
+  fun softDelete(assessmentVersions: List<AssessmentVersion>, userDetails: UserDetails): List<AssessmentVersion> = assessmentVersions
+    .filter { !it.deleted }
+    .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
+    .map { it.apply { deleted = true } }
+    .run(assessmentVersionRepository::saveAll)
+    .also { telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it) }
 
   @Transactional
-  fun undelete(assessment: Assessment, fromVersion: Int, toVersion: Int?, userDetails: UserDetails): List<AssessmentVersion> {
-    return assessmentVersionRepository.findAllDeleted(assessment.uuid)
-      .filter {
-        if (toVersion == null) {
-          it.versionNumber >= fromVersion
-        } else {
-          it.versionNumber >= fromVersion && it.versionNumber < toVersion
-        }
+  fun undelete(assessment: Assessment, fromVersion: Int, toVersion: Int?, userDetails: UserDetails): List<AssessmentVersion> = assessmentVersionRepository.findAllDeleted(assessment.uuid)
+    .filter {
+      if (toVersion == null) {
+        it.versionNumber >= fromVersion
+      } else {
+        it.versionNumber >= fromVersion && it.versionNumber < toVersion
       }
-      .ifEmpty { throw ConflictException("No assessment versions found for un-deletion") }
-      .map { it.apply { deleted = false } }
-      .run(assessmentVersionRepository::saveAll)
-      .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
-  }
+    }
+    .ifEmpty { throw ConflictException("No assessment versions found for un-deletion") }
+    .map { it.apply { deleted = false } }
+    .run(assessmentVersionRepository::saveAll)
+    .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

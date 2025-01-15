@@ -3,10 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.1.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.1.2"
   kotlin("plugin.spring") version "2.1.0"
   id("org.jetbrains.kotlin.kapt") version "2.1.0"
-  id("org.jetbrains.kotlinx.kover") version "0.8.3"
+  id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
 configurations {
@@ -21,21 +21,21 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   constraints {
-    implementation("com.nimbusds:nimbus-jose-jwt:10.0") {
+    implementation("com.nimbusds:nimbus-jose-jwt:10.0.1") {
       because("previous versions have a high vulnerability CVE-2023-52428")
     }
   }
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.postgresql:postgresql:42.7.4")
+  implementation("org.postgresql:postgresql:42.7.5")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

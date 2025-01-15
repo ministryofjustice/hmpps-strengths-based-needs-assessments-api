@@ -24,21 +24,19 @@ data class AssessmentResponse(
   val oasysEquivalent: OasysEquivalent,
 ) {
   companion object {
-    fun from(assessmentVersion: AssessmentVersion): AssessmentResponse {
-      return AssessmentResponse(
-        AssessmentMetadata(
-          assessmentVersion.assessment.uuid,
-          assessmentVersion.assessment.createdAt,
-          assessmentVersion.uuid,
-          assessmentVersion.versionNumber,
-          assessmentVersion.createdAt,
-          assessmentVersion.updatedAt,
-          assessmentVersion.tag,
-          assessmentVersion.assessment.info?.formVersion,
-        ),
-        assessmentVersion.answers,
-        assessmentVersion.oasysEquivalents,
-      )
-    }
+    fun from(assessmentVersion: AssessmentVersion): AssessmentResponse = AssessmentResponse(
+      AssessmentMetadata(
+        assessmentVersion.assessment.uuid,
+        assessmentVersion.assessment.createdAt,
+        assessmentVersion.uuid,
+        assessmentVersion.versionNumber,
+        assessmentVersion.createdAt,
+        assessmentVersion.updatedAt,
+        assessmentVersion.tag,
+        assessmentVersion.assessment.info?.formVersion,
+      ),
+      assessmentVersion.answers,
+      assessmentVersion.oasysEquivalents,
+    )
   }
 }

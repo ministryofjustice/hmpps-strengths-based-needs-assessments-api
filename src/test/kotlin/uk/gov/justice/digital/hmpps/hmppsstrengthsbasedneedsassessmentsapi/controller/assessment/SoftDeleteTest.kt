@@ -36,8 +36,7 @@ class SoftDeleteTest(
   val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
-  private fun endpoint(assessmentUuid: UUID? = null) =
-    "/assessment/${assessmentUuid ?: assessment.uuid}/soft-delete"
+  private fun endpoint(assessmentUuid: UUID? = null) = "/assessment/${assessmentUuid ?: assessment.uuid}/soft-delete"
 
   @BeforeEach
   fun setUp() {

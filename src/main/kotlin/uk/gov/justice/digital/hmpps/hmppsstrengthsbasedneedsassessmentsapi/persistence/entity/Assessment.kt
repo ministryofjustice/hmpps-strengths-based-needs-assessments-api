@@ -39,18 +39,16 @@ data class Assessment(
   var oasysAssessments: List<OasysAssessment> = listOf(),
 ) {
   companion object {
-    fun new(formConfig: FormConfig): Assessment {
-      return Assessment()
-        .apply {
-          info = AssessmentFormInfo(
-            formVersion = formConfig.version,
-            assessment = this,
-          )
+    fun new(formConfig: FormConfig): Assessment = Assessment()
+      .apply {
+        info = AssessmentFormInfo(
+          formVersion = formConfig.version,
+          assessment = this,
+        )
 
-          assessmentVersions = listOf(
-            AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNSIGNED),
-          )
-        }
-    }
+        assessmentVersions = listOf(
+          AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNSIGNED),
+        )
+      }
   }
 }

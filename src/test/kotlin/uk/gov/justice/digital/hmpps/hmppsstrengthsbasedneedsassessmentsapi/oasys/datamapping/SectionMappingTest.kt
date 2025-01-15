@@ -74,8 +74,6 @@ class Given {
   }
 
   companion object {
-    fun aCollectionOf(field: Field, collection: List<Map<String, Answer>>): Given {
-      return Given().apply { answers = mapOf(field.lower to Answer(collection = collection)) }
-    }
+    fun aCollectionOf(field: Field, collection: List<Map<String, Answer>>): Given = Given().apply { answers = mapOf(field.lower to Answer(collection = collection)) }
   }
 }

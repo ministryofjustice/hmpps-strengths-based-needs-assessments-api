@@ -41,82 +41,72 @@ typealias Properties = MutableMap<Property, String>
 class TelemetryService(
   val client: TelemetryClient,
 ) {
-  private fun track(event: Event, properties: Properties) =
-    client.trackEvent(event.name, properties.mapKeys { it.key.name }, null)
+  private fun track(event: Event, properties: Properties) = client.trackEvent(event.name, properties.mapKeys { it.key.name }, null)
 
-  fun assessmentCreated(assessmentVersion: AssessmentVersion, userId: String, clonedFromVersion: Int? = null) =
-    track(
-      Event.ASSESSMENT_CREATED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply { set(Property.CLONED_FROM_VERSION, clonedFromVersion.toString()) },
-    )
+  fun assessmentCreated(assessmentVersion: AssessmentVersion, userId: String, clonedFromVersion: Int? = null) = track(
+    Event.ASSESSMENT_CREATED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply { set(Property.CLONED_FROM_VERSION, clonedFromVersion.toString()) },
+  )
 
-  fun assessmentCompleted(assessmentVersion: AssessmentVersion, userId: String) =
-    track(
-      Event.ASSESSMENT_COMPLETED,
-      please().apply { putAll(propertiesFrom(assessmentVersion, userId)) },
-    )
+  fun assessmentCompleted(assessmentVersion: AssessmentVersion, userId: String) = track(
+    Event.ASSESSMENT_COMPLETED,
+    please().apply { putAll(propertiesFrom(assessmentVersion, userId)) },
+  )
 
-  fun assessmentAnswersUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag) =
-    track(
-      Event.ASSESSMENT_ANSWERS_UPDATED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply { set(Property.PREVIOUS_STATUS, previousStatus.toString()) },
-    )
+  fun assessmentAnswersUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag) = track(
+    Event.ASSESSMENT_ANSWERS_UPDATED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply { set(Property.PREVIOUS_STATUS, previousStatus.toString()) },
+  )
 
-  fun assessmentStatusUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag) =
-    track(
-      Event.ASSESSMENT_STATUS_UPDATED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply { set(Property.PREVIOUS_STATUS, previousStatus.toString()) },
-    )
+  fun assessmentStatusUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag) = track(
+    Event.ASSESSMENT_STATUS_UPDATED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply { set(Property.PREVIOUS_STATUS, previousStatus.toString()) },
+  )
 
-  fun assessmentSoftDeleted(assessment: Assessment, userId: String, versions: List<AssessmentVersion>) =
-    track(
-      Event.ASSESSMENT_SOFT_DELETED,
-      please().apply { putAll(propertiesFrom(assessment, userId, versions)) },
-    )
+  fun assessmentSoftDeleted(assessment: Assessment, userId: String, versions: List<AssessmentVersion>) = track(
+    Event.ASSESSMENT_SOFT_DELETED,
+    please().apply { putAll(propertiesFrom(assessment, userId, versions)) },
+  )
 
-  fun assessmentUndeleted(assessment: Assessment, userId: String, versions: List<AssessmentVersion>) =
-    track(
-      Event.ASSESSMENT_UNDELETED,
-      please().apply { putAll(propertiesFrom(assessment, userId, versions)) },
-    )
+  fun assessmentUndeleted(assessment: Assessment, userId: String, versions: List<AssessmentVersion>) = track(
+    Event.ASSESSMENT_UNDELETED,
+    please().apply { putAll(propertiesFrom(assessment, userId, versions)) },
+  )
 
-  fun sectionCompleted(assessmentVersion: AssessmentVersion, userId: String, sectionCode: String) =
-    track(
-      Event.SECTION_COMPLETED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply { set(Property.SECTION_CODE, sectionCode) },
-    )
+  fun sectionCompleted(assessmentVersion: AssessmentVersion, userId: String, sectionCode: String) = track(
+    Event.SECTION_COMPLETED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply { set(Property.SECTION_CODE, sectionCode) },
+  )
 
-  fun sectionUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag, sectionCode: String) =
-    track(
-      Event.SECTION_UPDATED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply {
-          set(Property.PREVIOUS_STATUS, previousStatus.toString())
-          set(Property.SECTION_CODE, sectionCode)
-        },
-    )
+  fun sectionUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag, sectionCode: String) = track(
+    Event.SECTION_UPDATED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply {
+        set(Property.PREVIOUS_STATUS, previousStatus.toString())
+        set(Property.SECTION_CODE, sectionCode)
+      },
+  )
 
-  fun questionUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag, sectionCode: String, questionCode: String, removed: Boolean) =
-    track(
-      Event.QUESTION_UPDATED,
-      please()
-        .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
-        .apply {
-          set(Property.PREVIOUS_STATUS, previousStatus.toString())
-          set(Property.SECTION_CODE, sectionCode)
-          set(Property.QUESTION_CODE, questionCode)
-          set(Property.REMOVED, removed.toString())
-        },
-    )
+  fun questionUpdated(assessmentVersion: AssessmentVersion, userId: String, previousStatus: Tag, sectionCode: String, questionCode: String, removed: Boolean) = track(
+    Event.QUESTION_UPDATED,
+    please()
+      .apply { putAll(propertiesFrom(assessmentVersion, userId)) }
+      .apply {
+        set(Property.PREVIOUS_STATUS, previousStatus.toString())
+        set(Property.SECTION_CODE, sectionCode)
+        set(Property.QUESTION_CODE, questionCode)
+        set(Property.REMOVED, removed.toString())
+      },
+  )
 
   companion object {
     fun please(): Properties = mutableMapOf()

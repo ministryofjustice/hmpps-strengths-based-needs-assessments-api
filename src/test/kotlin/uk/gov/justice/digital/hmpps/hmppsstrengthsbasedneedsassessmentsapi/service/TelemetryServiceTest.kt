@@ -44,10 +44,9 @@ class TelemetryServiceTest {
     every { telemetryClient.trackEvent(any(), any(), null) } just Runs
   }
 
-  fun verifyTracked(event: Event, properties: Map<String, String>) =
-    verify(exactly = 1) {
-      telemetryClient.trackEvent(event.name, withArg { assertPropertiesMatch(properties, it) }, null)
-    }
+  fun verifyTracked(event: Event, properties: Map<String, String>) = verify(exactly = 1) {
+    telemetryClient.trackEvent(event.name, withArg { assertPropertiesMatch(properties, it) }, null)
+  }
 
   fun assertPropertiesMatch(expected: Map<String, String>, actual: Map<String, String>) {
     assertEquals(expected.keys, actual.keys)

@@ -6,26 +6,22 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.SectionMapping
 
 class FinancialManagement : SectionMapping() {
-  override fun getFieldsToMap(): FieldsToMap {
-    return mapOf(
-      "o5-3" to ::q3,
-      "o5-4" to ::q4,
-      "o5-5" to ::q5,
-      "o5-6" to ::q6,
-      "o5-97" to ::q97,
-      "o5-98" to ::q98,
-      "o5-99" to ::q99,
-      "o5_SAN_STRENGTH" to ::qStrength,
-    )
-  }
+  override fun getFieldsToMap(): FieldsToMap = mapOf(
+    "o5-3" to ::q3,
+    "o5-4" to ::q4,
+    "o5-5" to ::q5,
+    "o5-6" to ::q6,
+    "o5-97" to ::q97,
+    "o5-98" to ::q98,
+    "o5-99" to ::q99,
+    "o5_SAN_STRENGTH" to ::qStrength,
+  )
 
-  private fun q3(): Any? {
-    return when (ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
-      ap.get(Value.GOOD), ap.get(Value.FAIRLY_GOOD) -> "0"
-      ap.get(Value.FAIRLY_BAD) -> "1"
-      ap.get(Value.BAD) -> "2"
-      else -> null
-    }
+  private fun q3(): Any? = when (ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
+    ap.get(Value.GOOD), ap.get(Value.FAIRLY_GOOD) -> "0"
+    ap.get(Value.FAIRLY_BAD) -> "1"
+    ap.get(Value.BAD) -> "2"
+    else -> null
   }
 
   private fun q4(): Any? {
@@ -62,26 +58,16 @@ class FinancialManagement : SectionMapping() {
     }
   }
 
-  private fun q6(): Any? {
-    return when (ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
-      ap.get(Value.GOOD), ap.get(Value.FAIRLY_GOOD) -> "0"
-      else -> null
-    }
+  private fun q6(): Any? = when (ap.answer(Field.FINANCE_MONEY_MANAGEMENT).value) {
+    ap.get(Value.GOOD), ap.get(Value.FAIRLY_GOOD) -> "0"
+    else -> null
   }
 
-  private fun q97(): Any? {
-    return PractitionerAnalysis("FINANCE", ap).notes()
-  }
+  private fun q97(): Any? = PractitionerAnalysis("FINANCE", ap).notes()
 
-  private fun q98(): Any? {
-    return PractitionerAnalysis("FINANCE", ap).riskOfSeriousHarm()
-  }
+  private fun q98(): Any? = PractitionerAnalysis("FINANCE", ap).riskOfSeriousHarm()
 
-  private fun q99(): Any? {
-    return PractitionerAnalysis("FINANCE", ap).riskOfReoffending()
-  }
+  private fun q99(): Any? = PractitionerAnalysis("FINANCE", ap).riskOfReoffending()
 
-  private fun qStrength(): Any? {
-    return PractitionerAnalysis("FINANCE", ap).strengthsOrProtectiveFactors()
-  }
+  private fun qStrength(): Any? = PractitionerAnalysis("FINANCE", ap).strengthsOrProtectiveFactors()
 }

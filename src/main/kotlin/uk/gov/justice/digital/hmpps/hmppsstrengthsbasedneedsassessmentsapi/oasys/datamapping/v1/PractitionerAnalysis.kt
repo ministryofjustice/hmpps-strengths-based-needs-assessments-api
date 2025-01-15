@@ -44,35 +44,27 @@ class PractitionerAnalysis(private val sectionPrefix: String, private val ap: An
     }
   }
 
-  fun notes(): Any? {
-    return listOfNotNull(
-      strenghtsOrProtectiveFactorsNotes(),
-      seriousHarmNotes(),
-      reoffendingNotes(),
-    ).joinToString(separator = "\n").ifEmpty { null }
+  fun notes(): Any? = listOfNotNull(
+    strenghtsOrProtectiveFactorsNotes(),
+    seriousHarmNotes(),
+    reoffendingNotes(),
+  ).joinToString(separator = "\n").ifEmpty { null }
+
+  fun riskOfSeriousHarm(): Any? = when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM")).value) {
+    ap.get(Value.YES) -> "YES"
+    ap.get(Value.NO) -> "NO"
+    else -> null
   }
 
-  fun riskOfSeriousHarm(): Any? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_SERIOUS_HARM")).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
-    }
+  fun riskOfReoffending(): Any? = when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING")).value) {
+    ap.get(Value.YES) -> "YES"
+    ap.get(Value.NO) -> "NO"
+    else -> null
   }
 
-  fun riskOfReoffending(): Any? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_RISK_OF_REOFFENDING")).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
-    }
-  }
-
-  fun strengthsOrProtectiveFactors(): Any? {
-    return when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS")).value) {
-      ap.get(Value.YES) -> "YES"
-      ap.get(Value.NO) -> "NO"
-      else -> null
-    }
+  fun strengthsOrProtectiveFactors(): Any? = when (ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS")).value) {
+    ap.get(Value.YES) -> "YES"
+    ap.get(Value.NO) -> "NO"
+    else -> null
   }
 }

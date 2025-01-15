@@ -21,9 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 
 @Component
 class MappingProvider {
-  fun get(formInfo: AssessmentFormInfo): Set<SectionMapping> {
-    return versions[formInfo.formVersion] ?: throw MappingNotFoundException(formInfo.formVersion)
-  }
+  fun get(formInfo: AssessmentFormInfo): Set<SectionMapping> = versions[formInfo.formVersion] ?: throw MappingNotFoundException(formInfo.formVersion)
 
   companion object {
     private val versions = mapOf(

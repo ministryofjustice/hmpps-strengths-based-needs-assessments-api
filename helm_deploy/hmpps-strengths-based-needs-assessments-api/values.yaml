@@ -4,7 +4,7 @@ generic-service:
   replicaCount: 4
 
   image:
-    repository: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api
+    repository: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api
     tag: app_version # override at deployment time
     port: 8080
 

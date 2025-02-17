@@ -16,7 +16,7 @@ services:
       - "8070:8080"
 
   san-api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:local
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:
       target: development
     command: gradle --parallel --build-cache --configuration-cache bootRun

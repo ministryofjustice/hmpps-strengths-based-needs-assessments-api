@@ -31,7 +31,7 @@ services:
       - /var/lib/postgresql
 
   coordinator-api:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-coordinator-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:latest
     networks:
       - hmpps
     depends_on:
@@ -56,7 +56,7 @@ services:
       APP_STRATEGIES_PLAN: false
 
   san-api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:${APP_VERSION:-latest}
     build:
       context: .
     networks:
@@ -77,7 +77,7 @@ services:
       FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
   san-ui:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-ui:latest
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
     networks:
       - hmpps
     depends_on:
@@ -113,7 +113,7 @@ services:
       NODE_ENV: development
 
   arns-handover:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:latest
     networks:
       - hmpps
     depends_on:
@@ -140,7 +140,7 @@ services:
       CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
 
   oasys-ui:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-oastub-ui:latest
     networks:
       - hmpps
     depends_on:

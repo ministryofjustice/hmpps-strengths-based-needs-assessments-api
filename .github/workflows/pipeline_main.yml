@@ -1,4 +1,4 @@
-name: Main pipeline [build -> test -> deploy]
+name: Main
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 permissions:
   contents: read
   packages: write
-  actions: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

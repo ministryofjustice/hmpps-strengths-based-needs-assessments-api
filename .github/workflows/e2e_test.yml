@@ -11,12 +11,9 @@ on:
         required: true
         type: string
 
-permissions:
-  actions: write
-
 jobs:
   get-timings:
-    uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_get_timings.yml@arn-2494-additional-options
+    uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_get_timings.yml@v1
     with:
       repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
@@ -59,7 +56,7 @@ jobs:
           repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
           path: e2e-test-ui
 
-      - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@arn-2494-additional-options
+      - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@v1
         with:
           timings: ${{ needs.get-timings.outputs.timings }}
           path: e2e-test-ui
@@ -101,7 +98,7 @@ jobs:
             ${{ runner.temp }}/docker-logs
 
   save-timings:
-    uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@arn-2494-additional-options
+    uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1
     if: success() || failure()
     needs:
       - get-timings

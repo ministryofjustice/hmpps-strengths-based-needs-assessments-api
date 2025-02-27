@@ -1,7 +1,6 @@
 SHELL = '/bin/bash'
-DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.dev.yml
-TEST_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.test.yml
 LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
+DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.dev.yml
 PROJECT_NAME = hmpps-assess-risks-and-needs
 
 export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
@@ -67,13 +66,6 @@ lint-fix: ## Runs the Kotlin linter and auto-fixes.
 
 lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
 	docker compose ${DEV_COMPOSE_FILES} exec san-api gradle --parallel
-
-test-up: ## Stands up a test environment.
-	docker compose pull --policy missing
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up --wait --force-recreate
-
-test-down: ## Stops and removes all of the test containers.
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down

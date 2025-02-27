@@ -7,14 +7,6 @@ services:
     ports:
       - "5432:5432"
 
-  hmpps-auth:
-    ports:
-      - "9090:9090"
-
-  coordinator-api:
-    ports:
-      - "8070:8080"
-
   san-api:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:
@@ -30,18 +22,6 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
-
-  san-ui:
-    ports:
-      - "3000:3000"
-
-  arns-handover:
-    ports:
-      - "7070:7070"
-
-  oasys-ui:
-    ports:
-      - "7072:3000"
 
 volumes:
   .gradle:

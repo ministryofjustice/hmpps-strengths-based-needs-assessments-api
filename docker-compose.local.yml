@@ -1,4 +1,8 @@
 services:
+  hmpps-auth:
+    ports:
+      - "9090:9090"
+
   coordinator-api:
     ports:
       - "8070:8080"

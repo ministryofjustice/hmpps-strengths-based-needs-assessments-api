@@ -11,6 +11,9 @@ on:
         required: true
         type: string
 
+permissions:
+  actions: write
+
 jobs:
   get-timings:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_get_timings.yml@arn-2494-additional-options

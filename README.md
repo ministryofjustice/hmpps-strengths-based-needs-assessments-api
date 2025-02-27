@@ -1,7 +1,6 @@
 # hmpps-strengths-based-needs-assessments-api
+![Main Pipeline](https://github.com/ministryofjustice/hmpps-strengths-based-needs-assessments-api/actions/workflows/pipeline_main.yml/badge.svg?branch=main)
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.message&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv2%2Fcompliant-repository%2Fhmpps-strengths-based-needs-assessments-api)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/hmpps-strengths-based-needs-assessments-api "Link to report")
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-strengths-based-needs-assessments-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-strengths-based-needs-assessments-api)
-[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-strengths-based-needs-assessments-api/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-strengths-based-needs-assessments-api)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://api.strengths-based-needs-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/)
 
 API for the Strengths and Needs assessment service.
@@ -54,14 +53,16 @@ Run `make` to see the full list of dev commands.
 
 ## Deployment
 
-Deployments of the main branch to Development -> Preproduction -> Production are automated through the [build-test-and-deploy](https://app.circleci.com/pipelines/github/ministryofjustice/hmpps-strengths-based-needs-assessments-api/554/workflows/228227bb-282f-4322-8414-178e82b0f60e) workflow in CircleCI.
+Deployments of the main branch to Development -> Preproduction -> Production are automated through the Main workflow in GitHub Actions.
 
-To deploy a branch manually to the Test environment, open the project in CircleCI and follow these steps:
+To deploy a branch manually to the Dev or Test environment, go to the Actions tab on GitHub and follow these steps:
 
-1. Select the branch you wish to deploy
-2. Press the "Trigger Pipeline" button
-3. Add a string parameter named "deploy" with value "test"
-4. Press "Trigger Pipeline"
+1. Select the "Deploy to environment" workflow
+2. Click "Run workflow"
+3. Select the branch you wish to deploy
+4. Select the environment you wish to deploy to
+5. Optionally input an image tag (from the Docker registry)
+6. Click "Run workflow"
 
 ## Connecting to a remote Database in dev/preprod/prod
 

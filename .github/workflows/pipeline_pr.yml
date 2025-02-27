@@ -10,7 +10,6 @@ concurrency:
 permissions:
   contents: read
   packages: write
-  actions: write
 
 jobs:
   validate:
@@ -42,6 +41,5 @@ jobs:
   e2e_test:
     needs: build_docker
     uses: ./.github/workflows/e2e_test.yml
-    secrets: inherit
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}

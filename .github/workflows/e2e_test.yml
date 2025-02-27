@@ -104,5 +104,6 @@ jobs:
       - get-timings
       - e2e-test
     with:
+      repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
       initial-timings: ${{ needs.get-timings.outputs.timings }}
       updated-timings: ${{ toJSON(needs.e2e-test.outputs) }}

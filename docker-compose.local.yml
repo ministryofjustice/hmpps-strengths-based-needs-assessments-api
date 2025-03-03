@@ -1,4 +1,8 @@
 services:
+  hmpps-auth:
+    ports:
+      - "9090:9090"
+
   coordinator-api:
     ports:
       - "8070:8080"
@@ -8,6 +12,8 @@ services:
       - "8080:8080"
 
   san-ui:
+    depends_on:
+      - hmpps-auth-proxy
     ports:
       - "3000:3000"
 
@@ -18,3 +24,16 @@ services:
   oasys-ui:
     ports:
       - "7072:3000"
+
+  hmpps-auth-proxy:
+    image: nginx:latest
+    depends_on:
+      - hmpps-auth
+      - arns-handover
+    networks:
+      - hmpps
+    ports:
+      - "9091:9091"
+      - "7071:7071"
+    volumes:
+      - ./hmpps-auth-proxy/nginx.conf:/etc/nginx/nginx.conf

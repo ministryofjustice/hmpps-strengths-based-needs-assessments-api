@@ -134,16 +134,9 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
     test(
       "o4-9",
       Given().expect(null),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, null).expect(null),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.ENTRY_LEVEL).expect("2"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_1).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_2).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_3).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_4).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_5).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_6).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_7).expect("0"),
-      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_8).expect("0"),
+      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, null).expect(null),
+      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.NO).expect("2"),
+      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.YES).expect("0"),
     )
   }
 

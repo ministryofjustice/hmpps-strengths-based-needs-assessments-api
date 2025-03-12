@@ -105,17 +105,9 @@ class Education : SectionMapping() {
     else -> null
   }
 
-  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED).value) {
-    ap.get(Value.ENTRY_LEVEL) -> "2"
-    ap.get(Value.LEVEL_1),
-    ap.get(Value.LEVEL_2),
-    ap.get(Value.LEVEL_3),
-    ap.get(Value.LEVEL_4),
-    ap.get(Value.LEVEL_5),
-    ap.get(Value.LEVEL_6),
-    ap.get(Value.LEVEL_7),
-    ap.get(Value.LEVEL_8),
-    -> "0"
+  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS).value) {
+    ap.get(Value.NO) -> "2"
+    ap.get(Value.YES) -> "0"
     else -> null
   }
 

@@ -52,6 +52,7 @@ class FinancialManagement : SectionMapping() {
       null -> null
       true -> when (ap.answer(Field.FAMILY_OR_FRIENDS_DETAILS).value) {
         ap.get(Value.YES) -> "2"
+        ap.get(Value.UNKNOWN) -> "M"
         else -> "0"
       }
       else -> "0"

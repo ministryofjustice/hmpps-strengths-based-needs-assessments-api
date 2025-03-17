@@ -61,6 +61,8 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
         .and(Field.FAMILY_OR_FRIENDS_DETAILS, Value.NO).expect("0"),
       Given(Field.FINANCE_INCOME, listOf(Value.FAMILY_OR_FRIENDS))
         .and(Field.FAMILY_OR_FRIENDS_DETAILS, Value.YES).expect("2"),
+      Given(Field.FINANCE_INCOME, listOf(Value.FAMILY_OR_FRIENDS))
+        .and(Field.FAMILY_OR_FRIENDS_DETAILS, Value.UNKNOWN).expect("M"),
     )
   }
 

@@ -35,7 +35,7 @@ dependencies {
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

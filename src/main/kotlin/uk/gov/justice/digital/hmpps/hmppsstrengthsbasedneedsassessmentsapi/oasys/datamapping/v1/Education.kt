@@ -38,6 +38,7 @@ class Education : SectionMapping() {
     ap.get(Value.STABLE) -> "0"
     ap.get(Value.PERIODS_OF_INSTABILITY) -> "1"
     ap.get(Value.UNSTABLE) -> "2"
+    ap.get(Value.UNKNOWN) -> "M"
     else -> null
   }
 

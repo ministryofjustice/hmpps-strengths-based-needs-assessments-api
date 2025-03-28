@@ -37,6 +37,7 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
       Given(Field.EMPLOYMENT_HISTORY, Value.STABLE).expect("0"),
       Given(Field.EMPLOYMENT_HISTORY, Value.PERIODS_OF_INSTABILITY).expect("1"),
       Given(Field.EMPLOYMENT_HISTORY, Value.UNSTABLE).expect("2"),
+      Given(Field.EMPLOYMENT_HISTORY, Value.UNKNOWN).expect("M"),
     )
   }
 

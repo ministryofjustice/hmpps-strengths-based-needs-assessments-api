@@ -26,23 +26,15 @@ class FinancialManagement : SectionMapping() {
 
   private fun q4(): Any? {
     val income = ap.answer(Field.FINANCE_INCOME).values
-    val nonOffendingIncomes = setOf(
-      Value.CARERS_ALLOWANCE,
-      Value.DISABILITY_BENEFITS,
-      Value.EMPLOYMENT,
-      Value.FAMILY_OR_FRIENDS,
-      Value.PENSION,
-      Value.STUDENT_LOAN,
-      Value.Undeclared,
-      Value.WORK_RELATED_BENEFITS,
-      Value.OTHER,
-    ).map { ap.get(it) }
 
     return when {
       (income == null) -> null
-      (!income.contains(ap.get(Value.OFFENDING))) -> "0"
-      (income.any { it in nonOffendingIncomes }) -> "1"
-      else -> "2"
+      (income.contains(ap.get(Value.OFFENDING))) -> when {
+        (income.size == 1) -> "2"
+        else -> "1"
+      }
+      (income.contains(ap.get(Value.UNKNOWN))) -> "M"
+      else -> "0"
     }
   }
 

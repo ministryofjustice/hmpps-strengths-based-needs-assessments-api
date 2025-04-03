@@ -35,6 +35,7 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
       Given(Field.FINANCE_INCOME, listOf(Value.Undeclared)).expect("0"),
       Given(Field.FINANCE_INCOME, listOf(Value.WORK_RELATED_BENEFITS)).expect("0"),
       Given(Field.FINANCE_INCOME, listOf(Value.OTHER)).expect("0"),
+      Given(Field.FINANCE_INCOME, listOf(Value.UNKNOWN)).expect("M"),
       Given(Field.FINANCE_INCOME, listOf(Value.NO_MONEY)).expect("0"),
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.CARERS_ALLOWANCE)).expect("1"),
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.DISABILITY_BENEFITS)).expect("1"),
@@ -45,6 +46,7 @@ class FinancialManagementTest : SectionMappingTest(FinancialManagement(), "1.0")
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.Undeclared)).expect("1"),
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.WORK_RELATED_BENEFITS)).expect("1"),
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.OTHER)).expect("1"),
+      Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING, Value.UNKNOWN)).expect("1"),
       Given(Field.FINANCE_INCOME, listOf(Value.OFFENDING)).expect("2"),
     )
   }

@@ -41,6 +41,22 @@ class MappingProvider {
         Relationships(),
         ThinkingBehaviours(),
       ),
+      "1.1" to setOf(
+        Accommodation(),
+        AlcoholMisuse(),
+        Attitudes(),
+        Drugs(),
+        Education(),
+        EmotionalWellbeing(),
+        FinancialManagement(),
+        Health(),
+        LifestyleAssociates(),
+        NewSections(),
+        OffenceAnalysis(),
+        Predictors(),
+        Relationships(),
+        ThinkingBehaviours(),
+      ),
     )
   }
 }

@@ -448,6 +448,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Value.WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH.name to "W1",
       Value.WHITE_IRISH.name to "W2",
       Value.WHITE_GYPSY_OR_IRISH_TRAVELLER.name to "W4",
+      Value.WHITE_ROMA.name to "W5",
       Value.WHITE_ANY_OTHER_WHITE_BACKGROUND.name to "W9",
       Value.MIXED_WHITE_AND_BLACK_CARIBBEAN.name to "M1",
       Value.MIXED_WHITE_AND_BLACK_AFRICAN.name to "M2",

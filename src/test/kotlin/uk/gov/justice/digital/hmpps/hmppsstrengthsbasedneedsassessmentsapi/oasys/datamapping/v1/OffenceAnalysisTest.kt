@@ -417,7 +417,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Value.MALE.name to "1",
       Value.FEMALE.name to "2",
       Value.INTERSEX.name to null,
-      Value.UNKNOWN.name to null,
+      Value.UNKNOWN.name to "0",
     ).forEach { (givenValue, expectedValue) ->
       val entries: List<Map<String, PersistedAnswer>> = listOf(
         mapOf(

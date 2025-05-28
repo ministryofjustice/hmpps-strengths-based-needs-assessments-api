@@ -47,9 +47,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-1-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_HEROIN, null).expect(null),
-      Given(Field.INJECTING_DRUG_HEROIN, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_HEROIN, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_HEROIN, null).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, Value.YES).expect("YES"),
     )
   }
 

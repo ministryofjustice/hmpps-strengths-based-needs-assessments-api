@@ -90,17 +90,24 @@ class Drugs : SectionMapping() {
     else -> false
   }
 
+  private fun isMoreThanSix(field: Field): Boolean = when (ap.answer(field).value) {
+    ap.get(Value.MORE_THAN_SIX) -> true
+    else -> false
+  }
+
   private fun q1(): Any? = when (ap.answer(Field.DRUG_USE).value) {
     ap.get(Value.YES) -> "YES"
     ap.get(Value.NO) -> "NO"
     else -> null
   }
 
-  private fun q2011(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_HEROIN)
+  private fun q2011(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN)
 
-  private fun q2013(): Any? = if (isYes(Field.PAST_DRUG_USAGE_HEROIN)) "YES" else null
+  private fun q2013(): Any? = if (isMoreThanSix(Field.PAST_DRUG_USAGE_HEROIN)) "YES" else null
 
-  private fun q2012(): Any? = if (isYes(Field.INJECTING_DRUG_HEROIN)) "YES" else null
+  private fun q2012(): Any? = ap.answer(Field.DRUGS_INJECTED_HEROIN).values?.let {
+    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
+  }
 
   private fun q2014(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_HEROIN)) "YES" else null
 

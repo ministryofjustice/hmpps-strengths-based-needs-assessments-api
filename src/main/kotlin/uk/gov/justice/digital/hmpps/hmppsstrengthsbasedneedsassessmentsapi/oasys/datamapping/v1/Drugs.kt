@@ -130,13 +130,17 @@ class Drugs : SectionMapping() {
     if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
   }
 
-  private fun q2031(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_OTHER_OPIATES)
+  private fun q2031(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES)
 
-  private fun q2033(): Any? = if (isYes(Field.PAST_DRUG_USAGE_OTHER_OPIATES)) "YES" else null
+  private fun q2033(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_OTHER_OPIATES)) "YES" else null
 
-  private fun q2032(): Any? = if (isYes(Field.INJECTING_DRUG_OTHER_OPIATES)) "YES" else null
+  private fun q2032(): Any? = ap.answer(Field.DRUGS_INJECTED_OTHER_OPIATES).values?.let {
+    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
+  }
 
-  private fun q2034(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES)) "YES" else null
+  private fun q2034(): Any? = ap.answer(Field.DRUGS_INJECTED_OTHER_OPIATES).values?.let {
+    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
+  }
 
   private fun q2041(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_CRACK)
 

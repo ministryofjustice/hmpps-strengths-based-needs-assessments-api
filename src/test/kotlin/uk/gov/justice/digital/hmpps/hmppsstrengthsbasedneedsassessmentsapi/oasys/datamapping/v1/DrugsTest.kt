@@ -115,11 +115,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, null).expect(null),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -128,9 +128,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_OPIATES, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, null).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.YES).expect("YES"),
     )
   }
 
@@ -139,9 +139,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_OPIATES, null).expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, null).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.YES).expect("YES"),
     )
   }
 
@@ -150,9 +150,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_OPIATES, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, null).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.YES).expect("YES"),
     )
   }
 

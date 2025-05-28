@@ -69,11 +69,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -82,9 +82,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, null).expect(null),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
     )
   }
 
@@ -93,9 +93,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, null).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
     )
   }
 
@@ -104,9 +104,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, null).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
     )
   }
 

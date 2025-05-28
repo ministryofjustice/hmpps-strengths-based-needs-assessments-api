@@ -90,6 +90,11 @@ class Drugs : SectionMapping() {
     else -> false
   }
 
+  private fun isLastSix(field: Field): Boolean = when (ap.answer(field).value) {
+    ap.get(Value.LAST_SIX) -> true
+    else -> false
+  }
+
   private fun isMoreThanSix(field: Field): Boolean = when (ap.answer(field).value) {
     ap.get(Value.MORE_THAN_SIX) -> true
     else -> false
@@ -109,15 +114,21 @@ class Drugs : SectionMapping() {
     if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
   }
 
-  private fun q2014(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_HEROIN)) "YES" else null
+  private fun q2014(): Any? = ap.answer(Field.DRUGS_INJECTED_HEROIN).values?.let {
+    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
+  }
 
-  private fun q2021(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED)
+  private fun q2021(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED)
 
-  private fun q2023(): Any? = if (isYes(Field.PAST_DRUG_USAGE_METHADONE_NOT_PRESCRIBED)) "YES" else null
+  private fun q2023(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED)) "YES" else null
 
-  private fun q2022(): Any? = if (isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED)) "YES" else null
+  private fun q2022(): Any? = ap.answer(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED).values?.let {
+    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
+  }
 
-  private fun q2024(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED)) "YES" else null
+  private fun q2024(): Any? = ap.answer(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED).values?.let {
+    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
+  }
 
   private fun q2031(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_OTHER_OPIATES)
 

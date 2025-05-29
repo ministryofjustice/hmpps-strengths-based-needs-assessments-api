@@ -23,11 +23,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-1-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_HEROIN, null).expect(null),
-      Given(Field.DRUG_USAGE_HEROIN, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -37,8 +37,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-1-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_HEROIN, null).expect(null),
-      Given(Field.DRUG_LAST_USED_HEROIN, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_HEROIN, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_HEROIN, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_HEROIN, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -47,9 +47,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-1-2",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_HEROIN, null).expect(null),
-      Given(Field.DRUGS_INJECTED_HEROIN, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_HEROIN, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_HEROIN, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -58,9 +58,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-1-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_HEROIN, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_HEROIN, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_HEROIN, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_HEROIN, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -83,8 +83,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-2-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -93,9 +93,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-2",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -104,9 +104,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-2-4",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, null).expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -129,8 +129,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-3-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_OTHER_OPIATES, null).expect(null),
-      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -139,9 +139,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-2",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -150,9 +150,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-3-4",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -175,8 +175,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-4-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_CRACK, null).expect(null),
-      Given(Field.DRUG_LAST_USED_CRACK, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_CRACK, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_CRACK, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_CRACK, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -185,9 +185,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-4-2",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, null).expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_CRACK, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -196,9 +196,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-4-4",
       Given().expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, null).expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_CRACK, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -221,8 +221,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-5-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_COCAINE, null).expect(null),
-      Given(Field.DRUG_LAST_USED_COCAINE, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_COCAINE, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_COCAINE, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_COCAINE, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -232,8 +232,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-5-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_COCAINE, null).expect(null),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_COCAINE, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -243,8 +244,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-5-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_COCAINE, null).expect(null),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_COCAINE, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -267,8 +269,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-6-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, null).expect(null),
-      Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -278,8 +280,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-6-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, null).expect(null),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -289,8 +292,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-6-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, null).expect(null),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -313,8 +317,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-7-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, null).expect(null),
-      Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -324,8 +328,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-7-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -335,8 +340,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-7-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -359,8 +365,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-8-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_AMPHETAMINES, null).expect(null),
-      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -370,8 +376,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-8-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_AMPHETAMINES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -381,8 +388,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-8-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_AMPHETAMINES, null).expect(null),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -405,8 +413,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-9-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, null).expect(null),
-      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -429,8 +437,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-10-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_ECSTASY, null).expect(null),
-      Given(Field.DRUG_LAST_USED_ECSTASY, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_ECSTASY, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_ECSTASY, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_ECSTASY, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -453,8 +461,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-11-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_CANNABIS, null).expect(null),
-      Given(Field.DRUG_LAST_USED_CANNABIS, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_CANNABIS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_CANNABIS, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_CANNABIS, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -477,8 +485,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-12-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_SOLVENTS, null).expect(null),
-      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -501,8 +509,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-13-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_STEROIDS, null).expect(null),
-      Given(Field.DRUG_LAST_USED_STEROIDS, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_STEROIDS, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_STEROIDS, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -512,8 +520,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-13-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_STEROIDS, null).expect(null),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -523,8 +532,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-13-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_STEROIDS, null).expect(null),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 
@@ -547,8 +557,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-15-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_SPICE, null).expect(null),
-      Given(Field.DRUG_LAST_USED_SPICE, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_SPICE, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_SPICE, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_SPICE, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -571,8 +581,8 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-14-3",
       Given().expect(null),
       Given(Field.DRUG_LAST_USED_OTHER_DRUG, null).expect(null),
-      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.LAST_SIX).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.MORE_THAN_SIX).expect("YES"),
     )
   }
 
@@ -582,8 +592,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-14-2",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_OTHER_DRUG, null).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.MORE_THAN_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.LAST_SIX)).expect("YES"),
     )
   }
 
@@ -593,8 +604,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       "o8-2-14-4",
       Given().expect(null),
       Given(Field.DRUGS_INJECTED_OTHER_DRUG, null).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, emptyList()).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.LAST_SIX)).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.MORE_THAN_SIX)).expect("YES"),
     )
   }
 

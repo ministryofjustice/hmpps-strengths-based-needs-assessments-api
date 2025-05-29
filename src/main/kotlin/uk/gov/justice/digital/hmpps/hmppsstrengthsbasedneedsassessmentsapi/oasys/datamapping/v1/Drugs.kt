@@ -85,11 +85,6 @@ class Drugs : SectionMapping() {
     }
   }
 
-  private fun isYes(field: Field): Boolean = when (ap.answer(field).value) {
-    ap.get(Value.YES) -> true
-    else -> false
-  }
-
   private fun isMoreThanSix(field: Field): Boolean = when (ap.answer(field).value) {
     ap.get(Value.MORE_THAN_SIX) -> true
     else -> false

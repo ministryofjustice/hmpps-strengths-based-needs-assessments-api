@@ -205,9 +205,7 @@ class Drugs : SectionMapping() {
 
   private fun q2144(): Any? = fieldContains(Field.DRUGS_INJECTED_OTHER_DRUG, Value.MORE_THAN_SIX)
 
-  private fun q214t(): Any? {
-    return ap.answer(Field.OTHER_DRUG_NAME).value
-  }
+  private fun q214t(): Any? = ap.answer(Field.OTHER_DRUG_NAME).value
 
   private fun q4(): Any {
     val frequencies = setOf(Value.DAILY, Value.WEEKLY, Value.MONTHLY, Value.OCCASIONALLY)

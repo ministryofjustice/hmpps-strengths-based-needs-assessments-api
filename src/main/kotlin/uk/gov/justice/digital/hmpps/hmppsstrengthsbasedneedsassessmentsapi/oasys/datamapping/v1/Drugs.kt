@@ -90,14 +90,13 @@ class Drugs : SectionMapping() {
     else -> false
   }
 
-  private fun isLastSix(field: Field): Boolean = when (ap.answer(field).value) {
-    ap.get(Value.LAST_SIX) -> true
-    else -> false
-  }
-
   private fun isMoreThanSix(field: Field): Boolean = when (ap.answer(field).value) {
     ap.get(Value.MORE_THAN_SIX) -> true
     else -> false
+  }
+
+  private fun fieldContains(field: Field, value: Value): String? = ap.answer(field).values?.let {
+    if (it.contains(ap.get(value))) "YES" else null
   }
 
   private fun q1(): Any? = when (ap.answer(Field.DRUG_USE).value) {
@@ -108,145 +107,117 @@ class Drugs : SectionMapping() {
 
   private fun q2011(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN)
 
-  private fun q2013(): Any? = if (isMoreThanSix(Field.PAST_DRUG_USAGE_HEROIN)) "YES" else null
+  private fun q2013(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_HEROIN)) "YES" else null
 
-  private fun q2012(): Any? = ap.answer(Field.DRUGS_INJECTED_HEROIN).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2012(): Any? = fieldContains(Field.DRUGS_INJECTED_HEROIN, Value.LAST_SIX)
 
-  private fun q2014(): Any? = ap.answer(Field.DRUGS_INJECTED_HEROIN).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2014(): Any? = fieldContains(Field.DRUGS_INJECTED_HEROIN, Value.MORE_THAN_SIX)
 
   private fun q2021(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED)
 
   private fun q2023(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED)) "YES" else null
 
-  private fun q2022(): Any? = ap.answer(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2022(): Any? = fieldContains(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.LAST_SIX)
 
-  private fun q2024(): Any? = ap.answer(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2024(): Any? = fieldContains(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.MORE_THAN_SIX)
 
   private fun q2031(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES)
 
   private fun q2033(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_OTHER_OPIATES)) "YES" else null
 
-  private fun q2032(): Any? = ap.answer(Field.DRUGS_INJECTED_OTHER_OPIATES).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2032(): Any? = fieldContains(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.LAST_SIX)
 
-  private fun q2034(): Any? = ap.answer(Field.DRUGS_INJECTED_OTHER_OPIATES).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2034(): Any? = fieldContains(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.MORE_THAN_SIX)
 
   private fun q2041(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK)
 
   private fun q2043(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_CRACK)) "YES" else null
 
-  private fun q2042(): Any? = ap.answer(Field.DRUGS_INJECTED_CRACK).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2042(): Any? = fieldContains(Field.DRUGS_INJECTED_CRACK, Value.LAST_SIX)
 
-  private fun q2044(): Any? = ap.answer(Field.DRUGS_INJECTED_CRACK).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2044(): Any? = fieldContains(Field.DRUGS_INJECTED_CRACK, Value.MORE_THAN_SIX)
 
   private fun q2051(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE)
 
   private fun q2053(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_COCAINE)) "YES" else null
 
-  private fun q2052(): Any? = ap.answer(Field.DRUGS_INJECTED_COCAINE).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2052(): Any? = fieldContains(Field.DRUGS_INJECTED_COCAINE, Value.LAST_SIX)
 
-  private fun q2054(): Any? = ap.answer(Field.DRUGS_INJECTED_COCAINE).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2054(): Any? = fieldContains(Field.DRUGS_INJECTED_COCAINE, Value.MORE_THAN_SIX)
 
   private fun q2061(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS)
 
   private fun q2063(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS)) "YES" else null
 
-  private fun q2062(): Any? = ap.answer(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2062(): Any? = fieldContains(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.LAST_SIX)
 
-  private fun q2064(): Any? = ap.answer(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2064(): Any? = fieldContains(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.MORE_THAN_SIX)
 
   private fun q2071(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES)
 
   private fun q2073(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_BENZODIAZEPINES)) "YES" else null
 
-  private fun q2072(): Any? = ap.answer(Field.DRUGS_INJECTED_BENZODIAZEPINES).values?.let {
-    if (it.contains(ap.get(Value.LAST_SIX))) "YES" else null
-  }
+  private fun q2072(): Any? = fieldContains(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.LAST_SIX)
 
-  private fun q2074(): Any? = ap.answer(Field.DRUGS_INJECTED_BENZODIAZEPINES).values?.let {
-    if (it.contains(ap.get(Value.MORE_THAN_SIX))) "YES" else null
-  }
+  private fun q2074(): Any? = fieldContains(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.MORE_THAN_SIX)
 
-  private fun q2081(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_AMPHETAMINES)
+  private fun q2081(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES)
 
-  private fun q2083(): Any? = if (isYes(Field.PAST_DRUG_USAGE_AMPHETAMINES)) "YES" else null
+  private fun q2083(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_AMPHETAMINES)) "YES" else null
 
-  private fun q2082(): Any? = if (isYes(Field.INJECTING_DRUG_AMPHETAMINES)) "YES" else null
+  private fun q2082(): Any? = fieldContains(Field.DRUGS_INJECTED_AMPHETAMINES, Value.LAST_SIX)
 
-  private fun q2084(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES)) "YES" else null
+  private fun q2084(): Any? = fieldContains(Field.DRUGS_INJECTED_AMPHETAMINES, Value.MORE_THAN_SIX)
 
-  private fun q2091(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_HALLUCINOGENICS)
+  private fun q2091(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS)
 
-  private fun q2093(): Any? = if (isYes(Field.PAST_DRUG_USAGE_HALLUCINOGENICS)) "YES" else null
+  private fun q2093(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_HALLUCINOGENICS)) "YES" else null
 
-  private fun q2101(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_ECSTASY)
+  private fun q2101(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY)
 
-  private fun q2103(): Any? = if (isYes(Field.PAST_DRUG_USAGE_ECSTASY)) "YES" else null
+  private fun q2103(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_ECSTACY)) "YES" else null
 
-  private fun q2111(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_CANNABIS)
+  private fun q2111(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS)
 
-  private fun q2113(): Any? = if (isYes(Field.PAST_DRUG_USAGE_CANNABIS)) "YES" else null
+  private fun q2113(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_CANNABIS)) "YES" else null
 
-  private fun q2121(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_SOLVENTS)
+  private fun q2121(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS)
 
-  private fun q2123(): Any? = if (isYes(Field.PAST_DRUG_USAGE_SOLVENTS)) "YES" else null
+  private fun q2123(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_SOLVENTS)) "YES" else null
 
-  private fun q2131(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_STEROIDS)
+  private fun q2131(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS)
 
-  private fun q2133(): Any? = if (isYes(Field.PAST_DRUG_USAGE_STEROIDS)) "YES" else null
+  private fun q2133(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_STEROIDS)) "YES" else null
 
-  private fun q2132(): Any? = if (isYes(Field.INJECTING_DRUG_STEROIDS)) "YES" else null
+  private fun q2132(): Any? = fieldContains(Field.DRUGS_INJECTED_STEROIDS, Value.LAST_SIX)
 
-  private fun q2134(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_STEROIDS)) "YES" else null
+  private fun q2134(): Any? = fieldContains(Field.DRUGS_INJECTED_STEROIDS, Value.MORE_THAN_SIX)
 
-  private fun q2151(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_SPICE)
+  private fun q2151(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE)
 
-  private fun q2153(): Any? = if (isYes(Field.PAST_DRUG_USAGE_SPICE)) "YES" else null
+  private fun q2153(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_SPICE)) "YES" else null
 
-  private fun q2141(): Any? = getUsageFrequencyScore(Field.DRUG_USAGE_OTHER_DRUG)
+  private fun q2141(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG)
 
-  private fun q2143(): Any? = if (isYes(Field.PAST_DRUG_USAGE_OTHER_DRUG)) "YES" else null
+  private fun q2143(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_OTHER_DRUG)) "YES" else null
 
-  private fun q2142(): Any? = if (isYes(Field.INJECTING_DRUG_OTHER_DRUG)) "YES" else null
+  private fun q2142(): Any? = fieldContains(Field.DRUGS_INJECTED_OTHER_DRUG, Value.LAST_SIX)
 
-  private fun q2144(): Any? = if (isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG)) "YES" else null
+  private fun q2144(): Any? = fieldContains(Field.DRUGS_INJECTED_OTHER_DRUG, Value.MORE_THAN_SIX)
 
   private fun q214t(): Any? {
-    return ap.answer(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS).value
+    return ap.answer(Field.OTHER_DRUG_NAME).value
   }
 
   private fun q4(): Any {
     val frequencies = setOf(Value.DAILY, Value.WEEKLY, Value.MONTHLY, Value.OCCASIONALLY)
     return when {
-      isUsing(Field.DRUG_USAGE_HEROIN, frequencies) ||
-        isUsing(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, frequencies) ||
-        isUsing(Field.DRUG_USAGE_OTHER_OPIATES, frequencies) ||
-        isUsing(Field.DRUG_USAGE_CRACK, frequencies) ||
-        isUsing(Field.DRUG_USAGE_COCAINE, frequencies) ||
-        isUsing(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, frequencies)
+      isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, frequencies) ||
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, frequencies) ||
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, frequencies) ||
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, frequencies) ||
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, frequencies) ||
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, frequencies)
       -> "2"
       else -> "0"
     }
@@ -256,21 +227,21 @@ class Drugs : SectionMapping() {
     val dailyOrWeekly = setOf(Value.DAILY, Value.WEEKLY)
     val monthlyOrOccasionally = setOf(Value.MONTHLY, Value.OCCASIONALLY)
     val drugs = setOf(
-      Field.DRUG_USAGE_HEROIN,
-      Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED,
-      Field.DRUG_USAGE_OTHER_OPIATES,
-      Field.DRUG_USAGE_CRACK,
-      Field.DRUG_USAGE_COCAINE,
-      Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS,
-      Field.DRUG_USAGE_BENZODIAZEPINES,
-      Field.DRUG_USAGE_AMPHETAMINES,
-      Field.DRUG_USAGE_HALLUCINOGENICS,
-      Field.DRUG_USAGE_ECSTASY,
-      Field.DRUG_USAGE_CANNABIS,
-      Field.DRUG_USAGE_SOLVENTS,
-      Field.DRUG_USAGE_STEROIDS,
-      Field.DRUG_USAGE_SPICE,
-      Field.DRUG_USAGE_OTHER_DRUG,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG,
     )
 
     return when {
@@ -308,7 +279,7 @@ class Drugs : SectionMapping() {
     else -> "0"
   }
 
-  private fun q8(): Any? = when (ap.answer(Field.MOTIVATED_STOPPING_DRUG_USE).value) {
+  private fun q8(): Any? = when (ap.answer(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP).value) {
     ap.get(Value.MOTIVATED) -> "0"
     ap.get(Value.SOME_MOTIVATION) -> "1"
     ap.get(Value.NO_MOTIVATION) -> "2"

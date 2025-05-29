@@ -36,9 +36,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-1-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_HEROIN, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_HEROIN, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_HEROIN, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_HEROIN, null).expect(null),
+      Given(Field.DRUG_LAST_USED_HEROIN, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_HEROIN, Value.YES).expect("YES"),
     )
   }
 
@@ -345,11 +345,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-8-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, null).expect(null),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -358,9 +358,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-8-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_AMPHETAMINES, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, null).expect(null),
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.YES).expect("YES"),
     )
   }
 
@@ -369,9 +369,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-8-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_AMPHETAMINES, null).expect(null),
-      Given(Field.INJECTING_DRUG_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, null).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.YES).expect("YES"),
     )
   }
 
@@ -380,9 +380,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-8-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_AMPHETAMINES, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_AMPHETAMINES, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_AMPHETAMINES, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, null).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.YES).expect("YES"),
     )
   }
 
@@ -391,11 +391,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-9-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, null).expect(null),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -404,9 +404,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-9-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_HALLUCINOGENICS, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_HALLUCINOGENICS, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_HALLUCINOGENICS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, null).expect(null),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.YES).expect("YES"),
     )
   }
 
@@ -415,11 +415,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-10-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_ECSTASY, null).expect(null),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -428,9 +428,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-10-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_ECSTASY, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_ECSTASY, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_ECSTASY, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_ECSTACY, null).expect(null),
+      Given(Field.DRUG_LAST_USED_ECSTACY, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_ECSTACY, Value.YES).expect("YES"),
     )
   }
 
@@ -439,11 +439,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-11-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_CANNABIS, null).expect(null),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -452,9 +452,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-11-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_CANNABIS, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_CANNABIS, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_CANNABIS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_CANNABIS, null).expect(null),
+      Given(Field.DRUG_LAST_USED_CANNABIS, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_CANNABIS, Value.YES).expect("YES"),
     )
   }
 
@@ -463,11 +463,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-12-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_SOLVENTS, null).expect(null),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -476,9 +476,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-12-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_SOLVENTS, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_SOLVENTS, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_SOLVENTS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, null).expect(null),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.YES).expect("YES"),
     )
   }
 
@@ -487,11 +487,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-13-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_STEROIDS, null).expect(null),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -500,9 +500,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-13-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_STEROIDS, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_STEROIDS, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_STEROIDS, null).expect(null),
+      Given(Field.DRUG_LAST_USED_STEROIDS, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_STEROIDS, Value.YES).expect("YES"),
     )
   }
 
@@ -511,9 +511,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-13-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_STEROIDS, null).expect(null),
-      Given(Field.INJECTING_DRUG_STEROIDS, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, null).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, Value.YES).expect("YES"),
     )
   }
 
@@ -522,9 +522,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-13-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_STEROIDS, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_STEROIDS, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_STEROIDS, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, null).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_STEROIDS, Value.YES).expect("YES"),
     )
   }
 
@@ -533,11 +533,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-15-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_SPICE, null).expect(null),
-      Given(Field.DRUG_USAGE_SPICE, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_SPICE, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_SPICE, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_SPICE, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -546,9 +546,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-15-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_SPICE, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_SPICE, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_SPICE, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_SPICE, null).expect(null),
+      Given(Field.DRUG_LAST_USED_SPICE, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_SPICE, Value.YES).expect("YES"),
     )
   }
 
@@ -557,11 +557,11 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-1",
       Given().expect(null),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, null).expect(null),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.DAILY).expect("100"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.WEEKLY).expect("110"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.MONTHLY).expect("120"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.OCCASIONALLY).expect("130"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, null).expect(null),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.DAILY).expect("100"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.WEEKLY).expect("110"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.MONTHLY).expect("120"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.OCCASIONALLY).expect("130"),
     )
   }
 
@@ -570,9 +570,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-3",
       Given().expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_DRUG, null).expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.PAST_DRUG_USAGE_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, null).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.NO).expect(null),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.YES).expect("YES"),
     )
   }
 
@@ -581,9 +581,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-2",
       Given().expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_DRUG, null).expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.INJECTING_DRUG_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, null).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.YES).expect("YES"),
     )
   }
 
@@ -592,9 +592,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-4",
       Given().expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_DRUG, null).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_DRUG, Value.NO).expect(null),
-      Given(Field.PAST_INJECTING_DRUG_OTHER_DRUG, Value.YES).expect("YES"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, null).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.NO).expect(null),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.YES).expect("YES"),
     )
   }
 
@@ -603,9 +603,9 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-2-14-t",
       Given().expect(null),
-      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, null).expect(null),
-      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "").expect(""),
-      Given(Field.DRUG_USE_TYPE_OTHER_DRUG_DETAILS, "some text").expect("some text"),
+      Given(Field.OTHER_DRUG_NAME, null).expect(null),
+      Given(Field.OTHER_DRUG_NAME, "").expect(""),
+      Given(Field.OTHER_DRUG_NAME, "some text").expect("some text"),
     )
   }
 
@@ -614,36 +614,36 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-4",
       Given().expect("0"),
-      Given(Field.DRUG_USAGE_HEROIN, null).expect("0"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect("0"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, null).expect("0"),
-      Given(Field.DRUG_USAGE_CRACK, null).expect("0"),
-      Given(Field.DRUG_USAGE_COCAINE, null).expect("0"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, null).expect("0"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.MONTHLY).expect("2"),
-      Given(Field.DRUG_USAGE_HEROIN, Value.OCCASIONALLY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.OCCASIONALLY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.OCCASIONALLY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.OCCASIONALLY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, null).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.MONTHLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.OCCASIONALLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.OCCASIONALLY).expect("2"),
     )
   }
 
@@ -652,88 +652,88 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-5",
       Given().expect("M"),
-      Given(Field.DRUG_USAGE_HEROIN, null).expect("M"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, null).expect("M"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, null).expect("M"),
-      Given(Field.DRUG_USAGE_CRACK, null).expect("M"),
-      Given(Field.DRUG_USAGE_COCAINE, null).expect("M"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, null).expect("M"),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, null).expect("M"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, null).expect("M"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, null).expect("M"),
-      Given(Field.DRUG_USAGE_ECSTASY, null).expect("M"),
-      Given(Field.DRUG_USAGE_CANNABIS, null).expect("M"),
-      Given(Field.DRUG_USAGE_SOLVENTS, null).expect("M"),
-      Given(Field.DRUG_USAGE_STEROIDS, null).expect("M"),
-      Given(Field.DRUG_USAGE_SPICE, null).expect("M"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, null).expect("M"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, null).expect("M"),
 
-      Given(Field.DRUG_USAGE_HEROIN, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_SPICE, Value.DAILY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.DAILY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.DAILY).expect("2"),
 
-      Given(Field.DRUG_USAGE_HEROIN, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_CRACK, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_SPICE, Value.WEEKLY).expect("2"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.WEEKLY).expect("2"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.WEEKLY).expect("2"),
 
-      Given(Field.DRUG_USAGE_HEROIN, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_CRACK, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_SPICE, Value.MONTHLY).expect("0"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.MONTHLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.MONTHLY).expect("0"),
 
-      Given(Field.DRUG_USAGE_HEROIN, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_OTHER_OPIATES, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_CRACK, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_COCAINE, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_MISUSED_PRESCRIBED_DRUGS, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_BENZODIAZEPINES, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_AMPHETAMINES, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_HALLUCINOGENICS, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_ECSTASY, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_CANNABIS, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_SOLVENTS, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_STEROIDS, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_SPICE, Value.OCCASIONALLY).expect("0"),
-      Given(Field.DRUG_USAGE_OTHER_DRUG, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, Value.OCCASIONALLY).expect("0"),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, Value.OCCASIONALLY).expect("0"),
 
-      Given(Field.DRUG_USAGE_HEROIN, Value.DAILY)
-        .and(Field.DRUG_USAGE_COCAINE, Value.MONTHLY)
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY)
+        .and(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.MONTHLY)
         .expect("2"),
     )
   }
@@ -821,10 +821,10 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
     test(
       "o8-8",
       Given().expect(null),
-      Given(Field.MOTIVATED_STOPPING_DRUG_USE, null).expect(null),
-      Given(Field.MOTIVATED_STOPPING_DRUG_USE, Value.MOTIVATED).expect("0"),
-      Given(Field.MOTIVATED_STOPPING_DRUG_USE, Value.SOME_MOTIVATION).expect("1"),
-      Given(Field.MOTIVATED_STOPPING_DRUG_USE, Value.NO_MOTIVATION).expect("2"),
+      Given(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP, null).expect(null),
+      Given(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP, Value.MOTIVATED).expect("0"),
+      Given(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP, Value.SOME_MOTIVATION).expect("1"),
+      Given(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP, Value.NO_MOTIVATION).expect("2"),
     )
   }
 

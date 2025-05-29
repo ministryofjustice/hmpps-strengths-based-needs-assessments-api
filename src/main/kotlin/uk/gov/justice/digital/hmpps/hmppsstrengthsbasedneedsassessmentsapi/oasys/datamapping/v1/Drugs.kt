@@ -95,6 +95,11 @@ class Drugs : SectionMapping() {
     else -> false
   }
 
+  private fun isLastSix(field: Field): Boolean = when (ap.answer(field).value) {
+    ap.get(Value.LAST_SIX) -> true
+    else -> false
+  }
+
   private fun fieldContains(field: Field, value: Value): String? = ap.answer(field).values?.let {
     if (it.contains(ap.get(value))) "YES" else null
   }
@@ -173,9 +178,9 @@ class Drugs : SectionMapping() {
 
   private fun q2093(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_HALLUCINOGENICS)) "YES" else null
 
-  private fun q2101(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY)
+  private fun q2101(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTASY)
 
-  private fun q2103(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_ECSTACY)) "YES" else null
+  private fun q2103(): Any? = if (isMoreThanSix(Field.DRUG_LAST_USED_ECSTASY)) "YES" else null
 
   private fun q2111(): Any? = getUsageFrequencyScore(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS)
 
@@ -236,7 +241,7 @@ class Drugs : SectionMapping() {
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES,
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES,
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS,
-      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTACY,
+      Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTASY,
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS,
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS,
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS,
@@ -252,37 +257,38 @@ class Drugs : SectionMapping() {
   }
 
   private fun q6(): Any = when {
-    isYes(Field.INJECTING_DRUG_HEROIN) ||
-      isYes(Field.INJECTING_DRUG_METHADONE_NOT_PRESCRIBED) ||
-      isYes(Field.INJECTING_DRUG_OTHER_OPIATES) ||
-      isYes(Field.INJECTING_DRUG_CRACK) ||
-      isYes(Field.INJECTING_DRUG_COCAINE) ||
-      isYes(Field.INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS) ||
-      isYes(Field.INJECTING_DRUG_BENZODIAZEPINES) ||
-      isYes(Field.INJECTING_DRUG_AMPHETAMINES) ||
-      isYes(Field.INJECTING_DRUG_STEROIDS) ||
-      isYes(Field.INJECTING_DRUG_OTHER_DRUG)
+    isLastSix(Field.DRUGS_INJECTED_HEROIN) ||
+      isLastSix(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED) ||
+      isLastSix(Field.DRUGS_INJECTED_OTHER_OPIATES) ||
+      isLastSix(Field.DRUGS_INJECTED_CRACK) ||
+      isLastSix(Field.DRUGS_INJECTED_COCAINE) ||
+      isLastSix(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS) ||
+      isLastSix(Field.DRUGS_INJECTED_BENZODIAZEPINES) ||
+      isLastSix(Field.DRUGS_INJECTED_AMPHETAMINES) ||
+      isLastSix(Field.DRUGS_INJECTED_STEROIDS) ||
+      isLastSix(Field.DRUGS_INJECTED_OTHER_DRUG)
     -> "2"
 
-    isYes(Field.PAST_INJECTING_DRUG_HEROIN) ||
-      isYes(Field.PAST_INJECTING_DRUG_METHADONE_NOT_PRESCRIBED) ||
-      isYes(Field.PAST_INJECTING_DRUG_OTHER_OPIATES) ||
-      isYes(Field.PAST_INJECTING_DRUG_CRACK) ||
-      isYes(Field.PAST_INJECTING_DRUG_COCAINE) ||
-      isYes(Field.PAST_INJECTING_DRUG_MISUSED_PRESCRIBED_DRUGS) ||
-      isYes(Field.PAST_INJECTING_DRUG_BENZODIAZEPINES) ||
-      isYes(Field.PAST_INJECTING_DRUG_AMPHETAMINES) ||
-      isYes(Field.PAST_INJECTING_DRUG_STEROIDS) ||
-      isYes(Field.PAST_INJECTING_DRUG_OTHER_DRUG)
+    isMoreThanSix(Field.DRUGS_INJECTED_HEROIN) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_OTHER_OPIATES) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_CRACK) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_COCAINE) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_BENZODIAZEPINES) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_AMPHETAMINES) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_STEROIDS) ||
+      isMoreThanSix(Field.DRUGS_INJECTED_OTHER_DRUG)
     -> "1"
 
     else -> "0"
   }
 
   private fun q8(): Any? = when (ap.answer(Field.DRUGS_PRACTITIONER_ANALYSIS_MOTIVATED_TO_STOP).value) {
-    ap.get(Value.MOTIVATED) -> "0"
-    ap.get(Value.SOME_MOTIVATION) -> "1"
+    ap.get(Value.FULL_MOTIVATION) -> "0"
+    ap.get(Value.PARTIAL_MOTIVATION) -> "1"
     ap.get(Value.NO_MOTIVATION) -> "2"
+    ap.get(Value.UNKNOWN) -> "M"
     else -> null
   }
 

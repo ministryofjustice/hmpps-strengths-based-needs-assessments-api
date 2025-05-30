@@ -671,22 +671,22 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
   fun q5() {
     test(
       "o8-5",
-      Given().expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTASY, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, null).expect("M"),
-      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, null).expect("M"),
+      Given().expect(""), // TODO: Check these, as "M" seems to have been repurposed.
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_BENZODIAZEPINES, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_AMPHETAMINES, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HALLUCINOGENICS, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_ECSTASY, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CANNABIS, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SOLVENTS, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_STEROIDS, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_SPICE, null).expect(""),
+      Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG, null).expect(""),
 
       Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY).expect("2"),
       Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_METHADONE_NOT_PRESCRIBED, Value.DAILY).expect("2"),
@@ -755,6 +755,22 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       Given(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_HEROIN, Value.DAILY)
         .and(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, Value.MONTHLY)
         .expect("2"),
+
+      Given(Field.DRUG_LAST_USED_AMPHETAMINES, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_BENZODIAZEPINES, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_CANNABIS, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_COCAINE, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_CRACK, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_ECSTASY, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_HALLUCINOGENICS, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_HEROIN, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_OTHER_OPIATES, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_SOLVENTS, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_STEROIDS, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_SPICE, Value.LAST_SIX).expect("M"),
+      Given(Field.DRUG_LAST_USED_OTHER_DRUG, Value.LAST_SIX).expect("M"),
     )
   }
 

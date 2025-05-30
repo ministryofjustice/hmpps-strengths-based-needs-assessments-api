@@ -245,7 +245,23 @@ class Drugs : SectionMapping() {
     return when {
       drugs.any { isUsing(it, dailyOrWeekly) } -> "2"
       drugs.any { isUsing(it, monthlyOrOccasionally) } -> "0"
-      else -> "M"
+      isLastSix(Field.DRUG_LAST_USED_AMPHETAMINES) ||
+        isLastSix(Field.DRUG_LAST_USED_BENZODIAZEPINES) ||
+        isLastSix(Field.DRUG_LAST_USED_CANNABIS) ||
+        isLastSix(Field.DRUG_LAST_USED_COCAINE) ||
+        isLastSix(Field.DRUG_LAST_USED_CRACK) ||
+        isLastSix(Field.DRUG_LAST_USED_ECSTASY) ||
+        isLastSix(Field.DRUG_LAST_USED_HALLUCINOGENICS) ||
+        isLastSix(Field.DRUG_LAST_USED_HEROIN) ||
+        isLastSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED) ||
+        isLastSix(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS) ||
+        isLastSix(Field.DRUG_LAST_USED_OTHER_OPIATES) ||
+        isLastSix(Field.DRUG_LAST_USED_SOLVENTS) ||
+        isLastSix(Field.DRUG_LAST_USED_STEROIDS) ||
+        isLastSix(Field.DRUG_LAST_USED_SPICE) ||
+        isLastSix(Field.DRUG_LAST_USED_OTHER_DRUG)
+       -> "M"
+      else -> "" // TODO: Check what this should be.
     }
   }
 

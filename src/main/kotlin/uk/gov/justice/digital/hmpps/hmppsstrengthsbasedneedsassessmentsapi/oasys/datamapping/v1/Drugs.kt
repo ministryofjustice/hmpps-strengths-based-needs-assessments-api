@@ -259,8 +259,7 @@ class Drugs : SectionMapping() {
         isLastSix(Field.DRUG_LAST_USED_SOLVENTS) ||
         isLastSix(Field.DRUG_LAST_USED_STEROIDS) ||
         isLastSix(Field.DRUG_LAST_USED_SPICE) ||
-        isLastSix(Field.DRUG_LAST_USED_OTHER_DRUG)
-       -> "M"
+        isLastSix(Field.DRUG_LAST_USED_OTHER_DRUG) -> "M"
       else -> "" // TODO: Check what this should be.
     }
   }

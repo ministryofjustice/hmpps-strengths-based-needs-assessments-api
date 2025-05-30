@@ -54,6 +54,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
+          ref: drug-use-redesign-base
           path: e2e-test-ui
 
       - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@v1

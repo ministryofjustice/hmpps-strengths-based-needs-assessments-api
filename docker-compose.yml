@@ -77,7 +77,8 @@ services:
       FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
   san-ui:
-    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
+    # TODO: UI is temporarily pinned to a version with Drug mappings
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:2025-05-28.6.dca71cb
     networks:
       - hmpps
     depends_on:

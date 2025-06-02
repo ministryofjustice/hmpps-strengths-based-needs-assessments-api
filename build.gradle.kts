@@ -3,9 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.0.0"
-  kotlin("plugin.spring") version "2.1.20"
-  id("org.jetbrains.kotlin.kapt") version "2.1.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.1.0"
+  kotlin("plugin.spring") version "2.1.21"
+  id("org.jetbrains.kotlin.kapt") version "2.1.21"
   id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
@@ -30,7 +30,7 @@ dependencies {
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

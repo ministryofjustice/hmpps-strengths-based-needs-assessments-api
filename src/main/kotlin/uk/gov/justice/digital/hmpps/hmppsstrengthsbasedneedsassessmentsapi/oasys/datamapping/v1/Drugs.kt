@@ -242,39 +242,29 @@ class Drugs : SectionMapping() {
       Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_DRUG,
     )
 
+    val drugsLastUsed = setOf(
+      Field.DRUG_LAST_USED_AMPHETAMINES,
+      Field.DRUG_LAST_USED_BENZODIAZEPINES,
+      Field.DRUG_LAST_USED_CANNABIS,
+      Field.DRUG_LAST_USED_COCAINE,
+      Field.DRUG_LAST_USED_CRACK,
+      Field.DRUG_LAST_USED_ECSTASY,
+      Field.DRUG_LAST_USED_HALLUCINOGENICS,
+      Field.DRUG_LAST_USED_HEROIN,
+      Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED,
+      Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS,
+      Field.DRUG_LAST_USED_OTHER_OPIATES,
+      Field.DRUG_LAST_USED_SOLVENTS,
+      Field.DRUG_LAST_USED_STEROIDS,
+      Field.DRUG_LAST_USED_SPICE,
+      Field.DRUG_LAST_USED_OTHER_DRUG,
+    )
+
     return when {
       drugs.any { isUsing(it, dailyOrWeekly) } -> "2"
       drugs.any { isUsing(it, monthlyOrOccasionally) } -> "0"
-      isLastSix(Field.DRUG_LAST_USED_AMPHETAMINES) ||
-        isLastSix(Field.DRUG_LAST_USED_BENZODIAZEPINES) ||
-        isLastSix(Field.DRUG_LAST_USED_CANNABIS) ||
-        isLastSix(Field.DRUG_LAST_USED_COCAINE) ||
-        isLastSix(Field.DRUG_LAST_USED_CRACK) ||
-        isLastSix(Field.DRUG_LAST_USED_ECSTASY) ||
-        isLastSix(Field.DRUG_LAST_USED_HALLUCINOGENICS) ||
-        isLastSix(Field.DRUG_LAST_USED_HEROIN) ||
-        isLastSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED) ||
-        isLastSix(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS) ||
-        isLastSix(Field.DRUG_LAST_USED_OTHER_OPIATES) ||
-        isLastSix(Field.DRUG_LAST_USED_SOLVENTS) ||
-        isLastSix(Field.DRUG_LAST_USED_STEROIDS) ||
-        isLastSix(Field.DRUG_LAST_USED_SPICE) ||
-        isLastSix(Field.DRUG_LAST_USED_OTHER_DRUG) -> "M"
-      isMoreThanSix(Field.DRUG_LAST_USED_AMPHETAMINES) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_BENZODIAZEPINES) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_CANNABIS) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_COCAINE) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_CRACK) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_ECSTASY) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_HALLUCINOGENICS) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_HEROIN) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_OTHER_OPIATES) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_SOLVENTS) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_STEROIDS) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_SPICE) ||
-        isMoreThanSix(Field.DRUG_LAST_USED_OTHER_DRUG) -> "0"
+      drugsLastUsed.any { isLastSix(it) } -> "M"
+      drugsLastUsed.any { isMoreThanSix(it) } -> "0"
       else -> null
     }
   }

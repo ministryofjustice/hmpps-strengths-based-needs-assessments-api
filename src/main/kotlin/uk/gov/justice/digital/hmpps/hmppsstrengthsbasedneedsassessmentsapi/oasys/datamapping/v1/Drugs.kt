@@ -221,7 +221,7 @@ class Drugs : SectionMapping() {
     }
   }
 
-  private fun q5(): Any {
+  private fun q5(): Any? {
     val dailyOrWeekly = setOf(Value.DAILY, Value.WEEKLY)
     val monthlyOrOccasionally = setOf(Value.MONTHLY, Value.OCCASIONALLY)
     val drugs = setOf(
@@ -260,7 +260,22 @@ class Drugs : SectionMapping() {
         isLastSix(Field.DRUG_LAST_USED_STEROIDS) ||
         isLastSix(Field.DRUG_LAST_USED_SPICE) ||
         isLastSix(Field.DRUG_LAST_USED_OTHER_DRUG) -> "M"
-      else -> "" // TODO: Check what this should be.
+      isMoreThanSix(Field.DRUG_LAST_USED_AMPHETAMINES) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_BENZODIAZEPINES) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_CANNABIS) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_COCAINE) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_CRACK) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_ECSTASY) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_HALLUCINOGENICS) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_HEROIN) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_METHADONE_NOT_PRESCRIBED) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_MISUSED_PRESCRIBED_DRUGS) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_OTHER_OPIATES) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_SOLVENTS) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_STEROIDS) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_SPICE) ||
+        isMoreThanSix(Field.DRUG_LAST_USED_OTHER_DRUG) -> "0"
+      else -> null
     }
   }
 

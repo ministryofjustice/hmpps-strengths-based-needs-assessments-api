@@ -215,8 +215,7 @@ class Drugs : SectionMapping() {
         isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_OTHER_OPIATES, frequencies) ||
         isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_CRACK, frequencies) ||
         isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_COCAINE, frequencies) ||
-        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, frequencies)
-      -> "2"
+        isUsing(Field.HOW_OFTEN_USED_LAST_SIX_MONTHS_MISUSED_PRESCRIBED_DRUGS, frequencies) -> "2"
       else -> "0"
     }
   }
@@ -270,17 +269,17 @@ class Drugs : SectionMapping() {
   }
 
   private fun q6(): Any {
-      val drugsInjected = setOf(
-        Field.DRUGS_INJECTED_HEROIN,
-        Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED,
-        Field.DRUGS_INJECTED_OTHER_OPIATES,
-        Field.DRUGS_INJECTED_CRACK,
-        Field.DRUGS_INJECTED_COCAINE,
-        Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS,
-        Field.DRUGS_INJECTED_BENZODIAZEPINES,
-        Field.DRUGS_INJECTED_AMPHETAMINES,
-        Field.DRUGS_INJECTED_STEROIDS,
-        Field.DRUGS_INJECTED_OTHER_DRUG,
+    val drugsInjected = setOf(
+      Field.DRUGS_INJECTED_HEROIN,
+      Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED,
+      Field.DRUGS_INJECTED_OTHER_OPIATES,
+      Field.DRUGS_INJECTED_CRACK,
+      Field.DRUGS_INJECTED_COCAINE,
+      Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS,
+      Field.DRUGS_INJECTED_BENZODIAZEPINES,
+      Field.DRUGS_INJECTED_AMPHETAMINES,
+      Field.DRUGS_INJECTED_STEROIDS,
+      Field.DRUGS_INJECTED_OTHER_DRUG,
     )
 
     return when {

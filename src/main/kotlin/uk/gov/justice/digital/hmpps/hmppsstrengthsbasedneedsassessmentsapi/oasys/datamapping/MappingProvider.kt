@@ -29,7 +29,7 @@ class MappingProvider {
         Accommodation(),
         AlcoholMisuse(),
         Attitudes(),
-        Drugs(),
+//        Drugs(),
         Education(),
         EmotionalWellbeing(),
         FinancialManagement(),

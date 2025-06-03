@@ -840,6 +840,17 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.MORE_THAN_SIX)).expect("1"),
       Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.MORE_THAN_SIX)).expect("1"),
 
+      Given(Field.DRUGS_INJECTED, listOf(Value.AMPHETAMINES)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.BENZODIAZEPINES)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.COCAINE)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.CRACK)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.HEROIN)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.METHADONE_NOT_PRESCRIBED)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.MISUSED_PRESCRIBED_DRUGS)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.OTHER_OPIATES)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.STEROIDS)).expect("1"),
+      Given(Field.DRUGS_INJECTED, listOf(Value.OTHER_DRUG)).expect("1"),
+
       Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.MORE_THAN_SIX))
         .and(Field.DRUGS_INJECTED_COCAINE, listOf(Value.LAST_SIX))
         .expect("2"),

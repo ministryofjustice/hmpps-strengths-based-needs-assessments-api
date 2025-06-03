@@ -97,6 +97,8 @@ class Drugs : SectionMapping() {
   private fun containsLastSix(field: Field): Boolean = ap.answer(field).values.orEmpty()
     .contains(ap.get(Value.LAST_SIX))
 
+  private fun hasInjected(value: Value): Boolean = ap.answer(Field.DRUGS_INJECTED).values.orEmpty().contains(ap.get(value))
+
   private fun yesIfContains(field: Field, value: Value): String? = ap.answer(field).values?.let {
     if (it.contains(ap.get(value))) "YES" else null
   }
@@ -284,9 +286,22 @@ class Drugs : SectionMapping() {
       Field.DRUGS_INJECTED_OTHER_DRUG,
     )
 
+    val injectableDrugs = setOf(
+      Value.AMPHETAMINES,
+      Value.BENZODIAZEPINES,
+      Value.COCAINE,
+      Value.CRACK,
+      Value.HEROIN,
+      Value.METHADONE_NOT_PRESCRIBED,
+      Value.MISUSED_PRESCRIBED_DRUGS,
+      Value.OTHER_OPIATES,
+      Value.STEROIDS,
+      Value.OTHER_DRUG,
+    )
+
     return when {
       drugsInjected.any { containsLastSix(it) } -> "2"
-      drugsInjected.any { containsMoreThanSix(it) } -> "1"
+      drugsInjected.any { containsMoreThanSix(it) } || injectableDrugs.any { hasInjected(it) } -> "1"
       else -> "0"
     }
   }

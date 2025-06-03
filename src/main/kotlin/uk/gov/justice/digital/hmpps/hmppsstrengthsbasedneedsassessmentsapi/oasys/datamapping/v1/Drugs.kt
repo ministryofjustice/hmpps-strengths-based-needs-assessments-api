@@ -85,10 +85,16 @@ class Drugs : SectionMapping() {
     }
   }
 
-  private fun isMoreThanSix(field: Field): Boolean = ap.answer(field).values.orEmpty()
+  private fun isMoreThanSix(field: Field): Boolean = ap.answer(field).value
+    .equals(ap.get(Value.MORE_THAN_SIX))
+
+  private fun isLastSix(field: Field): Boolean = ap.answer(field).value
+    .equals(ap.get(Value.LAST_SIX))
+
+  private fun containsMoreThanSix(field: Field): Boolean = ap.answer(field).values.orEmpty()
     .contains(ap.get(Value.MORE_THAN_SIX))
 
-  private fun isLastSix(field: Field): Boolean = ap.answer(field).values.orEmpty()
+  private fun containsLastSix(field: Field): Boolean = ap.answer(field).values.orEmpty()
     .contains(ap.get(Value.LAST_SIX))
 
   private fun yesIfContains(field: Field, value: Value): String? = ap.answer(field).values?.let {
@@ -279,8 +285,8 @@ class Drugs : SectionMapping() {
     )
 
     return when {
-      drugsInjected.any { isLastSix(it) } -> "2"
-      drugsInjected.any { isMoreThanSix(it) } -> "1"
+      drugsInjected.any { containsLastSix(it) } -> "2"
+      drugsInjected.any { containsMoreThanSix(it) } -> "1"
       else -> "0"
     }
   }

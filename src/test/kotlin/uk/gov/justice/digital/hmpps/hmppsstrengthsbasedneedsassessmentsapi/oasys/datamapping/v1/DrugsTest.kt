@@ -818,30 +818,30 @@ class DrugsTest : SectionMappingTest(Drugs(), "1.0") {
       Given(Field.DRUGS_INJECTED_STEROIDS, emptyList()).expect("0"),
       Given(Field.DRUGS_INJECTED_OTHER_DRUG, emptyList()).expect("0"),
 
-      Given(Field.DRUGS_INJECTED_HEROIN, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.LAST_SIX).expect("2"),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.LAST_SIX).expect("2"),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.LAST_SIX)).expect("2"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.LAST_SIX)).expect("2"),
 
-      Given(Field.DRUGS_INJECTED_HEROIN, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_CRACK, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_COCAINE, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_AMPHETAMINES, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_STEROIDS, Value.MORE_THAN_SIX).expect("1"),
-      Given(Field.DRUGS_INJECTED_OTHER_DRUG, Value.MORE_THAN_SIX).expect("1"),
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_METHADONE_NOT_PRESCRIBED, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_OTHER_OPIATES, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_CRACK, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_COCAINE, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_MISUSED_PRESCRIBED_DRUGS, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_BENZODIAZEPINES, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_AMPHETAMINES, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_STEROIDS, listOf(Value.MORE_THAN_SIX)).expect("1"),
+      Given(Field.DRUGS_INJECTED_OTHER_DRUG, listOf(Value.MORE_THAN_SIX)).expect("1"),
 
-      Given(Field.DRUGS_INJECTED_HEROIN, Value.MORE_THAN_SIX)
-        .and(Field.DRUGS_INJECTED_COCAINE, Value.LAST_SIX)
+      Given(Field.DRUGS_INJECTED_HEROIN, listOf(Value.MORE_THAN_SIX))
+        .and(Field.DRUGS_INJECTED_COCAINE, listOf(Value.LAST_SIX))
         .expect("2"),
     )
   }

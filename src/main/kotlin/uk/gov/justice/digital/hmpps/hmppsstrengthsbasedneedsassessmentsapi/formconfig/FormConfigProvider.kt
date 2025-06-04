@@ -17,11 +17,23 @@ data class FormConfig(
   val fields: Map<String, Field> = emptyMap(),
 )
 
+enum class FieldType {
+  TEXT,
+  RADIO,
+  CHECKBOX,
+  TEXT_AREA,
+  DATE,
+  DROPDOWN,
+  HIDDEN,
+  AUTOCOMPLETE,
+  COLLECTION,
+}
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Field(
   val code: String,
   val options: List<Option> = emptyList(),
-  val type: String = "",
+  val type: FieldType = FieldType.TEXT,
   val section: String = "",
 )
 

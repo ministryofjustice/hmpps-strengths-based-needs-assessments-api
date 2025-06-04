@@ -78,7 +78,7 @@ services:
 
   san-ui:
     # TODO: UI is temporarily pinned to a version with Drug mappings
-    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:2025-05-28.6.dca71cb
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:2025-06-03.11.89ab77b
     networks:
       - hmpps
     depends_on:

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common
 
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FieldType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.Option
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.Field
@@ -8,11 +9,28 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answer as PersistedAnswer
 
-class Answer(
-  val value: String?,
-  val values: List<String>?,
-  val collection: List<Map<String, PersistedAnswer>>,
-)
+abstract class Answer {
+  open val value: String?
+    get() = throw InvalidMappingException("Invalid use of '.value' on a ${this::class.simpleName}")
+
+  open val values: List<String>?
+    get() = throw InvalidMappingException("Invalid use of '.values' on a ${this::class.simpleName}")
+
+  open val collection: List<Map<String, PersistedAnswer>>
+    get() = throw InvalidMappingException("Invalid use of '.collection' on a ${this::class.simpleName}")
+}
+
+class SingleValueAnswer(
+  override val value: String?,
+) : Answer()
+
+class MultipleValuesAnswer(
+  override val values: List<String>?,
+) : Answer()
+
+class CollectionAnswer(
+  override val collection: List<Map<String, PersistedAnswer>>,
+) : Answer()
 
 class AnswersProvider(
   private val answers: Answers,
@@ -30,8 +48,11 @@ class AnswersProvider(
 
     return config.fields[context]?.code?.let {
       val answer = answers[it]
-      val answerValues = if (config.fields[context]?.type == "CHECKBOX" && answer?.values == listOf("")) emptyList() else answer?.values
-      Answer(answer?.value, answerValues, answer?.collection.orEmpty())
+      when (config.fields[context]?.type) {
+        FieldType.CHECKBOX -> MultipleValuesAnswer(if (answer?.values == listOf("")) emptyList() else answer?.values)
+        FieldType.COLLECTION -> CollectionAnswer(answer?.collection.orEmpty())
+        else -> SingleValueAnswer(answer?.value)
+      }
     } ?: throw InvalidMappingException("Field ${field.lower} does not exist in form config version ${config.version}")
   }
 

@@ -111,6 +111,7 @@ services:
       INGRESS_URL: http://localhost:3000
       HTTPS: false
       NODE_ENV: development
+      FEEDBACK_URL: http://foo.bar
 
   arns-handover:
     image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:latest

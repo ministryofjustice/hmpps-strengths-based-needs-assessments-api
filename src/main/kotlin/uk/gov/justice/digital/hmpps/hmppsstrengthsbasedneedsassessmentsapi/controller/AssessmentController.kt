@@ -372,4 +372,5 @@ class AssessmentController(
   ): List<AssessmentVersionResponse> = assessmentService.findByUuid(assessmentUuid)
     .run(assessmentVersionService::findAllByAssessmentUuid)
     .run(AssessmentVersionResponse::fromAll)
+    .sortedByDescending { it.createdAt }
 }

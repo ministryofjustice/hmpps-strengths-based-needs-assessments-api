@@ -6,14 +6,11 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
-import org.springframework.http.HttpHeaders
-import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
 import java.util.UUID
@@ -23,16 +20,16 @@ import java.util.UUID
 class GetAssessmentVersionsTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
-) :  IntegrationTest() {
+) : IntegrationTest() {
   private lateinit var assessment: Assessment
 
-  private val endpoint = {"/assessment/${assessment.uuid}/all"}
+  private val endpoint = { "/assessment/${assessment.uuid}/all" }
   private val now = LocalDateTime.now()
 
   @BeforeEach
   fun setup() {
     assessment = Assessment(uuid = UUID.randomUUID())
-      .apply{
+      .apply {
         assessmentVersions = listOf(
           AssessmentVersion(
             assessment = this,
@@ -54,10 +51,10 @@ class GetAssessmentVersionsTest(
             updatedAt = now,
             tag = Tag.UNSIGNED,
             versionNumber = 2,
-          )
+          ),
         )
         info = AssessmentFormInfo(formVersion = "1.0", assessment = this)
-    }
+      }
     assessmentRepository.save(assessment)
   }
 
@@ -78,10 +75,10 @@ class GetAssessmentVersionsTest(
 
   @Test
   fun `it returns Not Found when no assessment exists for the given assessment UUID`() {
-    webTestClient.get().uri( "/assessment/00000000-0000-0000-0000-000000000000/all")
-    .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
-    .exchange()
-    .expectStatus().isNotFound
+    webTestClient.get().uri("/assessment/00000000-0000-0000-0000-000000000000/all")
+      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 
   @Test
@@ -94,31 +91,28 @@ class GetAssessmentVersionsTest(
       .returnResult()
       .responseBody
 
-    assertThat(response?.map { it -> it.versionNumber}).isEqualTo(listOf(2, 1, 0))
+    assertThat(response?.map { it -> it.versionNumber }).isEqualTo(listOf(2, 1, 0))
 
     assertThat(response?.size).isEqualTo(3)
-    (response?.find { it -> it.versionNumber == 0 }).let{
+    (response?.find { it -> it.versionNumber == 0 }).let {
       println(response)
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
       assertThat(it?.createdAt).isEqualTo(now.minusDays(2))
       assertThat(it?.updatedAt).isEqualTo(now.minusDays(2))
-
     }
 
-    (response?.find { it -> it.versionNumber == 1 }).let{
+    (response?.find { it -> it.versionNumber == 1 }).let {
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
       assertThat(it?.updatedAt).isEqualTo(now.minusDays(1))
       assertThat(it?.createdAt).isEqualTo(now.minusDays(1))
-
     }
-    (response?.find { it -> it.versionNumber == 2 }).let{
+    (response?.find { it -> it.versionNumber == 2 }).let {
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
       assertThat(it?.updatedAt).isEqualTo(now)
       assertThat(it?.createdAt).isEqualTo(now)
     }
-
   }
 }

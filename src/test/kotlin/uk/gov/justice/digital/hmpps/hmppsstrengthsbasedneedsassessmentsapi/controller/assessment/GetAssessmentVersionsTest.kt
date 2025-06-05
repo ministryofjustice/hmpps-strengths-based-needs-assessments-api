@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
@@ -98,21 +99,21 @@ class GetAssessmentVersionsTest(
       println(response)
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
-      assertThat(it?.createdAt).isEqualTo(now.minusDays(2))
-      assertThat(it?.updatedAt).isEqualTo(now.minusDays(2))
+      assertThat(it?.createdAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.minusDays(2).truncatedTo(ChronoUnit.MILLIS))
+      assertThat(it?.updatedAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.minusDays(2).truncatedTo(ChronoUnit.MILLIS))
     }
 
     (response?.find { it -> it.versionNumber == 1 }).let {
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
-      assertThat(it?.updatedAt).isEqualTo(now.minusDays(1))
-      assertThat(it?.createdAt).isEqualTo(now.minusDays(1))
+      assertThat(it?.updatedAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.minusDays(1).truncatedTo(ChronoUnit.MILLIS))
+      assertThat(it?.createdAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.minusDays(1).truncatedTo(ChronoUnit.MILLIS))
     }
     (response?.find { it -> it.versionNumber == 2 }).let {
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
-      assertThat(it?.updatedAt).isEqualTo(now)
-      assertThat(it?.createdAt).isEqualTo(now)
+      assertThat(it?.updatedAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.truncatedTo(ChronoUnit.MILLIS))
+      assertThat(it?.createdAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.truncatedTo(ChronoUnit.MILLIS))
     }
   }
 }

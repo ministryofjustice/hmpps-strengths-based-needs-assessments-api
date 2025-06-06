@@ -412,7 +412,18 @@ class AssessmentVersionServiceTest {
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
-      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(withArg { assertEquals(signedVersion.captured.uuid, it.uuid) }, signer.id, Tag.UNSIGNED) }
+      verify(exactly = 1) {
+        telemetryService.assessmentStatusUpdated(
+          withArg {
+            assertEquals(
+              signedVersion.captured.uuid,
+              it.uuid,
+            )
+          },
+          signer.id,
+          Tag.UNSIGNED,
+        )
+      }
 
       assertThat(result).isEqualTo(signedVersion.captured)
       assertThat(result.tag).isEqualTo(expectedTag)
@@ -489,7 +500,13 @@ class AssessmentVersionServiceTest {
 
       verify(exactly = 1) { assessmentVersionRepository.save(any()) }
       verify(exactly = 1) { assessmentVersionAuditRepository.save(any()) }
-      verify(exactly = 1) { telemetryService.assessmentStatusUpdated(assessmentVersion, counterSigner.id, initialStatus) }
+      verify(exactly = 1) {
+        telemetryService.assessmentStatusUpdated(
+          assessmentVersion,
+          counterSigner.id,
+          initialStatus,
+        )
+      }
 
       assertThat(result).isEqualTo(counterSignedVersion.captured)
       assertThat(result.tag).isEqualTo(outcome)
@@ -645,7 +662,13 @@ class AssessmentVersionServiceTest {
       assertTrue(deletedVersions.all { version -> version.deleted })
 
       verify(exactly = 1) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
-      verify(exactly = 1) { telemetryService.assessmentSoftDeleted(withArg { assertEquals(assessment.uuid, it.uuid) }, user.id, withArg { assertEquals(it.count(), 2) }) }
+      verify(exactly = 1) {
+        telemetryService.assessmentSoftDeleted(
+          withArg { assertEquals(assessment.uuid, it.uuid) },
+          user.id,
+          withArg { assertEquals(it.count(), 2) },
+        )
+      }
     }
 
     @Test
@@ -719,6 +742,52 @@ class AssessmentVersionServiceTest {
       verify(exactly = 1) { assessmentVersionRepository.findAllDeleted(match { it == assessment.uuid }) }
       verify(exactly = 0) { assessmentVersionRepository.saveAll(any<List<AssessmentVersion>>()) }
       verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
+    }
+  }
+
+  @Nested
+  @DisplayName("findAllByAssessmentUuid")
+  inner class FindAllByAssessmentUuid {
+    val assessment = Assessment(id = 1)
+
+    @Test
+    fun `it finds all assessment versions when provided with Uuid`() {
+      val now = LocalDateTime.now()
+      val assessmentVersions = listOf(
+        AssessmentVersion(
+          assessment = assessment,
+          createdAt = now.minusDays(2),
+          updatedAt = now.minusDays(2),
+          tag = Tag.UNSIGNED,
+          versionNumber = 0,
+        ),
+        AssessmentVersion(
+          assessment = assessment,
+          updatedAt = now.minusDays(1),
+          createdAt = now.minusDays(1),
+          tag = Tag.UNSIGNED,
+          versionNumber = 1,
+        ),
+      )
+      every {
+        assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+      } returns assessmentVersions
+
+      val result = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+
+      assertThat(result).isEqualTo(assessmentVersions)
+    }
+
+    @Test
+    fun `it returns an empty list when there are no versions for a given assessment`() {
+      val assessmentVersions = emptyList<AssessmentVersion>()
+
+      every {
+        assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+      } returns assessmentVersions
+
+      val result = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+      assertThat(result).isEqualTo(assessmentVersions)
     }
   }
 }

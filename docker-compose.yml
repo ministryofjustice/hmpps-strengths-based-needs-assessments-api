@@ -77,8 +77,7 @@ services:
       FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
   san-ui:
-    # TODO: Remove temporarily pinned UI version
-    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:2025-06-06.14.8a52dbd
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
     networks:
       - hmpps
     depends_on:

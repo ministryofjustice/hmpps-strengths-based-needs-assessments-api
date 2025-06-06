@@ -262,6 +262,8 @@ class AssessmentVersionService(
     .run(assessmentVersionRepository::saveAll)
     .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
 
+  fun findAllByAssessmentUuid(assessment: Assessment): List<AssessmentVersion> = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }

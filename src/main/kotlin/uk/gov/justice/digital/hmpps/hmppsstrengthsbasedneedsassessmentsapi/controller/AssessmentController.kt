@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UnDeleteRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.criteria.AssessmentVersionCriteria
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.AssessmentService
@@ -345,4 +346,31 @@ class AssessmentController(
     .let { AssessmentVersionCriteria(it.first().assessment.uuid) }
     .run(assessmentVersionService::find)
     .run(AssessmentResponse::from)
+
+  @RequestMapping(path = ["/{assessmentUuid}/all"], method = [RequestMethod.GET])
+  @Operation(description = "Gets all assessment versions")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment versions found"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun findAllByAssessmentUuid(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+  ): List<AssessmentVersionResponse> = assessmentService.findByUuid(assessmentUuid)
+    .run(assessmentVersionService::findAllByAssessmentUuid)
+    .run(AssessmentVersionResponse::fromAll)
+    .sortedByDescending { it.createdAt }
 }

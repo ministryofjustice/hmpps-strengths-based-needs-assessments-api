@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.datamapping.common.AnswersProvider
 
 class PractitionerAnalysis(private val sectionPrefix: String, private val ap: AnswersProvider) {
-  private fun strenghtsOrProtectiveFactorsNotes(): String? {
+  private fun strengthsOrProtectiveFactorsNotes(): String? {
     val yesDetails =
       ap.answer(Field.valueOf(sectionPrefix + "_PRACTITIONER_ANALYSIS_STRENGTHS_OR_PROTECTIVE_FACTORS_YES_DETAILS")).value
     val noDetails =
@@ -45,7 +45,7 @@ class PractitionerAnalysis(private val sectionPrefix: String, private val ap: An
   }
 
   fun notes(): Any? = listOfNotNull(
-    strenghtsOrProtectiveFactorsNotes(),
+    strengthsOrProtectiveFactorsNotes(),
     seriousHarmNotes(),
     reoffendingNotes(),
   ).joinToString(separator = "\n").ifEmpty { null }

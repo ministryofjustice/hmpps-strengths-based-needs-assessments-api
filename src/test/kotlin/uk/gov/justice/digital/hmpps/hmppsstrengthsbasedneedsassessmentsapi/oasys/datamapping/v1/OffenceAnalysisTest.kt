@@ -417,7 +417,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Value.MALE.name to "1",
       Value.FEMALE.name to "2",
       Value.INTERSEX.name to null,
-      Value.UNKNOWN.name to null,
+      Value.UNKNOWN.name to "0",
     ).forEach { (givenValue, expectedValue) ->
       val entries: List<Map<String, PersistedAnswer>> = listOf(
         mapOf(
@@ -448,6 +448,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Value.WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH.name to "W1",
       Value.WHITE_IRISH.name to "W2",
       Value.WHITE_GYPSY_OR_IRISH_TRAVELLER.name to "W4",
+      Value.WHITE_ROMA.name to "W5",
       Value.WHITE_ANY_OTHER_WHITE_BACKGROUND.name to "W9",
       Value.MIXED_WHITE_AND_BLACK_CARIBBEAN.name to "M1",
       Value.MIXED_WHITE_AND_BLACK_AFRICAN.name to "M2",
@@ -463,6 +464,7 @@ class OffenceAnalysisTest : SectionMappingTest(OffenceAnalysis(), "1.0") {
       Value.BLACK_OR_BLACK_BRITISH_ANY_OTHER_BLACK_BACKGROUND.name to "B9",
       Value.ARAB.name to "O2",
       Value.ANY_OTHER_ETHNIC_GROUP.name to "O9",
+      Value.UNKNOWN.name to "NS",
     ).forEach { (givenValue, expectedValue) ->
       val entries: List<Map<String, PersistedAnswer>> = listOf(
         mapOf(

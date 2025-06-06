@@ -60,6 +60,7 @@ class OffenceAnalysis : SectionMapping() {
     return when (entry[Field.OFFENCE_ANALYSIS_VICTIM_SEX.lower]?.value) {
       ap.get(Value.MALE) -> "1"
       ap.get(Value.FEMALE) -> "2"
+      ap.get(Value.UNKNOWN) -> "0"
       else -> null
     }
   }
@@ -70,6 +71,7 @@ class OffenceAnalysis : SectionMapping() {
       ap.get(Value.WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH) -> "W1"
       ap.get(Value.WHITE_IRISH) -> "W2"
       ap.get(Value.WHITE_GYPSY_OR_IRISH_TRAVELLER) -> "W4"
+      ap.get(Value.WHITE_ROMA) -> "W5"
       ap.get(Value.WHITE_ANY_OTHER_WHITE_BACKGROUND) -> "W9"
       ap.get(Value.MIXED_WHITE_AND_BLACK_CARIBBEAN) -> "M1"
       ap.get(Value.MIXED_WHITE_AND_BLACK_AFRICAN) -> "M2"
@@ -85,6 +87,7 @@ class OffenceAnalysis : SectionMapping() {
       ap.get(Value.BLACK_OR_BLACK_BRITISH_ANY_OTHER_BLACK_BACKGROUND) -> "B9"
       ap.get(Value.ARAB) -> "O2"
       ap.get(Value.ANY_OTHER_ETHNIC_GROUP) -> "O9"
+      ap.get(Value.UNKNOWN) -> "NS"
       else -> null
     }
   }

@@ -96,7 +96,6 @@ class GetAssessmentVersionsTest(
 
     assertThat(response?.size).isEqualTo(3)
     (response?.find { it -> it.versionNumber == 0 }).let {
-      println(response)
       assertThat(it).isNotNull
       assertThat(it?.tag).isEqualTo(Tag.UNSIGNED)
       assertThat(it?.createdAt?.truncatedTo(ChronoUnit.MILLIS)).isEqualTo(now.minusDays(2).truncatedTo(ChronoUnit.MILLIS))

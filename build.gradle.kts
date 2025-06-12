@@ -23,7 +23,7 @@ dependencies {
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.postgresql:postgresql:42.7.6")
+  implementation("org.postgresql:postgresql:42.7.7")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")

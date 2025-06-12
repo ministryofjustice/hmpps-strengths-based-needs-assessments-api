@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
+import java.util.UUID
 
 @Service
 class AssessmentVersionService(
@@ -60,6 +61,8 @@ class AssessmentVersionService(
     return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
+
+  fun find(assessmentVersionUuid: UUID) : AssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersionUuid)
 
   fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> = assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
 

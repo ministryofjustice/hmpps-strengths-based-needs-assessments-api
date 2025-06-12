@@ -72,6 +72,27 @@ class AssessmentController(
     .run(assessmentVersionService::find)
     .run(AssessmentResponse::from)
 
+  @RequestMapping(path = ["/version/{assessmentVersionUuid}"], method = [RequestMethod.GET])
+  @Operation(description = "Get the requested version of an assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment Version found"),
+      ApiResponse(
+        responseCode = "404",
+        description = "The assessment version was not found",
+        content = arrayOf(Content()),
+      ),
+      ApiResponse(responseCode = "500", description = "Unexpected error", content = arrayOf(Content())),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun getVersion(
+    @Parameter(description = "Assessment Version UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentVersionUuid: UUID,
+  ): AssessmentResponse = assessmentVersionService.find(assessmentVersionUuid)
+    .run(AssessmentResponse::from)
+
   @RequestMapping(method = [RequestMethod.POST])
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(description = "Create an assessment")

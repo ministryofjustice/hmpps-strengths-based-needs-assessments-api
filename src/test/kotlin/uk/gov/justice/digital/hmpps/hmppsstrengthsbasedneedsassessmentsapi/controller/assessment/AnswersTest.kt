@@ -124,7 +124,7 @@ class AnswersTest(
       .exchange()
       .expectStatus().isOk
 
-    val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
+    val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)!!
 
     assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q1", "q2", "field_name"))
     assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val1", "val2", "TEST"))
@@ -176,7 +176,7 @@ class AnswersTest(
       .exchange()
       .expectStatus().isOk
 
-    val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)
+    val updatedAssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersion.uuid)!!
 
     assertThat(updatedAssessmentVersion.answers.keys).isEqualTo(setOf("q2"))
     assertThat(updatedAssessmentVersion.answers.values.map { it.value }).isEqualTo(listOf("val2"))

@@ -62,7 +62,8 @@ class AssessmentVersionService(
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
 
-  fun find(assessmentVersionUuid: UUID) : AssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersionUuid)
+  fun find(assessmentVersionUuid: UUID): AssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersionUuid)
+    ?: throw AssessmentVersionNotFoundException(assessmentVersionUuid)
 
   fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> = assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
 

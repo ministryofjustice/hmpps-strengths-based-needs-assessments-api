@@ -748,8 +748,8 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
-  @DisplayName("findAllByAssessmentUuid")
-  inner class FindAllByAssessmentUuid {
+  @DisplayName("findAll")
+  inner class FindAll {
     val assessment = Assessment(id = 1)
 
     @Test

@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @AutoConfigureWebTestClient(timeout = "6000000")
-@DisplayName("Assessment Controller: /version/{assessmentVersionUuid}")
+@DisplayName("Assessment Controller: /assessment/version/{assessmentVersionUuid}")
 class GetAssessmentVersionTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
@@ -71,7 +71,7 @@ class GetAssessmentVersionTest(
 
   @Test
   fun `it returns Not Found when no assessment version exists with UUID provided`() {
-    webTestClient.get().uri("assessment/version/00000000-0000-0000-0000-000000000000")
+    webTestClient.get().uri("/assessment/version/00000000-0000-0000-0000-000000000000")
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
       .exchange()
@@ -80,7 +80,7 @@ class GetAssessmentVersionTest(
 
   @Test
   fun `it returns correct assessment version when UUID provided`() {
-    val response = webTestClient.get().uri("assessment/version/${assessmentVersion2.uuid}")
+    val response = webTestClient.get().uri("/assessment/version/${assessmentVersion2.uuid}")
       .header(HttpHeaders.CONTENT_TYPE, "application/json")
       .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_READ")))
       .exchange()

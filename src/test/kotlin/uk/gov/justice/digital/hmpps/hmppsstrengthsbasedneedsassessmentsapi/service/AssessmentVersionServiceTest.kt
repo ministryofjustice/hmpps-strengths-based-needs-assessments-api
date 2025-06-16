@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -42,6 +43,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
 import java.time.LocalDateTime
 import java.util.UUID
@@ -788,6 +790,34 @@ class AssessmentVersionServiceTest {
 
       val result = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
       assertThat(result).isEqualTo(assessmentVersions)
+    }
+  }
+
+  @Nested
+  @DisplayName("findVersionByUuid")
+  inner class FindVersionByUuid {
+    @Test
+    fun `it finds an assessment version when provided with version Uuid`() {
+      val versions = listOf(firstAssessmentVersion, secondAssessmentVersion)
+      versions.forEach { assessmentVersion ->
+        every { assessmentVersionRepository.findByUuid(assessmentVersion.uuid) } returns assessmentVersion
+      }
+
+      val result1 = assessmentVersionRepository.findByUuid(firstAssessmentVersion.uuid)
+      val result2 = assessmentVersionRepository.findByUuid(secondAssessmentVersion.uuid)
+
+      assertThat(result1).isEqualTo(firstAssessmentVersion)
+      assertThat(result2).isEqualTo(secondAssessmentVersion)
+    }
+
+    @Test
+    fun `it returns Not Found exception if there is no assessment version for that version Uuid`() {
+      val zeroUuid = UUID.fromString("00000000-0000-0000-0000-000000000000")
+      every { assessmentVersionRepository.findByUuid(zeroUuid) } returns null
+
+      assertThatThrownBy {
+        assessmentVersionService.find(zeroUuid)
+      }.isInstanceOf(AssessmentVersionNotFoundException::class.java).hasMessageContaining("No assessment version found with provided UUID: $zeroUuid")
     }
   }
 }

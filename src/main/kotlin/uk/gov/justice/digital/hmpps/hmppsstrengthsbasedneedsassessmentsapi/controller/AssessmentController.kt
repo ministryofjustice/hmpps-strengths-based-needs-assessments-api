@@ -391,7 +391,7 @@ class AssessmentController(
     @PathVariable
     assessmentUuid: UUID,
   ): List<AssessmentVersionResponse> = assessmentService.findByUuid(assessmentUuid)
-    .run(assessmentVersionService::findAllByAssessmentUuid)
+    .run(assessmentVersionService::findAllByAssessment)
     .run(AssessmentVersionResponse::fromAll)
     .sortedByDescending { it.createdAt }
 }

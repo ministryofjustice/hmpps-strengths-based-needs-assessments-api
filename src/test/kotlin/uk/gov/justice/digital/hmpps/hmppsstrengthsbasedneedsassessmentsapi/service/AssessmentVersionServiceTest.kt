@@ -8,6 +8,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -748,8 +749,8 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
-  @DisplayName("findAll")
-  inner class FindAll {
+  @DisplayName("findAllByAssessment")
+  inner class FindAllByAssessment {
     val assessment = Assessment(id = 1)
 
     @Test
@@ -775,9 +776,10 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
       } returns assessmentVersions
 
-      val result = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+      val result = assessmentVersionService.findAllByAssessment(assessment)
 
       assertThat(result).isEqualTo(assessmentVersions)
+      verify(exactly = 1) { assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid) }
     }
 
     @Test
@@ -788,8 +790,9 @@ class AssessmentVersionServiceTest {
         assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
       } returns assessmentVersions
 
-      val result = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+      val result = assessmentVersionService.findAllByAssessment(assessment)
       assertThat(result).isEqualTo(assessmentVersions)
+      verify(exactly = 1) { assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid) }
     }
   }
 
@@ -803,11 +806,16 @@ class AssessmentVersionServiceTest {
         every { assessmentVersionRepository.findByUuid(assessmentVersion.uuid) } returns assessmentVersion
       }
 
-      val result1 = assessmentVersionRepository.findByUuid(firstAssessmentVersion.uuid)
-      val result2 = assessmentVersionRepository.findByUuid(secondAssessmentVersion.uuid)
+      val result1 = assessmentVersionService.find(firstAssessmentVersion.uuid)
+      val result2 = assessmentVersionService.find(secondAssessmentVersion.uuid)
 
       assertThat(result1).isEqualTo(firstAssessmentVersion)
       assertThat(result2).isEqualTo(secondAssessmentVersion)
+      verify(exactly = 2) { assessmentVersionRepository.findByUuid(any()) }
+      verifyOrder {
+        assessmentVersionRepository.findByUuid(firstAssessmentVersion.uuid)
+        assessmentVersionRepository.findByUuid(secondAssessmentVersion.uuid)
+      }
     }
 
     @Test

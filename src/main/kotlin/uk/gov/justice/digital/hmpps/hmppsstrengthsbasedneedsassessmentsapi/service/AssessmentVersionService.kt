@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.ConflictException
+import java.util.UUID
 
 @Service
 class AssessmentVersionService(
@@ -60,6 +61,9 @@ class AssessmentVersionService(
     return assessmentVersionRepository.findAll(criteria.getSpecification(), limit).firstOrNull()
       ?: throw AssessmentVersionNotFoundException(criteria)
   }
+
+  fun find(assessmentVersionUuid: UUID): AssessmentVersion = assessmentVersionRepository.findByUuid(assessmentVersionUuid)
+    ?: throw AssessmentVersionNotFoundException(assessmentVersionUuid)
 
   fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> = assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
 
@@ -262,7 +266,7 @@ class AssessmentVersionService(
     .run(assessmentVersionRepository::saveAll)
     .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
 
-  fun findAllByAssessmentUuid(assessment: Assessment): List<AssessmentVersion> = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
+  fun findAllByAssessment(assessment: Assessment): List<AssessmentVersion> = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

@@ -11,7 +11,7 @@ import java.util.UUID
 interface AssessmentVersionRepository :
   JpaRepository<AssessmentVersion, Long>,
   JpaSpecificationExecutor<AssessmentVersion> {
-  fun findByUuid(uuid: UUID): AssessmentVersion
+  fun findByUuid(uuid: UUID): AssessmentVersion?
 
   @Query("SELECT * FROM assessments_versions WHERE assessment_uuid = :assessmentUuid AND deleted = TRUE", nativeQuery = true)
   fun findAllDeleted(assessmentUuid: UUID): List<AssessmentVersion>

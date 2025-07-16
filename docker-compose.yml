@@ -84,7 +84,7 @@ services:
       - redis
       - hmpps-auth
       - arns-handover
-      - oasys-ui
+      - oastub
       - coordinator-api
     healthcheck:
       test: [ "CMD", "node", "./docker/healthcheck.js" ]
@@ -141,7 +141,7 @@ services:
       CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
       CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
 
-  oasys-ui:
+  oastub:
     image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-oastub-ui:latest
     networks:
       - hmpps

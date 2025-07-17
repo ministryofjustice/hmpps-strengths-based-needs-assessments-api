@@ -16,8 +16,11 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersionAudit
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.OASysEvent
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.SignType
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.UpdateAnswers
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.User
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.exception.AssessmentVersionNotFoundException
@@ -31,6 +34,7 @@ class AssessmentVersionService(
   val dataMappingService: DataMappingService,
   val telemetryService: TelemetryService,
   val formConfigProvider: FormConfigProvider,
+  val assessmentEventService: AssessmentEventService,
 ) {
   fun createWith(
     assessment: Assessment,
@@ -67,15 +71,25 @@ class AssessmentVersionService(
 
   fun findAll(criteria: AssessmentVersionCriteria): List<AssessmentVersion> = assessmentVersionRepository.findAll(criteria.getSpecification(), Sort.by(Sort.Direction.DESC, "updatedAt"))
 
-  fun save(assessmentVersion: AssessmentVersion): AssessmentVersion = assessmentVersionRepository.save(assessmentVersion)
+  fun save(assessmentVersion: AssessmentVersion): AssessmentVersion =
+    assessmentVersionRepository.save(assessmentVersion)
 
-  fun saveAudit(assessmentVersionAudit: AssessmentVersionAudit) = assessmentVersionAuditRepository.save(assessmentVersionAudit)
+  fun saveAudit(assessmentVersionAudit: AssessmentVersionAudit): AssessmentVersionAudit =
+    assessmentVersionAuditRepository.save(assessmentVersionAudit)
 
   fun updateAnswers(existingVersion: AssessmentVersion, request: UpdateAssessmentAnswersRequest) {
     log.info("Adding answers to assessment with UUID ${existingVersion.assessment.uuid}")
     val assessmentVersion = existingVersion.run { takeIf { isUpdatable() } ?: createWith(assessment, answers) }
     val originalStatus = existingVersion.tag
     val originalAnswers = existingVersion.answers
+
+    request.run {
+      assessmentEventService.save(
+        assessmentVersion.assessment,
+        User(request.userDetails.id, request.userDetails.name),
+        UpdateAnswers(answersToAdd, answersToRemove),
+      )
+    }
 
     assessmentVersion
       .apply { setAnswers(request.answersToAdd, request.answersToRemove) }
@@ -100,18 +114,25 @@ class AssessmentVersionService(
 
     telemetryService.assessmentAnswersUpdated(assessmentVersion, request.userDetails.id, originalStatus)
 
-    fun isAssessmentComplete(answers: Answers) = answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
+    fun isAssessmentComplete(answers: Answers) =
+      answers.entries.find { (code, answer) -> code == "assessment_complete" && answer.value == "YES" } != null
 
     if (isAssessmentComplete(assessmentVersion.answers) && !isAssessmentComplete(originalAnswers)) {
       telemetryService.assessmentCompleted(assessmentVersion, request.userDetails.id)
     }
 
     val formConfig = assessmentVersion.assessment.info?.run(formConfigProvider::get)
-    fun getSectionCode(questionCode: String) = formConfig?.fields[questionCode]?.section ?: "Unknown"
+    fun getSectionCode(questionCode: String) = formConfig?.fields?.get(questionCode)?.section ?: "Unknown"
 
     request.answersToAdd.entries
       .filter { (code, answer) -> code.endsWith("_section_complete") && answer.value == "YES" && originalAnswers[code]?.value != "YES" }
-      .map { (fieldCode, _) -> telemetryService.sectionCompleted(assessmentVersion, request.userDetails.id, getSectionCode(fieldCode)) }
+      .map { (fieldCode, _) ->
+        telemetryService.sectionCompleted(
+          assessmentVersion,
+          request.userDetails.id,
+          getSectionCode(fieldCode),
+        )
+      }
 
     val sectionsUpdated = mutableSetOf<String>()
 
@@ -157,6 +178,12 @@ class AssessmentVersionService(
 
     telemetryService.assessmentStatusUpdated(assessmentVersion, userDetails.id, originalStatus)
 
+    assessmentEventService.save(
+      assessmentVersion.assessment,
+      User(userDetails.id, userDetails.name),
+      OASysEvent(Tag.LOCKED_INCOMPLETE),
+    )
+
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(userDetails)
       .apply {
@@ -183,6 +210,12 @@ class AssessmentVersionService(
     assessmentVersion.tag = newStatus
 
     telemetryService.assessmentStatusUpdated(assessmentVersion, signer.id, originalStatus)
+
+    assessmentEventService.save(
+      assessmentVersion.assessment,
+      User(signer.id, signer.name),
+      OASysEvent(newStatus),
+    )
 
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(signer)
@@ -212,6 +245,11 @@ class AssessmentVersionService(
 
     telemetryService.assessmentStatusUpdated(assessmentVersion, counterSigner.id, originalStatus)
 
+    assessmentEventService.save(
+      assessmentVersion.assessment,
+      User(counterSigner.id, counterSigner.name),
+      OASysEvent(outcome),
+    )
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(counterSigner)
       .apply {
@@ -234,6 +272,11 @@ class AssessmentVersionService(
 
     telemetryService.assessmentStatusUpdated(assessmentVersion, userDetails.id, originalStatus)
 
+    assessmentEventService.save(
+      assessmentVersion.assessment,
+      User(userDetails.id, userDetails.name),
+      OASysEvent(Tag.ROLLED_BACK),
+    )
     return assessmentVersionRepository.save(assessmentVersion)
       .audit(userDetails)
       .apply {
@@ -245,15 +288,21 @@ class AssessmentVersionService(
   }
 
   @Transactional
-  fun softDelete(assessmentVersions: List<AssessmentVersion>, userDetails: UserDetails): List<AssessmentVersion> = assessmentVersions
-    .filter { !it.deleted }
-    .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
-    .map { it.apply { deleted = true } }
-    .run(assessmentVersionRepository::saveAll)
-    .also { telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it) }
+  fun softDelete(assessmentVersions: List<AssessmentVersion>, userDetails: UserDetails): List<AssessmentVersion> =
+    assessmentVersions
+      .filter { !it.deleted }
+      .ifEmpty { throw ConflictException("No assessment versions found for deletion") }
+      .map { it.apply { deleted = true } }
+      .run(assessmentVersionRepository::saveAll)
+      .also { telemetryService.assessmentSoftDeleted(it.first().assessment, userDetails.id, it) }
 
   @Transactional
-  fun undelete(assessment: Assessment, fromVersion: Int, toVersion: Int?, userDetails: UserDetails): List<AssessmentVersion> = assessmentVersionRepository.findAllDeleted(assessment.uuid)
+  fun undelete(
+    assessment: Assessment,
+    fromVersion: Int,
+    toVersion: Int?,
+    userDetails: UserDetails,
+  ): List<AssessmentVersion> = assessmentVersionRepository.findAllDeleted(assessment.uuid)
     .filter {
       if (toVersion == null) {
         it.versionNumber >= fromVersion
@@ -265,6 +314,9 @@ class AssessmentVersionService(
     .map { it.apply { deleted = false } }
     .run(assessmentVersionRepository::saveAll)
     .also { telemetryService.assessmentUndeleted(assessment, userDetails.id, it) }
+
+  fun findAllByAssessmentUuid(assessment: Assessment): List<AssessmentVersion> =
+    assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
 
   fun findAllByAssessment(assessment: Assessment): List<AssessmentVersion> = assessmentVersionRepository.findAllByAssessmentUuid(assessment.uuid)
 

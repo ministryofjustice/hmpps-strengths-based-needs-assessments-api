@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.net.http.HttpClient
+import java.time.Clock
 
 @Configuration
 class ApplicationConfig(
@@ -14,6 +15,9 @@ class ApplicationConfig(
 ) {
   @Bean
   fun httpClient(): HttpClient = HttpClient.newBuilder().build()
+
+  @Bean
+  fun clock(): Clock = Clock.systemDefaultZone()
 
   fun isDebugEnabled(): Boolean = activeProfiles.split(",").any { listOf("local", "dev").contains(it) }
 }

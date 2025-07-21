@@ -3,10 +3,6 @@ services:
     ports:
       - "6379:6379"
 
-  postgres:
-    ports:
-      - "5432:5432"
-
   san-api:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:

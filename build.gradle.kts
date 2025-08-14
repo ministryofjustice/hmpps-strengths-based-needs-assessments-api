@@ -7,6 +7,7 @@ plugins {
   kotlin("plugin.spring") version "2.2.0"
   id("org.jetbrains.kotlin.kapt") version "2.2.0"
   id("org.jetbrains.kotlinx.kover") version "0.9.1"
+  kotlin("plugin.jpa") version "1.9.22"
 }
 
 configurations {

@@ -105,7 +105,7 @@ class AssessmentController(
   fun create(
     @RequestBody @Valid
     request: AuditedRequest,
-  ): AssessmentResponse = assessmentService.create()
+  ): AssessmentResponse = assessmentService.create(request.userDetails.location)
     .assessmentVersions.first()
     .audit(request.userDetails)
     .run(assessmentVersionService::saveAudit)

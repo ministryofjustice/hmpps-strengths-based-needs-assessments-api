@@ -131,7 +131,7 @@ class CreateTest(
   fun `it creates an assessment with Location`() {
     val request = """
           {
-            "userDetails": { "id": "user-id", "name": "John Doe", "Location": "COMMUNITY" }
+            "userDetails": { "id": "user-id", "name": "John Doe", "location": "COMMUNITY" }
           }
     """.trimIndent()
 

@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.cont
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Size
-import org.flywaydb.core.api.Location
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 
 interface AuditableRequest {
@@ -19,10 +18,10 @@ data class UserDetails(
   @Schema(description = "User type", example = "SAN")
   val type: UserType = UserType.SAN,
   @Schema(description = "Location", example = "COMMUNITY")
-  val location: StaffLocation? = null,
+  val location: Location? = null,
 )
 
-enum class StaffLocation {
+enum class Location {
   PRISON,
   COMMUNITY,
 }

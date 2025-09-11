@@ -17,7 +17,14 @@ data class UserDetails(
   val name: String = "",
   @Schema(description = "User type", example = "SAN")
   val type: UserType = UserType.SAN,
+  @Schema(description = "Location", example = "COMMUNITY")
+  val location: Location? = null,
 )
+
+enum class Location {
+  PRISON,
+  COMMUNITY,
+}
 
 enum class UserType {
   OASYS,

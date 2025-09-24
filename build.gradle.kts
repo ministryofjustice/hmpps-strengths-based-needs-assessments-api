@@ -4,9 +4,9 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.7"
-  kotlin("plugin.spring") version "2.2.10"
-  id("org.jetbrains.kotlin.kapt") version "2.2.10"
-  id("org.jetbrains.kotlinx.kover") version "0.9.1"
+  kotlin("plugin.spring") version "2.2.20"
+  id("org.jetbrains.kotlin.kapt") version "2.2.20"
+  id("org.jetbrains.kotlinx.kover") version "0.9.2"
 }
 
 configurations {
@@ -23,14 +23,14 @@ dependencies {
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.postgresql:postgresql:42.7.7")
+  implementation("org.postgresql:postgresql:42.7.8")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.11")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
 
   // Test dependencies
   testImplementation("com.h2database:h2")

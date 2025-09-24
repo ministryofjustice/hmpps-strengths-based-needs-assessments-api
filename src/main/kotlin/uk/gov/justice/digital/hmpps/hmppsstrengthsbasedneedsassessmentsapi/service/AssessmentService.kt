@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.serv
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserLocation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
@@ -19,7 +20,7 @@ class AssessmentService(
     ?: throw AssessmentNotFoundException("No assessment found with UUID $uuid")
 
   @Transactional
-  fun create(): Assessment = Assessment.new(formConfigProvider.getLatest())
+  fun create(userLocation: UserLocation): Assessment = Assessment.new(formConfigProvider.getLatest(), userLocation)
     .apply { assessmentVersions.forEach { assessmentVersionService.setOasysEquivalents(it) } }
     .run(assessmentRepository::save)
     .also { log.info("Created assessment with UUID ${it.uuid}") }

@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.contr
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.SoftDeleteRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UnDeleteRequest
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserLocation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentVersionResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
@@ -87,7 +88,11 @@ class AssessmentController(
   )
   @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_READ', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
   fun getVersion(
-    @Parameter(description = "Assessment Version UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @Parameter(
+      description = "Assessment Version UUID",
+      required = true,
+      example = "123e4567-e89b-12d3-a456-426614174000",
+    )
     @PathVariable
     assessmentVersionUuid: UUID,
   ): AssessmentResponse = assessmentVersionService.find(assessmentVersionUuid)
@@ -105,12 +110,18 @@ class AssessmentController(
   fun create(
     @RequestBody @Valid
     request: AuditedRequest,
-  ): AssessmentResponse = assessmentService.create()
-    .assessmentVersions.first()
-    .audit(request.userDetails)
-    .run(assessmentVersionService::saveAudit)
-    .also { telemetryService.assessmentCreated(it.assessmentVersion, request.userDetails.id) }
-    .run { AssessmentResponse.from(assessmentVersion) }
+  ): AssessmentResponse = if (request.userDetails.location != null) {
+    request.userDetails
+  } else {
+    request.userDetails.copy(location = UserLocation.COMMUNITY)
+  }.let { userDetails ->
+    assessmentService.create(userDetails.location!!)
+      .assessmentVersions.first()
+      .audit(userDetails)
+      .run(assessmentVersionService::saveAudit)
+      .also { telemetryService.assessmentCreated(it.assessmentVersion, userDetails.id) }
+      .run { AssessmentResponse.from(assessmentVersion) }
+  }
 
   @RequestMapping(path = ["/{assessmentUuid}/clone"], method = [RequestMethod.POST])
   @ResponseStatus(HttpStatus.CREATED)

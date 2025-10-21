@@ -16,6 +16,7 @@ class Relationships : SectionMapping() {
     "o6-7-1-2da" to ::q712da,
     "o6-7-2-1da" to ::q721da,
     "o6-7-2-2da" to ::q722da,
+    "o6-8" to ::q8,
     "o6-9" to ::q9,
     "o6-10" to ::q10,
     "o6-11" to ::q11,
@@ -109,6 +110,16 @@ class Relationships : SectionMapping() {
     ap.get(Value.YES) -> when (ap.answer(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE).value) {
       ap.get(Value.FAMILY_MEMBER), ap.get(Value.FAMILY_MEMBER_AND_INTIMATE_PARTNER) -> "YES"
       ap.get(Value.INTIMATE_PARTNER) -> "NO"
+      else -> null
+    }
+    else -> null
+  }
+
+  private fun q8(): Any? = when (ap.answer(Field.LIVING_WITH).values?.contains(ap.get(Value.PARTNER))) {
+    true -> "1"
+    false -> when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE).values?.contains(ap.get(Value.PARTNER_INTIMATE_RELATIONSHIP))) {
+      true -> "2"
+      false -> "3"
       else -> null
     }
     else -> null

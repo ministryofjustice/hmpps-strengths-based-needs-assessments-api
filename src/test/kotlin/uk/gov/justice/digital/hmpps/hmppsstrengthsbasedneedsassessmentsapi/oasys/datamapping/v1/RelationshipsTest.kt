@@ -144,6 +144,21 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
   }
 
   @Test
+  fun q8() {
+    test(
+      "o6-8",
+      Given().expect(null),
+      Given(Field.LIVING_WITH, emptyList()).expect(null),
+      Given(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, emptyList()).expect(null),
+      Given(Field.LIVING_WITH, listOf(Value.PARTNER)).expect("1"),
+      Given(Field.LIVING_WITH, emptyList())
+        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, listOf(Value.PARTNER_INTIMATE_RELATIONSHIP)).expect("2"),
+      Given(Field.LIVING_WITH, emptyList())
+        .and(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE, emptyList()).expect("3"),
+    )
+  }
+
+  @Test
   fun q9() {
     test(
       "o6-9",

@@ -47,9 +47,8 @@ class AssessmentVersionService(
       versionNumber = assessmentVersionRepository.countVersionWhereAssessmentUuid(assessment.uuid),
       tag = Tag.UNSIGNED,
       answers = answers,
-      oasysEquivalents = oasysEquivalents,
     )
-  }
+  }.run(::setOasysEquivalents)
 
   fun findOrNull(criteria: AssessmentVersionCriteria): AssessmentVersion? {
     val limit = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "updatedAt"))

@@ -149,7 +149,9 @@ class AssessmentVersionServiceTest {
 
       val clonedVersion = assessmentVersionService.clone(assessmentVersion)
 
+      assertThat(clonedVersion.assessment.uuid).isEqualTo(assessmentVersion.assessment.uuid)
       assertThat(clonedVersion.versionNumber).isEqualTo(7)
+      assertThat(clonedVersion.tag).isEqualTo(assessmentVersion.tag)
       assertThat(clonedVersion.answers).isEqualTo(assessmentVersion.answers)
       assertThat(clonedVersion.oasysEquivalents).isEqualTo(regeneratedMappings)
 

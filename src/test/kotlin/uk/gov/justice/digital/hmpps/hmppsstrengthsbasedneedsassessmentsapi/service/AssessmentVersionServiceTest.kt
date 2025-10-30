@@ -137,7 +137,7 @@ class AssessmentVersionServiceTest {
   inner class Clone {
     private val assessmentVersion = AssessmentVersion(
       answers = mapOf("q1" to Answer(value = "val1")),
-      oasysEquivalents = mapOf("foo" to "bar")
+      oasysEquivalents = mapOf("foo" to "bar"),
     )
 
     @Test

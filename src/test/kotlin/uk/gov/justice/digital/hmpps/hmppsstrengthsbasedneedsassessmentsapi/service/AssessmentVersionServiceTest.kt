@@ -133,6 +133,33 @@ class AssessmentVersionServiceTest {
   }
 
   @Nested
+  @DisplayName("clone")
+  inner class Clone {
+    private val assessmentVersion = AssessmentVersion(
+      answers = mapOf("q1" to Answer(value = "val1")),
+      oasysEquivalents = mapOf("foo" to "bar"),
+    )
+
+    @Test
+    fun `it clones the assessment version and regenerates the OASys data mappings`() {
+      val regeneratedMappings: OasysEquivalent = mapOf("bar" to "baz")
+
+      every { assessmentVersionRepository.countVersionWhereAssessmentUuid(assessmentVersion.assessment.uuid) } returns 7
+      every { dataMappingService.getOasysEquivalent(any()) } returns regeneratedMappings
+
+      val clonedVersion = assessmentVersionService.clone(assessmentVersion)
+
+      assertThat(clonedVersion.assessment.uuid).isEqualTo(assessmentVersion.assessment.uuid)
+      assertThat(clonedVersion.versionNumber).isEqualTo(7)
+      assertThat(clonedVersion.tag).isEqualTo(assessmentVersion.tag)
+      assertThat(clonedVersion.answers).isEqualTo(assessmentVersion.answers)
+      assertThat(clonedVersion.oasysEquivalents).isEqualTo(regeneratedMappings)
+
+      verify(exactly = 1) { dataMappingService.getOasysEquivalent(match { it.uuid == clonedVersion.uuid }) }
+    }
+  }
+
+  @Nested
   @DisplayName("setOasysEquivalent")
   inner class SetOasysEquivalent {
     private val assessmentVersion = AssessmentVersion()

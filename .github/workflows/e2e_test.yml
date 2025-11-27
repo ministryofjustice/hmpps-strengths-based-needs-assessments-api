@@ -39,10 +39,10 @@ jobs:
       timings-9: ${{ steps.timings.outputs.t9 }}
       timings-10: ${{ steps.timings.outputs.t10 }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download docker image
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: build_image
           path: ${{ runner.temp }}
@@ -51,7 +51,7 @@ jobs:
         run: docker load --input ${{ runner.temp }}/build_image.tar
 
       - name: Clone UI repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
           path: e2e-test-ui
@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload test results
         if: success() || failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: e2e_test_results
           path: |

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
-import com.vladmihalcea.hibernate.type.json.JsonType
+import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

@@ -15,6 +15,7 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
   // OAuth dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -26,7 +27,7 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.8")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-70:3.12.0")
   kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
 
   // OpenAPI dependencies

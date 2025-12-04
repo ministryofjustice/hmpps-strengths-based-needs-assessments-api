@@ -16,7 +16,7 @@ configurations {
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0-beta")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("org.springframework.boot:spring-boot-starter-jackson")
 
   // OAuth dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -25,11 +25,10 @@ dependencies {
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.postgresql:postgresql:42.7.8")
-  implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("io.hypersistence:hypersistence-utils-hibernate-70:3.12.0")
-  kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
+  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.1.0.Final")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")

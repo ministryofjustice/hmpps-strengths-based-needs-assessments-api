@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
-import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -14,8 +13,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
-import org.hibernate.annotations.Type
+import org.hibernate.type.SqlTypes
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -112,11 +112,11 @@ data class AssessmentVersion(
   @Enumerated(EnumType.STRING)
   var tag: Tag = Tag.UNSIGNED,
 
-  @Type(JsonType::class)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "answers")
   var answers: Answers = mutableMapOf(),
 
-  @Type(JsonType::class)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "oasys_equivalent")
   var oasysEquivalents: OasysEquivalent = mutableMapOf(),
 

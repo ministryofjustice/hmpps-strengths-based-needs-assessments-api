@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity
 
-import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -12,7 +11,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import org.hibernate.annotations.Type
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails
 import java.time.LocalDateTime
 import java.util.UUID
@@ -35,7 +35,7 @@ data class AssessmentVersionAudit(
   @JoinColumn(name = "assessment_version_uuid", referencedColumnName = "uuid", updatable = false, nullable = false)
   val assessmentVersion: AssessmentVersion = AssessmentVersion(),
 
-  @Type(JsonType::class)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "user_details")
   var userDetails: UserDetails = UserDetails(),
 

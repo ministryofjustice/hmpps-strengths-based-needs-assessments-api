@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserLocation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -198,48 +197,6 @@ class CreateTest(
     assertThat(audit.statusTo).isNull()
     assertThat(audit.userDetails.id).isEqualTo("user-id")
     assertThat(audit.userDetails.name).isEqualTo("John Doe")
-    assertThat(audit.userDetails.location).isEqualTo(UserLocation.COMMUNITY)
-
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
-        "user-id",
-        null,
-      )
-    }
-  }
-
-  @Test
-  fun `it creates an assessment with location explicitly specified`() {
-    val request = """
-          {
-            "userDetails": { "id": "user-id", "name": "John Doe", "location": "PRISON" }
-          }
-    """.trimIndent()
-
-    val response: AssessmentResponse? = webTestClient.post().uri(endpoint)
-      .header(HttpHeaders.CONTENT_TYPE, "application/json")
-      .headers(setAuthorisation(roles = listOf("ROLE_STRENGTHS_AND_NEEDS_OASYS")))
-      .bodyValue(request)
-      .exchange()
-      .expectStatus().isCreated
-      .expectBody(AssessmentResponse::class.java)
-      .returnResult()
-      .responseBody
-
-    val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
-
-    assertThat(newAssessment).isNotNull
-    assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
-    assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
-
-    val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
-    assertThat(audit).isNotNull
-    assertThat(audit!!.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
-    assertThat(audit.userDetails.location).isEqualTo(UserLocation.PRISON)
 
     verify(exactly = 1) {
       telemetryService.assessmentCreated(

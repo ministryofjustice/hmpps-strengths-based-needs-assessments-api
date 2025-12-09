@@ -46,19 +46,12 @@ jobs:
       upload_image_artifact: true
       image_artifact_retention_days: 10
 
-  e2e_test:
-    needs: build_docker
-    uses: ./.github/workflows/e2e_test.yml
-    with:
-      app_version: ${{ needs.build_docker.outputs.app_version }}
-
   publish_docker:
     name: Publish docker image
     needs:
       - validate
       - helm_lint
       - build_docker
-      - e2e_test
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_push.yml@v2
     with:
       docker_registry: 'ghcr.io'

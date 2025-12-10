@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Nested
+import tools.jackson.databind.ObjectMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
@@ -22,7 +22,7 @@ class FormConfigProviderTest {
     formConfigBaseUrl = "http://test-url/config",
     activeProfiles = "",
   )
-  private val sut = FormConfigProvider(appConfig, mockHttpClient, jacksonObjectMapper())
+  private val sut = FormConfigProvider(appConfig, mockHttpClient, ObjectMapper())
 
   @BeforeTest
   fun setUp() {

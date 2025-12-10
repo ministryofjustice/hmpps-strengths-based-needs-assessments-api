@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0-beta"
   kotlin("plugin.spring") version "2.2.21"
   id("org.jetbrains.kotlin.kapt") version "2.2.21"
   id("org.jetbrains.kotlinx.kover") version "0.9.3"
@@ -14,7 +14,9 @@ configurations {
 }
 
 dependencies {
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0-beta")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-jackson")
 
   // OAuth dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -23,16 +25,16 @@ dependencies {
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.postgresql:postgresql:42.7.8")
-  implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
-  kapt("org.hibernate:hibernate-jpamodelgen-jakarta:5.6.15.Final")
+  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.1.0.Final")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
 
   // Test dependencies
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0-beta")
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
   testImplementation("com.ninja-squad:springmockk:5.0.1")

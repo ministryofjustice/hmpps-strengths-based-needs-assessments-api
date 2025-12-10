@@ -10,7 +10,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserLocation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.oasys.persistence.entity.OasysAssessment
 import java.time.LocalDateTime
@@ -40,7 +39,7 @@ data class Assessment(
   var oasysAssessments: List<OasysAssessment> = listOf(),
 ) {
   companion object {
-    fun new(formConfig: FormConfig, userLocation: UserLocation): Assessment = Assessment()
+    fun new(formConfig: FormConfig): Assessment = Assessment()
       .apply {
         info = AssessmentFormInfo(
           formVersion = formConfig.version,
@@ -48,21 +47,7 @@ data class Assessment(
         )
 
         assessmentVersions = listOf(
-          AssessmentVersion(
-            assessment = this,
-            versionNumber = 0,
-            tag = Tag.UNSIGNED,
-            answers = mutableMapOf(
-              "pathway" to Answer(
-                type = AnswerType.RADIO,
-                options = listOf(
-                  Option(value = "COMMUNITY", text = "COMMUNITY"),
-                  Option(value = "PRISON", text = "PRISON"),
-                ),
-                value = userLocation.name,
-              ),
-            ),
-          ),
+          AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNSIGNED),
         )
       }
   }

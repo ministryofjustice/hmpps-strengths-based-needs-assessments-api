@@ -6,7 +6,7 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.2.0"
   kotlin("plugin.spring") version "2.2.21"
   id("org.jetbrains.kotlin.kapt") version "2.2.21"
-  id("org.jetbrains.kotlinx.kover") version "0.9.3"
+  id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 configurations {

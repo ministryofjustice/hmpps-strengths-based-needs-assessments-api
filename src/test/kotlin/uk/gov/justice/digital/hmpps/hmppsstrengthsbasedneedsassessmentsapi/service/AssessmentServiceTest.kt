@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserLocation
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.FormConfigProvider
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
@@ -43,7 +42,7 @@ class AssessmentServiceTest {
       every { formConfigProvider.getLatest() } returns formConfig
       every { assessmentVersionService.setOasysEquivalents(any()) } returnsArgument 0
 
-      val result = assessmentService.create(userLocation = UserLocation.COMMUNITY)
+      val result = assessmentService.create()
 
       verify(exactly = 1) { formConfigProvider.getLatest() }
       verify(exactly = 1) { assessmentRepository.save(any()) }

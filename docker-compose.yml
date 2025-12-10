@@ -108,6 +108,7 @@ services:
       SYSTEM_CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       SESSION_SECRET: sessionsecret
       SBNA_API_URL: http://san-api:8080
+      COORDINATOR_API_URL: http://coordinator-api:8080
       INGRESS_URL: http://localhost:3000
       HTTPS: false
       NODE_ENV: development

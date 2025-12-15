@@ -161,7 +161,7 @@ class CounterSignTest(
 
   @Test
   fun `it updates the assessment version and returns it as counter-signed`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.AWAITING_COUNTERSIGN,
@@ -242,7 +242,7 @@ class CounterSignTest(
 
   @Test
   fun `it returns Conflict when the requested outcome is invalid`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.AWAITING_COUNTERSIGN,
@@ -276,7 +276,7 @@ class CounterSignTest(
 
   @Test
   fun `it returns Conflict when the assessment version cannot be counter-signed due to its status`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.UNSIGNED,

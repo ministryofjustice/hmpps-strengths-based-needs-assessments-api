@@ -47,7 +47,7 @@ class GetTest(
       versionNumber = 0,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessment.assessmentVersions = mutableListOf(latestVersion, previousVersion)
     assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
     assessmentRepository.save(assessment)

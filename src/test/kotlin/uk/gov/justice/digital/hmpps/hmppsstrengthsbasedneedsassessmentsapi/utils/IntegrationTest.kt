@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils
 
 import com.ninjasquad.springmockk.MockkBean
+import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -28,6 +29,9 @@ abstract class IntegrationTest {
 
   @LocalServerPort
   private var port: Int = 0
+
+  @Autowired
+  lateinit var entityManager: EntityManager
 
   @Autowired
   internal lateinit var jwtAuthHelper: JwtAuthorisationHelper

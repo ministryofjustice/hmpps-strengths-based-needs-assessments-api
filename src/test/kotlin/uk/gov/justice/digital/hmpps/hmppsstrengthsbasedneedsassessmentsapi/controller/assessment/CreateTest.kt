@@ -32,7 +32,7 @@ class CreateTest(
   @BeforeEach
   fun setUp() {
     assessment = Assessment()
-    assessment.assessmentVersions = listOf(AssessmentVersion(assessment = assessment))
+    assessment.assessmentVersions = mutableListOf(AssessmentVersion(assessment = assessment))
     assessmentRepository.save(assessment)
     clearAllMocks()
     every { telemetryService.assessmentCreated(any(), any(), any()) } just Runs

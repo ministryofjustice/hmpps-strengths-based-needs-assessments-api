@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.hibernate.Hibernate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -36,7 +37,7 @@ class SoftDeleteTest(
   @BeforeEach
   fun setUp() {
     assessment = Assessment()
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(assessment = assessment, versionNumber = 0),
       AssessmentVersion(assessment = assessment, versionNumber = 1),
       AssessmentVersion(assessment = assessment, versionNumber = 2),
@@ -328,7 +329,9 @@ class SoftDeleteTest(
       .exchange()
       .expectStatus().isOk
 
-    assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions).isEmpty()
+    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)!!
+    Hibernate.initialize(updatedAssessment.assessmentVersions)
+    assertThat(updatedAssessment.assessmentVersions).isEmpty()
 
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(4)

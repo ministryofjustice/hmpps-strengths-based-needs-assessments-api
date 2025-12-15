@@ -29,7 +29,7 @@ class GetAssessmentVersionsTest(
   fun setup() {
     assessment = Assessment(uuid = UUID.randomUUID())
       .apply {
-        assessmentVersions = listOf(
+        assessmentVersions = mutableListOf(
           AssessmentVersion(
             assessment = this,
             createdAt = now.minusDays(2),

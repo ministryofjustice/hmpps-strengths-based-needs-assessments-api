@@ -139,7 +139,7 @@ class LockTest(
       versionNumber = 0,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessment.assessmentVersions = mutableListOf(latestVersion, previousVersion)
     assessmentRepository.save(assessment)
 
     val request = """
@@ -192,7 +192,7 @@ class LockTest(
 
   @Test
   fun `it returns Conflict when the assessment is already locked`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         createdAt = LocalDateTime.now().minusHours(1),

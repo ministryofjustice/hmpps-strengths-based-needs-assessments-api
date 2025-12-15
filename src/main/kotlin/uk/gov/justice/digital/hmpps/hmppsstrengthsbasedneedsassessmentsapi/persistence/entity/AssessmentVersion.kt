@@ -33,8 +33,8 @@ enum class AnswerType {
 }
 
 data class Option(
-  val value: String,
-  val text: String,
+  val value: String = "",
+  val text: String = "",
 )
 
 data class Answer(
@@ -128,7 +128,7 @@ data class AssessmentVersion(
   val versionNumber: Int = 0,
 
   @OneToMany(mappedBy = "assessmentVersion", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-  var assessmentVersionAudit: List<AssessmentVersionAudit> = listOf(),
+  var assessmentVersionAudit: MutableList<AssessmentVersionAudit> = mutableListOf(),
 
   @Column(name = "deleted")
   var deleted: Boolean = false,

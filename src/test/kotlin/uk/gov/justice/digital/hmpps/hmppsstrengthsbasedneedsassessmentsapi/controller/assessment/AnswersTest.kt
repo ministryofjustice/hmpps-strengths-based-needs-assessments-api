@@ -103,7 +103,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(
@@ -155,7 +155,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(
@@ -208,7 +208,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(

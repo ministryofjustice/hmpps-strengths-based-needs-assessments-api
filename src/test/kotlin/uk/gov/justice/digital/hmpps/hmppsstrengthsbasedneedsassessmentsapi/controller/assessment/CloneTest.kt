@@ -132,7 +132,7 @@ class CloneTest(
 
   @Test
   fun `it clones and returns the latest version of the assessment`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(2),
@@ -197,7 +197,7 @@ class CloneTest(
 
   @Test
   fun `it clones from the latest non-deleted version of the assessment`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         updatedAt = LocalDateTime.now().minusDays(2),

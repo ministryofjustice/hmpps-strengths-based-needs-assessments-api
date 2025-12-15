@@ -47,7 +47,7 @@ class GetAssessmentVersionTest(
       oasysEquivalents = assessmentVersion1.oasysEquivalents + mapOf("q3" to "3"),
       versionNumber = 1,
     )
-    assessment.assessmentVersions = listOf(assessmentVersion1, assessmentVersion2)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion1, assessmentVersion2)
     assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
     assessmentRepository.save(assessment)
   }

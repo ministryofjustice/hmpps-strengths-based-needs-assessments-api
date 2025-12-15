@@ -142,7 +142,7 @@ class SignTest(
       versionNumber = 0,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessment.assessmentVersions = mutableListOf(latestVersion, previousVersion)
     assessmentRepository.save(assessment)
 
     val request = """
@@ -195,7 +195,7 @@ class SignTest(
 
   @Test
   fun `it returns Conflict when the assessment is already signed`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         answers = mapOf("assessment_complete" to Answer(value = "YES")),

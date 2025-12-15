@@ -186,7 +186,7 @@ class RollbackTest(
 
   @Test
   fun `it rolls back an assessment for a given version number`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(versionNumber = 1, assessment = assessment, tag = Tag.AWAITING_COUNTERSIGN),
     )
 
@@ -237,7 +237,7 @@ class RollbackTest(
 
   @Test
   fun `it returns Conflict when the assessment for the given version number is not in the correct state`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(versionNumber = 1, assessment = assessment, tag = Tag.UNSIGNED),
     )
 

@@ -17,6 +17,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0-beta")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-jackson")
+  implementation("tools.jackson.module:jackson-module-kotlin")
 
   // OAuth dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")

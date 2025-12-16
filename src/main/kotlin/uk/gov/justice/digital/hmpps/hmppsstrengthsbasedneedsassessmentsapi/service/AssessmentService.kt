@@ -25,6 +25,12 @@ class AssessmentService(
     .run(assessmentRepository::save)
     .also { log.info("Created assessment with UUID ${it.uuid}") }
 
+  @Transactional
+  fun delete(assessment: Assessment) {
+    assessmentRepository.delete(assessment)
+    log.info("Deleted assessment with UUID ${assessment.uuid}")
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }

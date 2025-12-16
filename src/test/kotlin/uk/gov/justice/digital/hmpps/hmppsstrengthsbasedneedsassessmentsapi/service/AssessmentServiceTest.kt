@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service
 
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -50,6 +52,20 @@ class AssessmentServiceTest {
 
       assertThat(result.uuid).isEqualTo(assessmentSlot.captured.uuid)
       assertThat(result.info?.formVersion).isEqualTo(formConfig.version)
+    }
+  }
+
+  @Nested
+  @DisplayName("delete")
+  inner class Delete {
+    @Test
+    fun `it deletes an assessment`() {
+      every { assessmentRepository.delete(any()) } just Runs
+
+      val assessment = Assessment()
+      assessmentService.delete(assessment)
+
+      verify(exactly = 1) { assessmentRepository.delete(assessment) }
     }
   }
 

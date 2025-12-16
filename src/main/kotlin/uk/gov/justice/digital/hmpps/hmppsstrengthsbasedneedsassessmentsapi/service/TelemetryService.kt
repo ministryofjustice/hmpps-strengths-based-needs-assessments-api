@@ -13,6 +13,7 @@ enum class Event {
   ASSESSMENT_ANSWERS_UPDATED,
   ASSESSMENT_STATUS_UPDATED,
   ASSESSMENT_SOFT_DELETED,
+  ASSESSMENT_DELETED,
   ASSESSMENT_UNDELETED,
   SECTION_COMPLETED,
   SECTION_UPDATED,
@@ -69,6 +70,11 @@ class TelemetryService(
       .apply { set(Property.PREVIOUS_STATUS, previousStatus.toString()) },
   )
 
+  fun assessmentDeleted(assessment: Assessment, userId: String) = track(
+    Event.ASSESSMENT_DELETED,
+    please().apply { putAll(propertiesFrom(assessment, userId)) },
+  )
+
   fun assessmentSoftDeleted(assessment: Assessment, userId: String, versions: List<AssessmentVersion>) = track(
     Event.ASSESSMENT_SOFT_DELETED,
     please().apply { putAll(propertiesFrom(assessment, userId, versions)) },
@@ -110,6 +116,13 @@ class TelemetryService(
 
   companion object {
     fun please(): Properties = mutableMapOf()
+
+    fun propertiesFrom(assessment: Assessment, userId: String): Properties = mutableMapOf(
+      Property.USER_ID to userId,
+      Property.TIMESTAMP to LocalDateTime.now().toString(),
+      Property.ASSESSMENT_ID to assessment.uuid.toString(),
+      Property.FORM_VERSION to (assessment.info?.formVersion ?: "Unknown"),
+    )
 
     fun propertiesFrom(assessmentVersion: AssessmentVersion, userId: String): Properties = mutableMapOf(
       Property.USER_ID to userId,

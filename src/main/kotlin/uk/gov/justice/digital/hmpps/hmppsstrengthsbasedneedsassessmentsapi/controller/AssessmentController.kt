@@ -296,6 +296,37 @@ class AssessmentController(
     .let { assessmentVersionService.rollback(it, request.userDetails) }
     .run(AssessmentResponse::from)
 
+  @RequestMapping(path = ["/{assessmentUuid}/delete"], method = [RequestMethod.POST])
+  @Operation(description = "Deletes an assessment from the database")
+  @ApiResponses(
+    value = [
+      ApiResponse(responseCode = "200", description = "Assessment has been deleted"),
+      ApiResponse(
+        responseCode = "404",
+        description = "Assessment not found",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+      ApiResponse(
+        responseCode = "500",
+        description = "Unexpected error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class))),
+      ),
+    ],
+  )
+  @PreAuthorize("hasAnyRole('ROLE_STRENGTHS_AND_NEEDS_OASYS', 'ROLE_STRENGTHS_AND_NEEDS_WRITE')")
+  fun delete(
+    @Parameter(description = "Assessment UUID", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+    @PathVariable
+    assessmentUuid: UUID,
+    @RequestBody @Valid
+    request: AuditedRequest,
+  ) = assessmentService.findByUuid(assessmentUuid)
+    .also {
+      it.assessmentVersions.first().audit(request.userDetails).run(assessmentVersionService::saveAudit)
+    }
+    .also { telemetryService.assessmentDeleted(it, request.userDetails.id) }
+    .run(assessmentService::delete)
+
   @RequestMapping(path = ["/{assessmentUuid}/soft-delete"], method = [RequestMethod.POST])
   @Operation(description = "Soft-deletes a range of assessment versions.")
   @ApiResponses(

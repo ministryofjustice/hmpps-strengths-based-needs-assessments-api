@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -19,18 +18,14 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
 import kotlin.test.assertEquals
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/rollback")
 class RollbackTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
-  @Autowired
-  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private fun endpoint(assessmentUuid: UUID? = null) = "/assessment/${assessmentUuid ?: assessment.uuid}/rollback"
 
@@ -191,7 +186,7 @@ class RollbackTest(
 
   @Test
   fun `it rolls back an assessment for a given version number`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(versionNumber = 1, assessment = assessment, tag = Tag.AWAITING_COUNTERSIGN),
     )
 
@@ -242,7 +237,7 @@ class RollbackTest(
 
   @Test
   fun `it returns Conflict when the assessment for the given version number is not in the correct state`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(versionNumber = 1, assessment = assessment, tag = Tag.UNSIGNED),
     )
 

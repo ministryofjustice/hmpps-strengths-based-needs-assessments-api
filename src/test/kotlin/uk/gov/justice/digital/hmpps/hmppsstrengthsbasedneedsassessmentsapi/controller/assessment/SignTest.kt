@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -20,18 +19,14 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/sign")
 class SignTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
-  @Autowired
-  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private val endpoint = { "/assessment/${assessment.uuid}/sign" }
@@ -147,7 +142,7 @@ class SignTest(
       versionNumber = 0,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessment.assessmentVersions = mutableListOf(latestVersion, previousVersion)
     assessmentRepository.save(assessment)
 
     val request = """
@@ -200,7 +195,7 @@ class SignTest(
 
   @Test
   fun `it returns Conflict when the assessment is already signed`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         answers = mapOf("assessment_complete" to Answer(value = "YES")),

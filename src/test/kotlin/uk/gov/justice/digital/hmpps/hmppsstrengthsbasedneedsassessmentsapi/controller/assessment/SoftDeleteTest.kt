@@ -6,11 +6,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.hibernate.Hibernate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -19,21 +19,17 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/soft-delete")
 class SoftDeleteTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
-  @Autowired
-  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private fun endpoint(assessmentUuid: UUID? = null) = "/assessment/${assessmentUuid ?: assessment.uuid}/soft-delete"
@@ -41,7 +37,7 @@ class SoftDeleteTest(
   @BeforeEach
   fun setUp() {
     assessment = Assessment()
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(assessment = assessment, versionNumber = 0),
       AssessmentVersion(assessment = assessment, versionNumber = 1),
       AssessmentVersion(assessment = assessment, versionNumber = 2),
@@ -333,7 +329,9 @@ class SoftDeleteTest(
       .exchange()
       .expectStatus().isOk
 
-    assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions).isEmpty()
+    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)!!
+    Hibernate.initialize(updatedAssessment.assessmentVersions)
+    assertThat(updatedAssessment.assessmentVersions).isEmpty()
 
     assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
       assertThat(count()).isEqualTo(4)

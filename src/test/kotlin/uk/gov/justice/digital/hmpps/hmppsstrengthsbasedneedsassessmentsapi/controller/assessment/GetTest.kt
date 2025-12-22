@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -18,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils
 import java.time.LocalDateTime
 import java.util.UUID
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}")
 class GetTest(
   @Autowired
@@ -49,7 +47,7 @@ class GetTest(
       versionNumber = 0,
     )
 
-    assessment.assessmentVersions = listOf(latestVersion, previousVersion)
+    assessment.assessmentVersions = mutableListOf(latestVersion, previousVersion)
     assessment.info = AssessmentFormInfo(formVersion = "1.0", assessment = assessment)
 
     assessmentRepository.save(assessment)

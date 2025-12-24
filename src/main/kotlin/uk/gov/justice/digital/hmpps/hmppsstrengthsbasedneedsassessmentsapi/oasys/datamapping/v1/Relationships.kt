@@ -115,14 +115,10 @@ class Relationships : SectionMapping() {
     else -> null
   }
 
-  private fun q8(): Any? = when (ap.answer(Field.LIVING_WITH).values?.contains(ap.get(Value.PARTNER))) {
-    true -> "1"
-    false -> when (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE).values?.contains(ap.get(Value.PARTNER_INTIMATE_RELATIONSHIP))) {
-      true -> "2"
-      false -> "3"
-      else -> null
-    }
-    else -> null
+  private fun q8(): Any? = when {
+    (ap.answer(Field.LIVING_WITH).values?.contains(ap.get(Value.PARTNER)) == true) -> "1"
+    (ap.answer(Field.PERSONAL_RELATIONSHIPS_COMMUNITY_IMPORTANT_PEOPLE).values?.contains(ap.get(Value.PARTNER_INTIMATE_RELATIONSHIP)) == true) -> "2"
+    else -> "3"
   }
 
   private fun q9(): Any? {

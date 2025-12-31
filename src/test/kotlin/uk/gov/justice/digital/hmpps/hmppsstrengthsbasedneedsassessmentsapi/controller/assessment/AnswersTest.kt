@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UpdateAssessmentAnswersRequest
@@ -25,20 +24,16 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentVersionRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.util.UUID
 import kotlin.test.assertEquals
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/answers")
 class AnswersTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
   @Autowired
   val assessmentVersionRepository: AssessmentVersionRepository,
-  @Autowired
-  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
 
@@ -108,7 +103,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(
@@ -160,7 +155,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(
@@ -213,7 +208,7 @@ class AnswersTest(
       ),
     )
 
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     assessmentRepository.save(assessment)
 
     val request = UpdateAssessmentAnswersRequest(

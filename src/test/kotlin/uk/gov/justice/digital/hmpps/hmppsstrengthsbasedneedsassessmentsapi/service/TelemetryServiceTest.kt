@@ -39,7 +39,7 @@ class TelemetryServiceTest {
 
   @BeforeEach
   fun setUp() {
-    assessment.assessmentVersions = listOf(assessmentVersion)
+    assessment.assessmentVersions = mutableListOf(assessmentVersion)
     clearAllMocks()
     every { telemetryClient.trackEvent(any(), any(), null) } just Runs
   }

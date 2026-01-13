@@ -4,9 +4,9 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0-beta"
-  kotlin("plugin.spring") version "2.2.21"
-  id("org.jetbrains.kotlin.kapt") version "2.2.21"
-  id("org.jetbrains.kotlinx.kover") version "0.9.3"
+  kotlin("plugin.spring") version "2.3.0"
+  id("org.jetbrains.kotlin.kapt") version "2.3.0"
+  id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 configurations {

@@ -14,6 +14,8 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
@@ -32,6 +34,9 @@ abstract class IntegrationTest {
 
   @Autowired
   lateinit var entityManager: EntityManager
+
+  @Autowired
+  lateinit var transactionManager: PlatformTransactionManager
 
   @Autowired
   internal lateinit var jwtAuthHelper: JwtAuthorisationHelper
@@ -80,4 +85,6 @@ abstract class IntegrationTest {
     roles: List<String> = listOf(),
     scopes: List<String> = listOf("read"),
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisationHeader(username = username, scope = scopes, roles = roles)
+
+  protected fun transactional() = TransactionTemplate(transactionManager)
 }

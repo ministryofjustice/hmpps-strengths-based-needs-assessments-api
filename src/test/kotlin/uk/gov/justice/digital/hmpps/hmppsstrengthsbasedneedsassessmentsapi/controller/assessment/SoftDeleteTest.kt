@@ -254,20 +254,22 @@ class SoftDeleteTest(
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(1)
 
-    assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
-      assertThat(count()).isEqualTo(2)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1) } })
-    }
+    transactional().execute {
+      assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
+        assertThat(count()).isEqualTo(2)
+        assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1) } })
+      }
 
-    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
-      assertThat(count()).isEqualTo(2)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(2, 3) } })
-      verify(exactly = 1) {
-        telemetryService.assessmentSoftDeleted(
-          withArg { assertEquals(assessment.uuid, it.uuid) },
-          "user-id",
-          withArg { assertTrue(it.all { version -> version.versionNumber in listOf(2, 3) }) },
-        )
+      assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
+        assertThat(count()).isEqualTo(2)
+        assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(2, 3) } })
+        verify(exactly = 1) {
+          telemetryService.assessmentSoftDeleted(
+            withArg { assertEquals(assessment.uuid, it.uuid) },
+            "user-id",
+            withArg { assertTrue(it.all { version -> version.versionNumber in listOf(2, 3) }) },
+          )
+        }
       }
     }
   }
@@ -295,20 +297,22 @@ class SoftDeleteTest(
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(3)
 
-    assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
-      assertThat(count()).isEqualTo(2)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 3) } })
-    }
+    transactional().execute {
+      assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
+        assertThat(count()).isEqualTo(2)
+        assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 3) } })
+      }
 
-    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
-      assertThat(count()).isEqualTo(2)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(1, 2) } })
-      verify(exactly = 1) {
-        telemetryService.assessmentSoftDeleted(
-          withArg { assertEquals(assessment.uuid, it.uuid) },
-          "user-id",
-          withArg { assertTrue(it.all { version -> version.versionNumber in listOf(1, 2) }) },
-        )
+      assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
+        assertThat(count()).isEqualTo(2)
+        assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(1, 2) } })
+        verify(exactly = 1) {
+          telemetryService.assessmentSoftDeleted(
+            withArg { assertEquals(assessment.uuid, it.uuid) },
+            "user-id",
+            withArg { assertTrue(it.all { version -> version.versionNumber in listOf(1, 2) }) },
+          )
+        }
       }
     }
   }
@@ -329,21 +333,23 @@ class SoftDeleteTest(
       .exchange()
       .expectStatus().isOk
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)!!
-    Hibernate.initialize(updatedAssessment.assessmentVersions)
-    assertThat(updatedAssessment.assessmentVersions).isEmpty()
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)!!
+      Hibernate.initialize(updatedAssessment.assessmentVersions)
+      assertThat(updatedAssessment.assessmentVersions).isEmpty()
 
-    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
-      assertThat(count()).isEqualTo(4)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(0, 1, 2, 3) } })
-    }
+      assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
+        assertThat(count()).isEqualTo(4)
+        assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(0, 1, 2, 3) } })
+      }
 
-    verify(exactly = 1) {
-      telemetryService.assessmentSoftDeleted(
-        withArg { assertEquals(assessment.uuid, it.uuid) },
-        "user-id",
-        withArg { assertTrue(it.all { version -> version.versionNumber in listOf(0, 1, 2, 3) }) },
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentSoftDeleted(
+          withArg { assertEquals(assessment.uuid, it.uuid) },
+          "user-id",
+          withArg { assertTrue(it.all { version -> version.versionNumber in listOf(0, 1, 2, 3) }) },
+        )
+      }
     }
   }
 }

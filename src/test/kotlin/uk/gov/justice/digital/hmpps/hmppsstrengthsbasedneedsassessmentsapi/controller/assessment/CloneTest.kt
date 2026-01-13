@@ -164,34 +164,36 @@ class CloneTest(
       .returnResult()
       .responseBody
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(3)
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(3)
 
-    val clonedVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 2 }
-    val previousVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 1 }
+      val clonedVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 2 }
+      val previousVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 1 }
 
-    assertThat(clonedVersion).isNotNull
-    assertThat(previousVersion).isNotNull
-    assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
+      assertThat(clonedVersion).isNotNull
+      assertThat(previousVersion).isNotNull
+      assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+      assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = clonedVersion.assessmentVersionAudit.first()
-    assertThat(audit.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = clonedVersion.assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isNull()
+      assertThat(audit.statusTo).isNull()
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(clonedVersion.uuid, it.uuid) },
-        "user-id",
-        previousVersion?.versionNumber,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentCreated(
+          withArg { assertEquals(clonedVersion.uuid, it.uuid) },
+          "user-id",
+          previousVersion?.versionNumber,
+        )
+      }
     }
   }
 
@@ -230,34 +232,36 @@ class CloneTest(
       .returnResult()
       .responseBody
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
 
-    val clonedVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 2 }
-    val previousVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 0 }
+      val clonedVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 2 }
+      val previousVersion = updatedAssessment.assessmentVersions.find { it.versionNumber == 0 }
 
-    assertThat(clonedVersion).isNotNull
-    assertThat(previousVersion).isNotNull
-    assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
+      assertThat(clonedVersion).isNotNull
+      assertThat(previousVersion).isNotNull
+      assertThat(clonedVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+      assertThat(clonedVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = clonedVersion.assessmentVersionAudit.first()
-    assertThat(audit.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = clonedVersion.assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isNull()
+      assertThat(audit.statusTo).isNull()
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.versionNumber).isEqualTo(clonedVersion.versionNumber).isEqualTo(2)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(clonedVersion.uuid, it.uuid) },
-        "user-id",
-        previousVersion?.versionNumber,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentCreated(
+          withArg { assertEquals(clonedVersion.uuid, it.uuid) },
+          "user-id",
+          previousVersion?.versionNumber,
+        )
+      }
     }
   }
 }

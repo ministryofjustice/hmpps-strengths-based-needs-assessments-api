@@ -209,29 +209,31 @@ class RollbackTest(
       .returnResult()
       .responseBody
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(1)
-    val rolledBackVersion = updatedAssessment.assessmentVersions.first()
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(1)
+      val rolledBackVersion = updatedAssessment.assessmentVersions.first()
 
-    assertThat(rolledBackVersion.tag).isEqualTo(Tag.ROLLED_BACK)
-    assertThat(rolledBackVersion.assessmentVersionAudit.count()).isEqualTo(1)
+      assertThat(rolledBackVersion.tag).isEqualTo(Tag.ROLLED_BACK)
+      assertThat(rolledBackVersion.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = rolledBackVersion.assessmentVersionAudit.first()
-    assertThat(audit.statusFrom).isEqualTo(Tag.AWAITING_COUNTERSIGN)
-    assertThat(audit.statusTo).isEqualTo(Tag.ROLLED_BACK)
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = rolledBackVersion.assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isEqualTo(Tag.AWAITING_COUNTERSIGN)
+      assertThat(audit.statusTo).isEqualTo(Tag.ROLLED_BACK)
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    assertThat(response?.metaData?.versionNumber).isEqualTo(1)
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.versionNumber).isEqualTo(1)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentStatusUpdated(
-        withArg { assertEquals(rolledBackVersion.uuid, it.uuid) },
-        "user-id",
-        Tag.AWAITING_COUNTERSIGN,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentStatusUpdated(
+          withArg { assertEquals(rolledBackVersion.uuid, it.uuid) },
+          "user-id",
+          Tag.AWAITING_COUNTERSIGN,
+        )
+      }
     }
   }
 

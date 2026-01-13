@@ -158,35 +158,37 @@ class LockTest(
       .returnResult()
       .responseBody
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(2)
 
-    val updatedLatestVersion = updatedAssessment.assessmentVersions.find { it.uuid == latestVersion.uuid }
-    val updatedPreviousVersion = updatedAssessment.assessmentVersions.find { it.uuid == previousVersion.uuid }
+      val updatedLatestVersion = updatedAssessment.assessmentVersions.find { it.uuid == latestVersion.uuid }
+      val updatedPreviousVersion = updatedAssessment.assessmentVersions.find { it.uuid == previousVersion.uuid }
 
-    assertThat(updatedLatestVersion).isNotNull
-    assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
-    assertThat(updatedPreviousVersion).isNotNull
-    assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
+      assertThat(updatedLatestVersion).isNotNull
+      assertThat(updatedLatestVersion?.tag).isEqualTo(Tag.LOCKED_INCOMPLETE)
+      assertThat(updatedPreviousVersion).isNotNull
+      assertThat(updatedPreviousVersion?.tag).isEqualTo(Tag.UNSIGNED)
 
-    assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
+      assertThat(updatedLatestVersion!!.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = updatedLatestVersion.assessmentVersionAudit.first()
-    assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
-    assertThat(audit.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = updatedLatestVersion.assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isEqualTo(Tag.UNSIGNED)
+      assertThat(audit.statusTo).isEqualTo(Tag.LOCKED_INCOMPLETE)
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    assertThat(response?.metaData?.versionNumber).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.versionNumber).isEqualTo(updatedLatestVersion.versionNumber).isEqualTo(1)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentStatusUpdated(
-        withArg { assertEquals(updatedLatestVersion.uuid, it.uuid) },
-        "user-id",
-        Tag.UNSIGNED,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentStatusUpdated(
+          withArg { assertEquals(updatedLatestVersion.uuid, it.uuid) },
+          "user-id",
+          Tag.UNSIGNED,
+        )
+      }
     }
   }
 

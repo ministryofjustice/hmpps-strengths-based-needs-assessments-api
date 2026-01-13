@@ -141,25 +141,27 @@ class CreateTest(
       .returnResult()
       .responseBody
 
-    val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
+    transactional().execute {
+      val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
 
-    assertThat(newAssessment).isNotNull
-    assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
-    assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
+      assertThat(newAssessment).isNotNull
+      assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
+      assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
 
-    val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
-    assertThat(audit).isNotNull
-    assertThat(audit!!.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
+      assertThat(audit).isNotNull
+      assertThat(audit!!.statusFrom).isNull()
+      assertThat(audit.statusTo).isNull()
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
-        "user-id",
-        null,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentCreated(
+          withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
+          "user-id",
+          null,
+        )
+      }
     }
   }
 
@@ -181,26 +183,28 @@ class CreateTest(
       .returnResult()
       .responseBody
 
-    val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
+    transactional().execute {
+      val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
 
-    assertThat(newAssessment).isNotNull
-    assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
-    assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
+      assertThat(newAssessment).isNotNull
+      assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
+      assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
 
-    val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
-    assertThat(audit).isNotNull
-    assertThat(audit!!.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
-    assertThat(audit.userDetails.location).isEqualTo(UserLocation.COMMUNITY)
+      val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
+      assertThat(audit).isNotNull
+      assertThat(audit!!.statusFrom).isNull()
+      assertThat(audit.statusTo).isNull()
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      assertThat(audit.userDetails.location).isEqualTo(UserLocation.COMMUNITY)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
-        "user-id",
-        null,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentCreated(
+          withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
+          "user-id",
+          null,
+        )
+      }
     }
   }
 
@@ -222,26 +226,28 @@ class CreateTest(
       .returnResult()
       .responseBody
 
-    val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
+    transactional().execute {
+      val newAssessment = assessmentRepository.findByUuid(response?.metaData?.uuid!!)
 
-    assertThat(newAssessment).isNotNull
-    assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
-    assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
+      assertThat(newAssessment).isNotNull
+      assertThat(newAssessment?.assessmentVersions?.count()).isEqualTo(1)
+      assertThat(newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.count()).isEqualTo(1)
 
-    val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
-    assertThat(audit).isNotNull
-    assertThat(audit!!.statusFrom).isNull()
-    assertThat(audit.statusTo).isNull()
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
-    assertThat(audit.userDetails.location).isEqualTo(UserLocation.PRISON)
+      val audit = newAssessment?.assessmentVersions?.first()?.assessmentVersionAudit?.first()
+      assertThat(audit).isNotNull
+      assertThat(audit!!.statusFrom).isNull()
+      assertThat(audit.statusTo).isNull()
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      assertThat(audit.userDetails.location).isEqualTo(UserLocation.PRISON)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentCreated(
-        withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
-        "user-id",
-        null,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentCreated(
+          withArg { assertEquals(newAssessment.assessmentVersions.last().uuid, it.uuid) },
+          "user-id",
+          null,
+        )
+      }
     }
   }
 }

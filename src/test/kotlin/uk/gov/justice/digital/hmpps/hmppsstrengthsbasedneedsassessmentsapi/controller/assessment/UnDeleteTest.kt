@@ -199,8 +199,11 @@ class UnDeleteTest(
       .exchange()
       .expectStatus().isNotFound
 
-    assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
-    assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    transactional().execute {
+      assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
+      assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    }
+
     verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
@@ -226,8 +229,10 @@ class UnDeleteTest(
 
     assertThat(response?.userMessage).isEqualTo("No assessment versions found for un-deletion")
 
-    assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
-    assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    transactional().execute {
+      assertThat(assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().size).isEqualTo(2)
+      assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid).size).isEqualTo(2)
+    }
     verify(exactly = 0) { telemetryService.assessmentUndeleted(any(), any(), any()) }
   }
 
@@ -253,12 +258,14 @@ class UnDeleteTest(
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(3)
 
-    assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
-      assertThat(count()).isEqualTo(4)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2, 3) } })
-    }
+    transactional().execute {
+      assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
+        assertThat(count()).isEqualTo(4)
+        assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2, 3) } })
+      }
 
-    assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid)).isEmpty()
+      assertThat(assessmentVersionRepository.findAllDeleted(assessment.uuid)).isEmpty()
+    }
 
     verify(exactly = 1) {
       telemetryService.assessmentUndeleted(
@@ -292,14 +299,16 @@ class UnDeleteTest(
     assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
     assertThat(response?.metaData?.versionNumber).isEqualTo(2)
 
-    assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
-      assertThat(count()).isEqualTo(3)
-      assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2) } })
-    }
+    transactional().execute {
+      assessmentRepository.findByUuid(assessment.uuid)?.assessmentVersions.orEmpty().run {
+        assertThat(count()).isEqualTo(3)
+        assertTrue(all { version -> with(version) { !deleted && versionNumber in listOf(0, 1, 2) } })
+      }
 
-    assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
-      assertThat(count()).isEqualTo(1)
-      assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(3) } })
+      assessmentVersionRepository.findAllDeleted(assessment.uuid).run {
+        assertThat(count()).isEqualTo(1)
+        assertTrue(all { version -> with(version) { deleted && versionNumber in listOf(3) } })
+      }
     }
 
     verify(exactly = 1) {

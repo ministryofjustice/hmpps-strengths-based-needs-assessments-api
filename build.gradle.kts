@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0-beta"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0"
   kotlin("plugin.spring") version "2.3.0"
   id("org.jetbrains.kotlin.kapt") version "2.3.0"
   id("org.jetbrains.kotlinx.kover") version "0.9.4"
@@ -14,7 +14,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0-beta")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-jackson")
   implementation("tools.jackson.module:jackson-module-kotlin")
@@ -35,7 +35,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
 
   // Test dependencies
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0-beta")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
   testImplementation("com.ninja-squad:springmockk:5.0.1")

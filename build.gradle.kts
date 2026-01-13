@@ -38,7 +38,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0-beta")
   testImplementation("com.h2database:h2")
   testImplementation(kotlin("test"))
-  testImplementation("com.ninja-squad:springmockk:4.0.2")
+  testImplementation("com.ninja-squad:springmockk:5.0.1")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
 

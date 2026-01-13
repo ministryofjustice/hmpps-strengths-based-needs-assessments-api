@@ -130,6 +130,21 @@ class TelemetryServiceTest {
   }
 
   @Test
+  fun assessmentDeleted() {
+    telemetryService.assessmentDeleted(assessment, "user-id")
+
+    verifyTracked(
+      Event.ASSESSMENT_DELETED,
+      mapOf(
+        Property.USER_ID.name to "user-id",
+        Property.TIMESTAMP.name to LocalDateTime.now().toString(),
+        Property.ASSESSMENT_ID.name to assessment.uuid.toString(),
+        Property.FORM_VERSION.name to "1.0",
+      ),
+    )
+  }
+
+  @Test
   fun assessmentSoftDeleted() {
     telemetryService.assessmentSoftDeleted(assessment, "user-id", assessment.assessmentVersions)
 

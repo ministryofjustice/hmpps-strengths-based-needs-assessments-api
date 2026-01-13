@@ -18,7 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class FormConfigProviderTest: IntegrationTest() {
+class FormConfigProviderTest : IntegrationTest() {
   private val mockHttpClient: HttpClient = mockk()
   private val appConfig: ApplicationConfig = ApplicationConfig(
     formConfigBaseUrl = "http://test-url/config",

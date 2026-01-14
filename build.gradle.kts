@@ -5,24 +5,26 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0"
   kotlin("plugin.spring") version "2.3.0"
+  kotlin("plugin.jpa") version "2.3.0"
   id("org.jetbrains.kotlin.kapt") version "2.3.0"
   id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+  // exclude until we update the base image
+  configureEach {
+    exclude(group = "io.netty", module = "netty-codec-http3")
+    exclude(group = "io.netty", module = "netty-codec-native-quic")
+    exclude(group = "io.netty", module = "netty-codec-classes-quic")
+  }
 }
 
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springframework.boot:spring-boot-starter-jackson")
-  implementation("tools.jackson.module:jackson-module-kotlin")
-
-  // OAuth dependencies
-  implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-oauth2-client")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("tools.jackson.module:jackson-module-kotlin:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -31,19 +33,10 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.1.0.Final")
 
-  // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
-
   // Test dependencies
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
-  testImplementation("com.h2database:h2")
-  testImplementation(kotlin("test"))
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.0")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
-
-  // Dev dependencies
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 kotlin {
@@ -73,7 +66,7 @@ tasks.register<Test>("integrationTests") {
   }
 }
 
-// this is to address JLLeitschuh/ktlint-gradle#809
-ktlint {
-  version = "1.5.0"
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.compilerOptions {
+  freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }

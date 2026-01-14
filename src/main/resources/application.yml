@@ -25,14 +25,10 @@ spring:
       client:
         provider:
           hmpps-auth:
-            token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+            token-uri: ${app.services.hmpps-auth.url}/oauth/token
       resourceserver:
         jwt:
-          jwk-set-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/.well-known/jwks.json
-
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
+          jwk-set-uri: ${app.services.hmpps-auth.url}/.well-known/jwks.json
 
   jackson:
     mapper:
@@ -77,6 +73,9 @@ management:
 app:
   form-config:
     base-url: ${form-config.base-url:http://localhost:3000/config}
+  services:
+    hmpps-auth:
+      url: ${oauth.endpoint.url:http://localhost:9090/auth}
 
 logging:
   level:

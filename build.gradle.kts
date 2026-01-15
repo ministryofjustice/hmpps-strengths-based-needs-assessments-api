@@ -29,9 +29,9 @@ dependencies {
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.postgresql:postgresql:42.7.8")
+  implementation("org.postgresql:postgresql:42.7.9")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.1.0.Final")
+  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.2.1.Final")
 
   // Test dependencies
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")

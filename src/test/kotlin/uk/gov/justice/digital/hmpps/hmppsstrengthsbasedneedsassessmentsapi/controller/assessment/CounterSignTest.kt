@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.response.AssessmentResponse
@@ -19,17 +18,13 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Tag
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import kotlin.test.assertEquals
 
-@AutoConfigureWebTestClient(timeout = "6000000")
 @DisplayName("AssessmentController: /assessment/{assessmentUuid}/counter-sign")
 class CounterSignTest(
   @Autowired
   val assessmentRepository: AssessmentRepository,
-  @Autowired
-  val telemetryService: TelemetryService,
 ) : IntegrationTest() {
   private lateinit var assessment: Assessment
   private val endpoint = { "/assessment/${assessment.uuid}/counter-sign" }
@@ -166,7 +161,7 @@ class CounterSignTest(
 
   @Test
   fun `it updates the assessment version and returns it as counter-signed`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.AWAITING_COUNTERSIGN,
@@ -193,29 +188,31 @@ class CounterSignTest(
       .returnResult()
       .responseBody
 
-    val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
+    transactional().execute {
+      val updatedAssessment = assessmentRepository.findByUuid(assessment.uuid)
 
-    assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(1)
-    val counterSignedVersion = updatedAssessment.assessmentVersions.first()
+      assertThat(updatedAssessment!!.assessmentVersions.count()).isEqualTo(1)
+      val counterSignedVersion = updatedAssessment.assessmentVersions.first()
 
-    assertThat(counterSignedVersion.tag).isEqualTo(Tag.COUNTERSIGNED)
-    assertThat(counterSignedVersion.assessmentVersionAudit.count()).isEqualTo(1)
+      assertThat(counterSignedVersion.tag).isEqualTo(Tag.COUNTERSIGNED)
+      assertThat(counterSignedVersion.assessmentVersionAudit.count()).isEqualTo(1)
 
-    val audit = counterSignedVersion.assessmentVersionAudit.first()
-    assertThat(audit.statusFrom).isEqualTo(Tag.AWAITING_COUNTERSIGN)
-    assertThat(audit.statusTo).isEqualTo(Tag.COUNTERSIGNED)
-    assertThat(audit.userDetails.id).isEqualTo("user-id")
-    assertThat(audit.userDetails.name).isEqualTo("John Doe")
+      val audit = counterSignedVersion.assessmentVersionAudit.first()
+      assertThat(audit.statusFrom).isEqualTo(Tag.AWAITING_COUNTERSIGN)
+      assertThat(audit.statusTo).isEqualTo(Tag.COUNTERSIGNED)
+      assertThat(audit.userDetails.id).isEqualTo("user-id")
+      assertThat(audit.userDetails.name).isEqualTo("John Doe")
 
-    assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
-    assertThat(response?.metaData?.versionNumber).isEqualTo(1)
+      assertThat(response?.metaData?.uuid).isEqualTo(assessment.uuid)
+      assertThat(response?.metaData?.versionNumber).isEqualTo(1)
 
-    verify(exactly = 1) {
-      telemetryService.assessmentStatusUpdated(
-        withArg { assertEquals(counterSignedVersion.uuid, it.uuid) },
-        "user-id",
-        Tag.AWAITING_COUNTERSIGN,
-      )
+      verify(exactly = 1) {
+        telemetryService.assessmentStatusUpdated(
+          withArg { assertEquals(counterSignedVersion.uuid, it.uuid) },
+          "user-id",
+          Tag.AWAITING_COUNTERSIGN,
+        )
+      }
     }
   }
 
@@ -247,7 +244,7 @@ class CounterSignTest(
 
   @Test
   fun `it returns Conflict when the requested outcome is invalid`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.AWAITING_COUNTERSIGN,
@@ -281,7 +278,7 @@ class CounterSignTest(
 
   @Test
   fun `it returns Conflict when the assessment version cannot be counter-signed due to its status`() {
-    assessment.assessmentVersions = listOf(
+    assessment.assessmentVersions = mutableListOf(
       AssessmentVersion(
         assessment = assessment,
         tag = Tag.UNSIGNED,

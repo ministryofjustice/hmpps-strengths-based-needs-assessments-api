@@ -1,14 +1,16 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Nested
+import org.springframework.beans.factory.annotation.Autowired
+import tools.jackson.databind.ObjectMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.ApplicationConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.formconfig.exception.FormConfigNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentFormInfo
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import kotlin.test.BeforeTest
@@ -16,17 +18,22 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class FormConfigProviderTest {
+class FormConfigProviderTest : IntegrationTest() {
   private val mockHttpClient: HttpClient = mockk()
   private val appConfig: ApplicationConfig = ApplicationConfig(
     formConfigBaseUrl = "http://test-url/config",
     activeProfiles = "",
   )
-  private val sut = FormConfigProvider(appConfig, mockHttpClient, jacksonObjectMapper())
+
+  @Autowired
+  private lateinit var objectMapper: ObjectMapper
+
+  private lateinit var sut: FormConfigProvider
 
   @BeforeTest
   fun setUp() {
     clearAllMocks()
+    sut = FormConfigProvider(appConfig, mockHttpClient, objectMapper)
   }
 
   @Nested

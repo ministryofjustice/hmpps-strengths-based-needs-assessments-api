@@ -681,7 +681,7 @@ class AssessmentVersionServiceTest {
     fun `it soft-deletes the provided assessment versions`() {
       val user = UserDetails("user-id", "User Name")
       val assessment = Assessment()
-      assessment.assessmentVersions = listOf(
+      assessment.assessmentVersions = mutableListOf(
         AssessmentVersion(assessment = assessment),
         AssessmentVersion(assessment = assessment),
       )

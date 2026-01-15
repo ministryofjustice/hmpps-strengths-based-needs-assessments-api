@@ -33,10 +33,10 @@ data class Assessment(
   var info: AssessmentFormInfo? = null,
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-  var assessmentVersions: List<AssessmentVersion> = listOf(),
+  var assessmentVersions: MutableList<AssessmentVersion> = mutableListOf(),
 
   @OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-  var oasysAssessments: List<OasysAssessment> = listOf(),
+  var oasysAssessments: MutableList<OasysAssessment> = mutableListOf(),
 ) {
   companion object {
     fun new(formConfig: FormConfig): Assessment = Assessment()
@@ -46,7 +46,7 @@ data class Assessment(
           assessment = this,
         )
 
-        assessmentVersions = listOf(
+        assessmentVersions = mutableListOf(
           AssessmentVersion(assessment = this, versionNumber = 0, tag = Tag.UNSIGNED),
         )
       }

@@ -55,6 +55,7 @@ jobs:
         with:
           repository: ministryofjustice/hmpps-strengths-based-needs-assessments-ui
           path: e2e-test-ui
+          ref: main-clean # TODO: remove once this becomes main
 
       - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@v1
         with:

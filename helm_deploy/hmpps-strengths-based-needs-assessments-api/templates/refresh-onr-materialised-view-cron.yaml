@@ -1,0 +1,84 @@
+{{- if .Values.is_production -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: update-onr-view
+  labels:
+    app: hmpps-strengths-based-needs-assessment
+    release: {{ .Release.Name }}
+data:
+  sql: |-
+    // TODO //
+  script: |-
+    #!/bin/bash
+    set -e
+    
+    export PGPASSFILE=/tmp/.pgpass
+    echo "${DB_HOST}:5432:${DB_NAME}:${DB_USER}:${DB_PASS}" > $PGPASSFILE
+    chmod 0600 $PGPASSFILE
+    
+    set -x
+    psql --host="$DB_HOST" --username="$DB_USER" --file=update-onr-view.sql
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-onr-view
+  labels:
+    app: hmpps-strengths-based-needs-assessment
+    release: {{ .Release.Name }}
+spec:
+  schedule: "55 23 * * *"
+  concurrencyPolicy: "Forbid"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      backoffLimit: 0
+      activeDeadlineSeconds: 1200
+      template:
+        spec:
+          securityContext:
+            runAsUser: 999
+          containers:
+            - name: psql
+              image: "postgres:16"
+              command:
+                - /bin/update-onr-view.sh
+              volumeMounts:
+                - name: update-onr-view
+                  mountPath: /bin
+                  readOnly: true
+              env:
+                - name: DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
+                      key: database_name
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
+                      key: database_username
+                - name: DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
+                      key: database_password
+                - name: DB_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: hmpps-strengths-based-needs-assessments-rds-instance
+                      key: rds_instance_address
+          restartPolicy: "Never"
+      volumes:
+        - name: create-onr-view
+          configMap:
+            name: create-onr-view
+            defaultMode: 0755
+            items:
+              - key: sql
+                path: update-onr-view.sql
+              - key: script
+                path: update-onr-view.sh
+{{- end }}

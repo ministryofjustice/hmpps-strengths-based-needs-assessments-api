@@ -27,7 +27,7 @@ services:
     ports:
       - "7070:7070"
 
-  oastub:
+  aap-ui:
     ports:
       - "7072:3000"
 

@@ -14,11 +14,14 @@ services:
       test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
       interval: 5s
       retries: 60
+    volumes:
+      - ./docker/auth_db:/auth_db
     environment:
       SERVER_PORT: 9090
       SPRING_PROFILES_ACTIVE: dev
       APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+      SPRING_FLYWAY_LOCATIONS: classpath:db/auth,db/auth_{vendor},db/dev/data/auth_{vendor},db/dev/data/auth,filesystem:/auth_db
 
   postgres:
     image: postgres:16
@@ -81,11 +84,16 @@ services:
     networks:
       - hmpps
     depends_on:
-      - redis
-      - hmpps-auth
-      - arns-handover
-      - oastub
-      - coordinator-api
+      redis:
+        condition: service_started
+      hmpps-auth:
+        condition: service_healthy
+      arns-handover:
+        condition: service_healthy
+      aap-ui:
+        condition: service_started
+      coordinator-api:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "node", "./docker/healthcheck.js" ]
       interval: 5s
@@ -141,34 +149,52 @@ services:
       CLIENT_SAN_SECRET: san-secret
       CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
       CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
+      CLIENT_SP_SECRET: sp-secret
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3001/sign-in/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3001/sign-in
 
-  oastub:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-oastub-ui:latest
+  aap-ui:
+    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:latest
     networks:
       - hmpps
     depends_on:
       - redis
-    healthcheck:
-      test: [ "CMD", "node", "/healthcheck.js" ]
-      interval: 5s
-      retries: 60
+      - hmpps-auth
+      - arns-handover
+      - coordinator-api
     environment:
+      PRODUCT_ID: ARNS
       REDIS_ENABLED: "true"
-      SYSTEM_CLIENT_SECRET: clientsecret
-      SYSTEM_CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
-      SESSION_SECRET: sessionsecret
       REDIS_HOST: redis
+      SESSION_SECRET: sessionsecret
       INGRESS_URL: http://localhost:7072
-      HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      NO_HTTPS: "true"
+      AUTH_CODE_CLIENT_ID: hmpps-arns-assessment-platform-ui
+      AUTH_CODE_CLIENT_SECRET: clientsecret
+      CLIENT_CREDS_CLIENT_ID: hmpps-arns-assessment-platform-ui-system
+      CLIENT_CREDS_CLIENT_SECRET: clientsecret
       TOKEN_VERIFICATION_ENABLED: "false"
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
+      HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
-      COORDINATOR_API_URL: "http://coordinator-api:8080"
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      COORDINATOR_API_URL: http://coordinator-api:8080
+      AAP_API_URL: http://coordinator-api:8080
+      OASYS_URL: http://localhost:7072
       ENVIRONMENT_NAME: DEV
       AUDIT_ENABLED: "false"
-      PRODUCT_ID: FOO
-    volumes:
-      - ./docker/healthcheck.js:/healthcheck.js
+      AUDIT_SQS_QUEUE_URL: http://localstack:4566/000000000000/audit-queue
+      AUDIT_SQS_REGION: eu-west-2
+      AUDIT_SERVICE_NAME: hmpps-arns-assessment-platform-ui
+      HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
+      HMPPS_ARNS_HANDOVER_CLIENT_SECRET: sp-secret
+      DELIUS_API_URL: http://localhost:8081
+      ARNS_API_URL: http://localhost:8082
+      TIER_API_URL: http://localhost:8083
+      INTERVENTIONS_API_URL: http://localhost:8084
+      SAN_EXTERNAL_URL: http://localhost:3000
+      TRAINING_SESSION_LAUNCHER_ENABLED: "true"
 
   localstack:
     image: localstack/localstack:4

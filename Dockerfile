@@ -3,6 +3,8 @@ FROM gradle:9-jdk21-alpine AS builder
 FROM eclipse-temurin:25.0.1_8-jre-alpine AS runtime
 
 FROM builder AS build
+ARG BUILD_NUMBER
+ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
 WORKDIR /app
 ADD . .
 RUN gradle --no-daemon assemble

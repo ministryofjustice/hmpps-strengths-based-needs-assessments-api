@@ -45,7 +45,7 @@ generic-service:
   allowlist:
     groups:
       - internal
-      -
+
 global:
   environment: ""
 

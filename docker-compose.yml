@@ -7,7 +7,7 @@ services:
       ALLOW_EMPTY_PASSWORD: yes
 
   hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth
+    image: ghcr.io/ministryofjustice/hmpps-auth:2026-01-19.282.b6537e8
     networks:
       - hmpps
     healthcheck:
@@ -159,42 +159,74 @@ services:
       - hmpps
     depends_on:
       - redis
-      - hmpps-auth
-      - arns-handover
+      - localstack
+      - aap-api
       - coordinator-api
+      - arns-handover
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--spider", "http://aap-ui:3000/health" ]
+      interval: 5s
+      retries: 60
     environment:
-      PRODUCT_ID: ARNS
-      REDIS_ENABLED: "true"
+      PRODUCT_ID: 'UNASSIGNED'
+      REDIS_ENABLED: true
       REDIS_HOST: redis
-      SESSION_SECRET: sessionsecret
-      INGRESS_URL: http://localhost:7072
-      NO_HTTPS: "true"
+      SESSION_SECRET: somesecretvalue
+      INGRESS_URL: http://localhost:3000
+      NO_HTTPS: true
       AUTH_CODE_CLIENT_ID: hmpps-arns-assessment-platform-ui
       AUTH_CODE_CLIENT_SECRET: clientsecret
       CLIENT_CREDS_CLIENT_ID: hmpps-arns-assessment-platform-ui-system
       CLIENT_CREDS_CLIENT_SECRET: clientsecret
-      TOKEN_VERIFICATION_ENABLED: "false"
-      TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
+      TOKEN_VERIFICATION_ENABLED: false
+      TOKEN_VERIFICATION_API_URL: http://localhost:9091/verification
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
       HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
-      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
-      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      AAP_API_URL: http://aap-api:8080
       COORDINATOR_API_URL: http://coordinator-api:8080
-      AAP_API_URL: http://coordinator-api:8080
-      OASYS_URL: http://localhost:7072
-      ENVIRONMENT_NAME: DEV
-      AUDIT_ENABLED: "false"
+      DELIUS_API_URL: http://coordinator-api:8080
+      ARNS_API_URL: http://coordinator-api:8080
+      SAN_URL: http://localhost:3002
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7074
+      HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
+      HMPPS_ARNS_HANDOVER_CLIENT_SECRET: sp-secret
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AUDIT_ENABLED: true
       AUDIT_SQS_QUEUE_URL: http://localstack:4566/000000000000/audit-queue
       AUDIT_SQS_REGION: eu-west-2
       AUDIT_SERVICE_NAME: hmpps-arns-assessment-platform-ui
-      HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
-      HMPPS_ARNS_HANDOVER_CLIENT_SECRET: sp-secret
-      DELIUS_API_URL: http://localhost:8081
-      ARNS_API_URL: http://localhost:8082
-      TIER_API_URL: http://localhost:8083
-      INTERVENTIONS_API_URL: http://localhost:8084
-      SAN_EXTERNAL_URL: http://localhost:3000
-      TRAINING_SESSION_LAUNCHER_ENABLED: "true"
+      NODE_CLUSTER_ENABLED: true
+      FORM_ENGINE_DEVELOPER_GUIDE_ENABLED: true
+      SERVICE_NOW_FORM_URL: "#service-now-link"
+      OASYS_URL: "http://localhost:3000/training-session-launcher/sessions"
+      MPOP_URL: "http://localhost:3000/sign-in"
+      CACHE_REDIS_HOST: redis
+
+  aap-api:
+    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-api:latest
+    networks:
+      - hmpps
+    depends_on:
+      - postgres
+      - localstack
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://aap-api:8080/health/ping" ]
+      interval: 5s
+      retries: 100
+    ports:
+      - "8081:8080"
+    environment:
+      - SERVER_PORT=8080
+      - HMPPS_AUTH_URL=http://hmpps-auth:9090/auth
+      - SPRING_PROFILES_ACTIVE=dev,postgres
+      - DATABASE_ENDPOINT=postgres:5432
+      - HMPPS_SQS_PROVIDER=localstack
+      - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
+      - HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME=audit-queue
+      - SPRING_DATA_REDIS_HOST=redis
 
   localstack:
     image: localstack/localstack:4

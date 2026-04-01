@@ -45,6 +45,9 @@ generic-service:
   allowlist:
     groups:
       - internal
+      -
+global:
+  environment: ""
 
 generic-prometheus-alerts:
   targetApplication: hmpps-strengths-based-needs-assessments-api

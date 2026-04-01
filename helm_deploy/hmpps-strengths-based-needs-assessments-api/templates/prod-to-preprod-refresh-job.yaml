@@ -1,4 +1,4 @@
-{{- if .Values.is_production -}}
+{{- if eq .Values.global.environment "prod" -}}
 ---
 apiVersion: v1
 kind: ConfigMap

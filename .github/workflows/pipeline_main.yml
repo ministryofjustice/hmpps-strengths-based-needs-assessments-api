@@ -82,7 +82,8 @@ jobs:
     secrets: inherit
     with:
       environment: 'preprod'
-      app_version: '${{ needs.build_docker.outputs.app_version }}'
+      app_version: '2026-02-17.96.5018672'
+#      app_version: '${{ needs.build_docker.outputs.app_version }}'
 
   deploy_prod:
     name: Deploy to the production environment
@@ -93,4 +94,5 @@ jobs:
     secrets: inherit
     with:
       environment: 'prod'
-      app_version: '${{ needs.build_docker.outputs.app_version }}'
+      app_version: '2026-02-17.96.5018672'
+#      app_version: '${{ needs.build_docker.outputs.app_version }}'

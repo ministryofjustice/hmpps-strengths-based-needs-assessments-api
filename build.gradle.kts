@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.0"
-  kotlin("plugin.spring") version "2.3.0"
-  kotlin("plugin.jpa") version "2.3.0"
-  id("org.jetbrains.kotlin.kapt") version "2.3.0"
-  id("org.jetbrains.kotlinx.kover") version "0.9.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.1.2"
+  kotlin("plugin.spring") version "2.3.20"
+  kotlin("plugin.jpa") version "2.3.20"
+  id("org.jetbrains.kotlin.kapt") version "2.3.20"
+  id("org.jetbrains.kotlinx.kover") version "0.9.8"
 }
 
 configurations {
@@ -15,22 +15,22 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("tools.jackson.module:jackson-module-kotlin:3.0.3")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
+  implementation("tools.jackson.module:jackson-module-kotlin:3.1.1")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   runtimeOnly("io.netty:netty-codec-classes-quic")
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.postgresql:postgresql:42.7.9")
+  implementation("org.postgresql:postgresql:42.7.10")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.2.1.Final")
+  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.3.0.Final")
 
   // Test dependencies
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.1.0")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.20")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }
 

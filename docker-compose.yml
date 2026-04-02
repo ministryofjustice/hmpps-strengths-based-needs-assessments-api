@@ -34,7 +34,7 @@ services:
       - /var/lib/postgresql
 
   coordinator-api:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:2026-03-11.94.a68a74e
     networks:
       - hmpps
     depends_on:
@@ -123,7 +123,7 @@ services:
       FEEDBACK_URL: http://foo.bar
 
   arns-handover:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:2026-03-03.87.37f828f
     networks:
       - hmpps
     depends_on:

@@ -15,7 +15,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.2.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.3.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("tools.jackson.module:jackson-module-kotlin:3.1.3")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
@@ -29,7 +29,7 @@ dependencies {
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.3.5.Final")
 
   // Test dependencies
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.2.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.3.0")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.21")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }

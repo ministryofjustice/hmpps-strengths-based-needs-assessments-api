@@ -134,10 +134,40 @@ class EducationTest : SectionMappingTest(Education(), "1.0") {
   fun q9() {
     test(
       "o4-9",
+      // Generic scenarios
       Given().expect(null),
-      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, null).expect(null),
-      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.NO).expect("2"),
-      Given(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.YES).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, null).expect(null),
+      // Education qualification OR professional or vocational qualification
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_2).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_3).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_4).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_5).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_6).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_7).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_8).expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_1)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.YES)
+        .expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.NONE_OF_THESE)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.YES)
+        .expect("0"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.ENTRY_LEVEL)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.YES)
+        .expect("0"),
+      // No education qualification AND unknown professional or vocational qualification
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_1).expect(null),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.NONE_OF_THESE).expect(null),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.ENTRY_LEVEL).expect(null),
+      // No education qualification AND no professional or vocational qualification
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.LEVEL_1)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.NO)
+        .expect("2"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.NONE_OF_THESE)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.NO)
+        .expect("2"),
+      Given(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED, Value.ENTRY_LEVEL)
+        .and(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS, Value.NO)
+        .expect("2"),
     )
   }
 

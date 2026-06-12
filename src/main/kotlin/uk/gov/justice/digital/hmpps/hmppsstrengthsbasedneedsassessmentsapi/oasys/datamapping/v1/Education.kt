@@ -45,7 +45,7 @@ class Education : SectionMapping() {
   private fun q3(): Any? = when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
     ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
     ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
-    -> {
+      -> {
       when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
         ap.get(Value.NO) -> "2"
         else -> getEmploymentHistory()
@@ -83,6 +83,7 @@ class Education : SectionMapping() {
         categories
           .values.mapNotNull(::getSeverityOf)
           .maxOrNull()?.toString()
+
       else -> null
     }
   }
@@ -106,9 +107,22 @@ class Education : SectionMapping() {
     else -> null
   }
 
-  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS).value) {
-    ap.get(Value.NO) -> "2"
-    ap.get(Value.YES) -> "0"
+  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED).value) {
+    ap.get(Value.LEVEL_1), ap.get(Value.ENTRY_LEVEL), ap.get(Value.NONE_OF_THESE) -> when (ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS).value) {
+      ap.get(Value.YES) -> "0"
+      ap.get(Value.NO) -> "2"
+      else -> null
+    }
+
+    ap.get(Value.LEVEL_2),
+    ap.get(Value.LEVEL_3),
+    ap.get(Value.LEVEL_4),
+    ap.get(Value.LEVEL_5),
+    ap.get(Value.LEVEL_6),
+    ap.get(Value.LEVEL_7),
+    ap.get(Value.LEVEL_8),
+      -> "0"
+
     else -> null
   }
 
@@ -145,7 +159,8 @@ class Education : SectionMapping() {
     ap.get(Value.LEVEL_6),
     ap.get(Value.LEVEL_7),
     ap.get(Value.LEVEL_8),
-    -> "MATHSENGLISH"
+      -> "MATHSENGLISH"
+
     ap.get(Value.NONE_OF_THESE) -> "NOQUAL"
     else -> null
   }
@@ -157,26 +172,31 @@ class Education : SectionMapping() {
       ap.get(Value.PART_TIME),
       ap.get(Value.TEMPORARY_OR_CASUAL),
       ap.get(Value.APPRENTICESHIP),
-      -> "PARTTIME"
+        -> "PARTTIME"
+
       else -> null
     }
+
     ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK),
     ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
     ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
-    -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
+      -> when (ap.answer(Field.HAS_BEEN_EMPLOYED).value) {
       ap.get(Value.NO) -> "UNEMPLOYED"
       else -> null
     }
+
     else -> null
   }
 
   private fun qSC5(): Any? = when (ap.answer(Field.EMPLOYMENT_STATUS).value) {
     ap.get(Value.EMPLOYED),
     ap.get(Value.SELF_EMPLOYED),
-    -> "YES"
+      -> "YES"
+
     ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
     ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
-    -> "NO"
+      -> "NO"
+
     else -> null
   }
 
@@ -185,7 +205,8 @@ class Education : SectionMapping() {
     ap.get(Value.FAIRLY_GOOD) -> "SOMETIMES"
     ap.get(Value.FAIRLY_BAD),
     ap.get(Value.BAD),
-    -> "NOTCONFIDENT"
+      -> "NOTCONFIDENT"
+
     else -> null
   }
 }

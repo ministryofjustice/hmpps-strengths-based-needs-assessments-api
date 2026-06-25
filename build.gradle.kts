@@ -32,6 +32,7 @@ dependencies {
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.21")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 
 kotlin {

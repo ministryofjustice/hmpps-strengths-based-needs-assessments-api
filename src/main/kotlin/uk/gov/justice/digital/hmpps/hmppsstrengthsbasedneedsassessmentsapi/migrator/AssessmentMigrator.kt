@@ -104,7 +104,7 @@ class AssessmentMigrator(
       ?: UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
     val commands = listOf(
       CreateAssessmentCommand(
-        user = UserDetails.from(assessment.assessmentVersions.minByOrNull { it.createdAt }!!.assessmentVersionAudit.first().userDetails),
+        user = creatingUser,
         formVersion = "v1.0",
         properties = emptyMap(),
         assessmentType = "STRENGTHS_AND_NEEDS",

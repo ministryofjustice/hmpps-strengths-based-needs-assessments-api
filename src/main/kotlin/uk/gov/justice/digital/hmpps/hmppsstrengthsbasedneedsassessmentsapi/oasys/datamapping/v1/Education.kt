@@ -83,6 +83,7 @@ class Education : SectionMapping() {
         categories
           .values.mapNotNull(::getSeverityOf)
           .maxOrNull()?.toString()
+
       else -> null
     }
   }
@@ -106,9 +107,35 @@ class Education : SectionMapping() {
     else -> null
   }
 
-  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS).value) {
-    ap.get(Value.NO) -> "2"
-    ap.get(Value.YES) -> "0"
+  private fun q9(): Any? = when (ap.answer(Field.EDUCATION_HIGHEST_LEVEL_COMPLETED).value) {
+    ap.get(Value.LEVEL_1), ap.get(Value.ENTRY_LEVEL), ap.get(Value.NONE_OF_THESE) -> when (
+      ap.answer(
+        Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS,
+      ).value
+    ) {
+      ap.get(Value.YES) -> "0"
+      ap.get(Value.NO) -> "2"
+      else -> null
+    }
+
+    ap.get(Value.LEVEL_2),
+    ap.get(Value.LEVEL_3),
+    ap.get(Value.LEVEL_4),
+    ap.get(Value.LEVEL_5),
+    ap.get(Value.LEVEL_6),
+    ap.get(Value.LEVEL_7),
+    ap.get(Value.LEVEL_8),
+    -> "0"
+
+    ap.get(Value.NOT_SURE), null -> when (
+      ap.answer(
+        Field.EDUCATION_PROFESSIONAL_OR_VOCATIONAL_QUALIFICATIONS,
+      ).value
+    ) {
+      ap.get(Value.YES) -> "0"
+      else -> null
+    }
+
     else -> null
   }
 
@@ -146,6 +173,7 @@ class Education : SectionMapping() {
     ap.get(Value.LEVEL_7),
     ap.get(Value.LEVEL_8),
     -> "MATHSENGLISH"
+
     ap.get(Value.NONE_OF_THESE) -> "NOQUAL"
     else -> null
   }
@@ -158,8 +186,10 @@ class Education : SectionMapping() {
       ap.get(Value.TEMPORARY_OR_CASUAL),
       ap.get(Value.APPRENTICESHIP),
       -> "PARTTIME"
+
       else -> null
     }
+
     ap.get(Value.CURRENTLY_UNAVAILABLE_FOR_WORK),
     ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
     ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
@@ -167,6 +197,7 @@ class Education : SectionMapping() {
       ap.get(Value.NO) -> "UNEMPLOYED"
       else -> null
     }
+
     else -> null
   }
 
@@ -174,9 +205,11 @@ class Education : SectionMapping() {
     ap.get(Value.EMPLOYED),
     ap.get(Value.SELF_EMPLOYED),
     -> "YES"
+
     ap.get(Value.UNEMPLOYED_LOOKING_FOR_WORK),
     ap.get(Value.UNEMPLOYED_NOT_LOOKING_FOR_WORK),
     -> "NO"
+
     else -> null
   }
 
@@ -186,6 +219,7 @@ class Education : SectionMapping() {
     ap.get(Value.FAIRLY_BAD),
     ap.get(Value.BAD),
     -> "NOTCONFIDENT"
+
     else -> null
   }
 }

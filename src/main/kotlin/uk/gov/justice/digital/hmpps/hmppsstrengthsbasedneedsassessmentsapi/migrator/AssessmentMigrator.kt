@@ -36,25 +36,40 @@ class AssessmentMigrator(
   fun migrate(assessment: Assessment): Context {
     log.info("Migrating assessment ${assessment.id}")
 
-    val context = createContext(assessment)
+    val versions = assessment.uuid
+      .let(assessmentVersionRepository::findAllByAssessmentUuid)
+
+    val creatingUser = versions
+      .minByOrNull { it.createdAt }
+      ?.assessmentVersionAudit
+      ?.firstOrNull()
+      ?.userDetails
+      ?.run(UserDetails::from)
+      ?: UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
+        .also { log.info("Defaulting creating user for assessment: ${assessment.id}") }
+
+    val context = createContext(assessment, creatingUser)
 
     var versionMappings: List<VersionMapping>
 
     try {
-      val versions: Map<LocalDateTime, AssessmentVersion> = assessment.uuid
-        .let(assessmentVersionRepository::findAllByAssessmentUuid)
+      val associatedVersions: Map<LocalDateTime, AssessmentVersion> = versions
         .filter { !it.deleted }
         .groupBy { it.versionNumber }
-        .map { it.key to it.value.maxBy { version -> version.id!! } }.toMap()
+        .map { it.key to it.value.maxBy { version -> version.updatedAt } }.toMap()
         .values
         .sortedBy { it.versionNumber }
         .associateBy { current ->
-            current.updatedAt
+          // versions *should* not have been created before the assessment, but let's ensure we handle it regardless
+          maxOf(current.updatedAt, assessment.createdAt.plusSeconds(1))
         }
 
-      versionMappings = versions.map {
+      versionMappings = associatedVersions.map { (updatedAt, version) ->
+        val updatingUser = version.assessmentVersionAudit.firstOrNull()?.userDetails?.run(UserDetails::from)
+          ?: UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
+            .also { log.info("Defaulting updating user for assessment: ${assessment.id}") }
         assessmentVersionMigrator
-          .migrate(context, it.value, it.key)
+          .migrate(context, version, updatedAt, updatingUser)
           .also { context.versionsMigrated += 1 }
       }
 
@@ -77,19 +92,19 @@ class AssessmentMigrator(
         )
       }.onFailure { ex ->
         when (ex) {
-          is WebClientResponseException.NotFound -> throw IllegalStateException("Association not found for assessment ${assessment.id}")
+          is WebClientResponseException.NotFound -> throw IllegalStateException("Association not found for assessment ${assessment.uuid}")
           else -> throw ex
         }
       }
 
       migrationLogRepository.save(
         MigrationLogEntity(
-          entityType = "SAN",
-          entityId = assessment.id!!,
+          entityType = "AAP_SAN",
+          entityId = assessment.id,
           entityUuid = assessment.uuid,
           aapUuid = UUID.fromString(context.assessmentUuid),
         ),
-      )
+      ).also { log.info("Migrated assessment ${assessment.id}") }
     } catch (e: Exception) {
       log.warn("Failed to migrate assessment ${assessment.id}: ${e.message}")
       aapService.deleteAssessment(UUID.fromString(context.assessmentUuid))
@@ -99,9 +114,8 @@ class AssessmentMigrator(
     return context
   }
 
-  fun createContext(assessment: Assessment): Context {
-    val creatingUser = assessment.assessmentVersions.minByOrNull { it.createdAt }?.assessmentVersionAudit?.first()?.userDetails?.run(UserDetails::from)
-      ?: UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
+  fun createContext(assessment: Assessment, creatingUser: UserDetails): Context {
+//    val creatingUser = UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
     val commands = listOf(
       CreateAssessmentCommand(
         user = creatingUser,
@@ -112,7 +126,7 @@ class AssessmentMigrator(
         // identifiers = assessment.crn?.let { mapOf(IdentifierType.CRN to it) },
         identifiers = emptyMap(),
         timeline = Timeline(
-          "MIGRATED",
+          "MIGRATED_SAN",
           mapOf(
             "date" to LocalDateTime.now(),
           ),
@@ -136,7 +150,7 @@ class AssessmentMigrator(
     return Context(
       assessment = assessment,
       assessmentUuid = response.extractNthInstance<CreateAssessmentCommandResult>(0).assessmentUuid,
-      victimsCollectionUuid = response.extractNthInstance<CreateCollectionCommandResult>(1).collectionUuid,
+      victimsCollectionUuid = response.extractNthInstance<CreateCollectionCommandResult>(0).collectionUuid,
       migrationCommands = commands.size,
     )
   }

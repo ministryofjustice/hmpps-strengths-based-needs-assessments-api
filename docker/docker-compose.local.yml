@@ -1,0 +1,58 @@
+# `docker-compose.local.yml` defines services that must be run locally
+# to support a fully self-contained local development environment.
+
+services:
+  wiremock:
+    ports:
+      - '9091:8080'
+    environment:
+      WIREMOCK_HMPPS_AUTH_URL: http://hmpps-auth:9090
+      WIREMOCK_AAP_API_URL: http://aap-api:8080
+      WIREMOCK_COORDINATOR_API_URL: http://coordinator-api:8080
+      WIREMOCK_HANDOVER_URL: http://arns-handover:7070
+      WIREMOCK_TOKEN_VERIFICATION_URL: http://token-verification:8080
+      WIREMOCK_DELIUS_URL: http://delius-api:8080
+    command: --global-response-templating
+
+  aap-ui:
+    ports:
+      - '3000:3000'
+
+  arns-handover:
+    environment:
+      OASYS_RETURN_URLS: http://localhost:3000
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3001/sign-in/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3001/sign-in
+
+  postgres:
+    ports:
+      - '5432:5432'
+
+  san-ui:
+    ports:
+      - '3001:3000'
+
+  san-api:
+    build:
+      target: development
+    command: gradle --parallel --build-cache --configuration-cache --info bootRun
+    volumes:
+      - ../.git:/app/.git
+      - ../.gradle:/home/gradle/.gradle
+      - ../build:/app/build
+      - ../src:/app/src
+      - ../build.gradle.kts:/app/build.gradle.kts
+      - ../settings.gradle.kts:/app/settings.gradle.kts
+      - ../glowroot-data:/opt/glowroot/data
+    ports:
+      - '8081:8080'
+      - '5006:5005'
+      - '4000:4000'
+      - '4001:4001'
+
+volumes:
+  node_modules:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_node_modules

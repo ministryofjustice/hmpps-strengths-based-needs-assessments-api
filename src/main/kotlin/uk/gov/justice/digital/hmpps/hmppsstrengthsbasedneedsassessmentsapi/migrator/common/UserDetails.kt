@@ -12,8 +12,7 @@ data class UserDetails(
   val authSource: AuthSource = AuthSource.NOT_SPECIFIED,
 ) {
   companion object {
-    fun from(practitioner: uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails?): UserDetails =
-      UserDetails(practitioner?.id ?: "UNKNOWN", practitioner?.name ?: "Unknown", AuthSource.OASYS)
+    fun from(practitioner: uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request.UserDetails?): UserDetails = UserDetails(practitioner?.id ?: "UNKNOWN", practitioner?.name ?: "Unknown", AuthSource.OASYS)
 
     fun fromUsername(username: String): UserDetails = UserDetails("UNKNOWN", username, AuthSource.OASYS)
   }

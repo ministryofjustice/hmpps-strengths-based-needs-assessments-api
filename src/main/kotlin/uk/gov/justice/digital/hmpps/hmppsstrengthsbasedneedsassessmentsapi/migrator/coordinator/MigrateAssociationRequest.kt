@@ -6,7 +6,6 @@ data class MigrateAssociationRequest(
   val mappings: List<VersionMapping>,
   val entityUuidFrom: UUID,
   val entityUuidTo: UUID,
-  // TODO: Confirm these types
-  val entityTypeFrom: String = "SAN",
+  val entityTypeFrom: String = "ASSESSMENT",
   val entityTypeTo: String = "AAP_SAN",
 )

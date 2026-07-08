@@ -39,14 +39,42 @@ kotlin {
   jvmToolchain(21)
 }
 
+springBoot {
+  mainClass.set("uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.HmppsStrengthsBasedNeedsAssessmentsApiKt")
+}
+
 tasks {
   withType<KotlinCompile> {
     compilerOptions.jvmTarget = JvmTarget.JVM_21
   }
+
   withType<BootRun> {
     jvmArgs = listOf(
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
     )
+  }
+
+  register<JavaExec>("migrator") {
+    group = "application"
+    description = "Runs the Migrator"
+
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.runner.TaskRunner")
+
+    val cliArgs = project.findProperty("args") as String?
+
+    val finalArgs = mutableListOf("--server.port=0")
+
+    if (!cliArgs.isNullOrBlank()) {
+      finalArgs += cliArgs.split("\\s+".toRegex())
+    }
+
+    args = finalArgs
+
+// Uncomment this to enable remote debugging for the migration task runner
+//    jvmArgs = listOf(
+//      "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+//    )
   }
 }
 

@@ -26,6 +26,20 @@ spring:
         provider:
           hmpps-auth:
             token-uri: ${app.services.hmpps-auth.url}/oauth/token
+        registration:
+          coordinator-api:
+            provider: hmpps-auth
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+            client-id: ${client-creds-client-id}
+            client-secret: ${client-creds-client-secret}
+          assessment-platform-api:
+            provider: hmpps-auth
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+            client-id: ${client-creds-client-id}
+            client-secret: ${client-creds-client-secret}
+
       resourceserver:
         jwt:
           jwk-set-uri: ${app.services.hmpps-auth.url}/.well-known/jwks.json

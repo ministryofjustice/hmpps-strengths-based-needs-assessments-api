@@ -12,17 +12,18 @@ import java.util.UUID
 @Repository
 interface AssessmentRepository : JpaRepository<Assessment, Long> {
   fun findByUuid(uuid: UUID): Assessment?
+
   @Query(
     value = """
         SELECT a.*
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
     """,
     countQuery = """
         SELECT COUNT(*)
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
     """,
     nativeQuery = true,
@@ -35,14 +36,14 @@ interface AssessmentRepository : JpaRepository<Assessment, Long> {
     value = """
         SELECT a.*
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
           AND a.id NOT IN (:ignoreIds)
     """,
     countQuery = """
         SELECT COUNT(*)
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
           AND a.id NOT IN (:ignoreIds)
     """,
@@ -57,14 +58,14 @@ interface AssessmentRepository : JpaRepository<Assessment, Long> {
     value = """
         SELECT a.*
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
           AND a.id IN (:assessmentIds)
     """,
     countQuery = """
         SELECT COUNT(*)
         FROM assessments a
-        LEFT JOIN migration_log ml ON ml.entity_type = 'SAN' AND a.id = ml.entity_id
+        LEFT JOIN migration_log ml ON ml.entity_type = 'AAP_SAN' AND a.id = ml.entity_id
         WHERE ml.id IS NULL
           AND a.id IN (:assessmentIds)
     """,

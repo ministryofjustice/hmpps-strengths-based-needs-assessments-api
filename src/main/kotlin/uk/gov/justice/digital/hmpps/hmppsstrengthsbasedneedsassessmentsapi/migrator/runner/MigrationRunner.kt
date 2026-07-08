@@ -75,7 +75,7 @@ class MigrationRunner(
               }
             } catch (e: Exception) {
               log.warn("Failed to migrate ${assessment.id}: ${e.stackTraceToString()}")
-              failedAssessments[assessment.id!!] = e.message ?: "Unknown error"
+              failedAssessments[assessment.id!!] = e.message ?: ("Stack: " + e.stackTraceToString())
             }
           }
         }
@@ -88,8 +88,8 @@ class MigrationRunner(
     log.info("Migrated ${Stats.numberOfAssessments} assessments totalling ${Stats.numberOfVersions} versions and created ${Stats.numberOfCommands} events")
 
     log.info("Failed to migrate ${failedAssessments.size} assessments")
-    failedAssessments.forEach { (assessmentId, message) ->
-      log.error("Failed to migrate assessment $assessmentId: $message")
+    failedAssessments.forEach { (assessmentUuid, message) ->
+      log.error("Failed to migrate assessment $assessmentUuid: $message")
     }
   }
 

@@ -107,18 +107,18 @@ services:
       HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
       HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
-      OASYS_BASE_URL: http://localhost:3000
-      OASYS_RETURN_URLS: http://localhost:3000
+      OASYS_BASE_URL: http://localhost:7072
+      OASYS_RETURN_URLS: http://localhost:7072
       COORDINATOR_API_BASE_URL: http://coordinator-api:8080
       SERVER_ERROR_WHITELABEL_ENABLED: true
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
       CLIENT_SP_SECRET: sp-secret
-      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
-      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:7072/sign-in/handover/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:7072/sign-in/handover?service=sentence-plan
       CLIENT_SAN_SECRET: san-secret
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3001/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3001/sign-in
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
 
   aap-ui:
     image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:latest
@@ -129,7 +129,7 @@ services:
       - localstack
       - wiremock
     ports:
-      - '3000:3000'
+      - '7072:3000'
       - '9229:9229'
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health']
@@ -140,7 +140,7 @@ services:
       REDIS_ENABLED: true
       REDIS_HOST: redis
       SESSION_SECRET: somesecretvalue
-      INGRESS_URL: http://localhost:3000
+      INGRESS_URL: http://localhost:7072
       NO_HTTPS: true
       AUTH_CODE_CLIENT_ID: hmpps-arns-assessment-platform-ui
       AUTH_CODE_CLIENT_SECRET: clientsecret
@@ -154,7 +154,7 @@ services:
       COORDINATOR_API_URL: http://wiremock:8080/coordinator-api
       DELIUS_API_URL: http://wiremock:8080/delius
       ARNS_API_URL: http://wiremock:8080/arns-api
-      SAN_URL: http://localhost:3001
+      SAN_URL: http://localhost:3000
       HMPPS_ARNS_HANDOVER_URL: http://wiremock:8080/handover
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
@@ -272,7 +272,7 @@ services:
       HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
-      OASYS_URL: http://localhost:3000
+      OASYS_URL: http://localhost:7072
       HANDOVER_CLIENT_ID: strengths-and-needs-assessment
       HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false
@@ -284,7 +284,7 @@ services:
       SESSION_SECRET: sessionsecret
       SBNA_API_URL: http://san-api:8080
       COORDINATOR_API_URL: http://coordinator-api:8080
-      INGRESS_URL: http://localhost:3001
+      INGRESS_URL: http://localhost:3000
       HTTPS: false
       NODE_ENV: development
       FEEDBACK_URL: http://foo.bar

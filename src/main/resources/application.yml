@@ -100,3 +100,8 @@ logging:
 
 springdoc:
   default-produces-media-type: application/json
+
+assessment-platform-api:
+  base-url: http://aap-api:8080
+coordinator-api:
+  base-url: http://coordinator-api:8080

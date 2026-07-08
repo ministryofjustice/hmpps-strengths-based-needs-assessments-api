@@ -224,7 +224,7 @@ services:
   san-api:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:
-      context: .
+      context: ../
       target: development
     networks:
       - hmpps

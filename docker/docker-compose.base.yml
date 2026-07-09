@@ -98,8 +98,6 @@ services:
       retries: 20
     networks:
       - hmpps
-    ports:
-      - '7070:7070'
     environment:
       SERVER_PORT: 7070
       REDIS_HOST: redis
@@ -129,7 +127,6 @@ services:
       - localstack
       - wiremock
     ports:
-      - '7072:3000'
       - '9229:9229'
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health']

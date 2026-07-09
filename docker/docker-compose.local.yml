@@ -20,19 +20,15 @@ services:
 
   aap-api:
     ports:
-      - '8080:8080'
+      - '8081:8080'
 
   aap-ui:
     ports:
       - '7072:3000'
 
   arns-handover:
-    environment:
-      OASYS_RETURN_URLS: http://localhost:3000
-      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
-      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
+    ports:
+      - '7070:7070'
 
   postgres:
     ports:
@@ -55,7 +51,7 @@ services:
       - ../settings.gradle.kts:/app/settings.gradle.kts
       - ../glowroot-data:/opt/glowroot/data
     ports:
-      - '8081:8080'
+      - '8080:8080'
       - '5006:5005'
       - '4000:4000'
       - '4001:4001'

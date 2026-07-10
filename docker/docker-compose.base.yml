@@ -217,6 +217,16 @@ services:
       WIREMOCK_ARNS_API_URL: http://arns-api:8080
     command: --global-response-templating
 
+  # annoyingly the feedback link is hardcoded in the UI cypress tests
+  feedback:
+    image: wiremock/wiremock:3.13.2
+    networks:
+      - hmpps
+    restart: always
+    volumes:
+      - ./wiremock/feedback.json:/home/wiremock/mappings/feedback.json
+    command: --global-response-templating
+
   san-api:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:
@@ -258,6 +268,8 @@ services:
         condition: service_started
       coordinator-api:
         condition: service_healthy
+      feedback:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "node", "./docker/healthcheck.js" ]
       interval: 5s
@@ -284,7 +296,7 @@ services:
       INGRESS_URL: http://localhost:3000
       HTTPS: false
       NODE_ENV: development
-      FEEDBACK_URL: http://foo.bar
+      FEEDBACK_URL: http://localhost:9092
 
 networks:
   hmpps:

@@ -106,8 +106,8 @@ db-export: ## Export the remote DB to out.sql
 	pg_dump --no-owner $$(make db-connection-string) > out.sql
 
 migrator-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005. Stands up all services needed for testing data migrations
-	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api
-	docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
+	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api coordinator-api
+	COORDINATOR_API_VERSION=aap-san docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
 
 migrator-down: ## Stops and removes all migrator containers in the project.
 	docker compose ${MIGRATOR_COMPOSE_FILES} down

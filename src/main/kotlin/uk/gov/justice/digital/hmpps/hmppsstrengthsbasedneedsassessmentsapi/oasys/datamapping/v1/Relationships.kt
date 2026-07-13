@@ -85,6 +85,7 @@ class Relationships : SectionMapping() {
       ap.get(Value.FAMILY_MEMBER) -> "NO"
       else -> null
     }
+    ap.get(Value.NO) -> "NO"
     else -> null
   }
 
@@ -94,6 +95,7 @@ class Relationships : SectionMapping() {
       ap.get(Value.INTIMATE_PARTNER) -> "NO"
       else -> null
     }
+    ap.get(Value.NO) -> "NO"
     else -> null
   }
 
@@ -103,6 +105,7 @@ class Relationships : SectionMapping() {
       ap.get(Value.FAMILY_MEMBER) -> "NO"
       else -> null
     }
+    ap.get(Value.NO) -> "NO"
     else -> null
   }
 
@@ -112,6 +115,7 @@ class Relationships : SectionMapping() {
       ap.get(Value.INTIMATE_PARTNER) -> "NO"
       else -> null
     }
+    ap.get(Value.NO) -> "NO"
     else -> null
   }
 

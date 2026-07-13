@@ -77,7 +77,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       "o6-7-1-1da",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, null).expect(null),
-      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
         .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
@@ -95,7 +95,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       "o6-7-1-2da",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, null).expect(null),
-      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
         .and(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_VICTIM_OF_DOMESTIC_ABUSE, Value.YES)
@@ -113,7 +113,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       "o6-7-2-1da",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, null).expect(null),
-      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
         .and(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
@@ -131,7 +131,7 @@ class RelationshipsTest : SectionMappingTest(Relationships(), "1.0") {
       "o6-7-2-2da",
       Given().expect(null),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, null).expect(null),
-      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect(null),
+      Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.NO).expect("NO"),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)
         .and(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE_TYPE, null).expect(null),
       Given(Field.OFFENCE_ANALYSIS_PERPETRATOR_OF_DOMESTIC_ABUSE, Value.YES)

@@ -1,6 +1,7 @@
 SHELL = '/bin/bash'
-LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
-DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.dev.yml
+LOCAL_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
+DEV_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
+MIGRATOR_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
 PROJECT_NAME = hmpps-assess-risks-and-needs
 
 export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
@@ -103,3 +104,25 @@ db-connect: ## Connects to the remote DB though the port-forwarding pod
 
 db-export: ## Export the remote DB to out.sql
 	pg_dump --no-owner $$(make db-connection-string) > out.sql
+
+migrator-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005. Stands up all services needed for testing data migrations
+	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api coordinator-api
+	COORDINATOR_API_VERSION=aap-san docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
+
+migrator-down: ## Stops and removes all migrator containers in the project.
+	docker compose ${MIGRATOR_COMPOSE_FILES} down
+
+migrator-update: ## Downloads the latest versions of containers.
+	docker compose ${MIGRATOR_COMPOSE_FILES} pull
+
+ASSESSMENTS=
+migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate e.g. make migrator-run ASSESSMENTS="12345 56789"
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec san-api gradle migrator -Pargs="${ASSESSMENTS}"
+
+migrator-data-pods: ## Create port-forwarding pods
+	sh ./docker/scripts/migrator/setup_pods.sh
+
+migrator-data: ## Loads data from a remote database
+	sh ./docker/scripts/migrator/load_data.sh
+	docker compose ${MIGRATOR_COMPOSE_FILES} down coordinator-api
+	@make migrator-up

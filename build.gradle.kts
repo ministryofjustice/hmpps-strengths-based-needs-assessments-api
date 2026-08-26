@@ -29,7 +29,7 @@ dependencies {
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.2.Final")
 
   // Test dependencies
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.1")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.21")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }

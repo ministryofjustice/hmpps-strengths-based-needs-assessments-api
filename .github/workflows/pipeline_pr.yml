@@ -45,3 +45,47 @@ jobs:
     uses: ./.github/workflows/e2e_test.yml
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
+
+  migrator_test:
+    name: Test the migrator
+    needs:
+      - build_docker
+      - e2e_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download docker image
+        uses: actions/download-artifact@v8
+        with:
+          name: build_image
+          path: ${{ runner.temp }}
+
+      - name: Load image
+        run: docker load --input ${{ runner.temp }}/build_image.tar
+
+      - name: Stand up the migrator environment
+        run: make migrator-up
+
+      - name: Download combined database dump
+        uses: actions/download-artifact@v8
+        with:
+          name: combined_db_dump
+          path: ${{ runner.temp }}/db-dump
+
+      - name: Import combined database dump
+        run: make migrator-import-dump DB_DUMP_FILE=${{ runner.temp }}/db-dump/combined_db_dump.sql
+
+      - name: Run the migrator
+        run: make migrator-run
+
+      - name: Export assessment-platform schema dump
+        if: success() || failure()
+        run: make migrator-export-schema OUTPUT_DUMP_FILE=${{ runner.temp }}/assessment_platform_dump.sql SCHEMA=assessment-platform
+
+      - name: Upload assessment-platform schema dump
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: assessment_platform_dump
+          path: ${{ runner.temp }}/assessment_platform_dump.sql

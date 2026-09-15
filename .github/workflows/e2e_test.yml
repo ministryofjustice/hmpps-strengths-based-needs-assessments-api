@@ -149,7 +149,7 @@ jobs:
           done
 
       - name: Export combined database dump
-        run: pg_dump -h localhost -U root -d postgres --no-owner --no-privileges -f combined_db_dump.sql
+        run: pg_dump -h localhost -U root -d postgres --no-owner --no-privileges --clean --if-exists -f combined_db_dump.sql
 
       - name: Upload combined database dump
         uses: actions/upload-artifact@v7

@@ -123,6 +123,13 @@ ASSESSMENTS=
 migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate e.g. make migrator-run ASSESSMENTS="12345 56789"
 	docker compose ${MIGRATOR_COMPOSE_FILES} exec san-api gradle migrator -Pargs="${ASSESSMENTS}"
 
+migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=
+	psql postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
+
+migrator-export-schema: ## Dumps a schema from the postgres container to a file defined by OUTPUT_DUMP_FILE= and SCHEMA=
+	mkdir -p $(dir ${OUTPUT_DUMP_FILE})
+	docker exec ${PROJECT_NAME}-postgres-1 pg_dump -U root -d postgres --schema=${SCHEMA} --no-owner --no-privileges > ${OUTPUT_DUMP_FILE}
+
 migrator-data-pods: ## Create port-forwarding pods
 	sh ./docker/scripts/migrator/setup_pods.sh
 

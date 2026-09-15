@@ -1,0 +1,58 @@
+# `docker-compose.local.yml` defines services that must be run locally
+# to support a fully self-contained local development environment.
+
+services:
+  wiremock:
+    ports:
+      - '9091:8080'
+
+  feedback:
+    ports:
+      - '9092:8080'
+
+  coordinator-api:
+    ports:
+      - '8070:8080'
+
+  aap-api:
+    ports:
+      - '8081:8080'
+
+  aap-ui:
+    ports:
+      - '7072:3000'
+
+  arns-handover:
+    ports:
+      - '7070:7070'
+
+  postgres:
+    ports:
+      - '5432:5432'
+
+  san-ui:
+    ports:
+      - '3000:3000'
+
+  san-api:
+    build:
+      target: development
+    command: gradle --parallel --build-cache --configuration-cache --info bootRun
+    volumes:
+      - ../.git:/app/.git
+      - ../.gradle:/home/gradle/.gradle
+      - ../build:/app/build
+      - ../src:/app/src
+      - ../build.gradle.kts:/app/build.gradle.kts
+      - ../settings.gradle.kts:/app/settings.gradle.kts
+      - ../glowroot-data:/opt/glowroot/data
+    ports:
+      - '8080:8080'
+      - '5006:5005'
+      - '4000:4000'
+      - '4001:4001'
+
+volumes:
+  node_modules:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_node_modules

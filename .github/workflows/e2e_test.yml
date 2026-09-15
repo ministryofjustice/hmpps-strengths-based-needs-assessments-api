@@ -88,6 +88,10 @@ jobs:
         if: failure()
         run: make save-logs OUTPUT_LOGS_DIR=${{ runner.temp }}/docker-logs
 
+      - name: Export database dump
+        if: success() || failure()
+        run: make save-db-dump OUTPUT_DB_DUMP_FILE=${{ runner.temp }}/db-dump/db_dump.dump
+
       - name: Upload test results
         if: success() || failure()
         uses: actions/upload-artifact@v7
@@ -97,6 +101,61 @@ jobs:
             e2e-test-ui/test_results
             e2e-test-ui/cypress/screenshots
             ${{ runner.temp }}/docker-logs
+
+      - name: Upload database dump
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: db_dump_${{ matrix.container }}
+          path: ${{ runner.temp }}/db-dump/db_dump.dump
+
+  combine-db-dumps:
+    runs-on: ubuntu-latest
+    needs: e2e-test
+    if: success() || failure()
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      PGPASSWORD: dev
+    steps:
+      - name: Download database dumps
+        uses: actions/download-artifact@v8
+        with:
+          pattern: db_dump_*
+          path: db-dumps
+
+      - name: Restore schema and data from every shard's dump
+        run: |
+          dumps=$(find db-dumps -name '*.dump' | sort -V)
+
+          first=$(echo "$dumps" | head -n1)
+          echo "Restoring schema from $first"
+          pg_restore --schema-only --no-owner --no-privileges -h localhost -U root -d postgres "$first"
+
+          for dump in $dumps; do
+            echo "Restoring data from $dump"
+            pg_restore --data-only --disable-triggers --no-owner --no-privileges -h localhost -U root -d postgres "$dump"
+          done
+
+      - name: Export combined database dump
+        run: pg_dump -h localhost -U root -d postgres --no-owner --no-privileges --clean --if-exists -f combined_db_dump.sql
+
+      - name: Upload combined database dump
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined_db_dump
+          path: combined_db_dump.sql
 
   save-timings:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1

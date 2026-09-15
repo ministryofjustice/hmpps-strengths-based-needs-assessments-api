@@ -83,6 +83,10 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
 
+save-db-dump: ## Dumps the postgres database (custom format, for later combining/restoring) to a file defined by OUTPUT_DB_DUMP_FILE=
+	mkdir -p $(dir ${OUTPUT_DB_DUMP_FILE})
+	docker exec ${PROJECT_NAME}-postgres-1 pg_dump -U root -d postgres -Fc > ${OUTPUT_DB_DUMP_FILE}
+
 db-port-forward-pod: ## Creates a DB port-forwarding pod in your currently active Kubernetes context
 	kubectl delete pod --ignore-not-found=true port-forward-pod
 	INSTANCE_ADDRESS=$$(kubectl get secret hmpps-strengths-based-needs-assessments-rds-instance -o json | jq -r '.data.rds_instance_address' | base64 --decode) \

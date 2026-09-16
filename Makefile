@@ -20,17 +20,17 @@ down: ## Stops and removes all containers in the project.
 	docker compose ${LOCAL_COMPOSE_FILES} down
 
 build-api: ## Builds a production image of the API.
-	docker compose build san-api
+	docker compose ${LOCAL_COMPOSE_FILES} build san-api
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
-	docker compose down san-api
+	docker compose ${DEV_COMPOSE_FILES} down san-api
 	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate san-api
 
 dev-build: ## Builds a development image of the API.
 	docker compose ${DEV_COMPOSE_FILES} build san-api
 
 dev-down: ## Stops and removes the API container.
-	docker compose down san-api
+	docker compose ${DEV_COMPOSE_FILES} down san-api
 
 dev-api-token: ## Generates a JWT for authenticating with the local API.
 	docker compose ${DEV_COMPOSE_FILES} exec san-api \
@@ -69,16 +69,18 @@ lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
 	docker compose ${DEV_COMPOSE_FILES} exec san-api gradle --parallel
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
-	docker compose down
+	docker compose ${DEV_COMPOSE_FILES} down
 	rm -rf .gradle build
 
 update: ## Downloads the latest versions of containers.
-	docker compose pull
+	docker compose ${DEV_COMPOSE_FILES} pull
 
 save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_DIR=
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log
 	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
+	docker logs ${PROJECT_NAME}-aap-api-1 > ${OUTPUT_LOGS_DIR}/aap-api.log
+	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log

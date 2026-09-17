@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -11,8 +12,10 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.AssessmentMigrator
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.Context
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.Stats
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.AAPService
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
 import java.util.concurrent.ConcurrentHashMap
 
@@ -66,7 +69,7 @@ class MigrationRunner(
         async(Dispatchers.IO) {
           semaphore.withPermit {
             try {
-              val context = assessmentMigrator.migrate(assessment)
+              val context = migrateWithRetry(assessment)
 
               synchronized(Stats) {
                 Stats.numberOfAssessments += 1
@@ -93,7 +96,25 @@ class MigrationRunner(
     }
   }
 
+  // Concurrent migrations can race to create the same OASys user's user_details row (only one
+  // wins); the loser just needs to retry once the winner's insert has committed.
+  private suspend fun migrateWithRetry(assessment: Assessment): Context {
+    repeat(MAX_ATTEMPTS - 1) { attempt ->
+      try {
+        return assessmentMigrator.migrate(assessment)
+      } catch (e: Exception) {
+        if (e.message?.contains(RETRYABLE_CONSTRAINT) != true) throw e
+        log.info("Retrying migration of assessment ${assessment.id} after a $RETRYABLE_CONSTRAINT collision (attempt ${attempt + 1})")
+        delay(RETRY_DELAY_MS)
+      }
+    }
+    return assessmentMigrator.migrate(assessment)
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private const val RETRYABLE_CONSTRAINT = "uq_user_id_and_type"
+    private const val MAX_ATTEMPTS = 2
+    private const val RETRY_DELAY_MS = 250L
   }
 }

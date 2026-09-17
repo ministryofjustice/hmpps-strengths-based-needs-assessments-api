@@ -1,6 +1,7 @@
 SHELL = '/bin/bash'
-LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
-DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.dev.yml
+LOCAL_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
+DEV_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
+MIGRATOR_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
 PROJECT_NAME = hmpps-assess-risks-and-needs
 
 export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
@@ -19,17 +20,17 @@ down: ## Stops and removes all containers in the project.
 	docker compose ${LOCAL_COMPOSE_FILES} down
 
 build-api: ## Builds a production image of the API.
-	docker compose build san-api
+	docker compose ${LOCAL_COMPOSE_FILES} build san-api
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
-	docker compose down san-api
+	docker compose ${DEV_COMPOSE_FILES} down san-api
 	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate san-api
 
 dev-build: ## Builds a development image of the API.
 	docker compose ${DEV_COMPOSE_FILES} build san-api
 
 dev-down: ## Stops and removes the API container.
-	docker compose down san-api
+	docker compose ${DEV_COMPOSE_FILES} down san-api
 
 dev-api-token: ## Generates a JWT for authenticating with the local API.
 	docker compose ${DEV_COMPOSE_FILES} exec san-api \
@@ -68,19 +69,25 @@ lint-baseline: ## Generate a baseline file, ignoring all existing code smells.
 	docker compose ${DEV_COMPOSE_FILES} exec san-api gradle --parallel
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
-	docker compose down
+	docker compose ${DEV_COMPOSE_FILES} down
 	rm -rf .gradle build
 
 update: ## Downloads the latest versions of containers.
-	docker compose pull
+	docker compose ${DEV_COMPOSE_FILES} pull
 
 save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_DIR=
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log
 	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
+	docker logs ${PROJECT_NAME}-aap-api-1 > ${OUTPUT_LOGS_DIR}/aap-api.log
+	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
+
+save-db-dump: ## Dumps the postgres database (custom format, for later combining/restoring) to a file defined by OUTPUT_DB_DUMP_FILE=
+	mkdir -p $(dir ${OUTPUT_DB_DUMP_FILE})
+	docker exec ${PROJECT_NAME}-postgres-1 pg_dump -U root -d postgres -Fc > ${OUTPUT_DB_DUMP_FILE}
 
 db-port-forward-pod: ## Creates a DB port-forwarding pod in your currently active Kubernetes context
 	kubectl delete pod --ignore-not-found=true port-forward-pod
@@ -103,3 +110,41 @@ db-connect: ## Connects to the remote DB though the port-forwarding pod
 
 db-export: ## Export the remote DB to out.sql
 	pg_dump --no-owner $$(make db-connection-string) > out.sql
+
+migrator-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005. Stands up all services needed for testing data migrations
+	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api coordinator-api
+	COORDINATOR_API_VERSION=aap-san docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
+
+migrator-down: ## Stops and removes all migrator containers in the project.
+	docker compose ${MIGRATOR_COMPOSE_FILES} down
+
+migrator-update: ## Downloads the latest versions of containers.
+	docker compose ${MIGRATOR_COMPOSE_FILES} pull
+
+ASSESSMENTS=
+migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate e.g. make migrator-run ASSESSMENTS="12345 56789"
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec san-api gradle migrator -Pargs="${ASSESSMENTS}"
+
+migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=
+	psql postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
+
+migrator-combine-db-dumps: ## Restores per-shard db_dump_* artifacts (zipped or not) from DUMPS_DIR= into the local postgres container
+	bash ./docker/scripts/migrator/combine_db_dumps.sh ${DUMPS_DIR}
+
+migrator-export-schema: ## Dumps a schema from the postgres container to a file defined by OUTPUT_DUMP_FILE= and SCHEMA=
+	mkdir -p $(dir ${OUTPUT_DUMP_FILE})
+	docker exec ${PROJECT_NAME}-postgres-1 pg_dump -U root -d postgres --schema=${SCHEMA} --no-owner --no-privileges > ${OUTPUT_DUMP_FILE}
+
+migrator-fetch-coordinator-assessments: ## Fetches every ENTITY_TYPE= association from the Coordinator, saving each response to a file named by UUID in OUTPUT_DIR=
+	bash ./docker/scripts/migrator/fetch_coordinator_assessments.sh ${OUTPUT_DIR} ${ENTITY_TYPE}
+
+compare-coordinator-responses: ## Compares sanOasysEquivalent between two sets of Coordinator responses, dirs defined by OLD_DIR=/NEW_DIR=, report saved to REPORT_DIR=
+	bash ./docker/scripts/migrator/compare_coordinator_responses.sh ${OLD_DIR} ${NEW_DIR} ${REPORT_DIR}
+
+migrator-data-pods: ## Create port-forwarding pods
+	sh ./docker/scripts/migrator/setup_pods.sh
+
+migrator-data: ## Loads data from a remote database
+	sh ./docker/scripts/migrator/load_data.sh
+	docker compose ${MIGRATOR_COMPOSE_FILES} down coordinator-api
+	@make migrator-up

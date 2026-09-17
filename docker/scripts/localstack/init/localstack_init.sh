@@ -1,3 +1,2 @@
-#! /usr/bin/env bash
-
+#!/usr/bin/env bash
 awslocal sqs create-queue --queue-name audit-queue

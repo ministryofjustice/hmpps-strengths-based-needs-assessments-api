@@ -11,6 +11,8 @@ generic-service:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/config
+    ASSESSMENT_PLATFORM_API_BASE_URL: https://arns-assessment-platform-api-test.hmpps.service.justice.gov.uk
+    COORDINATOR_API_BASE_URL: https://arns-coordinator-api-test.hmpps.service.justice.gov.uk
 
   allowlist:
     mp-nat-egress-one: 13.43.9.198/32
@@ -34,4 +36,7 @@ generic-prometheus-alerts:
   alertSeverity: hmpps-strengths-based-needs-assessments
 
 dataExtractor:
+  enabled: true
+
+migrator:
   enabled: true

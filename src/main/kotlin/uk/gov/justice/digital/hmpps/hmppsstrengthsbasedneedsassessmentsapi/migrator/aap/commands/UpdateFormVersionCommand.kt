@@ -1,0 +1,11 @@
+package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands
+
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.UserDetails
+
+class UpdateFormVersionCommand(
+  override val user: UserDetails,
+  override val timeline: Timeline? = null,
+  val assessmentUuid: String,
+  val version: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
+) : Requestable

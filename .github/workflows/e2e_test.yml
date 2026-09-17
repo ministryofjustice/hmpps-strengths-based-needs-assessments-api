@@ -88,6 +88,10 @@ jobs:
         if: failure()
         run: make save-logs OUTPUT_LOGS_DIR=${{ runner.temp }}/docker-logs
 
+      - name: Export database dump
+        if: success() || failure()
+        run: make save-db-dump OUTPUT_DB_DUMP_FILE=${{ runner.temp }}/db-dump/db_dump.dump
+
       - name: Upload test results
         if: success() || failure()
         uses: actions/upload-artifact@v7
@@ -97,6 +101,72 @@ jobs:
             e2e-test-ui/test_results
             e2e-test-ui/cypress/screenshots
             ${{ runner.temp }}/docker-logs
+
+      - name: Upload database dump
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: db_dump_${{ matrix.container }}
+          path: ${{ runner.temp }}/db-dump/db_dump.dump
+
+  combine-db-dumps:
+    runs-on: ubuntu-latest
+    needs: e2e-test
+    if: success() || failure()
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      PGPASSWORD: dev
+      TEMP_DIR: ${{ runner.temp }}
+      # The dumps are produced by postgres:18's own pg_dump (via `docker exec` into the
+      # postgres container), so they must be read back with a matching pg_restore/pg_dump -
+      # the version installed on the runner image is older and can't parse a newer archive
+      # format. Running the same postgres:18 image here keeps client and server in lockstep.
+      PG_IMAGE: postgres:18
+    steps:
+      - name: Download database dumps
+        uses: actions/download-artifact@v8
+        with:
+          pattern: db_dump_*
+          path: ${{ runner.temp }}/db-dumps
+
+      - name: Restore schema and data from every shard's dump
+        run: |
+          dumps=$(find "${TEMP_DIR}/db-dumps" -name '*.dump' | sort -V)
+
+          first=$(echo "$dumps" | head -n1)
+          echo "Restoring schema from $first"
+          docker run --rm --network host -e PGPASSWORD -v "${TEMP_DIR}:/work" "${PG_IMAGE}" \
+            pg_restore --schema-only --no-owner --no-privileges -h localhost -U root -d postgres "/work/${first#"${TEMP_DIR}/"}"
+
+          for dump in $dumps; do
+            echo "Restoring data from $dump"
+            docker run --rm --network host -e PGPASSWORD -v "${TEMP_DIR}:/work" "${PG_IMAGE}" \
+              pg_restore --data-only --disable-triggers --no-owner --no-privileges -h localhost -U root -d postgres "/work/${dump#"${TEMP_DIR}/"}"
+          done
+
+      - name: Export combined database dump
+        run: |
+          docker run --rm --network host -e PGPASSWORD "${PG_IMAGE}" \
+            pg_dump -h localhost -U root -d postgres --no-owner --no-privileges --clean --if-exists \
+            > "${TEMP_DIR}/combined_db_dump.sql"
+
+      - name: Upload combined database dump
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined_db_dump
+          path: ${{ runner.temp }}/combined_db_dump.sql
 
   save-timings:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1

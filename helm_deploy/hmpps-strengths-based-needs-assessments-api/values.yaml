@@ -51,3 +51,6 @@ global:
 
 generic-prometheus-alerts:
   targetApplication: hmpps-strengths-based-needs-assessments-api
+
+migrator:
+  enabled: false

@@ -134,7 +134,7 @@ class AssessmentMigrator(
         flags = listOf("SAN_BETA"),
       ),
       CreateCollectionCommand(
-        name = "VICTIMS",
+        name = "OFFENCE_ANALYSIS_VICTIM",
         parentCollectionItemUuid = null,
         user = creatingUser,
         assessmentUuid = "@0",
@@ -149,7 +149,7 @@ class AssessmentMigrator(
 
     return Context(
       assessment = assessment,
-      assessmentUuid = response.extractNthInstance<CreateAssessmentCommandResult>(0).assessmentUuid,
+      assessmentUuid = response.extractSingle<CreateAssessmentCommandResult>().assessmentUuid,
       victimsCollectionUuid = response.extractNthInstance<CreateCollectionCommandResult>(0).collectionUuid,
       migrationCommands = commands.size,
     )

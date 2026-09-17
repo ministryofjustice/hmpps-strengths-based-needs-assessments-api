@@ -11,6 +11,7 @@ class UpdateCollectionItemPropertiesCommand(
   val added: Map<String, Value>,
   val removed: List<String>,
   val assessmentUuid: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

@@ -9,4 +9,5 @@ class UpdateAssessmentAnswersCommand(
   val assessmentUuid: String,
   val added: Map<String, Value>,
   val removed: List<String>,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable

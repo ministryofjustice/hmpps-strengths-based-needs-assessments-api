@@ -8,4 +8,5 @@ class RollbackCommand(
   override val timeline: Timeline? = null,
   val assessmentUuid: String,
   val pointInTime: LocalDateTime,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable

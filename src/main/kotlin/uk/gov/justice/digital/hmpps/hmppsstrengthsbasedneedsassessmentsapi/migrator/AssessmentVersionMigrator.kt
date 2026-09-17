@@ -2,13 +2,16 @@ package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migr
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.AAPService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.AddCollectionItemCommand
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.RemoveCollectionItemCommand
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.Requestable
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.Resolvable
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateAssessmentAnswersCommand
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateAssessmentPropertiesCommand
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateOasysDataMapping
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.request.CommandResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.result.AddCollectionItemCommandResult
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.UserDetails
@@ -25,6 +28,7 @@ import java.util.UUID.fromString
 class AssessmentVersionMigrator(
   private val aapService: AAPService,
   private val migrationLogRepository: MigrationLogRepository,
+  private val objectMapper: ObjectMapper,
 ) {
   fun migrate(
     context: Context,
@@ -122,6 +126,15 @@ class AssessmentVersionMigrator(
     ).fold(emptyList()) { resolved, command ->
       resolved + (if (command is Resolvable) command.resolve(resolved) else command)
     }
+
+    val formConfig = objectMapper.readValue(
+      requireNotNull(javaClass.getResourceAsStream("/migrator/formconfig/v1.0.json")) {
+        "Missing form config fixture: src/main/resources/migrator/formconfig/v1.0.json"
+      },
+      FormConfig::class.java,
+    )
+
+    commands.last().hooks.add(UpdateOasysDataMapping(formConfig))
 
     context.previousAnswers = currentAnswerEntries.associate { it.key to it.value }
     context.previousProperties = currentPropertyEntries.associate { it.key to it.value }

@@ -11,6 +11,7 @@ class CreateCollectionCommand(
   val parentCollectionItem: AddCollectionItemCommand? = null,
   var parentCollectionItemUuid: String? = null,
   val assessmentUuid: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

@@ -9,6 +9,7 @@ class ReorderCollectionItemCommand(
   var collectionItemUuid: String? = null,
   val index: Int,
   val assessmentUuid: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

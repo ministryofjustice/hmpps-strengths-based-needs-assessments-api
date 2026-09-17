@@ -128,15 +128,18 @@ migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate
 migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=
 	psql postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
 
+migrator-combine-db-dumps: ## Restores per-shard db_dump_* artifacts (zipped or not) from DUMPS_DIR= into the local postgres container
+	bash ./docker/scripts/migrator/combine_db_dumps.sh ${DUMPS_DIR}
+
 migrator-export-schema: ## Dumps a schema from the postgres container to a file defined by OUTPUT_DUMP_FILE= and SCHEMA=
 	mkdir -p $(dir ${OUTPUT_DUMP_FILE})
 	docker exec ${PROJECT_NAME}-postgres-1 pg_dump -U root -d postgres --schema=${SCHEMA} --no-owner --no-privileges > ${OUTPUT_DUMP_FILE}
 
-migrator-fetch-coordinator-assessments: ## Fetches every assessment (uuid column of SCHEMA=/TABLE=) from the Coordinator, saving each response to a file named by UUID in OUTPUT_DIR=
-	sh ./docker/scripts/migrator/fetch_coordinator_assessments.sh ${OUTPUT_DIR} ${SCHEMA} ${TABLE}
+migrator-fetch-coordinator-assessments: ## Fetches every ENTITY_TYPE= association from the Coordinator, saving each response to a file named by UUID in OUTPUT_DIR=
+	bash ./docker/scripts/migrator/fetch_coordinator_assessments.sh ${OUTPUT_DIR} ${ENTITY_TYPE}
 
 compare-coordinator-responses: ## Compares sanOasysEquivalent between two sets of Coordinator responses, dirs defined by OLD_DIR=/NEW_DIR=, report saved to REPORT_DIR=
-	sh ./docker/scripts/migrator/compare_coordinator_responses.sh ${OLD_DIR} ${NEW_DIR} ${REPORT_DIR}
+	bash ./docker/scripts/migrator/compare_coordinator_responses.sh ${OLD_DIR} ${NEW_DIR} ${REPORT_DIR}
 
 migrator-data-pods: ## Create port-forwarding pods
 	sh ./docker/scripts/migrator/setup_pods.sh

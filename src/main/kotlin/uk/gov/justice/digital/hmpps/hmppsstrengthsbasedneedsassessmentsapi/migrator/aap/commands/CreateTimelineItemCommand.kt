@@ -8,6 +8,7 @@ class CreateTimelineItemCommand(
   override val user: UserDetails,
   override val timeline: Timeline,
   val assessmentUuid: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

@@ -89,7 +89,7 @@ jobs:
           path: ${{ runner.temp }}/assessment_platform_dump.sql
 
       - name: Fetch migrated assessments from the Coordinator
-        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses SCHEMA=assessment-platform TABLE=assessment
+        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses ENTITY_TYPE=AAP_SAN
 
       - name: Zip up Coordinator responses
         if: success() || failure()
@@ -134,7 +134,7 @@ jobs:
         run: make migrator-import-dump DB_DUMP_FILE=${{ runner.temp }}/db-dump/combined_db_dump.sql
 
       - name: Fetch assessments from the Coordinator
-        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses SCHEMA=strengthsbasedneedsapi TABLE=assessments
+        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses ENTITY_TYPE=ASSESSMENT
 
       - name: Zip up Coordinator responses
         if: success() || failure()

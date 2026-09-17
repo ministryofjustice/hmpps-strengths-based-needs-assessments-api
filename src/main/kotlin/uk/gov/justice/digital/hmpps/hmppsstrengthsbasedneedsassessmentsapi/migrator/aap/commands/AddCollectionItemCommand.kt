@@ -15,6 +15,7 @@ class AddCollectionItemCommand(
   val assessmentUuid: String,
   @JsonIgnore
   val originalId: String? = null,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

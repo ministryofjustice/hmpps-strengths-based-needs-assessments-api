@@ -7,4 +7,5 @@ class UpdateFormVersionCommand(
   override val timeline: Timeline? = null,
   val assessmentUuid: String,
   val version: String,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable

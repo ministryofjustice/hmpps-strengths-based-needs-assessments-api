@@ -8,6 +8,7 @@ class RemoveCollectionItemCommand(
   val assessmentUuid: String,
   val collectionItem: AddCollectionItemCommand? = null,
   var collectionItemUuid: String? = null,
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable,
   Resolvable {
   override fun resolve(

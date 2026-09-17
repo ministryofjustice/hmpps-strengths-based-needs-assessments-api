@@ -4,4 +4,5 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migra
 
 sealed interface Requestable : Command {
   val user: UserDetails
+  val hooks: MutableList<Hook>
 }

@@ -12,4 +12,5 @@ class CreateAssessmentCommand(
   val identifiers: Map<IdentifierType, String>? = null,
   val properties: Map<String, Value>? = null,
   val flags: List<String> = emptyList(),
+  override val hooks: MutableList<Hook> = mutableListOf(),
 ) : Requestable

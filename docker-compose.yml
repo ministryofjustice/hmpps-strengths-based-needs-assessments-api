@@ -164,7 +164,7 @@ services:
       - coordinator-api
       - arns-handover
     healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider", "http://aap-ui:3000/health" ]
+      test: [ "CMD", "wget", "-q", "--spider", "http://aap-ui:3000/ping" ]
       interval: 5s
       retries: 60
     environment:
@@ -186,6 +186,9 @@ services:
       COORDINATOR_API_URL: http://coordinator-api:8080
       DELIUS_API_URL: http://coordinator-api:8080
       ARNS_API_URL: http://coordinator-api:8080
+      TIER_API_URL: http://coordinator-api:8080
+      SUPERVISION_PACKAGE_API_URL: http://coordinator-api:8080
+      GOTENBERG_API_URL: http://localhost:3001
       SAN_URL: http://localhost:3002
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7074
@@ -202,6 +205,7 @@ services:
       FORM_ENGINE_DEVELOPER_GUIDE_ENABLED: true
       SERVICE_NOW_FORM_URL: "#service-now-link"
       OASYS_URL: "http://localhost:3000/training-session-launcher/sessions"
+      OASYS_REVIEW_URL: "http://localhost:3000/training-session-launcher/sessions"
       MPOP_URL: "http://localhost:3000/sign-in"
       CACHE_REDIS_HOST: redis
 

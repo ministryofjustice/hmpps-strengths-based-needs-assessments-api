@@ -4,10 +4,10 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
-  kotlin("plugin.spring") version "2.3.21"
-  kotlin("plugin.jpa") version "2.3.21"
-  id("org.jetbrains.kotlin.kapt") version "2.3.21"
-  id("org.jetbrains.kotlinx.kover") version "0.9.8"
+  kotlin("plugin.spring") version "2.4.20"
+  kotlin("plugin.jpa") version "2.4.20"
+  id("org.jetbrains.kotlin.kapt") version "2.4.20"
+  id("org.jetbrains.kotlinx.kover") version "0.9.9"
 }
 
 configurations {
@@ -17,20 +17,20 @@ configurations {
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.2")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("tools.jackson.module:jackson-module-kotlin:3.1.4")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("tools.jackson.module:jackson-module-kotlin:3.2.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
   runtimeOnly("io.netty:netty-codec-classes-quic")
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.postgresql:postgresql:42.7.11")
+  implementation("org.postgresql:postgresql:42.7.13")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.2.Final")
+  kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.10.Final")
 
   // Test dependencies
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.2")
-  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.3.21")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.4.20")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }
 

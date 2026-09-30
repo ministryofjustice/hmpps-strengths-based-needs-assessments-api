@@ -151,7 +151,7 @@ services:
     ports:
       - '9229:9229'
     healthcheck:
-      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health']
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/ping']
       interval: 5s
       retries: 20
     environment:

@@ -15,13 +15,16 @@
 # DUMPS_DIR may contain the raw db_dump_N.zip files as downloaded from the GitHub Actions
 # UI (each holding a single db_dump.dump), already-unzipped db_dump.dump files, or a mix.
 #
+# The target container defaults to the local stack's postgres, but can be overridden with
+# POSTGRES_CONTAINER (CI uses this to point at a standalone postgres container).
+#
 # Usage: combine_db_dumps.sh <dumps-dir>
 
 set -eu
 
 DUMPS_DIR="${1:?Usage: combine_db_dumps.sh <dumps-dir>}"
 PROJECT_NAME="hmpps-assess-risks-and-needs"
-CONTAINER="${PROJECT_NAME}-postgres-1"
+CONTAINER="${POSTGRES_CONTAINER:-${PROJECT_NAME}-postgres-1}"
 
 # Generous headroom: real per-shard row counts are tiny (test data), so any offset/
 # threshold far above that is safe. Must stay equal to each other (see below).

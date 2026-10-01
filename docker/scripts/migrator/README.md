@@ -2,8 +2,8 @@
 
 How to run and verify a full SAN → AAP migration locally, using a real dataset pulled from a
 GitHub Actions `e2e_test` run instead of whatever's in your local dev database. This mirrors what
-the `migrator_test` / `coordinator_fetch_test` / `compare_coordinator_responses` jobs do in
-`pipeline_pr.yml`, but lets you inspect every step and iterate on a fix without waiting on CI.
+the `migrator_test` job does in `pipeline_pr.yml`, but lets you inspect every step and iterate on
+a fix without waiting on CI.
 
 ## Prerequisites
 
@@ -16,29 +16,17 @@ the `migrator_test` / `coordinator_fetch_test` / `compare_coordinator_responses`
 
 ## Important: always start from a clean stack
 
-`make up` / `make migrator-up` both pass `--no-recreate`, so any container left running from a
+`make migrator-up` passes `--no-recreate`, so any container left running from a
 previous session gets reused as-is - even if its image tag or the schema it depends on has since
-changed underneath it. This has bitten us twice:
-
-- A stale `aap-api` container held onto `san-api`'s port mappings (`4000`/`4001`) from an older
-  compose config, causing `migrator-up` to fail with "port is already allocated".
-- After `migrator-combine-db-dumps` resets the `coordinator` schema (see below), a
-  **previously-running** `coordinator-api` never gets the chance to re-run its own Flyway
-  migration that adds the `AAP_SAN` value to the `coordinator.entity_type` enum - every migrated
-  association then fails with `invalid input value for enum entity_type: "AAP_SAN"`.
-
-Run `make down` before starting, every time. If you hit either symptom above mid-session, the fix
-is `docker rm -f <container-name>` followed by `make up` / `make migrator-up` again to force a
-fresh container.
+changed underneath it. Run `make migrator-down` before starting, every time.
 
 ## Step-by-step
 
-1. **Tear down and bring up the default stack** (this is the `coordinator-api` variant needed for
-   the pre-migration fetch in step 3):
+1. **Tear down and bring up the stack**:
 
    ```
-   make down
-   make up
+   make migrator-down
+   make migrator-up
    ```
 
 2. **Restore and remap the shard dumps into postgres:**
@@ -57,10 +45,11 @@ fresh container.
    non-overlapping ID block, before moving on to the next shard. Resyncs sequences at the end so
    later inserts (e.g. from the migrator itself) don't collide with the remapped data.
 
-3. **Fetch pre-migration Coordinator responses**, while `coordinator-api` is still the `make up`
-   variant:
+3. **Fetch pre-migration Coordinator responses**, you need to switch to the legacy SAN versions
+of the Coordinator and Handover service:
 
    ```
+   make use-legacy-san
    make migrator-fetch-coordinator-assessments \
      OUTPUT_DIR=/tmp/coordinator-pre ENTITY_TYPE=ASSESSMENT
    ```
@@ -74,12 +63,10 @@ fresh container.
    association. Writes one `<uuid>.json` response per assessment plus a `manifest.csv`
    (`uuid,oasys_pk`) used later to pair pre/post responses up.
 
-4. **Swap to the migrator environment** (recreates `coordinator-api` on the `aap-san` image tag,
-   which also re-adds the `AAP_SAN` enum value via Flyway - see the callout above for why this
-   matters if you re-run step 2 later without repeating this step):
+4. **Swap to the AAP version of Coordinator/Handover**:
 
    ```
-   make migrator-up
+   make use-aap-san
    ```
 
 5. **Run the migrator:**
@@ -100,8 +87,7 @@ fresh container.
 
    and grep the full output for `Failed to migrate assessment` for per-assessment detail.
 
-6. **Fetch post-migration Coordinator responses**, now that `coordinator-api` is the `aap-san`
-   variant:
+6. **Fetch post-migration Coordinator responses**:
 
    ```
    make migrator-fetch-coordinator-assessments \
@@ -152,11 +138,3 @@ fresh container.
 - Any assessment whose SAN uuid doesn't have a `coordinator.oasys_associations` row at all (no
   `ASSESSMENT`-type association) was never linked to an OASys record in the first place and won't
   appear in step 3's output - this is normal for some e2e test fixtures.
-
-## Known gap
-
-The CI `e2e_test.yml` `combine-db-dumps` job does **not** have the ID-remapping fix described in
-step 2 - it still restores shards with plain `pg_restore`, which hits primary-key collisions once
-shards contain more than trivial amounts of overlapping data. Only the local
-`migrator-combine-db-dumps` script has been fixed. The CI `combined_db_dump` artifact should be
-treated as unreliable until that's ported over.

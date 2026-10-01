@@ -115,7 +115,6 @@ class AssessmentMigrator(
   }
 
   fun createContext(assessment: Assessment, creatingUser: UserDetails): Context {
-//    val creatingUser = UserDetails("UNKNOWN_USER", "Unknown User", AuthSource.NOT_SPECIFIED)
     val commands = listOf(
       CreateAssessmentCommand(
         user = creatingUser,

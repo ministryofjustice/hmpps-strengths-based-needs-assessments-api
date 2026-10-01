@@ -15,6 +15,8 @@ services:
     image: postgres:18
     networks:
       - hmpps
+    ports:
+      - '5432:5432'
     tmpfs:
       - /var/lib/postgresql
     environment:
@@ -34,8 +36,8 @@ services:
       retries: 50
     volumes:
       - '${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack'
-      - './scripts/localstack/init:/etc/localstack/init/ready.d'
-      - './scripts/localstack/wait:/scripts/wait'
+      - './docker/scripts/localstack/init:/etc/localstack/init/ready.d'
+      - './docker/scripts/localstack/wait:/scripts/wait'
     environment:
       - SERVICES=sqs
       - LOCALSTACK_HOST=localstack:4566
@@ -55,21 +57,24 @@ services:
       interval: 5s
       retries: 20
     volumes:
-      - ./auth_db:/auth_db
+      - ./docker/auth_db:/auth_db
     environment:
       SERVER_PORT: 9090
       SPRING_PROFILES_ACTIVE: dev
       APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
       SPRING_FLYWAY_LOCATIONS: classpath:db/auth,db/auth_{vendor},db/dev/data/auth_{vendor},db/dev/data/auth,filesystem:/auth_db
 
-  coordinator-api:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:${COORDINATOR_API_VERSION:-latest}
+  coordinator-api-aap-san:
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:aap-san
     depends_on:
       - postgres
+      - localstack
     networks:
       - hmpps
+    ports:
+      - '6060:8080'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://coordinator-api:8080/health/ping']
+      test: ['CMD', 'curl', '-f', 'http://coordinator-api-aap-san:8080/health/ping']
       interval: 5s
       retries: 20
     environment:
@@ -80,7 +85,7 @@ services:
       APP_DB_USERNAME: root
       APP_DB_PASSWORD: dev
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090/auth
-      SAN_API_BASE_URL: http://san-api:8080
+      SAN_API_BASE_URL: http://wiremock:8080/san-api
       AAP_API_BASE_URL: http://wiremock:8080/aap-api
       APP_STRATEGIES_PLAN: false
       APP_STRATEGIES_ASSESSMENT: true
@@ -88,37 +93,106 @@ services:
       CLIENT_SECRET: clientsecret
       PLAN_TYPE: AAP_PLAN
       ASSESSMENT_TYPE: AAP_SAN
+      HMPPS_SQS_PROVIDER: localstack
+      HMPPS_SQS_LOCALSTACK_URL: http://localstack:4566
 
-  arns-handover:
+  coordinator-api-legacy-san:
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:aap-san
+    depends_on:
+      - postgres
+      - localstack
+    networks:
+      - hmpps
+    ports:
+      - '6061:8080'
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://coordinator-api-legacy-san:8080/health/ping' ]
+      interval: 5s
+      retries: 20
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: postgres
+      APP_DB_ENDPOINT: postgres:5432
+      APP_DB_NAME: postgres
+      APP_DB_USERNAME: root
+      APP_DB_PASSWORD: dev
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090/auth
+      SAN_API_BASE_URL: http://wiremock:8080/san-api
+      AAP_API_BASE_URL: http://wiremock:8080/aap-api
+      APP_STRATEGIES_PLAN: false
+      APP_STRATEGIES_ASSESSMENT: true
+      CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
+      CLIENT_SECRET: clientsecret
+      PLAN_TYPE: AAP_PLAN
+      ASSESSMENT_TYPE: ASSESSMENT
+      HMPPS_SQS_PROVIDER: localstack
+      HMPPS_SQS_LOCALSTACK_URL: http://localstack:4566
+
+  arns-handover-aap-san:
     image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:latest
     depends_on:
       - redis
       - localstack
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://arns-handover:7070/health/ping']
+      test: ['CMD', 'curl', '-f', 'http://arns-handover-aap-san:7070/health/ping']
       interval: 5s
       retries: 20
     networks:
       - hmpps
+    ports:
+      - '7070:7070'
     environment:
       SERVER_PORT: 7070
       REDIS_HOST: redis
       SPRING_PROFILES_ACTIVE: local
-      HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
-      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HMPPS_HANDOVER_BASE_URL: http://arns-handover-aap-san:7070
+      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:9091/handover
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
-      OASYS_BASE_URL: http://localhost:7072
-      OASYS_RETURN_URLS: http://localhost:7072
-      COORDINATOR_API_BASE_URL: http://coordinator-api:8080
+      OASYS_BASE_URL: http://localhost:3000
+      OASYS_RETURN_URLS: http://localhost:3000
+      COORDINATOR_API_BASE_URL: http://wiremock:8080/coordinator-api
       SERVER_ERROR_WHITELABEL_ENABLED: true
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
       CLIENT_SP_SECRET: sp-secret
-      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:7072/sign-in/handover/callback
-      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:7072/sign-in/handover?service=sentence-plan
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
       CLIENT_SAN_SECRET: san-secret
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=strengths-and-needs
+
+  arns-handover-legacy-san:
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:latest
+    depends_on:
+      - redis
+      - localstack
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://arns-handover-legacy-san:7070/health/ping' ]
+      interval: 5s
+      retries: 20
+    networks:
+      - hmpps
+    ports:
+      - '7071:7070'
+    environment:
+      SERVER_PORT: 7070
+      REDIS_HOST: redis
+      SPRING_PROFILES_ACTIVE: local
+      HMPPS_HANDOVER_BASE_URL: http://arns-handover-legacy-san:7070
+      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:9091/handover
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
+      OASYS_BASE_URL: http://localhost:3000
+      OASYS_RETURN_URLS: http://localhost:3000,http://localhost:3002
+      COORDINATOR_API_BASE_URL: http://wiremock:8080/coordinator-api
+      SERVER_ERROR_WHITELABEL_ENABLED: true
+      CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
+      CLIENT_SECRET: clientsecret
+      CLIENT_SP_SECRET: sp-secret
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
+      CLIENT_SAN_SECRET: san-secret
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3002/sign-in/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3002/sign-in
 
   gotenberg:
     image: gotenberg/gotenberg:8.36.0
@@ -129,7 +203,7 @@ services:
     ports:
       - '3001:3000'
     healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:3000/health' ]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 5s
       retries: 20
     command:
@@ -149,9 +223,10 @@ services:
       - wiremock
       - gotenberg
     ports:
+      - '3000:3000'
       - '9229:9229'
     healthcheck:
-      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/ping']
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health']
       interval: 5s
       retries: 20
     environment:
@@ -159,7 +234,9 @@ services:
       REDIS_ENABLED: true
       REDIS_HOST: redis
       SESSION_SECRET: somesecretvalue
-      INGRESS_URL: http://localhost:7072
+      INGRESS_URL: http://localhost:3000
+      GOTENBERG_API_URL: http://gotenberg:3000
+      GOTENBERG_RENDER_URL: http://aap-ui:3000
       NO_HTTPS: true
       AUTH_CODE_CLIENT_ID: hmpps-arns-assessment-platform-ui
       AUTH_CODE_CLIENT_SECRET: clientsecret
@@ -173,9 +250,13 @@ services:
       COORDINATOR_API_URL: http://wiremock:8080/coordinator-api
       DELIUS_API_URL: http://wiremock:8080/delius
       ARNS_API_URL: http://wiremock:8080/arns-api
-      SAN_URL: http://localhost:3000
+      TIER_API_URL: http://wiremock:8080/tier-api
+      SUPERVISION_PACKAGE_API_URL: http://wiremock:8080/supervision-package-api
+      FEATURE_FLAG_URL: http://wiremock:8080/flipt
+      SAN_URL: http://localhost:3000/strengths-and-needs/v1.0
+      SAN_LEGACY_URL: http://localhost:3002
       HMPPS_ARNS_HANDOVER_URL: http://wiremock:8080/handover
-      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:9091/handover
       HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
       HMPPS_ARNS_HANDOVER_CLIENT_SECRET: sp-secret
       AWS_ACCESS_KEY_ID: test
@@ -187,22 +268,21 @@ services:
       AUDIT_SERVICE_NAME: hmpps-arns-assessment-platform-ui
       NODE_CLUSTER_ENABLED: true
       FORM_TRAINING_SESSION_LAUNCHER_ENABLED: true
+      FORM_DATA_DELETION_TOOL_ENABLED: true
       CACHE_REDIS_HOST: redis
       SERVICE_NOW_FORM_URL: '#service-now-link'
-      NATIONAL_ROLLOUT_FEEDBACK_URL: national-rollout-feedback-url
-      FEEDBACK_FORM_URL: private-beta-feedback-url
+      NATIONAL_ROLLOUT_FEEDBACK_URL: '#national-rollout-feedback-url'
+      PRIVATE_BETA_FEEDBACK_URL: '#private-beta-feedback-url'
       OASYS_URL: 'http://aap-ui:3000/training-session-launcher/sessions'
       OASYS_REVIEW_URL: 'http://aap-ui:3000/training-session-launcher/sessions'
       MPOP_URL: 'http://aap-ui:3000/sign-in'
-      GOTENBERG_API_URL: http://gotenberg:3000
-      GOTENBERG_RENDER_URL: http://aap-ui:3000
-      TIER_API_URL: http://wiremock:8080/tier-api
-      SUPERVISION_PACKAGE_API_URL: http://wiremock:8080/supervision-package-api
 
   aap-api:
     image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-api:latest
     networks:
       - hmpps
+    ports:
+      - '8080:8080'
     depends_on:
       - postgres
       - localstack
@@ -219,28 +299,38 @@ services:
       - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
       - HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME=audit-queue
       - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_JPA_SHOW_SQL=true
 
   wiremock:
     image: wiremock/wiremock:3.13.2
     networks:
       - hmpps
+    ports:
+      - '9091:8080'
     depends_on:
       aap-api:
         condition: service_healthy
-      coordinator-api:
+      coordinator-api-aap-san:
         condition: service_healthy
-      arns-handover:
+      coordinator-api-legacy-san:
+        condition: service_healthy
+      arns-handover-aap-san:
+        condition: service_healthy
+      arns-handover-legacy-san:
         condition: service_healthy
       hmpps-auth:
         condition: service_healthy
     restart: always
     volumes:
-      - ./wiremock/mappings:/home/wiremock/mappings
+      - ./docker/wiremock/mappings:/home/wiremock/mappings
     environment:
       WIREMOCK_HMPPS_AUTH_URL: http://hmpps-auth:9090
       WIREMOCK_AAP_API_URL: http://aap-api:8080
-      WIREMOCK_COORDINATOR_API_URL: http://coordinator-api:8080
-      WIREMOCK_HANDOVER_URL: http://arns-handover:7070
+      WIREMOCK_SAN_API_URL: http://san-api:8080
+      WIREMOCK_COORDINATOR_API_AAP_SAN_URL: http://coordinator-api-aap-san:8080
+      WIREMOCK_COORDINATOR_API_LEGACY_SAN_URL: http://coordinator-api-legacy-san:8080
+      WIREMOCK_HANDOVER_AAP_SAN_URL: http://arns-handover-aap-san:7070
+      WIREMOCK_HANDOVER_LEGACY_SAN_URL: http://arns-handover-legacy-san:7070
       WIREMOCK_TOKEN_VERIFICATION_URL: http://token-verification:8080
       WIREMOCK_DELIUS_URL: http://delius-api:8080
       WIREMOCK_ARNS_API_URL: http://arns-api:8080
@@ -251,18 +341,34 @@ services:
     image: wiremock/wiremock:3.13.2
     networks:
       - hmpps
+    ports:
+      - '9092:8080'
     restart: always
     volumes:
-      - ./wiremock/feedback.json:/home/wiremock/mappings/feedback.json
+      - ./docker/wiremock/feedback.json:/home/wiremock/mappings/feedback.json
     command: --global-response-templating
 
   san-api:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:local
     build:
-      context: ../
+      context: .
       target: development
+    command: gradle --parallel --build-cache --configuration-cache --info bootRun
+    volumes:
+      - ./.git:/app/.git
+      - ./.gradle:/home/gradle/.gradle
+      - ./build:/app/build
+      - ./src:/app/src
+      - ./build.gradle.kts:/app/build.gradle.kts
+      - ./settings.gradle.kts:/app/settings.gradle.kts
+      - ./glowroot-data:/opt/glowroot/data
     networks:
       - hmpps
+    ports:
+      - '8082:8080'
+      - '5006:5005'
+      - '4000:4000'
+      - '4001:4001'
     depends_on:
       - postgres
       - hmpps-auth
@@ -280,22 +386,22 @@ services:
       CLIENT_CREDS_CLIENT_ID: sentence-plan-api-client
       CLIENT_CREDS_CLIENT_SECRET: sentence-plan-api-client
       ASSESSMENT_PLATFORM_API_BASE_URL: http://aap-api:8080
-      COORDINATOR_API_BASE_URL: http://coordinator-api:8080
+      COORDINATOR_API_BASE_URL: http://wiremock:8080/coordinator-api
 
   san-ui:
     image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
     networks:
       - hmpps
+    ports:
+      - '3002:3000'
     depends_on:
       redis:
         condition: service_started
       hmpps-auth:
         condition: service_healthy
-      arns-handover:
-        condition: service_healthy
       aap-ui:
         condition: service_started
-      coordinator-api:
+      wiremock:
         condition: service_healthy
       feedback:
         condition: service_healthy
@@ -308,8 +414,8 @@ services:
       REDIS_HOST: redis
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
       HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
-      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
-      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      HMPPS_ARNS_HANDOVER_URL: http://wiremock:8080/handover
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:9091/handover
       OASYS_URL: http://localhost:7072
       HANDOVER_CLIENT_ID: strengths-and-needs-assessment
       HANDOVER_CLIENT_SECRET: san-secret
@@ -321,11 +427,16 @@ services:
       SYSTEM_CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       SESSION_SECRET: sessionsecret
       SBNA_API_URL: http://san-api:8080
-      COORDINATOR_API_URL: http://coordinator-api:8080
-      INGRESS_URL: http://localhost:3000
+      COORDINATOR_API_URL: http://wiremock:8080/coordinator-api
+      INGRESS_URL: http://localhost:3002
       HTTPS: false
       NODE_ENV: development
       FEEDBACK_URL: http://localhost:9092
 
 networks:
   hmpps:
+
+volumes:
+  node_modules:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_node_modules

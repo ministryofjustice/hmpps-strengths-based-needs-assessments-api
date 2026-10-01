@@ -114,7 +114,7 @@ class MigrationRunner(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     private const val RETRYABLE_CONSTRAINT = "uq_user_id_and_type"
-    private const val MAX_ATTEMPTS = 2
+    private const val MAX_ATTEMPTS = 3
     private const val RETRY_DELAY_MS = 250L
   }
 }

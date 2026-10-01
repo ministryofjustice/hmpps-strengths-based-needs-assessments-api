@@ -1,7 +1,7 @@
 SHELL = '/bin/bash'
-LOCAL_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
-DEV_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
-MIGRATOR_COMPOSE_FILES = -f docker/docker-compose.base.yml -f docker/docker-compose.local.yml
+LOCAL_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
+DEV_COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.dev.yml
+MIGRATOR_COMPOSE_FILES = -f docker-compose.migrator.yml
 PROJECT_NAME = hmpps-assess-risks-and-needs
 
 export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
@@ -82,8 +82,10 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	docker logs ${PROJECT_NAME}-aap-api-1 > ${OUTPUT_LOGS_DIR}/aap-api.log
 	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
-	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
+	docker logs ${PROJECT_NAME}-coordinator-api-aap-san-1 > ${OUTPUT_LOGS_DIR}/coordinator-api-aap-san.log
+	docker logs ${PROJECT_NAME}-coordinator-api-legacy-san-1 > ${OUTPUT_LOGS_DIR}/coordinator-api-legacy-san.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
+	docker logs ${PROJECT_NAME}-wiremock-1 > ${OUTPUT_LOGS_DIR}/wiremock.log
 
 save-db-dump: ## Dumps the postgres database (custom format, for later combining/restoring) to a file defined by OUTPUT_DB_DUMP_FILE=
 	mkdir -p $(dir ${OUTPUT_DB_DUMP_FILE})
@@ -112,8 +114,8 @@ db-export: ## Export the remote DB to out.sql
 	pg_dump --no-owner $$(make db-connection-string) > out.sql
 
 migrator-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005. Stands up all services needed for testing data migrations
-	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api coordinator-api
-	COORDINATOR_API_VERSION=aap-san docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
+	docker compose ${MIGRATOR_COMPOSE_FILES} down san-api
+	docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate san-api aap-ui
 
 migrator-down: ## Stops and removes all migrator containers in the project.
 	docker compose ${MIGRATOR_COMPOSE_FILES} down
@@ -148,3 +150,11 @@ migrator-data: ## Loads data from a remote database
 	sh ./docker/scripts/migrator/load_data.sh
 	docker compose ${MIGRATOR_COMPOSE_FILES} down coordinator-api
 	@make migrator-up
+
+use-aap-san: ## Use AAP SAN containers
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec wiremock curl -sf -X PUT localhost:8080/__admin/scenarios/coordinator-target/state -d '{"state":"Started"}'
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec wiremock curl -sf -X PUT localhost:8080/__admin/scenarios/handover-target/state -d '{"state":"Started"}'
+
+use-legacy-san: ## Use legacy SAN containers
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec wiremock curl -sf -X PUT localhost:8080/__admin/scenarios/coordinator-target/state -d '{"state":"legacy-san"}'
+	docker compose ${MIGRATOR_COMPOSE_FILES} exec wiremock curl -sf -X PUT localhost:8080/__admin/scenarios/handover-target/state -d '{"state":"legacy-san"}'

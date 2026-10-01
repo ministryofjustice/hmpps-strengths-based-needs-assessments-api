@@ -1,8 +1,8 @@
 {
-  "name": "SAN API - Health Ping",
+  "name": "Tier API - Health Ping",
   "request": {
     "method": "GET",
-    "urlPath": "/san-api/health/ping"
+    "urlPath": "/tier-api/health/ping"
   },
   "response": {
     "status": 200,

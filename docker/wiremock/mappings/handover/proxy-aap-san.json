@@ -1,0 +1,13 @@
+{
+  "name": "Proxy to ARNS Handover (AAP SAN)",
+  "scenarioName": "handover-target",
+  "requiredScenarioState": "Started",
+  "request": {
+    "urlPattern": "/handover/.*"
+  },
+  "response": {
+    "proxyBaseUrl": "{{systemValue type='ENVIRONMENT' key='WIREMOCK_HANDOVER_AAP_SAN_URL'}}",
+    "proxyUrlPrefixToRemove": "/handover"
+  },
+  "priority": 100
+}

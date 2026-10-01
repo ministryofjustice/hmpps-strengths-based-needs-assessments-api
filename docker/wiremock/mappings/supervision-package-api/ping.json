@@ -1,13 +1,13 @@
 {
-  "name": "Coordinator API ping - default success",
+  "name": "Supervision Package API - Health Ping",
   "request": {
     "method": "GET",
-    "urlPattern": "/coordinator-api/health/ping"
+    "urlPath": "/supervision-package-api/health/ping"
   },
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/json;charset=UTF-8"
+      "Content-Type": "application/json"
     },
     "jsonBody": {
       "status": "UP"

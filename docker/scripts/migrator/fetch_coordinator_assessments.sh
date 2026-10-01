@@ -19,7 +19,7 @@ ENTITY_TYPE="${2:?Usage: fetch_coordinator_assessments.sh <output-dir> <entity-t
 
 DOCKER_CONNECTION_STRING="postgres://root:dev@localhost:5432/postgres"
 HMPPS_AUTH_URL="http://localhost:9090/auth"
-COORDINATOR_API_URL="http://localhost:8070"
+COORDINATOR_API_URL="http://localhost:9091/coordinator-api"
 # The Fetch endpoint is the one real OASys calls in production, so it needs the oastub
 # client's roles (ROLE_STRENGTHS_AND_NEEDS_OASYS etc.) - san-api's own outbound client
 # (sentence-plan-api-client) gets a 403 here despite authenticating fine.

@@ -214,7 +214,7 @@ services:
       - --prometheus-disable-collect
 
   aap-ui:
-    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:latest
+    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:aap-san
     networks:
       - hmpps
     depends_on:

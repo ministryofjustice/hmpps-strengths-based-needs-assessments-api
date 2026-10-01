@@ -129,7 +129,7 @@ jobs:
         run: docker load --input ${{ runner.temp }}/build_image.tar
 
       - name: Stand up a test environment
-        run: make up
+        run: make migrator-up
 
       - name: Download combined database dump
         uses: actions/download-artifact@v8

@@ -13,7 +13,6 @@ jobs:
     name: Combine the DB dumps from all of the parallel e2e test runners
     runs-on: ubuntu-latest
     env:
-      TEMP_DIR: ${{ runner.temp }}
       # combine_db_dumps.sh drives postgres via `docker exec`, so run it as a named container
       # rather than a service. The dumps are produced by postgres:18's own pg_dump, so they must
       # be read back with a matching pg_restore/pg_dump - the runner's own client is too old.
@@ -40,13 +39,13 @@ jobs:
           exit 1
 
       - name: Restore and remap every shard's dump
-        run: bash ./docker/scripts/migrator/combine_db_dumps.sh "${TEMP_DIR}/db-dumps"
+        run: bash ./docker/scripts/migrator/combine_db_dumps.sh "${RUNNER_TEMP}/db-dumps"
 
       - name: Export combined database dump
         run: |
           docker exec "${POSTGRES_CONTAINER}" \
             pg_dump -U root -d postgres --no-owner --no-privileges --clean --if-exists \
-            > "${TEMP_DIR}/combined_db_dump.sql"
+            > "${RUNNER_TEMP}/combined_db_dump.sql"
 
       - name: Upload combined database dump
         uses: actions/upload-artifact@v7

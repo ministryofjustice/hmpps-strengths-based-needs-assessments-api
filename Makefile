@@ -127,8 +127,10 @@ ASSESSMENTS=
 migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate e.g. make migrator-run ASSESSMENTS="12345 56789"
 	docker compose ${MIGRATOR_COMPOSE_FILES} exec san-api gradle migrator -Pargs="${ASSESSMENTS}"
 
-migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=
+migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=, then restarts services so they apply their own flyway migrations on top
 	psql postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
+	docker compose ${MIGRATOR_COMPOSE_FILES} restart coordinator-api-aap-san
+	docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate coordinator-api-aap-san
 
 migrator-combine-db-dumps: ## Restores per-shard db_dump_* artifacts (zipped or not) from DUMPS_DIR= into the local postgres container
 	bash ./docker/scripts/migrator/combine_db_dumps.sh ${DUMPS_DIR}

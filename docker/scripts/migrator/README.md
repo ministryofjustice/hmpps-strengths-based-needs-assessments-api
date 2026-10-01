@@ -138,3 +138,8 @@ of the Coordinator and Handover service:
 - Any assessment whose SAN uuid doesn't have a `coordinator.oasys_associations` row at all (no
   `ASSESSMENT`-type association) was never linked to an OASys record in the first place and won't
   appear in step 3's output - this is normal for some e2e test fixtures.
+
+## Useful commands/queries
+
+- **Find complete assessments in old SAN**: `SELECT * FROM assessment_versions WHERE answers->'assessment_complete'->>'value' = 'YES'`
+- **Find OASys PK in Coordinator**: `SELECT * FROM oasys_associations WHERE entity_uuid = '<ASSESSMENT_UUID_GOES_HERE>'`

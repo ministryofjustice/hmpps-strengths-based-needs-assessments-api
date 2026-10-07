@@ -13,9 +13,14 @@ class AnswerMapper {
         """^(?:[A-Za-z0-9_]+_(?:background_section_complete|practitioner_analysis_section_complete|section_complete)|assessment_complete)$""",
       ),
     )
+    fun isStepStatusCode(key: String) = key.matches(
+      Regex(
+        """^[A-Za-z0-9_]+_is_[A-Za-z0-9_]+_user_submitted$""",
+      ),
+    )
 
     fun isCollection(pair: Map.Entry<String, Answer>) = pair.let { (_, answer) -> answer.type === AnswerType.COLLECTION }
-    fun isProperty(pair: Map.Entry<String, Answer>) = pair.let { (key, _) -> isSectionStatusCode(key) }
+    fun isProperty(pair: Map.Entry<String, Answer>) = pair.let { (key, _) -> isSectionStatusCode(key) || isStepStatusCode(key)}
 
     fun toAapValue(pair: Map.Entry<String, Answer>): Pair<String, Value> = pair.let { (key, answer) ->
       val aapAnswerCode = QuestionCodeMapper.getCodeFor(key)

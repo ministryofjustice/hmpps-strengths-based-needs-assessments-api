@@ -20,7 +20,7 @@ class AnswerMapper {
     )
 
     fun isCollection(pair: Map.Entry<String, Answer>) = pair.let { (_, answer) -> answer.type === AnswerType.COLLECTION }
-    fun isProperty(pair: Map.Entry<String, Answer>) = pair.let { (key, _) -> isSectionStatusCode(key) || isStepStatusCode(key)}
+    fun isProperty(pair: Map.Entry<String, Answer>) = pair.let { (key, _) -> isSectionStatusCode(key) || isStepStatusCode(key) }
 
     fun toAapValue(pair: Map.Entry<String, Answer>): Pair<String, Value> = pair.let { (key, answer) ->
       val aapAnswerCode = QuestionCodeMapper.getCodeFor(key)

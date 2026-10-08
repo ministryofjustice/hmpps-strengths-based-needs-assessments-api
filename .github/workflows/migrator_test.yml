@@ -1,0 +1,196 @@
+name: Run migrator tests
+
+on:
+  workflow_call:
+    inputs:
+      app_version:
+        description: App version
+        required: true
+        type: string
+
+jobs:
+  combine-db-dumps:
+    name: Combine the DB dumps from all of the parallel e2e test runners
+    runs-on: ubuntu-latest
+    env:
+      # combine_db_dumps.sh drives postgres via `docker exec`, so run it as a named container
+      # rather than a service. The dumps are produced by postgres:18's own pg_dump, so they must
+      # be read back with a matching pg_restore/pg_dump - the runner's own client is too old.
+      POSTGRES_CONTAINER: combine-db-dumps-postgres
+      PG_IMAGE: postgres:18
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download database dumps
+        uses: actions/download-artifact@v8
+        with:
+          pattern: db_dump_*
+          path: ${{ runner.temp }}/db-dumps
+
+      - name: Start postgres
+        run: |
+          docker run -d --name "${POSTGRES_CONTAINER}" -e POSTGRES_USER=root -e POSTGRES_PASSWORD=dev "${PG_IMAGE}"
+          for _ in $(seq 1 30); do
+            docker exec "${POSTGRES_CONTAINER}" pg_isready -U root -d postgres -q && exit 0
+            sleep 2
+          done
+          echo "postgres did not become ready in time" >&2
+          docker logs "${POSTGRES_CONTAINER}"
+          exit 1
+
+      - name: Restore and remap every shard's dump
+        run: bash ./docker/scripts/migrator/combine_db_dumps.sh "${RUNNER_TEMP}/db-dumps"
+
+      - name: Export combined database dump
+        run: |
+          docker exec "${POSTGRES_CONTAINER}" \
+            pg_dump -U root -d postgres --no-owner --no-privileges --clean --if-exists \
+            > "${RUNNER_TEMP}/combined_db_dump.sql"
+
+      - name: Upload combined database dump
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined_db_dump
+          path: ${{ runner.temp }}/combined_db_dump.sql
+
+  migrator-test:
+    name: Test the migrator
+    runs-on: ubuntu-latest
+    needs: combine-db-dumps
+    env:
+      APP_VERSION: ${{ inputs.app_version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download docker image
+        uses: actions/download-artifact@v8
+        with:
+          name: build_image
+          path: ${{ runner.temp }}
+
+      - name: Load image
+        run: docker load --input ${{ runner.temp }}/build_image.tar
+
+      - name: Stand up the migrator environment
+        run: make migrator-up
+
+      - name: Download combined database dump
+        uses: actions/download-artifact@v8
+        with:
+          name: combined_db_dump
+          path: ${{ runner.temp }}/db-dump
+
+      - name: Import combined database dump
+        run: make migrator-import-dump DB_DUMP_FILE=${{ runner.temp }}/db-dump/combined_db_dump.sql
+
+      - name: Run the migrator
+        run: make migrator-run
+
+      - name: Export assessment-platform schema dump
+        run: make migrator-export-schema OUTPUT_DUMP_FILE=${{ runner.temp }}/assessment_platform_dump.sql SCHEMA=assessment-platform
+
+      - name: Upload assessment-platform schema dump
+        uses: actions/upload-artifact@v7
+        with:
+          name: assessment_platform_dump
+          path: ${{ runner.temp }}/assessment_platform_dump.sql
+
+      - name: Fetch migrated assessments from the Coordinator
+        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses ENTITY_TYPE=AAP_SAN
+
+      - name: Zip up Coordinator responses
+        if: success() || failure()
+        working-directory: ${{ runner.temp }}/coordinator-responses
+        run: zip -r ${{ runner.temp }}/coordinator_responses.zip .
+
+      - name: Upload Coordinator responses
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coordinator_responses_migrated
+          path: ${{ runner.temp }}/coordinator_responses.zip
+
+  coordinator-fetch-test:
+    name: Fetch assessments from the Coordinator
+    runs-on: ubuntu-latest
+    needs: combine-db-dumps
+    env:
+      APP_VERSION: ${{ inputs.app_version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download docker image
+        uses: actions/download-artifact@v8
+        with:
+          name: build_image
+          path: ${{ runner.temp }}
+
+      - name: Load image
+        run: docker load --input ${{ runner.temp }}/build_image.tar
+
+      - name: Stand up a test environment
+        run: make migrator-up
+
+      - name: Download combined database dump
+        uses: actions/download-artifact@v8
+        with:
+          name: combined_db_dump
+          path: ${{ runner.temp }}/db-dump
+
+      - name: Import combined database dump
+        run: make migrator-import-dump DB_DUMP_FILE=${{ runner.temp }}/db-dump/combined_db_dump.sql
+
+      - name: Switch to Coordinator/Handover for legacy SAN
+        run: make use-legacy-san
+
+      - name: Fetch assessments from the Coordinator
+        run: make migrator-fetch-coordinator-assessments OUTPUT_DIR=${{ runner.temp }}/coordinator-responses ENTITY_TYPE=ASSESSMENT
+
+      - name: Zip up Coordinator responses
+        if: success() || failure()
+        working-directory: ${{ runner.temp }}/coordinator-responses
+        run: zip -r ${{ runner.temp }}/coordinator_responses.zip .
+
+      - name: Upload Coordinator responses
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coordinator_responses
+          path: ${{ runner.temp }}/coordinator_responses.zip
+
+  compare-coordinator-responses:
+    name: Compare Coordinator responses before/after migration
+    runs-on: ubuntu-latest
+    needs:
+      - coordinator-fetch-test
+      - migrator-test
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download pre-migration Coordinator responses
+        uses: actions/download-artifact@v8
+        with:
+          name: coordinator_responses
+          path: ${{ runner.temp }}/old-responses
+
+      - name: Download post-migration Coordinator responses
+        uses: actions/download-artifact@v8
+        with:
+          name: coordinator_responses_migrated
+          path: ${{ runner.temp }}/new-responses
+
+      - name: Unzip Coordinator responses
+        run: |
+          mkdir -p ${{ runner.temp }}/old ${{ runner.temp }}/new
+          unzip -q ${{ runner.temp }}/old-responses/coordinator_responses.zip -d ${{ runner.temp }}/old
+          unzip -q ${{ runner.temp }}/new-responses/coordinator_responses.zip -d ${{ runner.temp }}/new
+
+      - name: Compare Coordinator responses
+        run: make compare-coordinator-responses OLD_DIR=${{ runner.temp }}/old NEW_DIR=${{ runner.temp }}/new REPORT_DIR=${{ runner.temp }}/report
+
+      - name: Upload comparison report
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coordinator_response_diff
+          path: ${{ runner.temp }}/report

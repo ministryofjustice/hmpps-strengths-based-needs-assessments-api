@@ -1,0 +1,4773 @@
+{
+  "version": "v1.0",
+  "fields": {
+    "current_accommodation": {
+      "code": "current_accommodation",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "SETTLED"
+        },
+        {
+          "value": "TEMPORARY"
+        },
+        {
+          "value": "NO_ACCOMMODATION"
+        }
+      ]
+    },
+    "type_of_settled_accommodation": {
+      "code": "type_of_settled_accommodation",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "HOMEOWNER"
+        },
+        {
+          "value": "FRIENDS_OR_FAMILY"
+        },
+        {
+          "value": "RENTING_PRIVATELY"
+        },
+        {
+          "value": "RENTING_OTHER"
+        },
+        {
+          "value": "RESIDENTIAL_HEALTHCARE"
+        },
+        {
+          "value": "SUPPORTED_ACCOMMODATION"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "type_of_temporary_accommodation": {
+      "code": "type_of_temporary_accommodation",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "APPROVED_PREMISES"
+        },
+        {
+          "value": "CAS2"
+        },
+        {
+          "value": "CAS3"
+        },
+        {
+          "value": "IMMIGRATION"
+        },
+        {
+          "value": "SHORT_TERM"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "approved_premises_end_date": {
+      "code": "approved_premises_end_date",
+      "type": "DATE",
+      "section": "accommodation"
+    },
+    "cas2_end_date": {
+      "code": "cas2_end_date",
+      "type": "DATE",
+      "section": "accommodation"
+    },
+    "cas3_end_date": {
+      "code": "cas3_end_date",
+      "type": "DATE",
+      "section": "accommodation"
+    },
+    "immigration_accommodation_end_date": {
+      "code": "immigration_accommodation_end_date",
+      "type": "DATE",
+      "section": "accommodation"
+    },
+    "short_term_accommodation_end_date": {
+      "code": "short_term_accommodation_end_date",
+      "type": "DATE",
+      "section": "accommodation"
+    },
+    "type_of_no_accommodation": {
+      "code": "type_of_no_accommodation",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "CAMPSITE"
+        },
+        {
+          "value": "EMERGENCY_HOSTEL"
+        },
+        {
+          "value": "HOMELESS"
+        },
+        {
+          "value": "ROUGH_SLEEPING"
+        },
+        {
+          "value": "SHELTER"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "living_with": {
+      "code": "living_with",
+      "type": "CHECKBOX",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "FAMILY"
+        },
+        {
+          "value": "FRIENDS"
+        },
+        {
+          "value": "PARTNER"
+        },
+        {
+          "value": "PERSON_UNDER_18"
+        },
+        {
+          "value": "OTHER"
+        },
+        {
+          "value": "UNKNOWN"
+        },
+        {
+          "value": "ALONE"
+        }
+      ]
+    },
+    "living_with_partner_details": {
+      "code": "living_with_partner_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "living_with_other_details": {
+      "code": "living_with_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "no_accommodation_reason": {
+      "code": "no_accommodation_reason",
+      "type": "CHECKBOX",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "ALCOHOL_PROBLEMS"
+        },
+        {
+          "value": "DRUG_PROBLEMS"
+        },
+        {
+          "value": "FINANCIAL_DIFFICULTIES"
+        },
+        {
+          "value": "RISK_TO_OTHERS"
+        },
+        {
+          "value": "SAFETY"
+        },
+        {
+          "value": "PRISON_RELEASE"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "no_accommodation_reason_other_details": {
+      "code": "no_accommodation_reason_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "past_accommodation_details": {
+      "code": "past_accommodation_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "suitable_housing_location": {
+      "code": "suitable_housing_location",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "suitable_housing_location_concerns": {
+      "code": "suitable_housing_location_concerns",
+      "type": "CHECKBOX",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "CRIMINAL_ASSOCIATES"
+        },
+        {
+          "value": "VICTIMISATION"
+        },
+        {
+          "value": "VICTIM_PROXIMITY"
+        },
+        {
+          "value": "NEIGHBOUR_DIFFICULTY"
+        },
+        {
+          "value": "AREA_SAFETY"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "suitable_housing_location_concerns_other_details": {
+      "code": "suitable_housing_location_concerns_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "suitable_housing": {
+      "code": "suitable_housing",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "YES_WITH_CONCERNS"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "suitable_housing_concerns": {
+      "code": "suitable_housing_concerns",
+      "type": "CHECKBOX",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "FACILITIES"
+        },
+        {
+          "value": "OVERCROWDING"
+        },
+        {
+          "value": "EXPLOITATION"
+        },
+        {
+          "value": "SAFETY"
+        },
+        {
+          "value": "LIVES_WITH_VICTIM"
+        },
+        {
+          "value": "VICTIMISATION"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "suitable_housing_concerns_other_details": {
+      "code": "suitable_housing_concerns_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "unsuitable_housing_concerns": {
+      "code": "unsuitable_housing_concerns",
+      "type": "CHECKBOX",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "FACILITIES"
+        },
+        {
+          "value": "OVERCROWDING"
+        },
+        {
+          "value": "EXPLOITATION"
+        },
+        {
+          "value": "SAFETY"
+        },
+        {
+          "value": "LIVES_WITH_VICTIM"
+        },
+        {
+          "value": "VICTIMISATION"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "unsuitable_housing_concerns_other_details": {
+      "code": "unsuitable_housing_concerns_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "suitable_housing_planned": {
+      "code": "suitable_housing_planned",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "future_accommodation_type": {
+      "code": "future_accommodation_type",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "AWAITING_ASSESSMENT"
+        },
+        {
+          "value": "AWAITING_PLACEMENT"
+        },
+        {
+          "value": "BUYING_HOUSE"
+        },
+        {
+          "value": "LIVING_WITH_FRIENDS_OR_FAMILY"
+        },
+        {
+          "value": "RENT_PRIVATELY"
+        },
+        {
+          "value": "RENT_SOCIAL"
+        },
+        {
+          "value": "RESIDENTIAL_HEALTHCARE"
+        },
+        {
+          "value": "SUPPORTED_ACCOMMODATION"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "future_accommodation_type_awaiting_assessment_details": {
+      "code": "future_accommodation_type_awaiting_assessment_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "future_accommodation_type_awaiting_placement_details": {
+      "code": "future_accommodation_type_awaiting_placement_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "future_accommodation_type_other_details": {
+      "code": "future_accommodation_type_other_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes": {
+      "code": "accommodation_changes",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "accommodation_changes_made_changes_details": {
+      "code": "accommodation_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_making_changes_details": {
+      "code": "accommodation_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_want_to_make_changes_details": {
+      "code": "accommodation_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_needs_help_to_make_changes_details": {
+      "code": "accommodation_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_thinking_about_making_changes_details": {
+      "code": "accommodation_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_does_not_want_to_make_changes_details": {
+      "code": "accommodation_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_changes_does_not_want_to_answer_details": {
+      "code": "accommodation_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "accommodation_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "accommodation_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "accommodation_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "accommodation_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_risk_of_serious_harm": {
+      "code": "accommodation_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "accommodation_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "accommodation_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "accommodation_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_risk_of_reoffending": {
+      "code": "accommodation_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "accommodation",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "accommodation_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "accommodation_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "accommodation_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "accommodation_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "accommodation"
+    },
+    "alcohol_use": {
+      "code": "alcohol_use",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES_WITHIN_LAST_THREE_MONTHS"
+        },
+        {
+          "value": "YES_NOT_IN_LAST_THREE_MONTHS"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_frequency": {
+      "code": "alcohol_frequency",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "ONCE_A_MONTH_OR_LESS"
+        },
+        {
+          "value": "MULTIPLE_TIMES_A_MONTH"
+        },
+        {
+          "value": "LESS_THAN_4_TIMES_A_WEEK"
+        },
+        {
+          "value": "MORE_THAN_4_TIMES_A_WEEK"
+        }
+      ]
+    },
+    "alcohol_units": {
+      "code": "alcohol_units",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "UNITS_1_TO_2"
+        },
+        {
+          "value": "UNITS_3_TO_4"
+        },
+        {
+          "value": "UNITS_5_TO_6"
+        },
+        {
+          "value": "UNITS_7_TO_9"
+        },
+        {
+          "value": "UNITS_10_OR_MORE"
+        }
+      ]
+    },
+    "alcohol_binge_drinking": {
+      "code": "alcohol_binge_drinking",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_binge_drinking_frequency": {
+      "code": "alcohol_binge_drinking_frequency",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "LESS_THAN_A_MONTH"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "DAILY"
+        }
+      ]
+    },
+    "alcohol_evidence_of_excess_drinking": {
+      "code": "alcohol_evidence_of_excess_drinking",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "NO_EVIDENCE"
+        },
+        {
+          "value": "YES_WITH_SOME_EVIDENCE"
+        },
+        {
+          "value": "YES_WITH_EVIDENCE"
+        }
+      ]
+    },
+    "alcohol_past_issues": {
+      "code": "alcohol_past_issues",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_past_issues_yes_details": {
+      "code": "alcohol_past_issues_yes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_reasons_for_use": {
+      "code": "alcohol_reasons_for_use",
+      "type": "CHECKBOX",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "CULTURAL_OR_RELIGIOUS"
+        },
+        {
+          "value": "CURIOSITY_OR_EXPERIMENTATION"
+        },
+        {
+          "value": "ENJOYMENT"
+        },
+        {
+          "value": "MANAGING_EMOTIONAL_ISSUES"
+        },
+        {
+          "value": "SPECIAL_OCCASIONS"
+        },
+        {
+          "value": "PEER_PRESSURE"
+        },
+        {
+          "value": "SELF_MEDICATION"
+        },
+        {
+          "value": "SOCIAL"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "alcohol_reasons_for_use_other_details": {
+      "code": "alcohol_reasons_for_use_other_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_impact_of_use": {
+      "code": "alcohol_impact_of_use",
+      "type": "CHECKBOX",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "BEHAVIOURAL"
+        },
+        {
+          "value": "COMMUNITY"
+        },
+        {
+          "value": "FINANCES"
+        },
+        {
+          "value": "LINKS_TO_REOFFENDING"
+        },
+        {
+          "value": "PHYSICAL_OR_MENTAL_HEALTH"
+        },
+        {
+          "value": "RELATIONSHIPS"
+        },
+        {
+          "value": "OTHER"
+        },
+        {
+          "value": "NO_NEGATIVE_IMPACT"
+        }
+      ]
+    },
+    "alcohol_impact_of_use_other_details": {
+      "code": "alcohol_impact_of_use_other_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_stopped_or_reduced": {
+      "code": "alcohol_stopped_or_reduced",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_stopped_or_reduced_yes_details": {
+      "code": "alcohol_stopped_or_reduced_yes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes": {
+      "code": "alcohol_use_changes",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "alcohol_use_changes_made_changes_details": {
+      "code": "alcohol_use_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_making_changes_details": {
+      "code": "alcohol_use_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_want_to_make_changes_details": {
+      "code": "alcohol_use_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_needs_help_to_make_changes_details": {
+      "code": "alcohol_use_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_thinking_about_making_changes_details": {
+      "code": "alcohol_use_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_does_not_want_to_make_changes_details": {
+      "code": "alcohol_use_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_changes_does_not_want_to_answer_details": {
+      "code": "alcohol_use_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "alcohol_use_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_use_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "alcohol_use_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "alcohol_use_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_risk_of_serious_harm": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_use_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_risk_of_reoffending": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "alcohol-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_use_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "alcohol_use_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "alcohol_use_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "alcohol-use"
+    },
+    "drug_use": {
+      "code": "drug_use",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "select_misused_drugs": {
+      "code": "select_misused_drugs",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "AMPHETAMINES"
+        },
+        {
+          "value": "BENZODIAZEPINES"
+        },
+        {
+          "value": "CANNABIS"
+        },
+        {
+          "value": "COCAINE"
+        },
+        {
+          "value": "CRACK"
+        },
+        {
+          "value": "ECSTASY"
+        },
+        {
+          "value": "HALLUCINOGENICS"
+        },
+        {
+          "value": "HEROIN"
+        },
+        {
+          "value": "METHADONE_NOT_PRESCRIBED"
+        },
+        {
+          "value": "MISUSED_PRESCRIBED_DRUGS"
+        },
+        {
+          "value": "OTHER_OPIATES"
+        },
+        {
+          "value": "SOLVENTS"
+        },
+        {
+          "value": "STEROIDS"
+        },
+        {
+          "value": "SPICE"
+        },
+        {
+          "value": "OTHER_DRUG"
+        }
+      ]
+    },
+    "drug_last_used_amphetamines": {
+      "code": "drug_last_used_amphetamines",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_benzodiazepines": {
+      "code": "drug_last_used_benzodiazepines",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_cannabis": {
+      "code": "drug_last_used_cannabis",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_cocaine": {
+      "code": "drug_last_used_cocaine",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_crack": {
+      "code": "drug_last_used_crack",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_ecstasy": {
+      "code": "drug_last_used_ecstasy",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_hallucinogenics": {
+      "code": "drug_last_used_hallucinogenics",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_heroin": {
+      "code": "drug_last_used_heroin",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_methadone_not_prescribed": {
+      "code": "drug_last_used_methadone_not_prescribed",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_misused_prescribed_drugs": {
+      "code": "drug_last_used_misused_prescribed_drugs",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_other_opiates": {
+      "code": "drug_last_used_other_opiates",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_solvents": {
+      "code": "drug_last_used_solvents",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_steroids": {
+      "code": "drug_last_used_steroids",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drug_last_used_spice": {
+      "code": "drug_last_used_spice",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "other_drug_name": {
+      "code": "other_drug_name",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_last_used_other_drug": {
+      "code": "drug_last_used_other_drug",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "not_used_in_last_six_months_details": {
+      "code": "not_used_in_last_six_months_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_injected": {
+      "code": "drugs_injected",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "NONE"
+        },
+        {
+          "value": "AMPHETAMINES"
+        },
+        {
+          "value": "BENZODIAZEPINES"
+        },
+        {
+          "value": "COCAINE"
+        },
+        {
+          "value": "CRACK"
+        },
+        {
+          "value": "HEROIN"
+        },
+        {
+          "value": "METHADONE_NOT_PRESCRIBED"
+        },
+        {
+          "value": "MISUSED_PRESCRIBED_DRUGS"
+        },
+        {
+          "value": "OTHER_OPIATES"
+        },
+        {
+          "value": "STEROIDS"
+        },
+        {
+          "value": "OTHER_DRUG"
+        }
+      ]
+    },
+    "drugs_injected_amphetamines": {
+      "code": "drugs_injected_amphetamines",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_benzodiazepines": {
+      "code": "drugs_injected_benzodiazepines",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_cocaine": {
+      "code": "drugs_injected_cocaine",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_crack": {
+      "code": "drugs_injected_crack",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_heroin": {
+      "code": "drugs_injected_heroin",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_methadone_not_prescribed": {
+      "code": "drugs_injected_methadone_not_prescribed",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_misused_prescribed_drugs": {
+      "code": "drugs_injected_misused_prescribed_drugs",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_other_opiates": {
+      "code": "drugs_injected_other_opiates",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_steroids": {
+      "code": "drugs_injected_steroids",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_injected_other_drug": {
+      "code": "drugs_injected_other_drug",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "LAST_SIX"
+        },
+        {
+          "value": "MORE_THAN_SIX"
+        }
+      ]
+    },
+    "drugs_is_receiving_treatment": {
+      "code": "drugs_is_receiving_treatment",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "drugs_is_receiving_treatment_yes_details": {
+      "code": "drugs_is_receiving_treatment_yes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_is_receiving_treatment_no_details": {
+      "code": "drugs_is_receiving_treatment_no_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_reasons_for_use": {
+      "code": "drugs_reasons_for_use",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "CULTURAL_OR_RELIGIOUS"
+        },
+        {
+          "value": "CURIOSITY_OR_EXPERIMENTATION"
+        },
+        {
+          "value": "ENHANCE_PERFORMANCE"
+        },
+        {
+          "value": "ESCAPISM_OR_AVOIDANCE"
+        },
+        {
+          "value": "MANAGING_EMOTIONAL_ISSUES"
+        },
+        {
+          "value": "PEER_PRESSURE"
+        },
+        {
+          "value": "RECREATION_OR_PLEASURE"
+        },
+        {
+          "value": "SELF_MEDICATION"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "drugs_reasons_for_use_details": {
+      "code": "drugs_reasons_for_use_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_affected_their_life": {
+      "code": "drugs_affected_their_life",
+      "type": "CHECKBOX",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "BEHAVIOUR"
+        },
+        {
+          "value": "COMMUNITY"
+        },
+        {
+          "value": "FINANCES"
+        },
+        {
+          "value": "LINKS_TO_OFFENDING"
+        },
+        {
+          "value": "HEALTH"
+        },
+        {
+          "value": "RELATIONSHIPS"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "drugs_affected_their_life_details": {
+      "code": "drugs_affected_their_life_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_anything_helped_stop_or_reduce_use": {
+      "code": "drugs_anything_helped_stop_or_reduce_use",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_what_could_help_not_use_drugs_in_future": {
+      "code": "drugs_what_could_help_not_use_drugs_in_future",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes": {
+      "code": "drug_use_changes",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "drug_use_changes_made_changes_details": {
+      "code": "drug_use_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_making_changes_details": {
+      "code": "drug_use_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_want_to_make_changes_details": {
+      "code": "drug_use_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_needs_help_to_make_changes_details": {
+      "code": "drug_use_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_thinking_about_making_changes_details": {
+      "code": "drug_use_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_does_not_want_to_make_changes_details": {
+      "code": "drug_use_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_changes_does_not_want_to_answer_details": {
+      "code": "drug_use_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drugs_practitioner_analysis_motivated_to_stop": {
+      "code": "drugs_practitioner_analysis_motivated_to_stop",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "NO_MOTIVATION"
+        },
+        {
+          "value": "PARTIAL_MOTIVATION"
+        },
+        {
+          "value": "FULL_MOTIVATION"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "drug_use_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "drug_use_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "drug_use_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "drug_use_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "drug_use_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_practitioner_analysis_risk_of_serious_harm": {
+      "code": "drug_use_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "drug_use_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "drug_use_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "drug_use_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_practitioner_analysis_risk_of_reoffending": {
+      "code": "drug_use_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "drug_use_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "drug_use_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "drug_use_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "drug_use_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "drug-use"
+    },
+    "how_often_used_last_six_months_amphetamines": {
+      "code": "how_often_used_last_six_months_amphetamines",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_amphetamines_details": {
+      "code": "how_often_used_last_six_months_amphetamines_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_benzodiazepines": {
+      "code": "how_often_used_last_six_months_benzodiazepines",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_benzodiazepines_details": {
+      "code": "how_often_used_last_six_months_benzodiazepines_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_cannabis": {
+      "code": "how_often_used_last_six_months_cannabis",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_cannabis_details": {
+      "code": "how_often_used_last_six_months_cannabis_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_cocaine": {
+      "code": "how_often_used_last_six_months_cocaine",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_cocaine_details": {
+      "code": "how_often_used_last_six_months_cocaine_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_crack": {
+      "code": "how_often_used_last_six_months_crack",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_crack_details": {
+      "code": "how_often_used_last_six_months_crack_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_ecstasy": {
+      "code": "how_often_used_last_six_months_ecstasy",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_ecstasy_details": {
+      "code": "how_often_used_last_six_months_ecstasy_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_hallucinogenics": {
+      "code": "how_often_used_last_six_months_hallucinogenics",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_hallucinogenics_details": {
+      "code": "how_often_used_last_six_months_hallucinogenics_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_heroin": {
+      "code": "how_often_used_last_six_months_heroin",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_heroin_details": {
+      "code": "how_often_used_last_six_months_heroin_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_methadone_not_prescribed": {
+      "code": "how_often_used_last_six_months_methadone_not_prescribed",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_methadone_not_prescribed_details": {
+      "code": "how_often_used_last_six_months_methadone_not_prescribed_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_misused_prescribed_drugs": {
+      "code": "how_often_used_last_six_months_misused_prescribed_drugs",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_misused_prescribed_drugs_details": {
+      "code": "how_often_used_last_six_months_misused_prescribed_drugs_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_other_opiates": {
+      "code": "how_often_used_last_six_months_other_opiates",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_other_opiates_details": {
+      "code": "how_often_used_last_six_months_other_opiates_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_solvents": {
+      "code": "how_often_used_last_six_months_solvents",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_solvents_details": {
+      "code": "how_often_used_last_six_months_solvents_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_steroids": {
+      "code": "how_often_used_last_six_months_steroids",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_steroids_details": {
+      "code": "how_often_used_last_six_months_steroids_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_spice": {
+      "code": "how_often_used_last_six_months_spice",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_spice_details": {
+      "code": "how_often_used_last_six_months_spice_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "how_often_used_last_six_months_other_drug": {
+      "code": "how_often_used_last_six_months_other_drug",
+      "type": "RADIO",
+      "section": "drug-use",
+      "options": [
+        {
+          "value": "DAILY"
+        },
+        {
+          "value": "WEEKLY"
+        },
+        {
+          "value": "MONTHLY"
+        },
+        {
+          "value": "OCCASIONALLY"
+        }
+      ]
+    },
+    "how_often_used_last_six_months_other_drug_details": {
+      "code": "how_often_used_last_six_months_other_drug_details",
+      "type": "TEXT",
+      "section": "drug-use",
+      "options": []
+    },
+    "employment_status": {
+      "code": "employment_status",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "EMPLOYED"
+        },
+        {
+          "value": "SELF_EMPLOYED"
+        },
+        {
+          "value": "RETIRED"
+        },
+        {
+          "value": "CURRENTLY_UNAVAILABLE_FOR_WORK"
+        },
+        {
+          "value": "UNEMPLOYED_LOOKING_FOR_WORK"
+        },
+        {
+          "value": "UNEMPLOYED_NOT_LOOKING_FOR_WORK"
+        }
+      ]
+    },
+    "employment_type": {
+      "code": "employment_type",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "FULL_TIME"
+        },
+        {
+          "value": "PART_TIME"
+        },
+        {
+          "value": "TEMPORARY_OR_CASUAL"
+        },
+        {
+          "value": "APPRENTICESHIP"
+        }
+      ]
+    },
+    "has_been_employed": {
+      "code": "has_been_employed",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "employment_area": {
+      "code": "employment_area",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_history": {
+      "code": "employment_history",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "STABLE"
+        },
+        {
+          "value": "PERIODS_OF_INSTABILITY"
+        },
+        {
+          "value": "UNSTABLE"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "employment_history_stable_details": {
+      "code": "employment_history_stable_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_history_periods_of_instability_details": {
+      "code": "employment_history_periods_of_instability_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_history_unstable_details": {
+      "code": "employment_history_unstable_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_history_unknown_details": {
+      "code": "employment_history_unknown_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_other_responsibilities": {
+      "code": "employment_other_responsibilities",
+      "type": "CHECKBOX",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "CARER"
+        },
+        {
+          "value": "CHILD"
+        },
+        {
+          "value": "STUDYING"
+        },
+        {
+          "value": "VOLUNTEER"
+        },
+        {
+          "value": "OTHER"
+        },
+        {
+          "value": "UNKNOWN"
+        },
+        {
+          "value": "NONE"
+        }
+      ]
+    },
+    "employment_other_responsibilities_carer_details": {
+      "code": "employment_other_responsibilities_carer_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_other_responsibilities_child_details": {
+      "code": "employment_other_responsibilities_child_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_other_responsibilities_volunteer_details": {
+      "code": "employment_other_responsibilities_volunteer_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_other_responsibilities_other_details": {
+      "code": "employment_other_responsibilities_other_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_highest_level_completed": {
+      "code": "education_highest_level_completed",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "ENTRY_LEVEL"
+        },
+        {
+          "value": "LEVEL_1"
+        },
+        {
+          "value": "LEVEL_2"
+        },
+        {
+          "value": "LEVEL_3"
+        },
+        {
+          "value": "LEVEL_4"
+        },
+        {
+          "value": "LEVEL_5"
+        },
+        {
+          "value": "LEVEL_6"
+        },
+        {
+          "value": "LEVEL_7"
+        },
+        {
+          "value": "LEVEL_8"
+        },
+        {
+          "value": "NONE_OF_THESE"
+        },
+        {
+          "value": "NOT_SURE"
+        }
+      ]
+    },
+    "education_professional_or_vocational_qualifications": {
+      "code": "education_professional_or_vocational_qualifications",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "NOT_SURE"
+        }
+      ]
+    },
+    "education_professional_or_vocational_qualifications_yes_details": {
+      "code": "education_professional_or_vocational_qualifications_yes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_transferable_skills": {
+      "code": "education_transferable_skills",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "YES_SOME_SKILLS"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "education_transferable_skills_yes_details": {
+      "code": "education_transferable_skills_yes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_transferable_skills_yes_some_skills_details": {
+      "code": "education_transferable_skills_yes_some_skills_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_difficulties": {
+      "code": "education_difficulties",
+      "type": "CHECKBOX",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "READING"
+        },
+        {
+          "value": "WRITING"
+        },
+        {
+          "value": "NUMERACY"
+        },
+        {
+          "value": "NONE"
+        }
+      ]
+    },
+    "education_difficulties_reading_severity": {
+      "code": "education_difficulties_reading_severity",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "SIGNIFICANT_DIFFICULTIES"
+        },
+        {
+          "value": "SOME_DIFFICULTIES"
+        }
+      ]
+    },
+    "education_difficulties_writing_severity": {
+      "code": "education_difficulties_writing_severity",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "SIGNIFICANT_DIFFICULTIES"
+        },
+        {
+          "value": "SOME_DIFFICULTIES"
+        }
+      ]
+    },
+    "education_difficulties_numeracy_severity": {
+      "code": "education_difficulties_numeracy_severity",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "SIGNIFICANT_DIFFICULTIES"
+        },
+        {
+          "value": "SOME_DIFFICULTIES"
+        }
+      ]
+    },
+    "employment_experience": {
+      "code": "employment_experience",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "POSITIVE"
+        },
+        {
+          "value": "MOSTLY_POSITIVE"
+        },
+        {
+          "value": "POSITIVE_AND_NEGATIVE"
+        },
+        {
+          "value": "MOSTLY_NEGATIVE"
+        },
+        {
+          "value": "NEGATIVE"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "employment_experience_positive_details": {
+      "code": "employment_experience_positive_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_experience_mostly_positive_details": {
+      "code": "employment_experience_mostly_positive_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_experience_positive_and_negative_details": {
+      "code": "employment_experience_positive_and_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_experience_mostly_negative_details": {
+      "code": "employment_experience_mostly_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_experience_negative_details": {
+      "code": "employment_experience_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_experience": {
+      "code": "education_experience",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "POSITIVE"
+        },
+        {
+          "value": "MOSTLY_POSITIVE"
+        },
+        {
+          "value": "POSITIVE_AND_NEGATIVE"
+        },
+        {
+          "value": "MOSTLY_NEGATIVE"
+        },
+        {
+          "value": "NEGATIVE"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "education_experience_positive_details": {
+      "code": "education_experience_positive_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_experience_mostly_positive_details": {
+      "code": "education_experience_mostly_positive_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_experience_positive_and_negative_details": {
+      "code": "education_experience_positive_and_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_experience_mostly_negative_details": {
+      "code": "education_experience_mostly_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "education_experience_negative_details": {
+      "code": "education_experience_negative_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes": {
+      "code": "employment_education_changes",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "employment_education_changes_made_changes_details": {
+      "code": "employment_education_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_making_changes_details": {
+      "code": "employment_education_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_want_to_make_changes_details": {
+      "code": "employment_education_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_needs_help_to_make_changes_details": {
+      "code": "employment_education_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_thinking_about_making_changes_details": {
+      "code": "employment_education_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_does_not_want_to_make_changes_details": {
+      "code": "employment_education_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_changes_does_not_want_to_answer_details": {
+      "code": "employment_education_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "employment_education_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "employment_education_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "employment_education_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "employment_education_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_risk_of_serious_harm": {
+      "code": "employment_education_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "employment_education_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "employment_education_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "employment_education_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_risk_of_reoffending": {
+      "code": "employment_education_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "employment-and-education",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "employment_education_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "employment_education_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "employment_education_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "employment_education_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "employment-and-education"
+    },
+    "finance_income": {
+      "code": "finance_income",
+      "type": "CHECKBOX",
+      "section": "finance",
+      "options": [
+        {
+          "value": "CARERS_ALLOWANCE"
+        },
+        {
+          "value": "DISABILITY_BENEFITS"
+        },
+        {
+          "value": "EMPLOYMENT"
+        },
+        {
+          "value": "FAMILY_OR_FRIENDS"
+        },
+        {
+          "value": "OFFENDING"
+        },
+        {
+          "value": "PENSION"
+        },
+        {
+          "value": "STUDENT_LOAN"
+        },
+        {
+          "value": "Undeclared"
+        },
+        {
+          "value": "WORK_RELATED_BENEFITS"
+        },
+        {
+          "value": "OTHER"
+        },
+        {
+          "value": "UNKNOWN"
+        },
+        {
+          "value": "NO_MONEY"
+        }
+      ]
+    },
+    "family_or_friends_details": {
+      "code": "family_or_friends_details",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "finance_income_other_details": {
+      "code": "finance_income_other_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_income_no_money_details": {
+      "code": "finance_income_no_money_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_bank_account": {
+      "code": "finance_bank_account",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "finance_money_management": {
+      "code": "finance_money_management",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "GOOD"
+        },
+        {
+          "value": "FAIRLY_GOOD"
+        },
+        {
+          "value": "FAIRLY_BAD"
+        },
+        {
+          "value": "BAD"
+        }
+      ]
+    },
+    "finance_money_management_good_details": {
+      "code": "finance_money_management_good_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_money_management_fairly_good_details": {
+      "code": "finance_money_management_fairly_good_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_money_management_fairly_bad_details": {
+      "code": "finance_money_management_fairly_bad_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_money_management_bad_details": {
+      "code": "finance_money_management_bad_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_gambling": {
+      "code": "finance_gambling",
+      "type": "CHECKBOX",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES_THEIR_GAMBLING"
+        },
+        {
+          "value": "YES_SOMEONE_ELSES_GAMBLING"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "finance_gambling_yes_their_gambling_details": {
+      "code": "finance_gambling_yes_their_gambling_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_gambling_yes_someone_elses_gambling_details": {
+      "code": "finance_gambling_yes_someone_elses_gambling_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_gambling_unknown_details": {
+      "code": "finance_gambling_unknown_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_debt": {
+      "code": "finance_debt",
+      "type": "CHECKBOX",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES_THEIR_DEBT"
+        },
+        {
+          "value": "YES_SOMEONE_ELSES_DEBT"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "yes_type_of_debt": {
+      "code": "yes_type_of_debt",
+      "type": "CHECKBOX",
+      "section": "finance",
+      "options": [
+        {
+          "value": "DEBT_TO_OTHERS"
+        },
+        {
+          "value": "FORMAL_DEBT"
+        }
+      ]
+    },
+    "yes_type_of_debt_debt_to_others_details": {
+      "code": "yes_type_of_debt_debt_to_others_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "yes_type_of_debt_formal_debt_details": {
+      "code": "yes_type_of_debt_formal_debt_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "yes_someone_elses_type_of_debt": {
+      "code": "yes_someone_elses_type_of_debt",
+      "type": "CHECKBOX",
+      "section": "finance",
+      "options": [
+        {
+          "value": "DEBT_TO_OTHERS"
+        },
+        {
+          "value": "FORMAL_DEBT"
+        }
+      ]
+    },
+    "yes_someone_elses_type_of_debt_debt_to_others_details": {
+      "code": "yes_someone_elses_type_of_debt_debt_to_others_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "yes_someone_elses_type_of_debt_formal_debt_details": {
+      "code": "yes_someone_elses_type_of_debt_formal_debt_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_debt_unknown_details": {
+      "code": "finance_debt_unknown_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes": {
+      "code": "finance_changes",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "finance_changes_made_changes_details": {
+      "code": "finance_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_making_changes_details": {
+      "code": "finance_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_want_to_make_changes_details": {
+      "code": "finance_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_needs_help_to_make_changes_details": {
+      "code": "finance_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_thinking_about_making_changes_details": {
+      "code": "finance_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_does_not_want_to_make_changes_details": {
+      "code": "finance_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_changes_does_not_want_to_answer_details": {
+      "code": "finance_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "finance_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "finance_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "finance_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "finance_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_risk_of_serious_harm": {
+      "code": "finance_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "finance_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "finance_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "finance_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_risk_of_reoffending": {
+      "code": "finance_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "finance",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "finance_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "finance_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "finance_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "finance_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "finance"
+    },
+    "health_wellbeing_physical_health_condition": {
+      "code": "health_wellbeing_physical_health_condition",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "health_wellbeing_physical_health_condition_yes_details": {
+      "code": "health_wellbeing_physical_health_condition_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_mental_health_condition": {
+      "code": "health_wellbeing_mental_health_condition",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES_ONGOING_SEVERE"
+        },
+        {
+          "value": "YES_ONGOING"
+        },
+        {
+          "value": "YES_IN_THE_PAST"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "health_wellbeing_mental_health_condition_yes_ongoing_severe_details": {
+      "code": "health_wellbeing_mental_health_condition_yes_ongoing_severe_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_mental_health_condition_yes_ongoing_details": {
+      "code": "health_wellbeing_mental_health_condition_yes_ongoing_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_mental_health_condition_yes_in_the_past_details": {
+      "code": "health_wellbeing_mental_health_condition_yes_in_the_past_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_prescribed_medication_physical_conditions": {
+      "code": "health_wellbeing_prescribed_medication_physical_conditions",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_prescribed_medication_mental_conditions": {
+      "code": "health_wellbeing_prescribed_medication_mental_conditions",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_psychiatric_treatment": {
+      "code": "health_wellbeing_psychiatric_treatment",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "PENDING_TREATMENT"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "health_wellbeing_head_injury_or_illness": {
+      "code": "health_wellbeing_head_injury_or_illness",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "health_wellbeing_neurodiverse_conditions": {
+      "code": "health_wellbeing_neurodiverse_conditions",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "health_wellbeing_neurodiverse_conditions_yes_details": {
+      "code": "health_wellbeing_neurodiverse_conditions_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_learning_difficulties": {
+      "code": "health_wellbeing_learning_difficulties",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES_SIGNIFICANT_DIFFICULTIES"
+        },
+        {
+          "value": "YES_SOME_DIFFICULTIES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_learning_difficulties_yes_significant_difficulties_details": {
+      "code": "health_wellbeing_learning_difficulties_yes_significant_difficulties_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_learning_difficulties_yes_some_difficulties_details": {
+      "code": "health_wellbeing_learning_difficulties_yes_some_difficulties_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_coping_day_to_day_life": {
+      "code": "health_wellbeing_coping_day_to_day_life",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "YES_SOME_DIFFICULTIES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_attitude_towards_self": {
+      "code": "health_wellbeing_attitude_towards_self",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "POSITIVE"
+        },
+        {
+          "value": "SOME_NEGATIVE_ASPECTS"
+        },
+        {
+          "value": "NEGATIVE"
+        }
+      ]
+    },
+    "health_wellbeing_self_harmed": {
+      "code": "health_wellbeing_self_harmed",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_self_harmed_yes_details": {
+      "code": "health_wellbeing_self_harmed_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_attempted_suicide_or_suicidal_thoughts": {
+      "code": "health_wellbeing_attempted_suicide_or_suicidal_thoughts",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details": {
+      "code": "health_wellbeing_attempted_suicide_or_suicidal_thoughts_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_outlook": {
+      "code": "health_wellbeing_outlook",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "OPTIMISTIC"
+        },
+        {
+          "value": "NOT_SURE"
+        },
+        {
+          "value": "NOT_OPTIMISTIC"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        }
+      ]
+    },
+    "health_wellbeing_positive_factors": {
+      "code": "health_wellbeing_positive_factors",
+      "type": "CHECKBOX",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "ACCOMMODATION"
+        },
+        {
+          "value": "EMPLOYMENT"
+        },
+        {
+          "value": "FAITH_OR_RELIGION"
+        },
+        {
+          "value": "COMMUNITY"
+        },
+        {
+          "value": "MEDICATION_OR_TREATMENT"
+        },
+        {
+          "value": "MONEY"
+        },
+        {
+          "value": "RELATIONSHIPS"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "health_wellbeing_positive_factors_other_details": {
+      "code": "health_wellbeing_positive_factors_other_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes": {
+      "code": "health_wellbeing_changes",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "health_wellbeing_changes_made_changes_details": {
+      "code": "health_wellbeing_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_making_changes_details": {
+      "code": "health_wellbeing_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_want_to_make_changes_details": {
+      "code": "health_wellbeing_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_needs_help_to_make_changes_details": {
+      "code": "health_wellbeing_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_thinking_about_making_changes_details": {
+      "code": "health_wellbeing_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_does_not_want_to_make_changes_details": {
+      "code": "health_wellbeing_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_changes_does_not_want_to_answer_details": {
+      "code": "health_wellbeing_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "health_wellbeing_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "health_wellbeing_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "health_wellbeing_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_serious_harm": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_reoffending": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "health-and-wellbeing",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "health_wellbeing_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "health_wellbeing_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "health-and-wellbeing"
+    },
+    "personal_relationships_community_children_details": {
+      "code": "personal_relationships_community_children_details",
+      "type": "CHECKBOX",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES_CHILDREN_LIVING_WITH_POP"
+        },
+        {
+          "value": "YES_CHILDREN_NOT_LIVING_WITH_POP"
+        },
+        {
+          "value": "YES_CHILDREN_VISITING"
+        },
+        {
+          "value": "NO_CHILDREN"
+        }
+      ]
+    },
+    "personal_relationships_community_children_details_yes_children_living_with_pop_details": {
+      "code": "personal_relationships_community_children_details_yes_children_living_with_pop_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_children_details_yes_children_not_living_with_pop_details": {
+      "code": "personal_relationships_community_children_details_yes_children_not_living_with_pop_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_children_details_yes_children_visiting_details": {
+      "code": "personal_relationships_community_children_details_yes_children_visiting_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people": {
+      "code": "personal_relationships_community_important_people",
+      "type": "CHECKBOX",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "PARTNER_INTIMATE_RELATIONSHIP"
+        },
+        {
+          "value": "CHILD_PARENTAL_RESPONSIBILITIES"
+        },
+        {
+          "value": "OTHER_CHILDREN"
+        },
+        {
+          "value": "FAMILY"
+        },
+        {
+          "value": "FRIENDS"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "personal_relationships_community_important_people_partner_intimate_relationship_details": {
+      "code": "personal_relationships_community_important_people_partner_intimate_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people_child_parental_responsibilities_details": {
+      "code": "personal_relationships_community_important_people_child_parental_responsibilities_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people_other_children_details": {
+      "code": "personal_relationships_community_important_people_other_children_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people_family_details": {
+      "code": "personal_relationships_community_important_people_family_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people_friends_details": {
+      "code": "personal_relationships_community_important_people_friends_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_important_people_other_details": {
+      "code": "personal_relationships_community_important_people_other_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_current_relationship": {
+      "code": "personal_relationships_community_current_relationship",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "HAPPY_RELATIONSHIP"
+        },
+        {
+          "value": "CONCERNS_HAPPY_RELATIONSHIP"
+        },
+        {
+          "value": "UNHAPPY_RELATIONSHIP"
+        }
+      ]
+    },
+    "personal_relationships_community_current_relationship_happy_relationship_details": {
+      "code": "personal_relationships_community_current_relationship_happy_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_current_relationship_concerns_happy_relationship_details": {
+      "code": "personal_relationships_community_current_relationship_concerns_happy_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_current_relationship_unhappy_relationship_details": {
+      "code": "personal_relationships_community_current_relationship_unhappy_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_intimate_relationship": {
+      "code": "personal_relationships_community_intimate_relationship",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "STABLE_RELATIONSHIPS"
+        },
+        {
+          "value": "POSITIVE_AND_NEGATIVE_RELATIONSHIPS"
+        },
+        {
+          "value": "UNSTABLE_RELATIONSHIPS"
+        }
+      ]
+    },
+    "personal_relationships_community_intimate_relationship_stable_relationships_details": {
+      "code": "personal_relationships_community_intimate_relationship_stable_relationships_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_intimate_relationship_positive_and_negative_relationships_details": {
+      "code": "personal_relationships_community_intimate_relationship_positive_and_negative_relationships_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_intimate_relationship_unstable_relationships_details": {
+      "code": "personal_relationships_community_intimate_relationship_unstable_relationships_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_challenges_intimate_relationship": {
+      "code": "personal_relationships_community_challenges_intimate_relationship",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_parental_responsibilities": {
+      "code": "personal_relationships_community_parental_responsibilities",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "personal_relationships_community_parental_responsibilities_yes_details": {
+      "code": "personal_relationships_community_parental_responsibilities_yes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_parental_responsibilities_sometimes_details": {
+      "code": "personal_relationships_community_parental_responsibilities_sometimes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_parental_responsibilities_no_details": {
+      "code": "personal_relationships_community_parental_responsibilities_no_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_family_relationship": {
+      "code": "personal_relationships_community_family_relationship",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "STABLE_RELATIONSHIP"
+        },
+        {
+          "value": "MIXED_RELATIONSHIP"
+        },
+        {
+          "value": "UNSTABLE_RELATIONSHIP"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "personal_relationships_community_family_relationship_stable_relationship_details": {
+      "code": "personal_relationships_community_family_relationship_stable_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_family_relationship_mixed_relationship_details": {
+      "code": "personal_relationships_community_family_relationship_mixed_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_family_relationship_unstable_relationship_details": {
+      "code": "personal_relationships_community_family_relationship_unstable_relationship_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_childhood": {
+      "code": "personal_relationships_community_childhood",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "POSITIVE_CHILDHOOD"
+        },
+        {
+          "value": "MIXED_CHILDHOOD"
+        },
+        {
+          "value": "NEGATIVE_CHILDHOOD"
+        }
+      ]
+    },
+    "personal_relationships_community_childhood_positive_childhood_details": {
+      "code": "personal_relationships_community_childhood_positive_childhood_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_childhood_mixed_childhood_details": {
+      "code": "personal_relationships_community_childhood_mixed_childhood_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_childhood_negative_childhood_details": {
+      "code": "personal_relationships_community_childhood_negative_childhood_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_childhood_behaviour": {
+      "code": "personal_relationships_community_childhood_behaviour",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "personal_relationships_community_childhood_behaviour_yes_details": {
+      "code": "personal_relationships_community_childhood_behaviour_yes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_childhood_behaviour_no_details": {
+      "code": "personal_relationships_community_childhood_behaviour_no_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_belonging": {
+      "code": "personal_relationships_community_belonging",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes": {
+      "code": "personal_relationships_community_changes",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "personal_relationships_community_changes_made_changes_details": {
+      "code": "personal_relationships_community_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_making_changes_details": {
+      "code": "personal_relationships_community_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_want_to_make_changes_details": {
+      "code": "personal_relationships_community_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_needs_help_to_make_changes_details": {
+      "code": "personal_relationships_community_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_thinking_about_making_changes_details": {
+      "code": "personal_relationships_community_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_does_not_want_to_make_changes_details": {
+      "code": "personal_relationships_community_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_changes_does_not_want_to_answer_details": {
+      "code": "personal_relationships_community_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "personal_relationships_community_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_serious_harm": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_reoffending": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "personal-relationships-and-community",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "personal_relationships_community_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "personal_relationships_community_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "personal-relationships-and-community"
+    },
+    "thinking_behaviours_attitudes_consequences": {
+      "code": "thinking_behaviours_attitudes_consequences",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_stable_behaviour": {
+      "code": "thinking_behaviours_attitudes_stable_behaviour",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_offending_activities": {
+      "code": "thinking_behaviours_attitudes_offending_activities",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO_OFFENDING_ACTIVITIES"
+        },
+        {
+          "value": "SOMETIMES_OFFENDING_ACTIVITIES"
+        },
+        {
+          "value": "YES_OFFENDING_ACTIVITIES"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_peer_pressure": {
+      "code": "thinking_behaviours_attitudes_peer_pressure",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOME"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_peer_pressure_yes_details": {
+      "code": "thinking_behaviours_attitudes_peer_pressure_yes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_peer_pressure_some_details": {
+      "code": "thinking_behaviours_attitudes_peer_pressure_some_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_peer_pressure_no_details": {
+      "code": "thinking_behaviours_attitudes_peer_pressure_no_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_problem_solving": {
+      "code": "thinking_behaviours_attitudes_problem_solving",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "LIMITED_PROBLEM_SOLVING"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_peoples_views": {
+      "code": "thinking_behaviours_attitudes_peoples_views",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_manipulative_predatory_behaviour": {
+      "code": "thinking_behaviours_attitudes_manipulative_predatory_behaviour",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO"
+        },
+        {
+          "value": "SOME"
+        },
+        {
+          "value": "YES"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_temper_management": {
+      "code": "thinking_behaviours_attitudes_temper_management",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_violence_controlling_behaviour": {
+      "code": "thinking_behaviours_attitudes_violence_controlling_behaviour",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO_VIOLENCE"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "YES_VIOLENCE"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_impulsive_behaviour": {
+      "code": "thinking_behaviours_attitudes_impulsive_behaviour",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "YES"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_positive_attitude": {
+      "code": "thinking_behaviours_attitudes_positive_attitude",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES_POSITIVE"
+        },
+        {
+          "value": "NEGATIVE_ATTITUDE_NO_CONCERNS"
+        },
+        {
+          "value": "NEGATIVE_ATTITUDE_AND_CONCERNS"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_hostile_orientation": {
+      "code": "thinking_behaviours_attitudes_hostile_orientation",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO"
+        },
+        {
+          "value": "SOME"
+        },
+        {
+          "value": "YES"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_supervision": {
+      "code": "thinking_behaviours_attitudes_supervision",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES_SUPERVISION"
+        },
+        {
+          "value": "UNSURE_SUPERVISION"
+        },
+        {
+          "value": "NO_SUPERVISION"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_criminal_behaviour": {
+      "code": "thinking_behaviours_attitudes_criminal_behaviour",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "NO"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "YES"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_changes": {
+      "code": "thinking_behaviours_attitudes_changes",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "MADE_CHANGES"
+        },
+        {
+          "value": "MAKING_CHANGES"
+        },
+        {
+          "value": "WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "NEEDS_HELP_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "THINKING_ABOUT_MAKING_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_MAKE_CHANGES"
+        },
+        {
+          "value": "DOES_NOT_WANT_TO_ANSWER"
+        },
+        {
+          "value": "NOT_PRESENT"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_changes_made_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_made_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_making_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_making_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_want_to_make_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_needs_help_to_make_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_needs_help_to_make_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_thinking_about_making_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_thinking_about_making_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_does_not_want_to_make_changes_details": {
+      "code": "thinking_behaviours_attitudes_changes_does_not_want_to_make_changes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_changes_does_not_want_to_answer_details": {
+      "code": "thinking_behaviours_attitudes_changes_does_not_want_to_answer_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_risk_sexual_harm": {
+      "code": "thinking_behaviours_attitudes_risk_sexual_harm",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_sexual_preoccupation": {
+      "code": "thinking_behaviours_attitudes_sexual_preoccupation",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_offence_related_sexual_interest": {
+      "code": "thinking_behaviours_attitudes_offence_related_sexual_interest",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES_OFFENCE_RELATED_SEXUAL_INTEREST"
+        },
+        {
+          "value": "SOME_OFFENCE_RELATED_SEXUAL_INTEREST"
+        },
+        {
+          "value": "NO_OFFENCE_RELATED_SEXUAL_INTEREST"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_emotional_intimacy": {
+      "code": "thinking_behaviours_attitudes_emotional_intimacy",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "SOMETIMES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors_yes_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors_yes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors_no_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_strengths_or_protective_factors_no_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm_yes_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm_yes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm_no_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_serious_harm_no_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending",
+      "type": "RADIO",
+      "section": "thinking-behaviours-and-attitudes",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending_yes_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending_yes_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending_no_details": {
+      "code": "thinking_behaviours_attitudes_practitioner_analysis_risk_of_reoffending_no_details",
+      "type": "TEXT",
+      "section": "thinking-behaviours-and-attitudes"
+    },
+    "offence_analysis_description_of_offence": {
+      "code": "offence_analysis_description_of_offence",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_elements": {
+      "code": "offence_analysis_elements",
+      "type": "CHECKBOX",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "ARSON"
+        },
+        {
+          "value": "DOMESTIC_ABUSE"
+        },
+        {
+          "value": "EXCESSIVE_OR_SADISTIC_VIOLENCE"
+        },
+        {
+          "value": "HATRED_OF_IDENTIFIABLE_GROUPS"
+        },
+        {
+          "value": "PHYSICAL_DAMAGE_TO_PROPERTY"
+        },
+        {
+          "value": "SEXUAL_ELEMENT"
+        },
+        {
+          "value": "VICTIM_TARGETED"
+        },
+        {
+          "value": "VIOLENCE_OR_COERCION"
+        },
+        {
+          "value": "WEAPON"
+        },
+        {
+          "value": "NONE"
+        }
+      ]
+    },
+    "offence_analysis_elements_victim_targeted_details": {
+      "code": "offence_analysis_elements_victim_targeted_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_weapon_details": {
+      "code": "offence_weapon_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_reason": {
+      "code": "offence_analysis_reason",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_motivations": {
+      "code": "offence_analysis_motivations",
+      "type": "CHECKBOX",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "ADDICTIONS_OR_PERCEIVED_NEEDS"
+        },
+        {
+          "value": "PRESSURISED_BY_OTHERS"
+        },
+        {
+          "value": "EMOTIONAL_STATE"
+        },
+        {
+          "value": "FINANCIAL_MOTIVATION"
+        },
+        {
+          "value": "HATRED_OF_IDENTIFIABLE_GROUPS"
+        },
+        {
+          "value": "SEEKING_OR_EXERTING_POWER"
+        },
+        {
+          "value": "SEXUAL_MOTIVATION"
+        },
+        {
+          "value": "THRILL_SEEKING"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "offence_analysis_motivations_other_details": {
+      "code": "offence_analysis_motivations_other_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_who_was_the_victim": {
+      "code": "offence_analysis_who_was_the_victim",
+      "type": "CHECKBOX",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "ONE_OR_MORE_PERSON"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "offence_analysis_who_was_the_victim_other_details": {
+      "code": "offence_analysis_who_was_the_victim_other_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_how_many_involved": {
+      "code": "offence_analysis_how_many_involved",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "NONE"
+        },
+        {
+          "value": "ONE"
+        },
+        {
+          "value": "TWO"
+        },
+        {
+          "value": "THREE"
+        },
+        {
+          "value": "FOUR"
+        },
+        {
+          "value": "FIVE"
+        },
+        {
+          "value": "SIX_TO_10"
+        },
+        {
+          "value": "ELEVEN_TO_15"
+        },
+        {
+          "value": "MORE_THAN_15"
+        }
+      ]
+    },
+    "offence_analysis_leader": {
+      "code": "offence_analysis_leader",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_leader_yes_details": {
+      "code": "offence_analysis_leader_yes_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_leader_no_details": {
+      "code": "offence_analysis_leader_no_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_impact_on_victims": {
+      "code": "offence_analysis_impact_on_victims",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_impact_on_victims_yes_details": {
+      "code": "offence_analysis_impact_on_victims_yes_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_impact_on_victims_no_details": {
+      "code": "offence_analysis_impact_on_victims_no_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_accept_responsibility": {
+      "code": "offence_analysis_accept_responsibility",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_accept_responsibility_yes_details": {
+      "code": "offence_analysis_accept_responsibility_yes_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_accept_responsibility_no_details": {
+      "code": "offence_analysis_accept_responsibility_no_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_escalation": {
+      "code": "offence_analysis_escalation",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        },
+        {
+          "value": "NOT_APPLICABLE"
+        }
+      ]
+    },
+    "offence_analysis_escalation_yes_details": {
+      "code": "offence_analysis_escalation_yes_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_escalation_no_details": {
+      "code": "offence_analysis_escalation_no_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_perpetrator_of_domestic_abuse": {
+      "code": "offence_analysis_perpetrator_of_domestic_abuse",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_perpetrator_of_domestic_abuse_type": {
+      "code": "offence_analysis_perpetrator_of_domestic_abuse_type",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "FAMILY_MEMBER"
+        },
+        {
+          "value": "INTIMATE_PARTNER"
+        },
+        {
+          "value": "FAMILY_MEMBER_AND_INTIMATE_PARTNER"
+        }
+      ]
+    },
+    "offence_analysis_perpetrator_of_domestic_abuse_type_family_member_details": {
+      "code": "offence_analysis_perpetrator_of_domestic_abuse_type_family_member_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_perpetrator_of_domestic_abuse_type_intimate_partner_details": {
+      "code": "offence_analysis_perpetrator_of_domestic_abuse_type_intimate_partner_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_perpetrator_of_domestic_abuse_type_family_member_and_intimate_partner_details": {
+      "code": "offence_analysis_perpetrator_of_domestic_abuse_type_family_member_and_intimate_partner_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_victim_of_domestic_abuse": {
+      "code": "offence_analysis_victim_of_domestic_abuse",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_victim_of_domestic_abuse_type": {
+      "code": "offence_analysis_victim_of_domestic_abuse_type",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "FAMILY_MEMBER"
+        },
+        {
+          "value": "INTIMATE_PARTNER"
+        },
+        {
+          "value": "FAMILY_MEMBER_AND_INTIMATE_PARTNER"
+        }
+      ]
+    },
+    "offence_analysis_victim_of_domestic_abuse_type_family_member_details": {
+      "code": "offence_analysis_victim_of_domestic_abuse_type_family_member_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_victim_of_domestic_abuse_type_intimate_partner_details": {
+      "code": "offence_analysis_victim_of_domestic_abuse_type_intimate_partner_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_victim_of_domestic_abuse_type_family_member_and_intimate_partner_details": {
+      "code": "offence_analysis_victim_of_domestic_abuse_type_family_member_and_intimate_partner_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_patterns_of_offending": {
+      "code": "offence_analysis_patterns_of_offending",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_risk": {
+      "code": "offence_analysis_risk",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_risk_yes_details": {
+      "code": "offence_analysis_risk_yes_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_risk_no_details": {
+      "code": "offence_analysis_risk_no_details",
+      "type": "TEXT",
+      "section": "offence-analysis"
+    },
+    "offence_analysis_victim_relationship": {
+      "code": "offence_analysis_victim_relationship",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "collection": "OFFENCE_ANALYSIS_VICTIM",
+      "options": [
+        {
+          "value": "STRANGER"
+        },
+        {
+          "value": "CRIMINAL_JUSTICE_STAFF"
+        },
+        {
+          "value": "POP_PARENT_OR_STEP_PARENT"
+        },
+        {
+          "value": "POP_PARTNER"
+        },
+        {
+          "value": "POP_EX_PARTNER"
+        },
+        {
+          "value": "POP_CHILD_OR_STEP_CHILD"
+        },
+        {
+          "value": "OTHER_FAMILY_MEMBER"
+        },
+        {
+          "value": "OTHER"
+        }
+      ]
+    },
+    "offence_analysis_victim_relationship_other_details": {
+      "code": "offence_analysis_victim_relationship_other_details",
+      "type": "TEXT",
+      "section": "offence-analysis",
+      "collection": "OFFENCE_ANALYSIS_VICTIM"
+    },
+    "offence_analysis_victim_age": {
+      "code": "offence_analysis_victim_age",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "collection": "OFFENCE_ANALYSIS_VICTIM",
+      "options": [
+        {
+          "value": "AGE_0_TO_4_YEARS"
+        },
+        {
+          "value": "AGE_5_TO_11_YEARS"
+        },
+        {
+          "value": "AGE_12_TO_15_YEARS"
+        },
+        {
+          "value": "AGE_16_TO_17_YEARS"
+        },
+        {
+          "value": "AGE_18_TO_20_YEARS"
+        },
+        {
+          "value": "AGE_21_TO_25_YEARS"
+        },
+        {
+          "value": "AGE_26_TO_49_YEARS"
+        },
+        {
+          "value": "AGE_50_TO_64_YEARS"
+        },
+        {
+          "value": "AGE_65_AND_OVER"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "offence_analysis_victim_sex": {
+      "code": "offence_analysis_victim_sex",
+      "type": "RADIO",
+      "section": "offence-analysis",
+      "collection": "OFFENCE_ANALYSIS_VICTIM",
+      "options": [
+        {
+          "value": "MALE"
+        },
+        {
+          "value": "FEMALE"
+        },
+        {
+          "value": "INTERSEX"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "offence_analysis_victim_race": {
+      "code": "offence_analysis_victim_race",
+      "type": "SELECT",
+      "section": "offence-analysis",
+      "collection": "OFFENCE_ANALYSIS_VICTIM",
+      "options": [
+        {
+          "value": ""
+        },
+        {
+          "value": "WHITE_ENGLISH_WELSH_SCOTTISH_NORTHERN_IRISH_OR_BRITISH"
+        },
+        {
+          "value": "WHITE_IRISH"
+        },
+        {
+          "value": "WHITE_GYPSY_OR_IRISH_TRAVELLER"
+        },
+        {
+          "value": "WHITE_ROMA"
+        },
+        {
+          "value": "WHITE_ANY_OTHER_WHITE_BACKGROUND"
+        },
+        {
+          "value": "MIXED_WHITE_AND_BLACK_CARIBBEAN"
+        },
+        {
+          "value": "MIXED_WHITE_AND_BLACK_AFRICAN"
+        },
+        {
+          "value": "MIXED_WHITE_AND_ASIAN"
+        },
+        {
+          "value": "MIXED_ANY_OTHER_MIXED_OR_MULTIPLE_ETHNIC_BACKGROUND_BACKGROUND"
+        },
+        {
+          "value": "ASIAN_OR_ASIAN_BRITISH_INDIAN"
+        },
+        {
+          "value": "ASIAN_OR_ASIAN_BRITISH_PAKISTANI"
+        },
+        {
+          "value": "ASIAN_OR_ASIAN_BRITISH_BANGLADESHI"
+        },
+        {
+          "value": "ASIAN_OR_ASIAN_BRITISH_CHINESE"
+        },
+        {
+          "value": "ASIAN_OR_ASIAN_BRITISH_ANY_OTHER_ASIAN_BACKGROUND"
+        },
+        {
+          "value": "BLACK_OR_BLACK_BRITISH_CARIBBEAN"
+        },
+        {
+          "value": "BLACK_OR_BLACK_BRITISH_AFRICAN"
+        },
+        {
+          "value": "BLACK_OR_BLACK_BRITISH_ANY_OTHER_BLACK_BACKGROUND"
+        },
+        {
+          "value": "ARAB"
+        },
+        {
+          "value": "ANY_OTHER_ETHNIC_GROUP"
+        },
+        {
+          "value": "UNKNOWN"
+        }
+      ]
+    },
+    "accommodation_section_complete": {
+      "code": "accommodation_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "employment_education_section_complete": {
+      "code": "employment_education_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "finance_section_complete": {
+      "code": "finance_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "drug_use_section_complete": {
+      "code": "drug_use_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "alcohol_use_section_complete": {
+      "code": "alcohol_use_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "health_wellbeing_section_complete": {
+      "code": "health_wellbeing_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "personal_relationships_community_section_complete": {
+      "code": "personal_relationships_community_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "thinking_behaviours_attitudes_section_complete": {
+      "code": "thinking_behaviours_attitudes_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    },
+    "offence_analysis_section_complete": {
+      "code": "offence_analysis_section_complete",
+      "type": "RADIO",
+      "options": [
+        {
+          "value": "YES"
+        },
+        {
+          "value": "NO"
+        }
+      ]
+    }
+  }
+}

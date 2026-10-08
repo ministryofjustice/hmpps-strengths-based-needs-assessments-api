@@ -1,0 +1,80 @@
+{
+  "name": "ARNS API - Get Criminogenic Needs",
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/arns-api/needs/crn/[A-Z][0-9]{6}"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "assessmentVersion": "SAN",
+      "assessedOn": "{{now}}",
+      "identifiedNeeds": [
+        {
+          "section": "ACCOMMODATION",
+          "name": "Accommodation",
+          "riskOfHarm": false,
+          "riskOfReoffending": true,
+          "score": 6,
+          "oasysThreshold": { "standard": 3 }
+        },
+        {
+          "section": "DRUG_USE",
+          "name": "Drug use",
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "score": 5,
+          "oasysThreshold": { "standard": 2 }
+        },
+        {
+          "section": "PERSONAL_RELATIONSHIPS_AND_COMMUNITY",
+          "name": "Personal relationships and community",
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "score": 5,
+          "oasysThreshold": { "standard": 3 }
+        },
+        {
+          "section": "THINKING_ATTITUDES_AND_BEHAVIOUR",
+          "name": "Thinking, behaviours and attitudes",
+          "riskOfHarm": true,
+          "riskOfReoffending": true,
+          "score": 7,
+          "oasysThreshold": { "standard": 4 }
+        }
+      ],
+      "notIdentifiedNeeds": [
+        {
+          "section": "EMPLOYMENT_AND_EDUCATION",
+          "name": "Employment and education",
+          "riskOfHarm": false,
+          "riskOfReoffending": false,
+          "score": 1,
+          "oasysThreshold": { "standard": 3 }
+        },
+        {
+          "section": "ALCOHOL_USE",
+          "name": "Alcohol use",
+          "riskOfHarm": false,
+          "riskOfReoffending": false,
+          "score": 2,
+          "oasysThreshold": { "standard": 3 }
+        },
+        {
+          "section": "LIFESTYLE_AND_ASSOCIATES",
+          "name": "Lifestyle and associates",
+          "riskOfHarm": null,
+          "riskOfReoffending": null,
+          "score": 1,
+          "oasysThreshold": { "standard": 2 }
+        }
+      ],
+      "unansweredNeeds": []
+    },
+    "transformers": ["response-template"]
+  },
+  "priority": 50
+}

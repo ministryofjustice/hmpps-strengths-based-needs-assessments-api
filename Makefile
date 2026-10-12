@@ -128,7 +128,11 @@ migrator-run: ## Runs the migrator. Optionally specify assessment IDs to migrate
 	docker compose ${MIGRATOR_COMPOSE_FILES} exec san-api gradle migrator -Pargs="${ASSESSMENTS}"
 
 migrator-import-dump: ## Imports a SQL dump into the postgres container, file defined by DB_DUMP_FILE=, then restarts services so they apply their own flyway migrations on top
-	psql postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
+	# The dump's own --clean only drops objects it knows about, so anything a newer service version created on
+	# startup (e.g. extra coordinator tables) would survive and clash with flyway re-running those migrations
+	grep -E '^CREATE SCHEMA ' ${DB_DUMP_FILE} | sed -E 's/^CREATE SCHEMA (.*);$$/DROP SCHEMA IF EXISTS \1 CASCADE;/' \
+		| psql -v ON_ERROR_STOP=1 postgres://root:dev@localhost:5432/postgres
+	psql -v ON_ERROR_STOP=1 postgres://root:dev@localhost:5432/postgres < ${DB_DUMP_FILE}
 	docker compose ${MIGRATOR_COMPOSE_FILES} restart coordinator-api-aap-san
 	docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate coordinator-api-aap-san
 

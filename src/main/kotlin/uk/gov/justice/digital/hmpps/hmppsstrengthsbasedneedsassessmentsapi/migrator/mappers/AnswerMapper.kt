@@ -25,8 +25,8 @@ class AnswerMapper {
     fun toAapValue(pair: Map.Entry<String, Answer>): Pair<String, Value> = pair.let { (key, answer) ->
       val aapAnswerCode = QuestionCodeMapper.getCodeFor(key)
       aapAnswerCode to when (answer.type) {
-        AnswerType.CHECKBOX -> MultiValue(answer.values.orEmpty().map(AnswerValueMapper::getCodeFor))
-        else -> SingleValue(AnswerValueMapper.getCodeFor(answer.value.orEmpty()))
+        AnswerType.CHECKBOX -> MultiValue(answer.values.orEmpty().map { AnswerValueMapper.getValueFor(key, it) })
+        else -> SingleValue(AnswerValueMapper.getValueFor(key, answer.value.orEmpty()))
       }
     }
   }

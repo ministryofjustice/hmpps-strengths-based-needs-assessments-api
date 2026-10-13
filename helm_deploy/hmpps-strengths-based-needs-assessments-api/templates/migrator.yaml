@@ -17,10 +17,19 @@ spec:
       template:
         spec:
           restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: migrator
               image: "{{ (index .Values "generic-service").image.repository }}:{{ (index .Values "generic-service").image.tag }}"
               imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - java
                 - -jar

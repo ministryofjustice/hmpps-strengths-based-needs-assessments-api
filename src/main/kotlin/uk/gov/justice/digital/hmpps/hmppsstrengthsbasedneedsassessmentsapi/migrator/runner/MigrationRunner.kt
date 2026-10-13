@@ -37,7 +37,7 @@ class MigrationRunner(
 
     val failedAssessments = ConcurrentHashMap<Long, String>()
 
-    val concurrencyLimit = 25
+    val concurrencyLimit = 20
     val semaphore = Semaphore(concurrencyLimit)
 
     val pageSize = 50

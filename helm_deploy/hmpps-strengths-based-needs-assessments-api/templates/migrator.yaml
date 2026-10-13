@@ -36,6 +36,6 @@ spec:
                 - /app/app.jar
               args:
                 - "--server.port=0"
-                - "--spring.profiles.active=migration"
+                - "--spring.profiles.active=migration,postgres"
               {{- include "deployment.envs" (index .Values "generic-service") | nindent 14 }}
 {{- end }}

@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migra
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.AAPService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.AssessmentRepository
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
@@ -98,23 +99,36 @@ class MigrationRunner(
 
   // Concurrent migrations can race to create the same OASys user's user_details row (only one
   // wins); the loser just needs to retry once the winner's insert has committed.
+  // Network-level failures (e.g. HMPPS Auth resetting connections) are transient too, so get the same
+  // treatment with a longer, increasing backoff. A failed attempt deletes anything it created in AAP.
   private suspend fun migrateWithRetry(assessment: Assessment): Context {
     repeat(MAX_ATTEMPTS - 1) { attempt ->
       try {
         return assessmentMigrator.migrate(assessment)
       } catch (e: Exception) {
-        if (e.message?.contains(RETRYABLE_CONSTRAINT) != true) throw e
-        log.info("Retrying migration of assessment ${assessment.id} after a $RETRYABLE_CONSTRAINT collision (attempt ${attempt + 1})")
-        delay(RETRY_DELAY_MS)
+        when {
+          e.message?.contains(RETRYABLE_CONSTRAINT) == true -> {
+            log.info("Retrying migration of assessment ${assessment.id} after a $RETRYABLE_CONSTRAINT collision (attempt ${attempt + 1})")
+            delay(RETRY_DELAY_MS)
+          }
+          e.isTransientIoFailure() -> {
+            log.info("Retrying migration of assessment ${assessment.id} after an I/O failure: ${e.message} (attempt ${attempt + 1})")
+            delay(IO_RETRY_DELAY_MS * (attempt + 1))
+          }
+          else -> throw e
+        }
       }
     }
     return assessmentMigrator.migrate(assessment)
   }
+
+  private fun Throwable.isTransientIoFailure() = generateSequence(this) { it.cause }.any { it is IOException }
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     private const val RETRYABLE_CONSTRAINT = "uq_user_id_and_type"
     private const val MAX_ATTEMPTS = 3
     private const val RETRY_DELAY_MS = 250L
+    private const val IO_RETRY_DELAY_MS = 2000L
   }
 }

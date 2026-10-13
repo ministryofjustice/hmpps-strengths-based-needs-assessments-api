@@ -29,7 +29,7 @@ class WebClientConfiguration(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
   ): WebClient = builder.authorisedWebClient(
-    authorizedClientManager,
+    authorizedClientManager.serialised(),
     registrationId = "assessment-platform-api",
     url = assessmentPlatformBaseUrl,
     timeout,
@@ -40,9 +40,16 @@ class WebClientConfiguration(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     builder: WebClient.Builder,
   ): WebClient = builder.authorisedWebClient(
-    authorizedClientManager,
+    authorizedClientManager.serialised(),
     registrationId = "coordinator-api",
     url = coordinatorBaseURL,
     timeout,
   )
+
+  // The default manager doesn't coordinate concurrent callers, so when a token is missing or expired every
+  // in-flight request fetches its own - with the migrator's concurrency that's a burst of token requests
+  // that HMPPS Auth starts resetting. Serialising means one caller fetches and the rest reuse the cached token.
+  private fun OAuth2AuthorizedClientManager.serialised() = OAuth2AuthorizedClientManager { request ->
+    synchronized(this) { authorize(request) }
+  }
 }

@@ -72,7 +72,7 @@ class AssessmentVersionMigrator(
     val removedProperties = (context.previousProperties.keys - currentProperties.keys).toList()
 
     val oasysEquivalent = mapOf(
-      "oasys_equivalent" to SingleValue(objectMapper.writeValueAsString(assessmentVersion.oasysEquivalents))
+      "oasys_equivalent" to SingleValue(objectMapper.writeValueAsString(assessmentVersion.oasysEquivalents)),
     )
 
     val updatePropertiesCommand = UpdateAssessmentPropertiesCommand(

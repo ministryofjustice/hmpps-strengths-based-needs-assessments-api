@@ -54,7 +54,7 @@ class AAPService(
     .bodyValue(CommandsRequest(commands))
     .retrieve()
     .onStatus(
-      { it.is5xxServerError },
+      { it.isError },
       {
         it.bodyToMono(ErrorResponse::class.java)
           .map { res -> IllegalStateException("Call to Assessment Platform API failed with status ${res.status}: ${res.developerMessage}") }

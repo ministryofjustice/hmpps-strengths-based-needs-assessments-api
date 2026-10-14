@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migra
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.coordinator.VersionMapping
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.mappers.AnswerMapper
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.mappers.QuestionCodeMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.MigrationLogEntity
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.MigrationLogRepository
@@ -36,66 +35,53 @@ class AssessmentVersionMigrator(
     versionUpdatedAt: LocalDateTime,
     migrationUser: UserDetails,
   ): VersionMapping {
-    val currentAnswerEntries = assessmentVersion.answers
+    val currentAnswers = assessmentVersion.answers
       .entries
       .filterNot {
         AnswerMapper.isProperty(it) || AnswerMapper.isCollection(it)
-      }
+      }.associate { AnswerMapper.toAapValue(it) }
 
-    val answers = currentAnswerEntries
+    val answers = currentAnswers
       .filter {
         it.value != context.previousAnswers[it.key] // The answer has changed since the previous version
       }
 
     // Removing all current answers from previous, what keys are left from previous answers have been removed
-    val removedAnswers = (
-      context.previousAnswers.keys -
-        currentAnswerEntries.map { it.key }.toSet()
-      ).toList()
+    val removedAnswers = (context.previousAnswers.keys - currentAnswers.keys).toList()
 
-    val updateAnswersCommand = answers
-      .map { AnswerMapper.toAapValue(it) }
-      .let { convertedAnswers ->
-        UpdateAssessmentAnswersCommand(
-          user = migrationUser,
-          added = convertedAnswers.toMap(),
-          timeline = null,
-          assessmentUuid = context.assessmentUuid,
-          removed = removedAnswers.map(QuestionCodeMapper::getCodeFor),
-        )
-      }
+    val updateAnswersCommand = UpdateAssessmentAnswersCommand(
+      user = migrationUser,
+      added = answers.toMap(),
+      timeline = null,
+      assessmentUuid = context.assessmentUuid,
+      removed = removedAnswers,
+    )
 
-    val currentPropertyEntries = assessmentVersion.answers
+    val currentProperties = assessmentVersion.answers
       .entries
       .filter {
         AnswerMapper.isProperty(it) && !AnswerMapper.isCollection(it)
-      }
+      }.associate { AnswerMapper.toAapValue(it) }
 
-    val properties = currentPropertyEntries
+    val properties = currentProperties
       .filter {
         it.value != context.previousProperties[it.key] // The property has changed since the previous version
       }
 
     // Removing all current properties from previous, what keys are left from previous properties have been removed
-    val removedProperties = (
-      context.previousProperties.keys -
-        currentPropertyEntries.map { it.key }.toSet()
-      ).toList()
+    val removedProperties = (context.previousProperties.keys - currentProperties.keys).toList()
 
-    val updatePropertiesCommand = properties
-      .map { AnswerMapper.toAapValue(it) }
-      .let {
-        val oasysEquivalent = mapOf(
-          "oasys_equivalent" to SingleValue(objectMapper.writeValueAsString(assessmentVersion.oasysEquivalents))
-        )
-        UpdateAssessmentPropertiesCommand(
-          user = migrationUser,
-          added = it.toMap().plus(oasysEquivalent),
-          timeline = null,
-          assessmentUuid = context.assessmentUuid,
-          removed = removedProperties.map(QuestionCodeMapper::getCodeFor),
-        )
-      }
+    val oasysEquivalent = mapOf(
+      "oasys_equivalent" to SingleValue(objectMapper.writeValueAsString(assessmentVersion.oasysEquivalents))
+    )
+
+    val updatePropertiesCommand = UpdateAssessmentPropertiesCommand(
+      user = migrationUser,
+      added = properties.plus(oasysEquivalent),
+      timeline = null,
+      assessmentUuid = context.assessmentUuid,
+      removed = removedProperties,
+    )
 
     val victimsToRemove = context.victimsCollection.map { victimId ->
       RemoveCollectionItemCommand(
@@ -130,8 +116,8 @@ class AssessmentVersionMigrator(
       resolved + (if (command is Resolvable) command.resolve(resolved) else command)
     }
 
-    context.previousAnswers = currentAnswerEntries.associate { it.key to it.value }
-    context.previousProperties = currentPropertyEntries.associate { it.key to it.value }
+    context.previousAnswers = currentAnswers
+    context.previousProperties = currentProperties
 
     if (assessmentVersion.versionNumber < context.previousVersion) {
       throw IllegalStateException("Attempting to process events out of order for ${assessmentVersion.assessment.id}: ${assessmentVersion.versionNumber} after ${context.previousVersion}")

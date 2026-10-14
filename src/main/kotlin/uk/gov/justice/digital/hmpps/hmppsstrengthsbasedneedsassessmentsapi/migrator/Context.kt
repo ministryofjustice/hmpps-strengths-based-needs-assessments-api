@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator
 
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Answers
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.Value
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.Assessment
 
 data class Context(
@@ -11,6 +11,6 @@ data class Context(
   var previousVersion: Int = 0,
   var migrationCommands: Int = 0,
   var versionsMigrated: Int = 0,
-  var previousAnswers: Answers = emptyMap(),
-  var previousProperties: Answers = emptyMap(),
+  var previousAnswers: Map<String, Value> = emptyMap(),
+  var previousProperties: Map<String, Value> = emptyMap(),
 )

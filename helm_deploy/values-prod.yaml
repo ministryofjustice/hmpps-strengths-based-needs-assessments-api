@@ -13,10 +13,5 @@ generic-service:
     ASSESSMENT_PLATFORM_API_BASE_URL: https://arns-assessment-platform-api.hmpps.service.justice.gov.uk
     COORDINATOR_API_BASE_URL: https://arns-coordinator-api.hmpps.service.justice.gov.uk
 
-# CloudPlatform AlertManager receiver to route prometheus alerts to slack
-# See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
-generic-prometheus-alerts:
-  alertSeverity: hmpps-strengths-based-needs-assessments
-
 dataExtractor:
   enabled: true

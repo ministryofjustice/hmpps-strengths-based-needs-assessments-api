@@ -95,6 +95,13 @@ class MigrationRunner(
     failedAssessments.forEach { (assessmentUuid, message) ->
       log.error("Failed to migrate assessment $assessmentUuid: $message")
     }
+
+    failedAssessments.values
+      .groupingBy { if (it.startsWith("Association not found for assessment")) "Association not found for assessment" else it }
+      .eachCount()
+      .entries
+      .sortedByDescending { it.value }
+      .forEach { (errorType, count) -> log.error("Failed to migrate $count assessments with error: $errorType") }
   }
 
   // Concurrent migrations can race to create the same OASys user's user_details row (only one

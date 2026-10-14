@@ -299,7 +299,7 @@ services:
       - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
       - HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME=audit-queue
       - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_SHOW_SQL=false
 
   wiremock:
     image: wiremock/wiremock:3.13.2

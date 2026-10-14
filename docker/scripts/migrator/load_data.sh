@@ -5,15 +5,15 @@ set -eu
 POD_NAME="port-forward-pod"
 POD_IMAGE="ministryofjustice/port-forward"
 
-COORDINATOR_NAMESPACE="hmpps-assess-risks-and-needs-integrations-dev"
+COORDINATOR_NAMESPACE="hmpps-assess-risks-and-needs-integrations-test"
 COORDINATOR_SECRET_NAME="hmpps-assess-risks-and-needs-integrations-rds-instance"
 COORDINATOR_LOCAL_PORT=5436
 
-SAN_NAMESPACE="hmpps-strengths-based-needs-assessments-dev"
+SAN_NAMESPACE="hmpps-strengths-based-needs-assessments-test"
 SAN_SECRET_NAME="hmpps-strengths-based-needs-assessments-rds-instance"
 SAN_LOCAL_PORT=5437
 
-AAP_NAMESPACE="hmpps-arns-assessment-platform-dev"
+AAP_NAMESPACE="hmpps-arns-assessment-platform-test"
 AAP_SECRET_NAME="rds-aurora-instance-output"
 AAP_LOCAL_PORT=5438
 

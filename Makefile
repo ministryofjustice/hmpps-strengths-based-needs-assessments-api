@@ -154,8 +154,8 @@ migrator-data-pods: ## Create port-forwarding pods
 
 migrator-data: ## Loads data from a remote database
 	sh ./docker/scripts/migrator/load_data.sh
-	docker compose ${MIGRATOR_COMPOSE_FILES} down coordinator-api
-	@make migrator-up
+	docker compose ${MIGRATOR_COMPOSE_FILES} restart coordinator-api-aap-san
+	docker compose ${MIGRATOR_COMPOSE_FILES} up --wait --no-recreate coordinator-api-aap-san
 
 use-aap-san: ## Use AAP SAN containers
 	docker compose ${MIGRATOR_COMPOSE_FILES} exec wiremock curl -sf -X PUT localhost:8080/__admin/scenarios/coordinator-target/state -d '{"state":"Started"}'

@@ -5,18 +5,18 @@ import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.AAPService
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.AddCollectionItemCommand
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.FormConfig
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.RemoveCollectionItemCommand
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.Requestable
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.Resolvable
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateAssessmentAnswersCommand
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateAssessmentPropertiesCommand
-import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.UpdateOasysDataMapping
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.request.CommandResponse
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.aap.commands.result.AddCollectionItemCommandResult
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.SingleValue
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.common.UserDetails
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.coordinator.VersionMapping
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.mappers.AnswerMapper
+import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.migrator.mappers.QuestionCodeMapper
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.AssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.entity.MigrationLogEntity
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persistence.repository.MigrationLogRepository
@@ -61,7 +61,7 @@ class AssessmentVersionMigrator(
           added = convertedAnswers.toMap(),
           timeline = null,
           assessmentUuid = context.assessmentUuid,
-          removed = removedAnswers,
+          removed = removedAnswers.map(QuestionCodeMapper::getCodeFor),
         )
       }
 
@@ -85,12 +85,15 @@ class AssessmentVersionMigrator(
     val updatePropertiesCommand = properties
       .map { AnswerMapper.toAapValue(it) }
       .let {
+        val oasysEquivalent = mapOf(
+          "oasys_equivalent" to SingleValue(objectMapper.writeValueAsString(assessmentVersion.oasysEquivalents))
+        )
         UpdateAssessmentPropertiesCommand(
           user = migrationUser,
-          added = it.toMap(),
+          added = it.toMap().plus(oasysEquivalent),
           timeline = null,
           assessmentUuid = context.assessmentUuid,
-          removed = removedProperties,
+          removed = removedProperties.map(QuestionCodeMapper::getCodeFor),
         )
       }
 
@@ -126,15 +129,6 @@ class AssessmentVersionMigrator(
     ).fold(emptyList()) { resolved, command ->
       resolved + (if (command is Resolvable) command.resolve(resolved) else command)
     }
-
-    val formConfig = objectMapper.readValue(
-      requireNotNull(javaClass.getResourceAsStream("/migrator/formconfig/v1.0.json")) {
-        "Missing form config fixture: src/main/resources/migrator/formconfig/v1.0.json"
-      },
-      FormConfig::class.java,
-    )
-
-    commands.last().hooks.add(UpdateOasysDataMapping(formConfig))
 
     context.previousAnswers = currentAnswerEntries.associate { it.key to it.value }
     context.previousProperties = currentPropertyEntries.associate { it.key to it.value }

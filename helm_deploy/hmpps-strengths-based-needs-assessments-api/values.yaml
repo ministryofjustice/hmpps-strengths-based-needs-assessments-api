@@ -36,9 +36,8 @@ generic-service:
   namespace_secrets:
     hmpps-strengths-based-needs-assessments-api:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
-    hmpps-strengths-based-needs-assessments-api-client-creds:
-      CLIENT_CREDS_CLIENT_ID: "API_CLIENT_ID"
-      CLIENT_CREDS_CLIENT_SECRET: "API_CLIENT_SECRET"
+      CLIENT_CREDS_CLIENT_ID: "SYSTEM_CLIENT_ID"
+      CLIENT_CREDS_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
     hmpps-strengths-based-needs-assessments-rds-instance:
       DATABASE_USERNAME: "database_username"
       DATABASE_PASSWORD: "database_password"

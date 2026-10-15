@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.controller.request
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Size
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.config.Constraints
@@ -8,6 +9,7 @@ interface AuditableRequest {
   val userDetails: UserDetails
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class UserDetails(
   @Schema(description = "User ID", example = "111111")
   @get:Size(max = Constraints.OASYS_USER_ID_MAX_LENGTH)

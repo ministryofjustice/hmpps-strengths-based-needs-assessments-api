@@ -12,6 +12,8 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/config
     SPRING_PROFILES_ACTIVE: "logstash, postgres, dev"
+    ASSESSMENT_PLATFORM_API_BASE_URL: https://arns-assessment-platform-api-dev.hmpps.service.justice.gov.uk
+    COORDINATOR_API_BASE_URL: https://arns-coordinator-api-dev.hmpps.service.justice.gov.uk
 
   allowlist:
     mp-nat-egress-one: 13.43.9.198/32
@@ -27,4 +29,7 @@ generic-service:
     capita-developers-vms-six: 85.115.54.200/29
 
 dataExtractor:
+  enabled: true
+
+migrator:
   enabled: true

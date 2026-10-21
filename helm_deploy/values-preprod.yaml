@@ -10,6 +10,11 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
     FORM_CONFIG_BASE_URL: https://strengths-based-needs-preprod.hmpps.service.justice.gov.uk/config
+    ASSESSMENT_PLATFORM_API_BASE_URL: https://arns-assessment-platform-api-preprod.hmpps.service.justice.gov.uk
+    COORDINATOR_API_BASE_URL: https://arns-coordinator-api-preprod.hmpps.service.justice.gov.uk
 
 dataExtractor:
+  enabled: true
+
+migrator:
   enabled: true

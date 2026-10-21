@@ -43,7 +43,7 @@ class QuestionCodeMapper {
       "personal_relationships_community_is_personal_relationships_children_information_user_submitted" to "is_user_submitted_personal_relationships_children_information",
       "personal_relationships_community_is_personal_relationships_user_submitted" to "is_user_submitted_personal_relationships",
       "personal_relationships_community_is_personal_relationships_community_user_submitted" to "is_user_submitted_personal_relationships_community",
-      "personal_relationships_community_is_personal_relationships_children_user_submitted" to "is_user_submitted_personal_relationships",
+      "personal_relationships_community_is_personal_relationships_children_user_submitted" to "is_user_submitted_personal_relationships_community",
       "personal_relationships_community_is_personal_relationships_community_summary_user_submitted" to "is_user_submitted_personal_relationships_community_summary",
       "offence_analysis_is_offence_analysis_user_submitted" to "is_user_submitted_offence_analysis",
       "offence_analysis_is_offence_analysis_victim_details_user_submitted" to "is_user_submitted_offence_analysis_victim_summary",

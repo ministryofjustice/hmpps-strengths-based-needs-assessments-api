@@ -45,3 +45,11 @@ jobs:
     uses: ./.github/workflows/e2e_test.yml
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
+
+  migrator_test:
+    needs:
+      - build_docker
+      - e2e_test
+    uses: ./.github/workflows/migrator_test.yml
+    with:
+      app_version: ${{ needs.build_docker.outputs.app_version }}

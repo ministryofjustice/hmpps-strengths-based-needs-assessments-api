@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.14"
   kotlin("plugin.spring") version "2.4.20"
   kotlin("plugin.jpa") version "2.4.20"
   id("org.jetbrains.kotlin.kapt") version "2.4.20"
@@ -15,12 +15,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.2")
-
-  // Pinned due to CVE-2026-76183, remove when hmpps-kotlin-spring-boot-starter is updated to a version that includes a fixed version of jackson-module-kotlin
-  implementation(platform("org.springframework.boot:spring-boot-dependencies:4.1.2"))
-  implementation("org.apache.tomcat.embed:tomcat-embed-websocket:11.0.27")
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
 
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("tools.jackson.core:jackson-core:3.2.3")
@@ -36,18 +31,18 @@ dependencies {
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.10.Final")
 
   // Test dependencies
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.4.20")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }
 
 kotlin {
-  jvmToolchain(21)
+  jvmToolchain(25)
 }
 
 tasks {
   withType<KotlinCompile> {
-    compilerOptions.jvmTarget = JvmTarget.JVM_21
+    compilerOptions.jvmTarget = JvmTarget.JVM_25
   }
   withType<BootRun> {
     jvmArgs = listOf(

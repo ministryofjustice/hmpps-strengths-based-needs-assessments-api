@@ -24,7 +24,7 @@ services:
       SPRING_FLYWAY_LOCATIONS: classpath:db/auth,db/auth_{vendor},db/dev/data/auth_{vendor},db/dev/data/auth,filesystem:/auth_db
 
   postgres:
-    image: postgres:16
+    image: postgres:18
     networks:
       - hmpps
     environment:

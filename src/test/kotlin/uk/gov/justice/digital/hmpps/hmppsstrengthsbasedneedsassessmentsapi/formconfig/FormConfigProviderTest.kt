@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.persi
 import uk.gov.justice.digital.hmpps.hmppsstrengthsbasedneedsassessmentsapi.utils.IntegrationTest
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
+import java.time.Duration
+import java.util.Optional
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -91,6 +93,23 @@ class FormConfigProviderTest : IntegrationTest() {
         )
       }
     }
+
+    @Test
+    fun `sets a request timeout`() {
+      val mockResponse: HttpResponse<String> = mockk()
+      every { mockResponse.statusCode() } returns 404
+
+      every { mockHttpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns mockResponse
+
+      assertFailsWith<FormConfigNotFoundException> { sut.get(AssessmentFormInfo(formVersion = "1.0")) }
+
+      verify(exactly = 1) {
+        mockHttpClient.send(
+          withArg { assertEquals(Optional.of(Duration.ofSeconds(5)), it.timeout()) },
+          any<HttpResponse.BodyHandler<String>>(),
+        )
+      }
+    }
   }
 
   @Nested
@@ -144,6 +163,23 @@ class FormConfigProviderTest : IntegrationTest() {
       verify(exactly = 1) {
         mockHttpClient.send(
           withArg { assertEquals("http://test-url/config/latest", it.uri().toString()) },
+          any<HttpResponse.BodyHandler<String>>(),
+        )
+      }
+    }
+
+    @Test
+    fun `sets a request timeout`() {
+      val mockResponse: HttpResponse<String> = mockk()
+      every { mockResponse.statusCode() } returns 404
+
+      every { mockHttpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns mockResponse
+
+      assertFailsWith<FormConfigNotFoundException> { sut.getLatest() }
+
+      verify(exactly = 1) {
+        mockHttpClient.send(
+          withArg { assertEquals(Optional.of(Duration.ofSeconds(5)), it.timeout()) },
           any<HttpResponse.BodyHandler<String>>(),
         )
       }

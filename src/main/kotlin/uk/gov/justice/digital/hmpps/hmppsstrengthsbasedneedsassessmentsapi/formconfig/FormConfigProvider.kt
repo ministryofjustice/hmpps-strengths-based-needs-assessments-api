@@ -10,6 +10,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.Duration
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class FormConfig(
@@ -51,6 +52,7 @@ class FormConfigProvider(
   fun get(formInfo: AssessmentFormInfo): FormConfig {
     val request = HttpRequest.newBuilder()
       .uri(URI.create("${appConfig.formConfigBaseUrl}/${formInfo.formVersion.replace(".", "/")}"))
+      .timeout(REQUEST_TIMEOUT)
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
@@ -64,6 +66,7 @@ class FormConfigProvider(
   fun getLatest(): FormConfig {
     val request = HttpRequest.newBuilder()
       .uri(URI.create("${appConfig.formConfigBaseUrl}/latest"))
+      .timeout(REQUEST_TIMEOUT)
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
@@ -72,5 +75,9 @@ class FormConfigProvider(
     }
 
     return decoder.readValue(response.body(), FormConfig::class.java)
+  }
+
+  companion object {
+    val REQUEST_TIMEOUT: Duration = Duration.ofSeconds(5)
   }
 }

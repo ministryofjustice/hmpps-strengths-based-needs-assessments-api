@@ -88,6 +88,10 @@ jobs:
         if: failure()
         run: make save-logs OUTPUT_LOGS_DIR=${{ runner.temp }}/docker-logs
 
+      - name: Export database dump
+        if: success() || failure()
+        run: make save-db-dump OUTPUT_DB_DUMP_FILE=${{ runner.temp }}/db-dump/db_dump.dump
+
       - name: Upload test results
         if: success() || failure()
         uses: actions/upload-artifact@v7
@@ -97,6 +101,13 @@ jobs:
             e2e-test-ui/test_results
             e2e-test-ui/cypress/screenshots
             ${{ runner.temp }}/docker-logs
+
+      - name: Upload database dump
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: db_dump_${{ matrix.container }}
+          path: ${{ runner.temp }}/db-dump/db_dump.dump
 
   save-timings:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1

@@ -77,3 +77,4 @@ sonar-project.properties
 
 out.sql
 volume/
+db_dumps/

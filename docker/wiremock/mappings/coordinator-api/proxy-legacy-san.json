@@ -1,0 +1,11 @@
+{
+  "name": "Proxy to Coordinator API (legacy-san)",
+  "scenarioName": "coordinator-target",
+  "requiredScenarioState": "legacy-san",
+  "request": { "urlPattern": "/coordinator-api/.*" },
+  "response": {
+    "proxyBaseUrl": "{{systemValue type='ENVIRONMENT' key='WIREMOCK_COORDINATOR_API_LEGACY_SAN_URL'}}",
+    "proxyUrlPrefixToRemove": "/coordinator-api"
+  },
+  "priority": 100
+}

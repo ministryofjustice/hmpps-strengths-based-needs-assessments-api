@@ -82,6 +82,11 @@ To export the remote DB (saved locally as out.sql), run:
 
 `make db-export`
 
+## Migrator
+
+To run and verify a SAN → AAP migration locally against a real dataset pulled from a GitHub
+Actions `e2e_test` run, see [`docker/scripts/migrator/README.md`](docker/scripts/migrator/README.md).
+
 ## Service dependencies
 
 * [hmpps-auth](https://github.com/ministryofjustice/hmpps-auth) - for authentication using OAuth/JWT

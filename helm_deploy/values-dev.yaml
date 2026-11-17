@@ -10,7 +10,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/config
+    FORM_CONFIG_BASE_URL: http://hmpps-strengths-based-needs-assessments-ui.hmpps-strengths-based-needs-assessments-dev.svc.cluster.local/config
     SPRING_PROFILES_ACTIVE: "logstash, postgres, dev"
 
   allowlist:

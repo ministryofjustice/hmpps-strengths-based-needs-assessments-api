@@ -10,7 +10,7 @@ generic-service:
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    FORM_CONFIG_BASE_URL: https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/config
+    FORM_CONFIG_BASE_URL: http://hmpps-strengths-based-needs-assessments-ui.hmpps-strengths-based-needs-assessments-test.svc.cluster.local/config
 
   allowlist:
     mp-nat-egress-one: 13.43.9.198/32

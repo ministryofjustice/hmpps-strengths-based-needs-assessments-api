@@ -21,6 +21,7 @@ dependencies {
   implementation("tools.jackson.core:jackson-core:3.3.0")
   implementation("tools.jackson.module:jackson-module-kotlin:3.3.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
+  implementation("org.webjars:swagger-ui:5.35.1")
   runtimeOnly("io.netty:netty-codec-classes-quic")
 
   // Database dependencies

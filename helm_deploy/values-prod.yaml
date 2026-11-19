@@ -9,7 +9,7 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
-    FORM_CONFIG_BASE_URL: https://strengths-based-needs.hmpps.service.justice.gov.uk/config
+    FORM_CONFIG_BASE_URL: http://hmpps-strengths-based-needs-assessments-ui.hmpps-strengths-based-needs-assessments-prod.svc.cluster.local/config
 
 dataExtractor:
   enabled: true

@@ -1,0 +1,11 @@
+{
+  "name": "Proxy to Coordinator API (aap-san)",
+  "scenarioName": "coordinator-target",
+  "requiredScenarioState": "Started",
+  "request": { "urlPattern": "/coordinator-api/.*" },
+  "response": {
+    "proxyBaseUrl": "{{systemValue type='ENVIRONMENT' key='WIREMOCK_COORDINATOR_API_AAP_SAN_URL'}}",
+    "proxyUrlPrefixToRemove": "/coordinator-api"
+  },
+  "priority": 100
+}

@@ -4,7 +4,7 @@ spring:
     username: ${database.username:root}
     password: ${database.password:dev}
     hikari:
-      maximum-pool-size: 20
+      maximum-pool-size: 25
       connection-timeout: 15000
       leakDetectionThreshold: 20000
   flyway:

@@ -1,0 +1,11 @@
+{
+  "name": "Proxy to SAN API",
+  "request": {
+    "urlPattern": "/san-api/.*"
+  },
+  "response": {
+    "proxyBaseUrl": "{{systemValue type='ENVIRONMENT' key='WIREMOCK_SAN_API_URL'}}",
+    "proxyUrlPrefixToRemove": "/san-api"
+  },
+  "priority": 100
+}

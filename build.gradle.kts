@@ -15,12 +15,13 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.1.0")
 
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("tools.jackson.core:jackson-core:3.2.4")
   implementation("tools.jackson.module:jackson-module-kotlin:3.2.4")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
+  implementation("org.webjars:swagger-ui:5.35.1")
   runtimeOnly("io.netty:netty-codec-classes-quic")
 
   // Database dependencies
@@ -31,7 +32,7 @@ dependencies {
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.14.Final")
 
   // Test dependencies
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.1.0")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.4.21")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
 }

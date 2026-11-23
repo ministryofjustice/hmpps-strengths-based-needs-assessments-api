@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "ANY",
+    "urlPattern": ".*"
+  },
+  "response": {
+    "status": 200,
+    "body": "Feedback",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  }
+}

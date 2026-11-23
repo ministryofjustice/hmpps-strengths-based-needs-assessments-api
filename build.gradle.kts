@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.1.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.1.2"
   kotlin("plugin.spring") version "2.4.21"
   kotlin("plugin.jpa") version "2.4.21"
   id("org.jetbrains.kotlin.kapt") version "2.4.21"
@@ -20,14 +20,14 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("tools.jackson.core:jackson-core:3.3.0")
   implementation("tools.jackson.module:jackson-module-kotlin:3.3.0")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
-  implementation("org.webjars:swagger-ui:5.35.1")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.1")
+  implementation("org.webjars:swagger-ui:5.36.0")
   runtimeOnly("io.netty:netty-codec-classes-quic")
 
   // Database dependencies
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.postgresql:postgresql:42.7.14")
+  implementation("org.postgresql:postgresql:42.7.15")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   kapt("org.hibernate.orm:hibernate-jpamodelgen:7.4.17.Final")
 
@@ -35,7 +35,7 @@ dependencies {
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.1.0")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.4.21")
   testImplementation("com.ninja-squad:springmockk:5.0.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 }
 
 kotlin {

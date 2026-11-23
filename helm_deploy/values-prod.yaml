@@ -15,3 +15,6 @@ generic-service:
 
 dataExtractor:
   enabled: true
+
+migrator:
+  enabled: true

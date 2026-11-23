@@ -12,7 +12,7 @@ services:
       ALLOW_EMPTY_PASSWORD: yes
 
   postgres:
-    image: postgres:18
+    image: postgres:19
     networks:
       - hmpps
     ports:
